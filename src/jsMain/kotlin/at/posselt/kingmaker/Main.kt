@@ -1,15 +1,19 @@
 package at.posselt
 
 import at.posselt.kingmaker.actor.playerCharacters
+import at.posselt.kingmaker.buildPromise
+import at.posselt.kingmaker.macros.awardHeroPoints
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.game
 
-external class Something
 
 fun main() {
+
     Hooks.on("ready") {
 //        DialogV2.confirm(ConfirmOptions(content = "<b>hi</b>"))
-        console.log(game.playerCharacters())
+        buildPromise {
+            awardHeroPoints(game.playerCharacters())
+        }
 //        buildPromise {
 //            game.settings.register<Boolean>(
 //                "pf2e-kingmaker-tools-ng", "thingy", SettingsData(

@@ -1,4 +1,4 @@
-@file:JsQualifier("foundry.applications.api")
+//@file:JsQualifier("foundry.applications.api")
 
 package com.foundryvtt.core
 
@@ -8,7 +8,8 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
-
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
+@JsName("foundry.applications.api.DialogV2")
 open external class DialogV2(options: DialogV2Options) : ApplicationV2 {
     companion object X {
         protected fun _onClickButton(event: PointerEvent, target: HTMLButtonElement)

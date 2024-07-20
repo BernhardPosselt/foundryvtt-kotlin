@@ -16,11 +16,16 @@ external interface DialogV2Button {
 }
 
 @JsPlainObject
-external interface DialogV2Options : ApplicationConfiguration {
+external interface BaseDialogV2Options : ApplicationConfiguration {
     val content: String
     val buttons: Array<DialogV2Button>?
     val submit: ((Any) -> Promise<Unit>)?
     val modal: Boolean?
+}
+
+@JsPlainObject
+external interface DialogV2Options : BaseDialogV2Options {
+    override val buttons: Array<DialogV2Button>
 }
 
 @JsPlainObject
@@ -29,15 +34,15 @@ external interface DialogV2WaitOptions {
 }
 
 @JsPlainObject
-external interface ConfirmOptions : DialogV2WaitOptions, DialogV2Options {
+external interface ConfirmOptions : DialogV2WaitOptions, BaseDialogV2Options {
     val yes: DialogV2Button?
     val no: DialogV2Button?
 }
 
 @JsPlainObject
-external interface PromptOptions : DialogV2WaitOptions, DialogV2Options {
+external interface PromptOptions : DialogV2WaitOptions, BaseDialogV2Options {
     val ok: DialogV2Button?
 }
 
 @JsPlainObject
-external interface WaitOptions : DialogV2WaitOptions, DialogV2Options
+external interface WaitOptions : DialogV2WaitOptions, BaseDialogV2Options
