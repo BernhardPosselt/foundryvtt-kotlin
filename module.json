@@ -1,0 +1,36 @@
+{
+  "title": "Pathfinder - Kingmaker Tools NG (Unofficial)",
+  "description": "A collection of utilities to run Kingmaker",
+  "version": "2.0.0",
+  "scripts": [
+    "dist/main.js"
+  ],
+  "url": "https://github.com/BernhardPosselt/pf2e-kingmaker-tools",
+  "license": "LICENSE",
+  "styles": [
+    "styles/style.css"
+  ],
+  "id": "pf2e-kingmaker-tools-ng",
+  "socket": true,
+  "authors": [
+    {
+      "name": "Bernhard Posselt",
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "compatibility": {
+          "minimum": "6.0.0-beta3"
+        }
+      }
+    ]
+  },
+  "compatibility": {
+    "minimum": "12",
+    "maximum": "12",
+    "verified": "12"
+  }
+}
