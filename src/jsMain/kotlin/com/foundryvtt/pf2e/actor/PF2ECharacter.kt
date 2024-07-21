@@ -1,5 +1,6 @@
 package com.foundryvtt.pf2e.actor
 
+import js.objects.Record
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -39,4 +40,6 @@ external interface PF2ECharacterData {
 
 @JsName("CONFIG.PF2E.Actor.documentClasses.character")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2ECharacter : PF2EActor<PF2ECharacterData>
+external class PF2ECharacter : PF2EActor<PF2ECharacterData> {
+    val skills: Record<String, PF2EActorSkill>
+}

@@ -1,4 +1,11 @@
 package at.posselt.kingmaker.macros
 
-class ExplorationSkillChecks {
+import at.posselt.kingmaker.actor.CharacterSkill
+
+
+suspend fun rollExplorationSkillCheck(
+    explorationEffectName: String,
+    skill: CharacterSkill
+) {
+
 }
