@@ -25,7 +25,10 @@ external class PF2EActorSkill {
     fun roll(data: RollData): Promise<RollResult?>
 }
 
-
+/**
+ * Generic superclass that bundles functionality but can not be checked at runtime
+ * because the class is not exposed n the scope
+ */
 open external class PF2EActor<D> : Actor<D> {
     val perception: PF2EActorSkill
     val level: Int

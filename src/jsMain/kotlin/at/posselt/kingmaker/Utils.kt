@@ -27,3 +27,5 @@ fun <T> buildPromise(
 suspend fun <T> List<Promise<T>>.awaitAll(): List<T> =
     map { it.asDeferred() }.awaitAll()
 
+suspend fun <T> Array<Promise<T>>.awaitAll(): Array<T> =
+    map { it.asDeferred() }.awaitAll().toTypedArray()

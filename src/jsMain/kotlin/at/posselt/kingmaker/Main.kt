@@ -8,6 +8,7 @@ import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.game
 
 fun main() {
+
     Hooks.on("ready") {
 //        DialogV2.confirm(ConfirmOptions(content = "<b>hi</b>"))
         val players = game.playerCharacters()

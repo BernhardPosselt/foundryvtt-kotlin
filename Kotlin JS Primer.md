@@ -25,7 +25,7 @@ suspend fun asyncFunction() = 3
 
 suspend fun f(): Int {
     val result = asyncFunction()
-    println(result)
+    console.log(result)
     return result
 }
 ```
@@ -54,12 +54,12 @@ Kotlin:
 ```kt
 fun promiseFunction(num: Int) = Promise.resolve(num)
 
-suspend fun f(): List<Int> {
-    println(promiseFunction(3).await())
-    val result = listOf(1, 2, 3)
+suspend fun f(): Array<Int> {
+    console.log(promiseFunction(3).await())
+    val result = arrayOf(1, 2, 3)
         .map { promiseFunction(it) }
         .awaitAll()
-    println(result)
+    console.log(result)
     return result
 }
 ```
@@ -72,12 +72,12 @@ suspend fun work(num: Int) = num
 suspend fun x() = coroutineScope {
     val result = async { work(1) }
     val result2 = async { work(2) }
-    listOf(result.await(), result2.await())
+    arrayOf(result.await(), result2.await())
 }
 
 fun main() {
     buildPromise {
-        println(x())
+        console.log(x())
     }
 }
 ```
