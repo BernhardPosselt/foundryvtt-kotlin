@@ -79,7 +79,7 @@ suspend fun awardHeroPoints(players: Array<PF2ECharacter>) {
         if (points.isNotEmpty()) {
             updateHeroPoints(points)
             postChatTemplate(
-                "chatmessages/award-hero-points.hbs", AwardPointsChatContext(
+                "chatmessages/hero-point-result.hbs", AwardPointsChatContext(
                     points.map { PlayerPointsContext(it.points, it.player.name!!) }.toTypedArray()
                 )
             )
