@@ -2,16 +2,15 @@ package at.posselt.kingmaker
 
 import com.foundryvtt.core.ChatMessage
 import com.foundryvtt.core.ChatMessageData
+import js.objects.Record
 import js.objects.jso
 import kotlinx.coroutines.await
 
 suspend fun postChatTemplate(
     templatePath: String,
-    templateContext: Any = jso(),
+    templateContext: Record<String, Any?> = jso(),
     rollMode: RollMode? = null
 ) {
-    println(templateContext)
-    println(JSON.stringify(templateContext))
     val message = tpl(templatePath, templateContext)
     postChatMessage(message, rollMode)
 }

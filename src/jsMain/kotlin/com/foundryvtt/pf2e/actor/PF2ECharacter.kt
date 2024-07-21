@@ -13,8 +13,28 @@ external interface PF2ECharacterResourcesData {
 }
 
 @JsPlainObject
+external interface PF2ECharacterXPData {
+    val value: Int
+    val max: Int
+}
+
+@JsPlainObject
+external interface PF2ECharacterLevelData {
+    val value: Int
+}
+
+
+@JsPlainObject
+external interface PF2ECharacterDetailsData {
+    val xp: PF2ECharacterXPData
+    val level: PF2ECharacterLevelData
+}
+
+
+@JsPlainObject
 external interface PF2ECharacterData {
     val resources: PF2ECharacterResourcesData
+    val details: PF2ECharacterDetailsData
 }
 
 @JsName("CONFIG.PF2E.Actor.documentClasses.character")
