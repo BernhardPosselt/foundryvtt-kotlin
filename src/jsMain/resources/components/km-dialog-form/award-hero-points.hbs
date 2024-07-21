@@ -1,0 +1,12 @@
+<form>
+    <div class="row">
+        <label for="km-award-all">All</label>
+        <input type="number" value="0" name="award-all" id="km-award-all">
+    </div>
+    {{#each players}}
+        <div class="row">
+            <label for="km-award-hero-point-{{uuid}}">{{name}}</label>
+            <input type="number" value="0" name="{{uuid}}" id="km-award-hero-point-{{uuid}}">
+        </div>
+    {{/each}}
+</form>

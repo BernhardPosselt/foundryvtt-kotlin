@@ -1,10 +1,11 @@
 package at.posselt.kingmaker
 
 import com.foundryvtt.core.renderTemplate
+import js.objects.jso
 import kotlinx.coroutines.await
 
-suspend fun <T : Any> tpl(path: String, ctx: T): String {
-    val path = "modules/${Config.moduleId}/dist/templates/$path"
+suspend fun tpl(path: String, ctx: Any = jso()): String {
+    val path = "modules/${Config.moduleId}/dist/$path"
     return renderTemplate(
         path,
         ctx

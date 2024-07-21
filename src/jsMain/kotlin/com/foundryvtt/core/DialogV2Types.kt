@@ -12,7 +12,7 @@ external interface DialogV2Button {
     val icon: String?
     val `class`: String?
     val default: Boolean?
-    val callback: (event: Event, button: HTMLButtonElement, dialog: DialogV2) -> Any
+    val callback: ((event: Event, button: HTMLButtonElement, dialog: DialogV2) -> Any)?
 }
 
 @JsPlainObject
