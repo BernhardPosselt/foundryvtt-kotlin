@@ -1,5 +1,7 @@
 # FoundryVTT Kotlin
 
+If you are interested in hacking on the code base, take a look at the [Kotlin JS Primer](./Kotlin%20JS%20Primer.md) for a quick intro. 
+
 ## Development Setup
 
 Install the following things:

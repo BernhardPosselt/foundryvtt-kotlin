@@ -131,3 +131,33 @@ fun main() {
 ## Arrays/Lists
 
 You can not pass Lists to JavaScript functions or return them. Instead, use arrays when needing to interop with JS
+
+## Writing Type Definitions
+
+Type definitions are written in a similar way to TypeScript, but use the **external** modifier instead of **declare**:
+
+```kt
+external fun add(a: Int, b: Int)
+external fun asyncAdd(a: Int, b: Int): Promise<Int>
+external fun getArray(): Array<Int>
+external class A : SuperClass, Interface
+
+external val value: Int
+
+@JsPlainObject
+external interface Obj {
+    val optional: Int?
+    val required: Int
+}
+
+external fun funcTakingObject(obj: Obj)
+
+// making instanceof checks work needs the correct name on global scope
+@JsName("PF2ECharacter")
+external class A
+
+// or a path to where the class instance can be accessed
+@JsName("CONFIG.PF2E.Actor.documentClasses.character")
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
+external class B
+```
