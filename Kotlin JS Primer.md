@@ -207,3 +207,17 @@ Test.create()
 Test2.create()
 Test2.update()
 ```
+
+## Default Parameters
+
+If a JS function has a default parameter, you need to declare it using **definedExternally**:
+
+```js
+function name(name, param = 1) {
+    
+}
+```
+
+```kt
+external fun name(name: String, param: Int = definedExternally)
+```
