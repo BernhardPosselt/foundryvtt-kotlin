@@ -161,3 +161,49 @@ external class A
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class B
 ```
+
+## Inheriting Static Methods
+
+JS allows you to inherit static methods and resolve the actual instance. In Kotlin, this is not supported, but you can share common logic by pulling it out into a separate open class and letting your companion objects extend from it. This means you need to maintain a separate chain of inheritance outside the companion object:
+
+JS:
+```js
+class Test {
+    static create() {
+        return new this()
+    }
+}
+
+class Test2 extends Test {}
+
+console.log(Test2.create())  // prints Test2 {}
+```
+
+Kotlin:
+
+```kt
+open external class Test {
+    @OptIn(ExperimentalStdlibApi::class)
+    @JsExternalInheritorsOnly
+    open class Factory<T> {
+        fun create(): T
+    }
+
+    companion object : Factory<Test>
+}
+
+external class Test2 : Test {
+    @OptIn(ExperimentalStdlibApi::class)
+    @JsExternalInheritorsOnly
+    open class Factory2<T> : Factory<T> {
+        fun update(): T
+    }
+
+    companion object : Factory2<Test2>
+}
+// Test only has access to create
+Test.create()
+// But Test 2 has access to both
+Test2.create()
+Test2.update()
+```
