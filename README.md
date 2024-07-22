@@ -9,7 +9,7 @@ Install the following things:
 * JVM 21
 * git
 * node
-* npm
+* yarn
 
 Then link this directory to your foundry data folder:
 
