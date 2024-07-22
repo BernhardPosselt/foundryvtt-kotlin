@@ -64,7 +64,7 @@ suspend fun f(): Array<Int> {
 }
 ```
 
-Should you find yourself having to await a list of suspending functions rather than a list of Promises, you need to provide a coroutine context:
+Should you find yourself having to await a list of suspending functions rather than a list of Promises, you need to provide a coroutine scope:
 
 ```kt
 suspend fun work(num: Int) = num
