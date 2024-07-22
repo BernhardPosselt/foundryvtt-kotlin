@@ -36,10 +36,14 @@ external interface PF2ECharacterDetailsData {
 external interface PF2ECharacterData {
     val resources: PF2ECharacterResourcesData
     val details: PF2ECharacterDetailsData
+    val exploration: Array<String>?
 }
 
 @JsName("CONFIG.PF2E.Actor.documentClasses.character")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2ECharacter : PF2EActor<PF2ECharacterData> {
-    val skills: Record<String, PF2EActorSkill>
+external class PF2ECharacter : PF2EActor {
+    companion object : DocumentStatic<Any>
+
+    val skills: Record<String, PF2EAttribute>
+    val system: PF2ECharacterData
 }

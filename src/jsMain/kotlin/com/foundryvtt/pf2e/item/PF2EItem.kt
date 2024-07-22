@@ -1,5 +1,5 @@
 package com.foundryvtt.pf2e.item
 
-import com.foundryvtt.core.Document
+import com.foundryvtt.core.Item
 
-abstract external class PF2EItem<D> : Document<D>
+open external class PF2EItem : Item

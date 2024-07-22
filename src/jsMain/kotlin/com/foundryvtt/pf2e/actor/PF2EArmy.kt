@@ -17,4 +17,8 @@ external interface PF2EArmyData {
 
 @JsName("CONFIG.PF2E.Actor.documentClasses.army")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2EArmy : PF2EActor<PF2EArmyData>
+external class PF2EArmy : PF2EActor {
+    companion object : DocumentStatic<Any>
+
+    val system: PF2EArmyData
+}

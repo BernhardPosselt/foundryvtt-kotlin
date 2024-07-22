@@ -22,4 +22,8 @@ external interface PF2ECampaignFeatureData {
 
 @JsName("CONFIG.PF2E.Item.documentClasses.campaignFeature")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2ECampaignFeature : PF2EItem<PF2ECampaignFeatureData>
+external class PF2ECampaignFeature : PF2EItem {
+    companion object : DocumentStatic<Any>
+
+    val system: PF2ECampaignFeatureData
+}

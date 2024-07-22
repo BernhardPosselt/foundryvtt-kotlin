@@ -10,7 +10,7 @@ external interface GetOptions {
     val strict: Boolean?
 }
 
-external class Collection<T>(
+open external class Collection<T>(
     values: ReadonlyArray<JsTuple2<String, T>> = definedExternally,
 ) : JsIterable<T> {
     val contents: Array<T>
@@ -23,4 +23,5 @@ external class Collection<T>(
     fun forEach(action: (T) -> Unit)
     fun filter(predicate: (T) -> Boolean): Collection<T>
     fun find(predicate: (T) -> Boolean): T?
+    fun delete(key: String): Boolean
 }

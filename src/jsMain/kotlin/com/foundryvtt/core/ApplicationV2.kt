@@ -8,6 +8,7 @@ import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 open external class ApplicationV2(options: ApplicationConfiguration = definedExternally) {
+    // TODO: is this inherited to dialogs?
     companion object {
         val RENDER_STATES: RenderStates
         val BASE_APPLICATION: JsClass<ApplicationV2>
