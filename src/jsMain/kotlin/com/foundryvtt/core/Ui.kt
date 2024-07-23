@@ -8,6 +8,6 @@ external class Notifications {
     fun warn(message: String)
 }
 
-external class Ui {
+external object Ui {
     val notifications: Notifications
 }

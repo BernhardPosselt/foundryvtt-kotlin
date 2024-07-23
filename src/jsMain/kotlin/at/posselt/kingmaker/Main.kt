@@ -6,14 +6,14 @@ import at.posselt.kingmaker.macros.awardHeroPoints
 import at.posselt.kingmaker.macros.awardXP
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.game
+import com.foundryvtt.core.onReady
 
 fun main() {
 
-    Hooks.on("ready") {
+    Hooks.onReady {
 //        DialogV2.confirm(ConfirmOptions(content = "<b>hi</b>"))
         val players = game.playerCharacters()
         console.log(3 / 2)
-
         buildPromise {
             awardHeroPoints(players)
             awardXP(players)

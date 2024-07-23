@@ -19,11 +19,11 @@ external object Hooks {
     fun onError(location: String, error: Throwable, options: OnErrorOptions = definedExternally)
 }
 
-fun Hooks.onReady(callback: () -> Any) =
+fun <O> Hooks.onReady(callback: () -> O) =
     on("ready", callback)
 
-fun Hooks.onInit(callback: () -> Any) =
+fun <O> Hooks.onInit(callback: () -> O) =
     on("init", callback)
 
-fun Hooks.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> Any) =
+fun <O> Hooks.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> O) =
     on("updateWorldTime", callback)
