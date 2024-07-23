@@ -1,8 +1,13 @@
 package com.foundryvtt.core
 
+import kotlin.js.Promise
+
 
 external class User : Document {
-    companion object : DocumentStatic<Any>
+    companion object : DocumentStatic<User>
+
+    override fun delete(operation: DatabaseGetOperation): Promise<User>
+    override fun update(data: Any, operation: DatabaseGetOperation): Promise<User>
 
     val isGM: Boolean
     val isBanned: Boolean

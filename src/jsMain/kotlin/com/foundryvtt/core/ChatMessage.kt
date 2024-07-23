@@ -14,7 +14,7 @@ external interface ChatMessageData {
 }
 
 external class ChatMessage : Document {
-    companion object : DocumentStatic<ChatMessageData> {
+    companion object : DocumentStatic<ChatMessage> {
         fun applyRollMode(data: Any, rollMode: String)
         fun getWhisperRecipients(name: String)
     }

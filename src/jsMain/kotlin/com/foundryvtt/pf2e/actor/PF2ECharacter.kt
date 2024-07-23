@@ -1,7 +1,9 @@
 package com.foundryvtt.pf2e.actor
 
+import com.foundryvtt.core.DatabaseGetOperation
 import js.objects.Record
 import kotlinx.js.JsPlainObject
+import kotlin.js.Promise
 
 @JsPlainObject
 external interface PF2ECharacterHeroPoints {
@@ -42,7 +44,10 @@ external interface PF2ECharacterData {
 @JsName("CONFIG.PF2E.Actor.documentClasses.character")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class PF2ECharacter : PF2EActor {
-    companion object : DocumentStatic<Any>
+    companion object : DocumentStatic<PF2ECharacter>
+
+    override fun delete(operation: DatabaseGetOperation): Promise<PF2ECharacter>
+    override fun update(data: Any, operation: DatabaseGetOperation): Promise<PF2ECharacter>
 
     val skills: Record<String, PF2EAttribute>
     val system: PF2ECharacterData

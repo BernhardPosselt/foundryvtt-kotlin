@@ -1,6 +1,7 @@
 package com.foundryvtt.pf2e.actor
 
 import com.foundryvtt.core.Actor
+import com.foundryvtt.core.DatabaseGetOperation
 import com.foundryvtt.pf2e.PF2ERollData
 import com.foundryvtt.pf2e.item.*
 import kotlinx.js.JsPlainObject
@@ -35,7 +36,10 @@ external class PF2EAttribute {
 @JsName("CONFIG.Actor.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class PF2EActor : Actor {
-    companion object : DocumentStatic<Any>
+    companion object : DocumentStatic<Actor>
+
+    override fun delete(operation: DatabaseGetOperation): Promise<PF2EActor>
+    override fun update(data: Any, operation: DatabaseGetOperation): Promise<PF2EActor>
 
     val perception: PF2EAttribute
     val level: Int

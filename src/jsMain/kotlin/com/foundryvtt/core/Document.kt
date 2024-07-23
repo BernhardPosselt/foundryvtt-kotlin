@@ -25,25 +25,27 @@ abstract external class Document(
 ) : DataModel {
     @OptIn(ExperimentalStdlibApi::class)
     @JsExternalInheritorsOnly
-    open class DocumentStatic<D> {
-        fun create(data: D, operation: DatabaseGetOperation = definedExternally): Promise<ChatMessage>
-
-        fun get(id: String, operation: DatabaseGetOperation = definedExternally): Promise<ChatMessage?>
+    open class DocumentStatic<D : Document> {
+        fun create(data: Any, operation: DatabaseGetOperation = definedExternally): Promise<D>
+        fun createDocuments(data: Array<Any>, operation: DatabaseGetOperation = definedExternally): Promise<Array<D>>
+        fun updateDocuments(data: Array<Any>, operation: DatabaseGetOperation = definedExternally): Promise<Array<D>>
+        fun deleteDocuments(data: Array<Any>, operation: DatabaseGetOperation = definedExternally): Promise<Array<D>>
+        fun get(id: String, operation: DatabaseGetOperation = definedExternally): Promise<D?>
     }
 
-    companion object : DocumentStatic<Any>
+    companion object : DocumentStatic<Document>
 
     val id: String?
     val uuid: String
     val isEmbedded: Boolean
 
-    fun update(
-        data: Record<String, Any> = definedExternally,
+    open fun update(
+        data: Any,
         operation: DatabaseGetOperation = definedExternally
     ): Promise<Document>
 
-    fun delete(operation: DatabaseGetOperation = definedExternally): Promise<Document>
-    fun getFlag(scope: String, key: String): Any?
-    fun setFlag(scope: String, key: String, value: Any?): Promise<Document>
-    fun unsetFlag(scope: String, key: String): Promise<Document>
+    open fun delete(operation: DatabaseGetOperation = definedExternally): Promise<Document>
+    open fun getFlag(scope: String, key: String): Any?
+    open fun <T> setFlag(scope: String, key: String, value: T): Promise<T>
+    open fun unsetFlag(scope: String, key: String): Promise<Any?>
 }
