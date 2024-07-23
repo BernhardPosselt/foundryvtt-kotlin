@@ -1,20 +1,35 @@
 package at.posselt
 
+import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.actor.playerCharacters
 import at.posselt.kingmaker.buildPromise
+import at.posselt.kingmaker.loadTpls
 import at.posselt.kingmaker.macros.awardHeroPoints
 import at.posselt.kingmaker.macros.awardXP
+import at.posselt.kingmaker.macros.rollPartyCheck
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.game
+import com.foundryvtt.core.onInit
 import com.foundryvtt.core.onReady
 
 fun main() {
 
+    Hooks.onInit {
+        buildPromise {
+            // register partials
+            loadTpls(
+                arrayOf(
+                    "components/forms/form-element.hbs",
+                )
+            )
+        }
+    }
+
     Hooks.onReady {
 //        DialogV2.confirm(ConfirmOptions(content = "<b>hi</b>"))
         val players = game.playerCharacters()
-        console.log(3 / 2)
         buildPromise {
+            rollPartyCheck(game.partyMembers())
             awardHeroPoints(players)
             awardXP(players)
         }

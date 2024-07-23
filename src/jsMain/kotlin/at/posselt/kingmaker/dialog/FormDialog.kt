@@ -48,17 +48,21 @@ suspend fun <T, R> confirm(
 
 suspend fun <T, R> prompt(
     title: String,
-    buttonLabel: String = "Ok",
+    buttonLabel: String? = null,
     templatePath: String,
     templateContext: Record<String, Any?> = jso(),
     await: Boolean = false,
+    isRoll: Boolean = false,
     submit: suspend (T) -> R
 ) {
+    val labelDefault = if (isRoll) "Roll" else "Ok"
+    val iconDefault = if (isRoll) "fa-solid fa-dice-d20" else null
     val content = tpl(templatePath, templateContext)
     val button = DialogV2Button(
         action = "ok",
-        label = buttonLabel,
+        label = buttonLabel ?: labelDefault,
         default = true,
+        icon = iconDefault
     ) { ev, button, dialog ->
         val data = FormDataExtended<T>(button.form!!)
         buildPromise {

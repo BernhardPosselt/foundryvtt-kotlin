@@ -1,9 +1,7 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.awaitAll
+import at.posselt.kingmaker.*
 import at.posselt.kingmaker.dialog.prompt
-import at.posselt.kingmaker.postChatMessage
-import at.posselt.kingmaker.postChatTemplate
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.array.toTypedArray
 import js.objects.Record
@@ -46,8 +44,13 @@ private suspend fun updateHeroPoints(points: Array<PointsForPlayer>) {
 
 suspend fun awardHeroPoints(players: Array<PF2ECharacter>) {
     prompt<Record<String, Int>, Unit>(
-        templatePath = "components/km-dialog-form/award-hero-points.hbs",
-        templateContext = recordOf("players" to players),
+        templatePath = "components/forms/form.hbs",
+        templateContext = recordOf(
+            "formRows" to formContext(
+                NumberInput(label = "All", name = "award-all"),
+                *players.map { NumberInput(label = it.name ?: "", name = it.uuid) }.toTypedArray()
+            )
+        ),
         title = "Award Hero Points",
     ) { data ->
         val points = players.asSequence()

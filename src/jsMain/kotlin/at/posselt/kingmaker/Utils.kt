@@ -29,3 +29,8 @@ suspend fun <T> List<Promise<T>>.awaitAll(): List<T> =
 
 suspend fun <T> Array<Promise<T>>.awaitAll(): Array<T> =
     map { it.asDeferred() }.awaitAll().toTypedArray()
+
+fun String.unslugify(): String =
+    split("-")
+        .joinToString(" ")
+        .replaceFirstChar(Char::uppercase)

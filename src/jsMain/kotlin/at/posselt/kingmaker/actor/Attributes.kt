@@ -1,10 +1,13 @@
 package at.posselt.kingmaker.actor
 
+import at.posselt.kingmaker.unslugify
 import com.foundryvtt.pf2e.actor.PF2EAttribute
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 
 sealed interface Attribute {
     val value: String
+    val label: String
+        get() = value.unslugify()
 
     companion object {
         fun fromString(value: String): Attribute {
@@ -89,11 +92,11 @@ enum class SkillRank(val value: Int) {
     }
 }
 
-fun resolveSkill(actor: PF2ECharacter, skill: String): PF2EAttribute? =
-    actor.skills[skill]
+fun PF2ECharacter.resolveSkill(skill: String): PF2EAttribute? =
+    skills[skill]
 
-fun resolveAttribute(actor: PF2ECharacter, skill: Attribute): PF2EAttribute? =
+fun PF2ECharacter.resolveAttribute(skill: Attribute): PF2EAttribute? =
     when (skill) {
-        is Skill, is Lore -> resolveSkill(actor, skill.value)
-        is Perception -> actor.perception
+        is Skill, is Lore -> resolveSkill(skill.value)
+        is Perception -> perception
     }

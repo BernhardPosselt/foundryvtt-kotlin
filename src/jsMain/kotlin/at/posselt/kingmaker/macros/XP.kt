@@ -1,11 +1,13 @@
 package at.posselt.kingmaker.macros
 
+import at.posselt.kingmaker.NumberInput
 import at.posselt.kingmaker.awaitAll
 import at.posselt.kingmaker.dialog.prompt
+import at.posselt.kingmaker.formContext
 import at.posselt.kingmaker.postChatMessage
 import com.foundryvtt.pf2e.actor.PF2ECharacter
-import js.objects.Record
 import js.objects.recordOf
+import kotlinx.js.JsPlainObject
 
 private suspend fun updateXP(players: Array<PF2ECharacter>, amount: Int) {
     players.map {
@@ -24,14 +26,26 @@ private suspend fun updateXP(players: Array<PF2ECharacter>, amount: Int) {
     postChatMessage("Players gained $amount XP!")
 }
 
+@JsPlainObject
+external interface XpFormData {
+    val amount: Int
+}
+
 suspend fun awardXP(players: Array<PF2ECharacter>) {
-    prompt<Record<String, Int>, Unit>(
+    prompt<XpFormData, Unit>(
         title = "Award Party XP",
-        templatePath = "components/km-dialog-form/award-xp.hbs",
+        templatePath = "components/forms/form.hbs",
+        templateContext = recordOf(
+            "formRows" to formContext(
+                NumberInput(
+                    name = "amount",
+                    label = "Amount",
+                )
+            )
+        )
     ) {
-        val amount = it["amount"] ?: 0
-        if (amount > 0) {
-            updateXP(players, amount)
+        if (it.amount > 0) {
+            updateXP(players, it.amount)
         }
     }
 }
