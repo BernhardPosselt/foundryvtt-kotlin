@@ -11,19 +11,19 @@ external interface OnErrorOptions {
 }
 
 external object Hooks {
-    fun on(key: String, callback: Any)
-    fun once(key: String, callback: Any)
-    fun off(key: String, callback: Any)
+    fun on(key: String, callback: dynamic)
+    fun once(key: String, callback: dynamic)
+    fun off(key: String, callback: dynamic)
     fun callAll(key: String, args: Array<Any>)
     fun call(key: String, args: Array<Any>)
     fun onError(location: String, error: Throwable, options: OnErrorOptions = definedExternally)
 }
 
-fun Hooks.onReady(callback: () -> Unit) =
+fun Hooks.onReady(callback: () -> Any) =
     on("ready", callback)
 
-fun Hooks.onInit(callback: () -> Unit) =
+fun Hooks.onInit(callback: () -> Any) =
     on("init", callback)
 
-fun Hooks.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> Unit) =
+fun Hooks.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> Any) =
     on("updateWorldTime", callback)
