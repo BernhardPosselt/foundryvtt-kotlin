@@ -1,5 +1,5 @@
 package at.posselt.kingmaker
 
 object Config {
-    val moduleId = "pf2e-kingmaker-tools-ng"
+    const val MODULE_ID = "pf2e-kingmaker-tools-ng"
 }

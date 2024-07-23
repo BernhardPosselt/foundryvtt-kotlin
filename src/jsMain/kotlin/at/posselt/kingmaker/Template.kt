@@ -6,13 +6,13 @@ import js.objects.Record
 import js.objects.jso
 import kotlinx.coroutines.await
 
-private val distPath = "modules/${Config.moduleId}/dist"
+private const val DIST_PATH = "modules/${Config.MODULE_ID}/dist"
 
 suspend fun loadTpls(paths: Array<String>) {
-    val resolvedPaths = paths.map { "$distPath/$it" }.toTypedArray()
+    val resolvedPaths = paths.map { "$DIST_PATH/$it" }.toTypedArray()
     loadTemplates(resolvedPaths).await()
 }
 
 suspend fun tpl(path: String, ctx: Record<String, Any?> = jso()): String {
-    return renderTemplate("$distPath/$path", ctx).await()
+    return renderTemplate("$DIST_PATH/$path", ctx).await()
 }

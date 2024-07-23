@@ -1,4 +1,4 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.dialog
 
 import kotlinx.js.JsPlainObject
 
@@ -100,10 +100,10 @@ fun formContext(vararg rows: FormRow): Array<RowContext> =
                 text = false,
                 textArea = false,
                 checkbox = false,
-                options = it.options.map {
+                options = it.options.map { opt ->
                     Option(
-                        label = it.label,
-                        value = it.value
+                        label = opt.label,
+                        value = opt.value
                     )
                 }.toTypedArray(),
             )

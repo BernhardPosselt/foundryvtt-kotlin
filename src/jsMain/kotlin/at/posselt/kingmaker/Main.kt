@@ -1,9 +1,7 @@
-package at.posselt
+package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.actor.playerCharacters
-import at.posselt.kingmaker.buildPromise
-import at.posselt.kingmaker.loadTpls
 import at.posselt.kingmaker.macros.awardHeroPoints
 import at.posselt.kingmaker.macros.awardXP
 import at.posselt.kingmaker.macros.rollPartyCheck

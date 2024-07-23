@@ -13,7 +13,7 @@ typealias CustomFormInput<T> = (field: DataField, config: FormInputConfig<T>) ->
 external interface SettingsRange {
     val max: Int
     val min: Int
-    val setp: Int
+    val step: Int
 }
 
 @JsPlainObject

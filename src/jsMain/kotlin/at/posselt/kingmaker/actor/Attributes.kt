@@ -11,6 +11,7 @@ sealed interface Attribute {
 
     companion object {
         fun fromString(value: String): Attribute {
+            @Suppress("SwallowException")
             return when (value) {
                 "perception" -> Perception
                 else -> {

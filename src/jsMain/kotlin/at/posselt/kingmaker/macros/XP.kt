@@ -1,9 +1,9 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.NumberInput
 import at.posselt.kingmaker.awaitAll
+import at.posselt.kingmaker.dialog.NumberInput
+import at.posselt.kingmaker.dialog.formContext
 import at.posselt.kingmaker.dialog.prompt
-import at.posselt.kingmaker.formContext
 import at.posselt.kingmaker.postChatMessage
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.objects.recordOf
