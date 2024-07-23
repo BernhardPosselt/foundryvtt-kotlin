@@ -3,22 +3,23 @@ package at.posselt.kingmaker.actor
 import com.foundryvtt.pf2e.actor.PF2EAttribute
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 
-fun parseAttributeString(value: String): Attribute {
-    return when (value) {
-        "perception" -> Perception
-        else -> {
-            try {
-                Skill.fromString(value)
-            } catch (e: IllegalArgumentException) {
-                Lore(value)
+sealed interface Attribute {
+    val value: String
+
+    companion object {
+        fun fromString(value: String): Attribute {
+            return when (value) {
+                "perception" -> Perception
+                else -> {
+                    try {
+                        Skill.fromString(value)
+                    } catch (e: IllegalArgumentException) {
+                        Lore(value)
+                    }
+                }
             }
         }
     }
-}
-
-
-sealed interface Attribute {
-    val value: String
 }
 
 enum class Skill(override val value: String) : Attribute {

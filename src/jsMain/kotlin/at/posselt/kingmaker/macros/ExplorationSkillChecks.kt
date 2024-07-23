@@ -52,7 +52,7 @@ suspend fun rollExplorationSkillCheckMacro(
         game = game,
         actors = actors,
         explorationEffectName = explorationEffectName,
-        attribute = parseAttributeString(attributeName),
+        attribute = Attribute.fromString(attributeName),
         dc = dc,
     )
 }
