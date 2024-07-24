@@ -221,3 +221,34 @@ function name(name, param = 1) {
 ```kt
 external fun name(name: String, param: Int = definedExternally)
 ```
+
+## Union/Sum Types
+
+Kotlin supports 2 ways of dealing with unions:
+
+* overloading
+* sealed interfaces
+
+Overloading can be used if a function or method can take more than 1 type, e.g.
+
+```ts
+function x(param: Record<String, String> | Boolean)
+```
+
+would become
+
+```kt
+external fun x(param: Record<String, String>)
+external fun x(param: Boolean)
+```
+
+Sealed interfaces can be used to group your own types together in the same package, e.g.
+
+```kt
+sealed interface Attribute
+class Perception : Attribute
+enum class Skill : Attribute
+class Lore : Attribute
+
+fun x(attribute: Attribute) {}
+```
