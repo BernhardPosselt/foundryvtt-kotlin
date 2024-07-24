@@ -10,7 +10,7 @@ open external class Actor : Document {
     override fun delete(operation: DatabaseGetOperation): Promise<Actor>
     override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Actor>
 
-    val name: String?
+    var name: String?
     val type: String
     val items: EmbeddedCollection<Item>
     val hasPlayerOwner: Boolean

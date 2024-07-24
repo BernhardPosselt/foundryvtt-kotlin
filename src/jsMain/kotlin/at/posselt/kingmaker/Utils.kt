@@ -1,6 +1,5 @@
 package at.posselt.kingmaker
 
-import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Document
 import js.objects.PropertyKey
 import js.objects.Record
@@ -8,6 +7,7 @@ import js.objects.jso
 import js.objects.recordOf
 import js.reflect.Proxy
 import js.reflect.ProxyHandler
+import js.symbol.Symbol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.awaitAll
@@ -56,32 +56,58 @@ fun String.unslugify(): String =
         .joinToString(" ")
         .replaceFirstChar(Char::uppercase)
 
-private class SetterProxy
+val isProxy = Symbol("isProxy")
 
-class Handler<T : Any>(
+
+private class Handler(
     private val currentPath: String = "",
     private val updates: HashMap<String, Any?>,
 ) {
-    fun set(target: T, p: PropertyKey, value: Any, receiver: Any) {
-        updates[currentPath] = value
+    private fun buildPath(p: String) = if (currentPath.isEmpty()) p else "$currentPath.$p"
+
+    fun set(target: dynamic, p: PropertyKey, value: dynamic, receiver: Any) {
+        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
+        if (value[isProxy] === true)
+            throw IllegalArgumentException(
+                "You are assigning an attribute to a proxy. " +
+                        "Did you mean to assign a value instead?"
+            )
+        updates[buildPath("$p")] = value
     }
 
-    fun get(target: T, p: PropertyKey, receiver: Any): Any =
-        Handler<T>(if (currentPath.isEmpty()) "$p" else "$currentPath.$p", updates)
-            .asProxy<T>(jso())
+    fun get(target: Any, p: PropertyKey, receiver: Any): Any {
+        if (p === isProxy) return true
+        return Handler(buildPath("$p"), updates)
+            .asProxy(jso())
+    }
 
-    fun <T : Any> asProxy(target: T): Proxy<T> {
-        @Suppress("UNCHECKED_CAST")
-        val binding = recordOf("set" to ::set, "get" to ::get) as ProxyHandler<T>
+    fun asProxy(target: Any): Proxy<Any> {
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+        val binding = recordOf("set" to ::set, "get" to ::get) as ProxyHandler<Any>
         return Proxy(target, binding)
     }
 }
 
+/**
+ * Allows you to assign partial updates in a typesafe manner, e.g.:
+ * pf2eActor.typeSafeUpdate {
+ *     name = "test",
+ *     system.details.level.value = 3
+ * }.await()
+ *
+ * will produce {'name': 'test', 'system.details.level.value': 3}
+ *
+ * Note that you *must not* assign a property to itself, e.g.
+ * * pf2eActor.typeSafeUpdate {
+ *  *     name = "test",
+ *  *     system.details.level.value = system.details.level.value
+ *  * }.await()
+ */
 @Suppress("UNCHECKED_CAST")
-fun <D : Document> D.buildUpdate(block: D.() -> Unit): AnyObject {
+fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): Promise<D> {
     val result = HashMap<String, Any?>()
-    val proxy = Handler<Any>(updates = result)
-        .asProxy<Any>(this) as D
+    val proxy = Handler(updates = result)
+        .asProxy(this) as D
     proxy.block()
-    return result.toRecord()
+    return update(result.toRecord()) as Promise<D>
 }
