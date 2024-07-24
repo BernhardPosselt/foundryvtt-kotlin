@@ -1,5 +1,6 @@
 package com.foundryvtt.core
 
+import js.objects.jso
 import kotlin.js.Promise
 
 
@@ -7,7 +8,7 @@ open external class Actor : Document {
     companion object : DocumentStatic<Actor>
 
     override fun delete(operation: DatabaseGetOperation): Promise<Actor>
-    override fun update(data: Any, operation: DatabaseGetOperation): Promise<Actor>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Actor>
 
     val name: String?
     val type: String
@@ -15,3 +16,6 @@ open external class Actor : Document {
     val hasPlayerOwner: Boolean
 }
 
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun Actor.update(data: Actor, operation: DatabaseGetOperation = jso()): Promise<Actor> =
+    update(data as AnyObject, operation)

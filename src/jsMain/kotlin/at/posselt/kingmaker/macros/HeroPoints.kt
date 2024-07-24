@@ -25,6 +25,9 @@ private data class PointsForPlayer(
     val mode: AwardMode = AwardMode.ADD
 )
 
+/**
+ * Sets all hero points to 1
+ */
 suspend fun resetHeroPoints(actors: Array<PF2ECharacter>) {
     val points = actors.map { PointsForPlayer(player = it, 1, AwardMode.SET) }.toTypedArray()
     updateHeroPoints(points)

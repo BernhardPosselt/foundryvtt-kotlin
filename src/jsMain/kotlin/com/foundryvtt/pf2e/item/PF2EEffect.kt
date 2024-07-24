@@ -1,6 +1,8 @@
 package com.foundryvtt.pf2e.item
 
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.DatabaseGetOperation
+import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -13,7 +15,11 @@ external class PF2EEffect : PF2EItem {
     companion object : DocumentStatic<PF2EEffect>
 
     override fun delete(operation: DatabaseGetOperation): Promise<PF2EEffect>
-    override fun update(data: Any, operation: DatabaseGetOperation): Promise<PF2EEffect>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<PF2EEffect>
 
     val system: PF2EEffectData
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun PF2EEffect.update(data: PF2EEffect, operation: DatabaseGetOperation = jso()): Promise<PF2EEffect> =
+    update(data as AnyObject, operation)

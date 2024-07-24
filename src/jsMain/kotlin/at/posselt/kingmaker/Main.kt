@@ -5,10 +5,7 @@ import at.posselt.kingmaker.actor.playerCharacters
 import at.posselt.kingmaker.macros.awardHeroPoints
 import at.posselt.kingmaker.macros.awardXP
 import at.posselt.kingmaker.macros.rollPartyCheck
-import com.foundryvtt.core.Hooks
-import com.foundryvtt.core.game
-import com.foundryvtt.core.onInit
-import com.foundryvtt.core.onReady
+import com.foundryvtt.core.*
 
 fun main() {
 
@@ -17,15 +14,25 @@ fun main() {
             // register partials
             loadTpls(
                 arrayOf(
-                    "components/forms/form-element.hbs",
+                    "formElement" to "components/forms/form-element.hbs",
                 )
             )
         }
+
     }
 
     Hooks.onReady {
 //        DialogV2.confirm(ConfirmOptions(content = "<b>hi</b>"))
+        Actor().update(Actor())
         val players = game.playerCharacters()
+        try {
+            console.log(game.playerCharacters().first().buildUpdate {
+                system.details.level.value = 3
+                system.details.xp.max = 4
+            })
+        } catch (e: Throwable) {
+            console.log(e)
+        }
         buildPromise {
             rollPartyCheck(game.partyMembers())
             awardHeroPoints(players)

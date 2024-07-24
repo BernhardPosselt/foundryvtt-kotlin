@@ -1,6 +1,7 @@
 package com.foundryvtt.core
 
 import js.objects.Record
+import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -19,17 +20,49 @@ external interface DatabaseGetOperation : DatabaseOperation {
     val parentUuid: String?
 }
 
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
+@JsName("foundry.abstract.Document")
 abstract external class Document(
-    data: Any = definedExternally,
+    data: AnyObject = definedExternally,
     options: DocumentConstructionContext = definedExternally
 ) : DataModel {
     @OptIn(ExperimentalStdlibApi::class)
     @JsExternalInheritorsOnly
     open class DocumentStatic<D : Document> {
         fun create(data: Any, operation: DatabaseGetOperation = definedExternally): Promise<D>
-        fun createDocuments(data: Array<Any>, operation: DatabaseGetOperation = definedExternally): Promise<Array<D>>
-        fun updateDocuments(data: Array<Any>, operation: DatabaseGetOperation = definedExternally): Promise<Array<D>>
-        fun deleteDocuments(data: Array<Any>, operation: DatabaseGetOperation = definedExternally): Promise<Array<D>>
+
+        fun create(data: D, operation: DatabaseGetOperation = definedExternally): Promise<D>
+
+        fun createDocuments(
+            data: Array<AnyObject>,
+            operation: DatabaseGetOperation = definedExternally
+        ): Promise<Array<D>>
+
+        fun createDocuments(
+            data: Array<D>,
+            operation: DatabaseGetOperation = definedExternally
+        ): Promise<Array<D>>
+
+        fun updateDocuments(
+            data: Array<AnyObject>,
+            operation: DatabaseGetOperation = definedExternally
+        ): Promise<Array<D>>
+
+        fun updateDocuments(
+            data: Array<D>,
+            operation: DatabaseGetOperation = definedExternally
+        ): Promise<Array<D>>
+
+        fun deleteDocuments(
+            data: Array<D>,
+            operation: DatabaseGetOperation = definedExternally
+        ): Promise<Array<D>>
+
+        fun deleteDocuments(
+            data: Array<AnyObject>,
+            operation: DatabaseGetOperation = definedExternally
+        ): Promise<Array<D>>
+
         fun get(id: String, operation: DatabaseGetOperation = definedExternally): Promise<D?>
     }
 
@@ -40,7 +73,7 @@ abstract external class Document(
     val isEmbedded: Boolean
 
     open fun update(
-        data: Any,
+        data: AnyObject,
         operation: DatabaseGetOperation = definedExternally
     ): Promise<Document>
 
@@ -49,3 +82,7 @@ abstract external class Document(
     open fun <T> setFlag(scope: String, key: String, value: T): Promise<T>
     open fun unsetFlag(scope: String, key: String): Promise<Any?>
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun Document.update(data: Document, operation: DatabaseGetOperation = jso()): Promise<Document> =
+    update(data as AnyObject, operation)

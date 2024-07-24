@@ -17,11 +17,13 @@ external interface DocumentConstructionContext {
     val options: DataValidationOptions?
 }
 
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
+@JsName("foundry.abstract.DataModel")
 abstract external class DataModel(
-    data: Any = definedExternally,
+    data: AnyObject = definedExternally,
     options: DocumentConstructionContext = definedExternally
 ) {
-    open fun toObject(source: Boolean = definedExternally): Any
-    open fun toJSON(): Any
+    open fun toObject(source: Boolean = definedExternally): AnyObject
+    open fun toJSON(): AnyObject
     open fun reset()
 }

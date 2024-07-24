@@ -11,15 +11,15 @@ external interface OnErrorOptions {
 }
 
 external object Hooks {
-    fun on(key: String, callback: dynamic)
-    fun once(key: String, callback: dynamic)
-    fun off(key: String, callback: dynamic)
+    fun <T> on(key: String, callback: Function<T>)
+    fun <T> once(key: String, callback: Function<T>)
+    fun <T> off(key: String, callback: Function<T>)
     fun callAll(key: String, args: Array<Any>)
     fun call(key: String, args: Array<Any>)
     fun onError(location: String, error: Throwable, options: OnErrorOptions = definedExternally)
 }
 
-fun <O> Hooks.onReady(callback: () -> O) =
+fun <O> Hooks.onReady(callback: (Any) -> O) =
     on("ready", callback)
 
 fun <O> Hooks.onInit(callback: () -> O) =

@@ -46,23 +46,26 @@ suspend fun <T, R> confirm(
     if (await) prompt.await()
 }
 
+enum class PromptType(val label: String, val icon: String? = null) {
+    ROLL("Roll", "fa-solid fa-dice-d20"),
+    OK("Ok"),
+}
+
 suspend fun <T, R> prompt(
     title: String,
     buttonLabel: String? = null,
     templatePath: String,
     templateContext: Record<String, Any?> = jso(),
     await: Boolean = false,
-    isRoll: Boolean = false,
+    promptType: PromptType = PromptType.OK,
     submit: suspend (T) -> R
 ) {
-    val labelDefault = if (isRoll) "Roll" else "Ok"
-    val iconDefault = if (isRoll) "fa-solid fa-dice-d20" else null
     val content = tpl(templatePath, templateContext)
     val button = DialogV2Button(
         action = "ok",
-        label = buttonLabel ?: labelDefault,
+        label = buttonLabel ?: promptType.label,
         default = true,
-        icon = iconDefault
+        icon = promptType.icon,
     ) { ev, button, dialog ->
         val data = FormDataExtended<T>(button.form!!)
         buildPromise {

@@ -1,9 +1,11 @@
 package com.foundryvtt.pf2e.actor
 
 import com.foundryvtt.core.Actor
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.DatabaseGetOperation
 import com.foundryvtt.pf2e.PF2ERollData
 import com.foundryvtt.pf2e.item.*
+import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -39,9 +41,13 @@ open external class PF2EActor : Actor {
     companion object : DocumentStatic<Actor>
 
     override fun delete(operation: DatabaseGetOperation): Promise<PF2EActor>
-    override fun update(data: Any, operation: DatabaseGetOperation): Promise<PF2EActor>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<PF2EActor>
 
     val perception: PF2EAttribute
     val level: Int
     val itemTypes: ItemTypes
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun PF2EActor.update(data: PF2EActor, operation: DatabaseGetOperation = jso()): Promise<PF2EActor> =
+    update(data as AnyObject, operation)

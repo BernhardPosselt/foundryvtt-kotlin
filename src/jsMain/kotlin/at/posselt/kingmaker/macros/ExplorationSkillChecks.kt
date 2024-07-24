@@ -23,6 +23,13 @@ private suspend fun rollExplorationSkillCheck(
     }
 }
 
+/**
+ * Based on an effect name, roll a check for all actors
+ * @param game
+ * @param explorationEffectName "Search", "Avoid Notice" use the built-in macros, otherwise one of the appropriately capitalized names of an exploration action
+ * @param attributeName a lower case skill, lore or perception
+ * @param dc if provided, a dc
+ */
 suspend fun rollExplorationSkillCheckMacro(
     game: Game,
     explorationEffectName: String,
