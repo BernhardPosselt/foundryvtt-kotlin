@@ -8,21 +8,18 @@ import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.array.toTypedArray
 
 
-fun rollCheck(
-    actor: PF2ECharacter,
+fun PF2ECharacter.rollCheck(
     attribute: Attribute,
     dc: Int?,
     rollMode: RollMode = RollMode.PRIVATE,
-) = actor.resolveAttribute(attribute)
-    ?.let {
-        it.roll(PF2ERollData(dc = dc?.let { Dc(value = dc) }, rollMode = rollMode.value))
-    }
+) = resolveAttribute(attribute)?.let {
+    it.roll(PF2ERollData(dc = dc?.let { Dc(value = dc) }, rollMode = rollMode.value))
+}
 
-fun rollChecks(
-    actors: Array<PF2ECharacter>,
+fun Array<PF2ECharacter>.rollChecks(
     attribute: Attribute,
     dc: Int?,
     rollMode: RollMode = RollMode.PRIVATE,
-) = actors.asSequence()
-    .mapNotNull { rollCheck(it, attribute, dc, rollMode) }
+) = asSequence()
+    .mapNotNull { it.rollCheck(attribute, dc, rollMode) }
     .toTypedArray()

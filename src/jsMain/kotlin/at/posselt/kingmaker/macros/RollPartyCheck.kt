@@ -39,8 +39,7 @@ suspend fun rollPartyCheck(players: Array<PF2ECharacter>) {
         title = "Roll Party Skill Check",
         promptType = PromptType.ROLL,
     ) { data ->
-        rollChecks(
-            actors = players,
+        players.rollChecks(
             attribute = Attribute.fromString(data.skill),
             dc = data.dc,
             rollMode = if (data.private) RollMode.PRIVATE else RollMode.PUBLIC

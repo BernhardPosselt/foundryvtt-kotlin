@@ -22,7 +22,7 @@ private suspend fun rollExplorationSkillCheck(
     } else if (explorationEffectName == "Avoid Notice" && attribute == Skill.STEALTH) {
         game.pf2e.actions["avoid-notice"]?.use(PF2EActionMacroUseOptions(actors = actors))
     } else {
-        rollChecks(actors, attribute, dc).awaitAll()
+        actors.rollChecks(attribute, dc).awaitAll()
     }
 }
 
