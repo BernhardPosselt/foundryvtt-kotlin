@@ -10,6 +10,8 @@ external interface GetOptions {
     val strict: Boolean?
 }
 
+@JsName("foundry.utils.Collection")
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class Collection<T>(
     values: ReadonlyArray<JsTuple2<String, T>> = definedExternally,
 ) : JsIterable<T> {
@@ -20,8 +22,10 @@ open external class Collection<T>(
     fun reduce(function: (T, T, Int) -> T, initial: T): T
     fun getName(name: String): T?
     fun get(key: String, options: GetOptions = definedExternally): T?
+    fun set(key: String, value: T)
     fun forEach(action: (T) -> Unit)
     fun filter(predicate: (T) -> Boolean): Collection<T>
     fun find(predicate: (T) -> Boolean): T?
     fun delete(key: String): Boolean
+    fun clear()
 }

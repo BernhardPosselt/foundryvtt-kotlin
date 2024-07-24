@@ -28,7 +28,7 @@ external interface PF2EActorData
 
 external class PF2EAttribute {
     val rank: Int
-    fun roll(data: PF2ERollData): Promise<RollResult?>
+    fun roll(data: PF2ERollData): Promise<RollResult>
 }
 
 /**
