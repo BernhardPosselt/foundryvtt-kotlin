@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.actor
 
-import at.posselt.kingmaker.RollMode
 import at.posselt.kingmaker.data.actor.Attribute
+import at.posselt.kingmaker.data.checks.RollMode
 import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollData
 import com.foundryvtt.pf2e.actor.PF2ECharacter

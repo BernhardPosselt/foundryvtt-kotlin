@@ -1,4 +1,4 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.data.checks
 
 enum class RollMode(val value: String) {
     PUBLIC("publicroll"),

@@ -1,10 +1,10 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.RollMode
 import at.posselt.kingmaker.actor.rollChecks
 import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.actor.Perception
 import at.posselt.kingmaker.data.actor.Skill
+import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.dialog.*
 import at.posselt.kingmaker.utils.awaitAll
 import com.foundryvtt.pf2e.actor.PF2ECharacter

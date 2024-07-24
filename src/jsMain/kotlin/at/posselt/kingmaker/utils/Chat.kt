@@ -1,10 +1,10 @@
 package at.posselt.kingmaker.utils
 
-import at.posselt.kingmaker.RollMode
+import at.posselt.kingmaker.data.checks.RollMode
 import com.foundryvtt.core.ChatMessage
-import com.foundryvtt.core.ChatMessageData
 import js.objects.Record
 import js.objects.jso
+import js.objects.recordOf
 import kotlinx.coroutines.await
 
 suspend fun postChatTemplate(
@@ -17,7 +17,7 @@ suspend fun postChatTemplate(
 }
 
 suspend fun postChatMessage(message: String, rollMode: RollMode? = null) {
-    val data = ChatMessageData(content = message)
+    val data = recordOf("content" to message)
     rollMode?.let { ChatMessage.applyRollMode(data, it.value) }
     ChatMessage.create(data).await()
 }
