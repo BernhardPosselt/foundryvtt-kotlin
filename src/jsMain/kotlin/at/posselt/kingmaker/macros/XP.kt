@@ -1,11 +1,11 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.awaitAll
 import at.posselt.kingmaker.dialog.NumberInput
 import at.posselt.kingmaker.dialog.formContext
 import at.posselt.kingmaker.dialog.prompt
-import at.posselt.kingmaker.postChatMessage
-import at.posselt.kingmaker.typeSafeUpdate
+import at.posselt.kingmaker.utils.awaitAll
+import at.posselt.kingmaker.utils.postChatMessage
+import at.posselt.kingmaker.utils.typeSafeUpdate
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject

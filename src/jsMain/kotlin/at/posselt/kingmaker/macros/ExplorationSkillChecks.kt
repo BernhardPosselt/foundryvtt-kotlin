@@ -1,7 +1,10 @@
 package at.posselt.kingmaker.macros
 
 import at.posselt.kingmaker.actor.*
-import at.posselt.kingmaker.awaitAll
+import at.posselt.kingmaker.data.actor.Attribute
+import at.posselt.kingmaker.data.actor.Perception
+import at.posselt.kingmaker.data.actor.Skill
+import at.posselt.kingmaker.utils.awaitAll
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.PF2EActionMacroUseOptions
 import com.foundryvtt.pf2e.actor.PF2ECharacter

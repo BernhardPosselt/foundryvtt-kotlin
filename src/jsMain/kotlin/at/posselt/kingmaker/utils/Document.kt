@@ -1,60 +1,14 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.utils
 
 import com.foundryvtt.core.Document
 import js.objects.PropertyKey
-import js.objects.Record
 import js.objects.jso
 import js.objects.recordOf
 import js.reflect.Proxy
 import js.reflect.ProxyHandler
 import js.symbol.Symbol
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asDeferred
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.promise
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.js.Promise
 
-/**
- * Use this whenever you'd use an async () => {} lambda in JS, e.g.
- *
- * func("do something") {
- *     buildPromise {
- *         window.fetch("https://google.com").await()
- *     }
- * }
- */
-fun <T> buildPromise(
-    block: suspend CoroutineScope.() -> T,
-): Promise<T> =
-    CoroutineScope(EmptyCoroutineContext).promise(block = block)
-
-/**
- * Make awaitAll also work on a list of Promises instead in addition to Deferred
- */
-suspend fun <T> List<Promise<T>>.awaitAll(): List<T> =
-    map { it.asDeferred() }.awaitAll()
-
-suspend fun <T> Array<Promise<T>>.awaitAll(): Array<T> =
-    map { it.asDeferred() }.awaitAll().toTypedArray()
-
-fun <F : Any, S> MutableList<Pair<F, S>>.toRecord(): Record<F, S> =
-    recordOf(*toTypedArray())
-
-fun <F : Any, S> List<Pair<F, S>>.toRecord(): Record<F, S> =
-    recordOf(*toTypedArray())
-
-fun <F : Any, S> Map<F, S>.toRecord(): Record<F, S> =
-    recordOf(*map { it.key to it.value }.toTypedArray())
-
-fun <F : Any, S> Array<Pair<F, S>>.toRecord(): Record<F, S> =
-    recordOf(*this)
-
-
-fun String.unslugify(): String =
-    split("-")
-        .joinToString(" ")
-        .replaceFirstChar(Char::uppercase)
 
 val isProxy = Symbol("isProxy")
 
@@ -66,8 +20,7 @@ private class Handler(
     private fun buildPath(p: String) = if (currentPath.isEmpty()) p else "$currentPath.$p"
 
     fun set(target: dynamic, p: PropertyKey, value: dynamic, receiver: Any) {
-        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
-        if (value[isProxy] === true)
+        if (value[isProxy] === isProxy)
             throw IllegalArgumentException(
                 "You are assigning an attribute to a proxy. " +
                         "Did you mean to assign a value instead?"
@@ -76,7 +29,7 @@ private class Handler(
     }
 
     fun get(target: Any, p: PropertyKey, receiver: Any): Any {
-        if (p === isProxy) return true
+        if (p === isProxy) return isProxy
         return Handler(buildPath("$p"), updates)
             .asProxy(jso())
     }

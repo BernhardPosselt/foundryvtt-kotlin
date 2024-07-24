@@ -1,5 +1,6 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.utils
 
+import at.posselt.kingmaker.RollMode
 import com.foundryvtt.core.ChatMessage
 import com.foundryvtt.core.ChatMessageData
 import js.objects.Record

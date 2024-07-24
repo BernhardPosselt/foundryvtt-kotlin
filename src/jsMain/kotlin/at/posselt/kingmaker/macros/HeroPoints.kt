@@ -1,11 +1,12 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.awaitAll
 import at.posselt.kingmaker.dialog.NumberInput
 import at.posselt.kingmaker.dialog.formContext
 import at.posselt.kingmaker.dialog.prompt
-import at.posselt.kingmaker.postChatMessage
-import at.posselt.kingmaker.postChatTemplate
+import at.posselt.kingmaker.utils.awaitAll
+import at.posselt.kingmaker.utils.postChatMessage
+import at.posselt.kingmaker.utils.postChatTemplate
+import at.posselt.kingmaker.utils.typeSafeUpdate
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.array.toTypedArray
 import js.objects.Record
@@ -42,9 +43,9 @@ private suspend fun updateHeroPoints(points: Array<PointsForPlayer>) {
             AwardMode.ADD -> actor.system.resources.heroPoints.value + it.points
             AwardMode.SET -> it.points
         }
-        it.player.update(
-            recordOf("system.resources.heroPoints.value" to min(3, actualPoints))
-        )
+        it.player.typeSafeUpdate {
+            system.resources.heroPoints.value = min(3, actualPoints)
+        }
     }.awaitAll()
 }
 

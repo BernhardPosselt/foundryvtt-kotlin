@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.dialog
 
-import at.posselt.kingmaker.buildPromise
-import at.posselt.kingmaker.tpl
+import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.utils.tpl
 import com.foundryvtt.core.*
 import js.objects.Record
 import js.objects.jso

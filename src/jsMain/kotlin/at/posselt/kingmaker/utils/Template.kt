@@ -1,5 +1,6 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.utils
 
+import at.posselt.kingmaker.Config
 import com.foundryvtt.core.loadTemplates
 import com.foundryvtt.core.renderTemplate
 import js.objects.Record

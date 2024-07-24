@@ -35,7 +35,7 @@ external interface SettingsData<T> {
     val hint: String?
     val scope: String // world or client
     val config: Boolean?
-    val default: T
+    val default: T?
     val requiresReload: Boolean?
     val type: Any  // Number, Object, Array, Boolean class or data field or data model
     val choices: Record<String, String>?
@@ -48,8 +48,8 @@ external interface SettingsData<T> {
 external interface SettingsMenuData<T : Any> {
     val name: String
     val label: String
-    val hint: String
-    val icon: String
+    val hint: String?
+    val icon: String?
     val type: JsClass<T>
     val restricted: Boolean
 }

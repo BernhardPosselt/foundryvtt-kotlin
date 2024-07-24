@@ -5,6 +5,8 @@ import at.posselt.kingmaker.actor.playerCharacters
 import at.posselt.kingmaker.macros.awardHeroPoints
 import at.posselt.kingmaker.macros.awardXP
 import at.posselt.kingmaker.macros.rollPartyCheck
+import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.utils.loadTpls
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.game
 import com.foundryvtt.core.onInit
@@ -25,9 +27,7 @@ fun main() {
     }
 
     Hooks.onReady {
-//        DialogV2.confirm(ConfirmOptions(content = "<b>hi</b>"))
         val players = game.playerCharacters()
-        val first = game.playerCharacters().first()
         buildPromise {
             rollPartyCheck(game.partyMembers())
             awardHeroPoints(players)
