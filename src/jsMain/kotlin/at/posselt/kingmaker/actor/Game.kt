@@ -1,15 +1,10 @@
 package at.posselt.kingmaker.actor
 
+import at.posselt.kingmaker.data.actor.ActorTypes
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.*
 import js.array.toTypedArray
 
-
-fun PF2ECharacter.runsExplorationActivity(name: String) =
-    system.exploration
-        ?.mapNotNull { id -> items.get(id)?.name }
-        ?.any { name == it }
-        ?: false
 
 fun Game.playerActorsOfType(types: Set<ActorTypes>): Array<PF2EActor> =
     @Suppress("UNCHECKED_CAST")

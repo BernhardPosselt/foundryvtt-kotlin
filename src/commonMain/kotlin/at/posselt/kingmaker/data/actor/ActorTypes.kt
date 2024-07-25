@@ -1,9 +1,4 @@
-package at.posselt.kingmaker.actor
-
-
-val actorTypes = ActorTypes.entries
-    .map { it.type }
-    .toSet()
+package at.posselt.kingmaker.data.actor
 
 enum class ActorTypes(val type: String) {
     NPC("npc"),
