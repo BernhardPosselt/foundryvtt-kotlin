@@ -26,12 +26,11 @@ external interface AppArguments {
 }
 
 /**
- * Sane wrapper around ApplicationV2. Note that you can't pass this class
- * to any Foundry API that requires an application, since it wraps an Application class
- * but does not extend one.
+ * Sane wrapper around ApplicationV2. Note that if you want to pass this class
+ * to any Foundry API that requires an application, you can use App().app
  */
 open external class App<T : Any>(arguments: AppArguments) {
-    protected val app: JsClass<ApplicationV2>
+    val app: JsClass<ApplicationV2>
     protected val instance: ApplicationV2?
 
     /**

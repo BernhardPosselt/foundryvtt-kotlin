@@ -29,23 +29,24 @@ inline fun <reified T : Any> Settings.create(
     )
 }
 
-inline fun <reified T : ApplicationV2> Settings.createMenu(
+fun Settings.createMenu(
     key: String,
     name: String,
     label: String,
     hint: String? = null,
     icon: String? = null,
     restricted: Boolean = false,
+    app: JsClass<ApplicationV2>
 ) {
-    registerMenu<T>(
+    registerMenu<ApplicationV2>(
         Config.MODULE_ID,
         key,
-        SettingsMenuData<T>(
+        SettingsMenuData<ApplicationV2>(
             name = name,
             label = label,
             hint = hint,
             icon = icon,
-            type = T::class.js,
+            type = app,
             restricted = restricted,
         )
     )
