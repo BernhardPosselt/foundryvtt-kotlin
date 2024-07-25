@@ -1,0 +1,41 @@
+package at.posselt.kingmaker.utils
+
+import com.foundryvtt.core.*
+import js.objects.recordOf
+import kotlinx.html.org.w3c.dom.events.Event
+import org.w3c.dom.HTMLFormElement
+import kotlin.js.Promise
+
+@JsName("ConfigureRegions")
+class ConfigureRegions : HandlebarsApplication() {
+    companion object {
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        var PARTS = recordOf(
+            "form" to HandlebarsTemplatePart(
+                template = resolveTemplatePath("applications/settings/configure-regions.hbs")
+            )
+        )
+
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        val DEFAULT_OPTIONS = ApplicationConfiguration(
+            tag = "form",
+            window = Window(
+                title = "Hey Joe"
+            ),
+            form = ApplicationFormConfiguration(
+                handler = ::sub,
+                submitOnChange = false,
+                closeOnSubmit = false,
+            )
+        )
+
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun sub(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Unit> =
+            buildPromise {
+                console.log(event, form, formData)
+            }
+    }
+}

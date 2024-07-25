@@ -8,15 +8,20 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
+
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 @JsName("foundry.applications.api.DialogV2")
 open external class DialogV2(options: DialogV2Options) : ApplicationV2 {
-    companion object X {
+    @OptIn(ExperimentalStdlibApi::class)
+    @JsExternalInheritorsOnly
+    open class DialogV2Static : ApplicationV2Static {
         protected fun _onClickButton(event: PointerEvent, target: HTMLButtonElement)
         fun confirm(options: ConfirmOptions): Promise<Any>
         fun prompt(options: PromptOptions): Promise<Any>
         fun wait(options: WaitOptions): Promise<Any>
     }
+
+    companion object : DialogV2Static
 
     protected fun _renderButtons(): String
     protected fun _onSubmit(target: HTMLButtonElement, event: Event): Promise<DialogV2>

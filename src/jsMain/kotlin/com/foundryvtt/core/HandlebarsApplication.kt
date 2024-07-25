@@ -8,11 +8,11 @@ import kotlin.js.Promise
 @JsPlainObject
 external interface HandlebarsTemplatePart {
     val template: String
-    val id: String
-    val classes: Array<String>
-    val templates: Array<String>
-    val scrollable: Array<String>
-    val forms: Record<String, ApplicationFormConfiguration>
+    val id: String?
+    val classes: Array<String>?
+    val templates: Array<String>?
+    val scrollable: Array<String>?
+    val forms: Record<String, ApplicationFormConfiguration>?
 }
 
 @JsPlainObject
@@ -20,14 +20,21 @@ external interface HandlebarsRenderOptions {
     val parts: Array<String>
 }
 
-@JsName("HandlebarsApplicationMixin(ApplicationV2)")
+
+@JsName("foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-open external class HandlebarsApplication : ApplicationV2 {
-    companion object {
-        var PARTS: Record<String, HandlebarsTemplatePart>
+open external class HandlebarsApplication(
+    options: ApplicationConfiguration = definedExternally
+) : ApplicationV2 {
+    @OptIn(ExperimentalStdlibApi::class)
+    @JsExternalInheritorsOnly
+    open class HandlebarsApplicationStatic : ApplicationV2Static {
+        open var PARTS: Record<String, HandlebarsTemplatePart>
     }
 
-    val parts: Record<String, HandlebarsTemplatePart>
+    companion object : HandlebarsApplicationStatic
+
+    open val parts: Record<String, HandlebarsTemplatePart>
 
     protected fun _preparePartContext(
         partId: String,

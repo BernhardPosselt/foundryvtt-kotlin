@@ -45,7 +45,7 @@ external interface SettingsData<T> {
 }
 
 @JsPlainObject
-external interface SettingsMenuData<T : Any> {
+external interface SettingsMenuData<T : ApplicationV2> {
     val name: String
     val label: String
     val hint: String?
@@ -57,7 +57,7 @@ external interface SettingsMenuData<T : Any> {
 
 external class Settings {
     fun <T> register(namespace: String, key: String, data: SettingsData<T>)
-    fun <T : Any> registerMenu(namespace: String, key: String, data: SettingsMenuData<T>)
+    fun <T : ApplicationV2> registerMenu(namespace: String, key: String, data: SettingsMenuData<T>)
     fun <T> set(namespace: String, key: String, data: T): Promise<T>
     fun <T> get(namespace: String, key: String): T
 }

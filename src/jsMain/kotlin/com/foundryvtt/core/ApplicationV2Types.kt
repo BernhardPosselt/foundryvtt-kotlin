@@ -7,7 +7,6 @@ import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.pointerevents.PointerEvent
-import org.w3c.xhr.FormData
 import kotlin.js.Promise
 
 typealias ApplicationClickAction = (event: PointerEvent, target: HTMLElement) -> Promise<Unit>
@@ -102,11 +101,10 @@ external interface ApplicationClosingOptions {
     val closeKey: Boolean
 }
 
-typealias ApplicationFormSubmission = (event: Event, form: HTMLFormElement, formData: FormData) -> Promise<Unit>
 
 @JsPlainObject
 external interface ApplicationFormConfiguration {
-    val handler: ApplicationFormSubmission
+    val handler: (event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Unit>
     val submitOnChange: Boolean
     val closeOnSubmit: Boolean
 }

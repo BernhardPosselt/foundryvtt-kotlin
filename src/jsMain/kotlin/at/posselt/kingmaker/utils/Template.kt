@@ -9,9 +9,11 @@ import kotlinx.coroutines.await
 
 private const val DIST_PATH = "modules/${Config.MODULE_ID}/dist"
 
+fun resolveTemplatePath(path: String) = "$DIST_PATH/$path"
+
 suspend fun loadTpls(paths: Array<Pair<String, String>>) {
     val resolvedPaths = paths.map {
-        it.first to "$DIST_PATH/${it.second}"
+        it.first to resolveTemplatePath(it.second)
     }.toRecord()
     loadTemplates(resolvedPaths).await()
 }

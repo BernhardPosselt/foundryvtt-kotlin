@@ -28,6 +28,7 @@ kotlin {
         useEsModules()
         compilerOptions {
             moduleKind = JsModuleKind.MODULE_ES
+            useEsClasses = true
         }
         browser {
             // run tests tasks using karma in chrome and firefox

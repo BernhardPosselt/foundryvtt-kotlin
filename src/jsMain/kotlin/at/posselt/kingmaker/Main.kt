@@ -1,16 +1,10 @@
 package at.posselt.kingmaker
 
-import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.actor.playerCharacters
-import at.posselt.kingmaker.macros.awardHeroPoints
-import at.posselt.kingmaker.macros.awardXP
-import at.posselt.kingmaker.macros.rollPartyCheck
+import at.posselt.kingmaker.utils.ConfigureRegions
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
-import com.foundryvtt.core.Hooks
-import com.foundryvtt.core.game
-import com.foundryvtt.core.onInit
-import com.foundryvtt.core.onReady
+import com.foundryvtt.core.*
 
 fun main() {
 
@@ -22,16 +16,18 @@ fun main() {
                     "formElement" to "components/forms/form-element.hbs",
                 )
             )
+            registerSettings(game.settings)
         }
 
     }
 
     Hooks.onReady {
         val players = game.playerCharacters()
+        ConfigureRegions().render(ApplicationRenderOptions(force = true))
         buildPromise {
-            rollPartyCheck(game.partyMembers())
-            awardHeroPoints(players)
-            awardXP(players)
+//            rollPartyCheck(game.partyMembers())
+//            awardHeroPoints(players)
+//            awardXP(players)
         }
 //        buildPromise {
 //            game.settings.register<Boolean>(

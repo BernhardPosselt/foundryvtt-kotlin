@@ -7,14 +7,22 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
-open external class ApplicationV2(options: ApplicationConfiguration = definedExternally) {
-    // TODO: is this inherited to dialogs?
-    companion object {
+
+@JsName("foundry.applications.api.ApplicationV2")
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
+open external class ApplicationV2(
+    options: ApplicationConfiguration = definedExternally
+) {
+    @OptIn(ExperimentalStdlibApi::class)
+    @JsExternalInheritorsOnly
+    open class ApplicationV2Static {
         val RENDER_STATES: RenderStates
         val BASE_APPLICATION: JsClass<ApplicationV2>
-        val DEFAULT_OPTIONS: ApplicationConfiguration
+        open val DEFAULT_OPTIONS: ApplicationConfiguration
         val emittedEvents: Array<String>
     }
+
+    companion object : ApplicationV2Static
 
     val options: ApplicationConfiguration
     val id: String
