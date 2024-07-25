@@ -1,10 +1,15 @@
+@file:OptIn(ExperimentalJsExport::class)
+@file:JsExport
+
 package at.posselt.kingmaker.utils
 
 import com.foundryvtt.core.*
+import js.core.Void
 import js.objects.recordOf
 import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.HTMLFormElement
 import kotlin.js.Promise
+
 
 @JsName("ConfigureRegions")
 class ConfigureRegions : HandlebarsApplication() {
@@ -22,7 +27,7 @@ class ConfigureRegions : HandlebarsApplication() {
         val DEFAULT_OPTIONS = ApplicationConfiguration(
             tag = "form",
             window = Window(
-                title = "Hey Joe"
+                title = "Hey Jose"
             ),
             form = ApplicationFormConfiguration(
                 handler = ::sub,
@@ -33,9 +38,10 @@ class ConfigureRegions : HandlebarsApplication() {
 
         @OptIn(ExperimentalJsStatic::class)
         @JsStatic
-        fun sub(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Unit> =
+        fun sub(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Void> =
             buildPromise {
                 console.log(event, form, formData)
+                null
             }
     }
 }

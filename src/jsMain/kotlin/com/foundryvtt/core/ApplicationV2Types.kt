@@ -1,6 +1,7 @@
 package com.foundryvtt.core
 
 
+import js.core.Void
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
@@ -104,7 +105,7 @@ external interface ApplicationClosingOptions {
 
 @JsPlainObject
 external interface ApplicationFormConfiguration {
-    val handler: (event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Unit>
+    val handler: (event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Void>
     val submitOnChange: Boolean
     val closeOnSubmit: Boolean
 }
