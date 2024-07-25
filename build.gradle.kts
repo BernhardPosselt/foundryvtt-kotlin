@@ -36,7 +36,6 @@ kotlin {
                 outputDirectory = file("dist")
             }
             webpackTask {
-                output.libraryTarget = "commonjs2"
                 mainOutputFileName = "main.js"
             }
             testTask {

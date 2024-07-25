@@ -23,6 +23,12 @@ external interface AppArguments {
     val isForm: Boolean?
     val dataModel: DataModel?
     val menuButtons: Array<ApplicationHeaderControlsEntry>
+    val classes: Array<String>?
+    val width: Int?
+    val height: Int?
+    val top: Int?
+    val left: Int?
+    val icon: String?
 }
 
 /**
@@ -36,6 +42,10 @@ open external class App<T : Any>(arguments: AppArguments) {
     /**
      * Callback that happens in the application constructor right before
      * hook callbacks are bound
+     *
+     * Use this hook to define:
+     * * listen to hooks using registerHooks()
+     * * listen to events using on()
      */
     protected open fun onInit()
 
@@ -85,5 +95,5 @@ open external class App<T : Any>(arguments: AppArguments) {
      * When a header menu button is clicked, this callback is executed with
      * the selected action
      */
-    protected open fun onMenu(action: String)
+    protected open fun onAction(action: String, event: Event)
 }

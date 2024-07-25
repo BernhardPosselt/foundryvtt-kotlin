@@ -13,7 +13,14 @@ class App {
             closeOnSubmit = false,
             isForm = true,
             dataModel,
+            icon,
             menuButtons = [],
+            classes = [],
+            actions = [],
+            width,
+            height = "auto",
+            top,
+            left,
         }
     ) {
         const that = this;
@@ -44,15 +51,28 @@ class App {
 
             static DEFAULT_OPTIONS = {
                 ...form,
+                classes: classes,
                 window: {
                     title,
+                    icon,
                 },
                 actions: {
                     ...Object.fromEntries(menuButtons.map(button => {
-                        return [button.action, () => {
-                            that.onMenu(button.action);
+                        return [button.action, (ev) => {
+                            that.onAction(button.action, ev);
                         }]
-                    }))
+                    })),
+                    ...Object.fromEntries(actions.map(action => {
+                        return [action, (ev) => {
+                            that.onAction(action, ev);
+                        }]
+                    })),
+                },
+                position: {
+                    width,
+                    height,
+                    top,
+                    left,
                 }
             }
             static PARTS = {
@@ -89,7 +109,7 @@ class App {
 
     }
 
-    onMenu(action) {
+    onAction(action, event) {
 
     }
 

@@ -3,6 +3,7 @@ package at.posselt.kingmaker.utils
 import at.posselt.kingmaker.dialog.App
 import at.posselt.kingmaker.dialog.AppArguments
 import com.foundryvtt.core.ApplicationHeaderControlsEntry
+import kotlinx.html.org.w3c.dom.events.Event
 
 class TestApp : App<Any>(
     AppArguments(
@@ -23,8 +24,8 @@ class TestApp : App<Any>(
         }
     }
 
-    override fun onMenu(action: String) {
-        console.log("Action: " + action)
+    override fun onAction(action: String, event: Event) {
+        console.log("Action: " + action, event)
     }
 
     fun log() {
