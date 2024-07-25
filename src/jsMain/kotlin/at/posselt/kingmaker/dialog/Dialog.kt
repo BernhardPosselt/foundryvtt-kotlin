@@ -3,6 +3,7 @@ package at.posselt.kingmaker.dialog
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.tpl
 import com.foundryvtt.core.*
+import com.foundryvtt.core.applications.api.*
 import js.objects.Record
 import js.objects.jso
 import kotlinx.coroutines.await

@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.dialog
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.expandObject
+import com.foundryvtt.core.utils.expandObject
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject
 

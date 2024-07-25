@@ -1,6 +1,6 @@
 package at.posselt.kingmaker.utils
 
-import com.foundryvtt.core.Document
+import com.foundryvtt.core.abstract.Document
 import js.objects.PropertyKey
 import js.objects.jso
 import js.objects.recordOf

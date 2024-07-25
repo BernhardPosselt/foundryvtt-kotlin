@@ -1,9 +1,9 @@
 package at.posselt.kingmaker.dialog
 
-import com.foundryvtt.core.ApplicationHeaderControlsEntry
-import com.foundryvtt.core.ApplicationV2
-import com.foundryvtt.core.DataModel
 import com.foundryvtt.core.FormDataExtended
+import com.foundryvtt.core.abstract.DataModel
+import com.foundryvtt.core.applications.api.ApplicationHeaderControlsEntry
+import com.foundryvtt.core.applications.api.ApplicationV2
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise

@@ -1,5 +1,6 @@
 package com.foundryvtt.core
 
+import com.foundryvtt.core.applications.api.ApplicationV2
 import js.objects.Record
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement

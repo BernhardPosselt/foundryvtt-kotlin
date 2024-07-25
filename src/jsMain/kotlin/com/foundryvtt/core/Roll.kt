@@ -1,5 +1,6 @@
 package com.foundryvtt.core
 
+import com.foundryvtt.core.documents.ChatMessage
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 

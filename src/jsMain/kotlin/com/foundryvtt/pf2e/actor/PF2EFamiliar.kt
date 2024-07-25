@@ -1,7 +1,7 @@
 package com.foundryvtt.pf2e.actor
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseGetOperation
 import js.objects.Record
 import js.objects.jso
 import kotlinx.js.JsPlainObject

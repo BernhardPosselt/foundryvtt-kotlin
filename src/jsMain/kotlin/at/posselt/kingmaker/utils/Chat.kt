@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.data.checks.RollMode
-import com.foundryvtt.core.ChatMessage
+import com.foundryvtt.core.documents.ChatMessage
 import js.objects.Record
 import js.objects.jso
 import js.objects.recordOf

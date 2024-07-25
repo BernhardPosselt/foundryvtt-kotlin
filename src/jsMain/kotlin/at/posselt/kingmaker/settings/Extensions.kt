@@ -3,6 +3,7 @@ package at.posselt.kingmaker.settings
 import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
+import com.foundryvtt.core.applications.api.ApplicationV2
 import js.objects.jso
 import kotlinx.coroutines.await
 

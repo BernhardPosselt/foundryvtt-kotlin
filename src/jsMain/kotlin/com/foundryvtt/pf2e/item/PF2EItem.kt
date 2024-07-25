@@ -1,8 +1,8 @@
 package com.foundryvtt.pf2e.item
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.DatabaseGetOperation
-import com.foundryvtt.core.Item
+import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.documents.Item
 import js.objects.jso
 import kotlin.js.Promise
 

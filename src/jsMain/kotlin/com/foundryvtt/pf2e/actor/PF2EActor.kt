@@ -2,7 +2,7 @@ package com.foundryvtt.pf2e.actor
 
 import com.foundryvtt.core.Actor
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseGetOperation
 import com.foundryvtt.pf2e.PF2ERollData
 import com.foundryvtt.pf2e.item.*
 import js.objects.jso
