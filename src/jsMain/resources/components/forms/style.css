@@ -7,6 +7,10 @@
 }
 
 .km-dialog-form {
+    table {
+        margin: 0;
+    }
+
     .dialog-content {
         border-spacing: 10px;
     }
@@ -26,9 +30,14 @@
     }
 
     .row {
+        padding: 5px 0;
     }
 
     button:not(.full-width) {
         width: auto;
+    }
+
+    button[data-action="save"] {
+        margin: 10px auto auto;
     }
 }

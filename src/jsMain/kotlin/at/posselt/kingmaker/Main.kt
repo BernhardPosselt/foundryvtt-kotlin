@@ -1,7 +1,7 @@
 package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.playerCharacters
-import at.posselt.kingmaker.utils.TestApp
+import at.posselt.kingmaker.settings.registerRegionSettings
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
 import com.foundryvtt.core.Hooks
@@ -17,16 +17,17 @@ fun main() {
             loadTpls(
                 arrayOf(
                     "formElement" to "components/forms/form-element.hbs",
+                    "formTable" to "components/forms/form-table.hbs",
                 )
             )
-            registerSettings(game.settings)
+            registerRegionSettings(game.settings)
         }
 
     }
 
     Hooks.onReady {
+        console.log(Any::class.js)
         val players = game.playerCharacters()
-        TestApp().launch()
 //        ConfigureRegions().render(ApplicationRenderOptions(force = true))
         buildPromise {
 //            rollPartyCheck(game.partyMembers())

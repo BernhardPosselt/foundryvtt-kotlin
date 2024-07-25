@@ -1,3 +1,37 @@
-<form>
-    <p>heello</p>
-</form>
+<div>
+    <div class="row">
+        {{> formElement useStolenLands}}
+    </div>
+    {{#unless useStolenLands}}
+        <table>
+            <thead>
+            <tr>
+                {{#each heading}}
+                    <th>{{this}}</th>
+                {{/each}}
+            </tr>
+            </thead>
+            <tbody>
+            {{#each formRows}}
+                <tr>
+                    {{#each this}}
+                        <td>{{> formElement this}}</td>
+                    {{/each}}
+                    {{#unless @index}}
+                        <td>
+                            <button
+                                    data-action="delete"
+                                    data-index="{{@index}}"
+                                    title="Remove Row"
+                            >
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </td>
+                    {{/unless}}
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    {{/unless}}
+    <button data-action="save">Save</button>
+</div>

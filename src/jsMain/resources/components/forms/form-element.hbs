@@ -1,22 +1,22 @@
-<label {{#if checkbox}}class="form-element-checkbox-label"{{/if}}>{{label}}
-    {{#if select}}
-        <select name="{{name}}">
+{{#unless hideLabel}}<label {{#if checkbox}}class="form-element-checkbox-label"{{/if}}>{{label}}{{/unless}}
+{{#if select}}
+        <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}}>
             {{selectOptions options selected=value}}
         </select>
-    {{/if}}
-    {{#if number}}
-        <input type="number" name="{{name}}" value="{{value}}">
-    {{/if}}
-    {{#if text}}
-        <input type="text" name="{{name}}" value="{{value}}">
-    {{/if}}
-    {{#if checkbox}}
-        <input type="checkbox" name="{{name}}" {{checked value}}>
-    {{/if}}
-    {{#if textarea}}
-        <textarea name="{{name}}">{{value}}</textarea>
-    {{/if}}
-    {{#if help}}
+{{/if}}
+{{#if number}}
+        <input type="number" name="{{name}}" value="{{value}}"  {{#if hideLabel}}aria-label="{{label}}"{{/if}}>
+{{/if}}
+{{#if text}}
+        <input type="text" name="{{name}}" value="{{value}}"  {{#if hideLabel}}aria-label="{{label}}"{{/if}}>
+{{/if}}
+{{#if checkbox}}
+        <input type="checkbox" name="{{name}}" {{checked value}}  {{#if hideLabel}}aria-label="{{label}}"{{/if}}>
+{{/if}}
+{{#if textarea}}
+        <textarea name="{{name}}"  {{#if hideLabel}}aria-label="{{label}}"{{/if}}>{{value}}</textarea>
+{{/if}}
+{{#if help}}
         <div class="help">{{help}}</div>
-    {{/if}}
-</label>
+{{/if}}
+{{#unless hideLabel}}</label>{{/unless}}

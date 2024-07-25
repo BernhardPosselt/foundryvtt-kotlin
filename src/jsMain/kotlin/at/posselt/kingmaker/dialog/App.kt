@@ -22,8 +22,9 @@ external interface AppArguments {
     val closeOnSubmit: Boolean?
     val isForm: Boolean?
     val dataModel: DataModel?
-    val menuButtons: Array<ApplicationHeaderControlsEntry>
+    val menuButtons: Array<ApplicationHeaderControlsEntry>?
     val classes: Array<String>?
+    val actions: Array<String>?
     val width: Int?
     val height: Int?
     val top: Int?
@@ -35,7 +36,7 @@ external interface AppArguments {
  * Sane wrapper around ApplicationV2. Note that if you want to pass this class
  * to any Foundry API that requires an application, you can use App().app
  */
-open external class App<T : Any>(arguments: AppArguments) {
+open external class App<T : Any, D : Any>(arguments: AppArguments) {
     val app: JsClass<ApplicationV2>
     protected val instance: ApplicationV2?
 
@@ -63,17 +64,17 @@ open external class App<T : Any>(arguments: AppArguments) {
     /**
      * Closes the application
      */
-    open fun close(): Promise<Unit>
+    fun close(): Promise<Unit>
 
     /**
      * Force the application to re-render
      */
-    protected open fun reRender(): Promise<Unit>
+    protected fun reRender(): Promise<Unit>
 
     /**
      * Open the application
      */
-    open fun launch(): Promise<Unit>
+    fun launch(): Promise<Unit>
 
     /**
      * Register a hook function that is cleaned up when the application is closed.
@@ -81,6 +82,11 @@ open external class App<T : Any>(arguments: AppArguments) {
      * @param callback second parameter passed to Hooks.on
      */
     protected fun <H> registerHook(key: String, callback: Function<H>)
+
+    /**
+     * Returns data that is available inside templates
+     */
+    protected open fun getTemplateContext(): Promise<D>
 
     /**
      * Add an event listener. Must be called inside an overriden onInit() method

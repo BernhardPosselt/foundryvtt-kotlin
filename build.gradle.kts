@@ -31,7 +31,6 @@ kotlin {
             useEsClasses = true
         }
         browser {
-            // run tests tasks using karma in chrome and firefox
             distribution {
                 outputDirectory = file("dist")
             }

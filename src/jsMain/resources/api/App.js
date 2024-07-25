@@ -39,6 +39,7 @@ class App {
 
             constructor() {
                 super();
+                that.instance = this
                 that.onInit();
                 that.registeredHooks.forEach((hook) => {
                     Hooks.on(hook.key, hook.callback);
@@ -83,6 +84,10 @@ class App {
 
             _getHeaderControls() {
                 return menuButtons;
+            }
+
+            async _prepareContext() {
+                return await that.getTemplateContext();
             }
 
             _onRender() {
@@ -133,12 +138,16 @@ class App {
 
     }
 
+    async getTemplateContext() {
+
+    }
+
     async reRender() {
         await this.instance.render();
     }
 
     async launch() {
-        this.instance = await (new this.app).render({force: true});
+        await (new this.app).render({force: true});
     }
 
     async close() {
