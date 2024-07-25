@@ -14,13 +14,13 @@ typealias ApplicationClickAction = (event: PointerEvent, target: HTMLElement) ->
 
 @JsPlainObject
 external interface ApplicationHeaderControlsEntry {
-    val icon: String
+    val icon: String?
     val label: String
     val action: String
-    val visible: Boolean
+    val visible: Boolean?
 
     // String or Number
-    val ownership: Any
+    val ownership: Any?
 }
 
 @JsPlainObject
