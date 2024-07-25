@@ -101,5 +101,5 @@ open external class App<T : Any, D : Any>(arguments: AppArguments) {
      * When a header menu button is clicked, this callback is executed with
      * the selected action
      */
-    protected open fun onAction(action: String, event: Event)
+    protected open fun onAction(action: String, event: Event): Promise<Unit>
 }

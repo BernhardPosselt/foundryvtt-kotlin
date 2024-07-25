@@ -60,16 +60,14 @@ class RegionConfiguration(
         console.log(data, currentSettings)
     }
 
-    override fun onAction(action: String, event: Event) {
-        buildPromise {
-            when (action) {
-                "save" -> {
-                    settings.setObject("regionSettings", currentSettings)
-                    close().await()
-                }
-
-                else -> console.log(action)
+    override fun onAction(action: String, event: Event) = buildPromise {
+        when (action) {
+            "save" -> {
+                settings.setObject("regionSettings", currentSettings)
+                close().await()
             }
+
+            else -> console.log(action)
         }
     }
 }

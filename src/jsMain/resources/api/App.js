@@ -59,13 +59,13 @@ class App {
                 },
                 actions: {
                     ...Object.fromEntries(menuButtons.map(button => {
-                        return [button.action, (ev) => {
-                            that.onAction(button.action, ev);
+                        return [button.action, async (ev) => {
+                            await that.onAction(button.action, ev);
                         }]
                     })),
                     ...Object.fromEntries(actions.map(action => {
-                        return [action, (ev) => {
-                            that.onAction(action, ev);
+                        return [action, async (ev) => {
+                            await that.onAction(action, ev);
                         }]
                     })),
                 },
@@ -114,7 +114,7 @@ class App {
 
     }
 
-    onAction(action, event) {
+    async onAction(action, event) {
 
     }
 
