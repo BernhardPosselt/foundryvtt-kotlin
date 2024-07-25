@@ -80,8 +80,8 @@ fun registerRegionSettings(settings: Settings) {
     )
     settings.createMenu(
         key = "regionsMenu",
-        label = "Configure Regions",
-        name = "Region Configuration",
+        label = "Customize",
+        name = "Regions",
         app = RegionConfiguration(settings).app
     )
 }
