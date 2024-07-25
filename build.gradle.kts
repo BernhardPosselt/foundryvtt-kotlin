@@ -41,7 +41,6 @@ kotlin {
             }
             testTask {
                 useKarma {
-
                     useFirefoxHeadless()
                 }
             }

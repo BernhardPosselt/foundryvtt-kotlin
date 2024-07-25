@@ -3,6 +3,7 @@
   "description": "A collection of utilities to run Kingmaker",
   "version": "2.0.0",
   "scripts": [
+    "dist/api/App.js",
     "dist/main.js"
   ],
   "url": "https://github.com/BernhardPosselt/pf2e-kingmaker-tools",

@@ -1,10 +1,13 @@
 package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.playerCharacters
-import at.posselt.kingmaker.utils.ConfigureRegions
+import at.posselt.kingmaker.utils.TestApp
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
-import com.foundryvtt.core.*
+import com.foundryvtt.core.Hooks
+import com.foundryvtt.core.game
+import com.foundryvtt.core.onInit
+import com.foundryvtt.core.onReady
 
 fun main() {
 
@@ -23,7 +26,8 @@ fun main() {
 
     Hooks.onReady {
         val players = game.playerCharacters()
-        ConfigureRegions().render(ApplicationRenderOptions(force = true))
+        TestApp().launch()
+//        ConfigureRegions().render(ApplicationRenderOptions(force = true))
         buildPromise {
 //            rollPartyCheck(game.partyMembers())
 //            awardHeroPoints(players)
