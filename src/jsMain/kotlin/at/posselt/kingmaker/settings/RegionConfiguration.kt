@@ -60,13 +60,15 @@ class RegionConfiguration : App<RegionSettingsContext>(
     HandlebarsFormApplicationOptions(
         window = Window(
             title = "Regions",
+            controls = arrayOf(ApplicationHeaderControlsEntry(label = "hi", action = "boo"))
         ),
         position = ApplicationPosition(
             width = 900,
         ),
         templatePath = resolveTemplatePath("applications/settings/configure-regions.hbs"),
         classes = arrayOf("km-dialog-form"),
-    )
+
+        )
 ) {
     init {
         appHook.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
