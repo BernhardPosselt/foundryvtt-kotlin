@@ -1,9 +1,6 @@
 package com.foundryvtt.core
 
-import com.foundryvtt.core.collections.Actors
-import com.foundryvtt.core.collections.Folders
-import com.foundryvtt.core.collections.Playlists
-import com.foundryvtt.core.collections.Users
+import com.foundryvtt.core.collections.*
 
 external val game: Game
 
@@ -13,4 +10,5 @@ external object Game {
     val playlists: Playlists?
     val folders: Folders?
     val users: Users
+    val tables: RollTables?
 }

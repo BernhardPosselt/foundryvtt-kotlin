@@ -1,6 +1,9 @@
 package at.posselt.kingmaker.dialog
 
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.documents.Playlist
+import com.foundryvtt.core.documents.PlaylistSound
+import com.foundryvtt.core.documents.RollTable
 import com.foundryvtt.core.utils.expandObject
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject
@@ -13,12 +16,13 @@ external interface Option {
 
 
 @JsPlainObject
-external interface RowContext {
+external interface FormElementContext {
     val label: String
     val name: String
     val help: String?
     val value: Any?
     val select: Boolean
+    val selectAllowsEmpty: Boolean
     val number: Boolean
     val text: Boolean
     val textArea: Boolean
@@ -32,13 +36,13 @@ data class SelectOption(
     val value: String
 )
 
-sealed interface FormRow {
+sealed interface IntoFormElementContext {
     val label: String
     val name: String
     val help: String?
     val hideLabel: Boolean
 
-    fun toContext(): RowContext
+    fun toContext(): FormElementContext
 }
 
 data class Select(
@@ -46,15 +50,17 @@ data class Select(
     override val name: String,
     val value: String? = null,
     val options: List<SelectOption>,
+    val allowsEmpty: Boolean = false,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
-) : FormRow {
-    override fun toContext() = RowContext(
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
         label = label,
         name = name,
         help = help,
         value = value,
         select = true,
+        selectAllowsEmpty = allowsEmpty,
         number = false,
         text = false,
         textArea = false,
@@ -75,13 +81,14 @@ data class TextInput(
     val value: String,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
-) : FormRow {
-    override fun toContext() = RowContext(
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
         label = label,
         name = name,
         help = help,
         value = value,
         select = false,
+        selectAllowsEmpty = false,
         number = false,
         text = true,
         textArea = false,
@@ -97,13 +104,14 @@ data class CheckboxInput(
     val value: Boolean = false,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
-) : FormRow {
-    override fun toContext() = RowContext(
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
         label = label,
         name = name,
         help = help,
         value = value,
         select = false,
+        selectAllowsEmpty = false,
         number = false,
         text = false,
         textArea = false,
@@ -119,13 +127,14 @@ data class TextArea(
     val value: String,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
-) : FormRow {
-    override fun toContext() = RowContext(
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
         label = label,
         name = name,
         help = help,
         value = value,
         select = false,
+        selectAllowsEmpty = false,
         number = false,
         text = false,
         textArea = true,
@@ -141,13 +150,14 @@ data class NumberInput(
     val value: Int = 0,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
-) : FormRow {
-    override fun toContext() = RowContext(
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
         label = label,
         name = name,
         help = help,
         value = value,
         select = false,
+        selectAllowsEmpty = false,
         number = true,
         text = false,
         textArea = false,
@@ -159,7 +169,7 @@ data class NumberInput(
 
 fun towDimensionalContext(
     heading: Array<String>,
-    rows: Array<Array<FormRow>>
+    rows: Array<Array<IntoFormElementContext>>
 ) = recordOf(
     "heading" to heading,
     "formRows" to rows,
@@ -169,7 +179,7 @@ fun towDimensionalContext(
  * Custom function to build a form declaratively rather than having
  * one template for each form
  */
-fun formContext(vararg rows: FormRow): Array<RowContext> =
+fun formContext(vararg rows: IntoFormElementContext): Array<FormElementContext> =
     rows.map { it.toContext() }.toTypedArray()
 
 
@@ -183,4 +193,16 @@ fun <T> expandObjectAnd(value: AnyObject, and: (AnyObject) -> Unit): T {
     and(result)
     @Suppress("UNCHECKED_CAST")
     return result as T
+}
+
+fun RollTable.toOption() = id?.let {
+    SelectOption(label = name, value = it)
+}
+
+fun Playlist.toOption() = id?.let {
+    SelectOption(label = name, value = it)
+}
+
+fun PlaylistSound.toOption() = id?.let {
+    SelectOption(label = name, value = it)
 }

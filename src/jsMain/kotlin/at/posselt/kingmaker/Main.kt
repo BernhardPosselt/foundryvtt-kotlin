@@ -19,7 +19,7 @@ fun main() {
                     "formElement" to "components/forms/form-element.hbs",
                 )
             )
-            registerRegionSettings(game.settings)
+            registerRegionSettings(game)
         }
 
     }

@@ -1,7 +1,11 @@
 {{#unless hideLabel}}<label {{#if checkbox}}class="form-element-checkbox-label"{{/if}}>{{label}}{{/unless}}
 {{#if select}}
         <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}}>
-            {{selectOptions options selected=value}}
+            {{#selectAllowsEmpty}}
+                {{selectOptions options selected=value blank="-"}}
+            {{else}}
+                {{selectOptions options selected=value}}
+            {{/selectAllowsEmpty}}
         </select>
 {{/if}}
 {{#if number}}
