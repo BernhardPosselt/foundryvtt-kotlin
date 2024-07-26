@@ -1,4 +1,8 @@
 const foundry = {
+    utils: {
+        expandObject: () => {
+        }
+    },
     applications: {
         api: {
             HandlebarsApplicationMixin: (klass) => {

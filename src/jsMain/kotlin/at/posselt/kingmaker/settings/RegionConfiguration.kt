@@ -4,56 +4,109 @@ import at.posselt.kingmaker.dialog.*
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.resolveTemplatePath
 import com.foundryvtt.core.*
+import com.foundryvtt.core.applications.api.*
 import com.foundryvtt.core.data.fields.DataFieldOptions
 import com.foundryvtt.core.data.fields.ObjectField
+import js.array.push
+import js.core.Void
+import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLFormElement
+import org.w3c.dom.get
+import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 @JsPlainObject
 external interface CombatTrack {
-    val playlistId: String
-    val trackId: String?
+    var playlistId: String
+    var trackId: String?
 }
 
 @JsPlainObject
 external interface RegionSetting {
-    val name: String
-    val zoneDc: Int
-    val encounterDc: Int
-    val level: Int
-    val rollTableId: String
-    val combatTrack: CombatTrack?
+    var name: String
+    var zoneDc: Int
+    var encounterDc: Int
+    var level: Int
+    var rollTableId: String?
+    var combatTrack: CombatTrack?
 }
 
 @JsPlainObject
 external interface RegionSettings {
-    val useStolenLands: Boolean
-    val regions: Array<RegionSetting>
+    var useStolenLands: Boolean
+    var regions: Array<RegionSetting>
+}
+
+@JsPlainObject
+external interface TableHead {
+    var label: String
+    var classes: Array<String>?
 }
 
 @JsPlainObject
 external interface RegionSettingsContext {
-    val useStolenLands: FormElementContext
-    val heading: Array<String>
-    val formRows: Array<Array<FormElementContext>>
+    var useStolenLands: FormElementContext
+    var heading: Array<TableHead>
+    var formRows: Array<Array<FormElementContext>>
 }
 
-
-class RegionConfiguration(
-    val game: Game,
-) : App<AnyObject, RegionSettingsContext>(
-    AppArguments(
-        title = "Regions",
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+class RegionConfiguration : App<RegionSettingsContext>(
+    HandlebarsFormApplicationOptions(
+        window = Window(
+            title = "Regions",
+        ),
+        position = ApplicationPosition(
+            width = 900,
+        ),
         templatePath = resolveTemplatePath("applications/settings/configure-regions.hbs"),
         classes = arrayOf("km-dialog-form"),
-        submitOnChange = true,
-        actions = arrayOf("save", "delete")
     )
 ) {
+    init {
+        appHook.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
+    }
+
     var currentSettings = game.settings.getObject<RegionSettings>("regionSettings")
-    override fun getTemplateContext(): Promise<RegionSettingsContext> = buildPromise {
+
+    override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
+        when (val action = target.dataset["action"]) {
+            "save" -> {
+                buildPromise {
+                    game.settings.setObject("regionSettings", currentSettings).await()
+                    close()
+                }
+            }
+
+            "add" -> {
+                addDefaultRegion()
+                render()
+            }
+
+            "delete" -> {
+                target.dataset["index"]?.toInt()?.let {
+                    console.log(it)
+                    currentSettings.regions = currentSettings.regions
+                        .filterIndexed { index, _ -> index != it }
+                        .toTypedArray()
+                    render()
+                }
+            }
+
+            else -> console.log(action)
+        }
+    }
+
+    override fun _preparePartContext(
+        partId: String,
+        context: RegionSettingsContext,
+        options: HandlebarsRenderOptions
+    ): Promise<RegionSettingsContext> = buildPromise {
         val playlistOptions = game.playlists?.contents
             ?.mapNotNull { it.toOption() }
             ?.sortedBy { it.label }
@@ -69,12 +122,20 @@ class RegionConfiguration(
                 label = "Use Stolen Lands",
             ).toContext(),
             heading = arrayOf(
-                "Name", "Level", "Zone DC", "Encounter DC", "Roll Table", "Combat Playlist", "Combat Track", "Remove"
+                TableHead("Name"),
+                TableHead("Level", arrayOf("small-heading")),
+                TableHead("Zone DC", arrayOf("small-heading")),
+                TableHead("Encounter DC", arrayOf("small-heading")),
+                TableHead("Roll Table"),
+                TableHead("Combat Playlist"),
+                TableHead("Combat Track"),
+                TableHead("Remove", arrayOf("small-heading"))
             ),
             formRows = currentSettings.regions.mapIndexed { index, row ->
                 val trackOptions = row.combatTrack?.playlistId?.let {
                     game.playlists?.get(it)?.sounds?.contents?.mapNotNull { it.toOption() } ?: emptyList()
                 } ?: emptyList()
+                console.log(row.combatTrack?.playlistId, row.combatTrack?.trackId)
                 arrayOf(
                     TextInput(
                         name = "regions.$index.name",
@@ -117,7 +178,7 @@ class RegionConfiguration(
                         options = playlistOptions
                     ).toContext(),
                     Select(
-                        name = "regions.$index.combatTrack.playList",
+                        name = "regions.$index.combatTrack.trackId",
                         label = "Combat Track",
                         value = row.combatTrack?.trackId,
                         allowsEmpty = true,
@@ -129,28 +190,42 @@ class RegionConfiguration(
         )
     }
 
-    override fun onSubmit(data: FormDataExtended<AnyObject>): Promise<Unit> = buildPromise {
-        val obj = expandObjectAnd<RegionSettings>(data.`object`) {
-            it["regions"] = it["regions"] ?: emptyArray<RegionSetting>()
-        }
-        currentSettings = obj
-        console.log(data, currentSettings)
-    }
+    override fun onSubmit(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Void> =
+        buildPromise {
+            val obj = expandObjectAnd<RegionSettings>(formData.`object`) {
+                it["regions"] = (it["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
+                it["regions"].forEach { row ->
+                    if (row.combatTrack.playlistId.isBlank()) {
 
-    override fun onAction(action: String, event: Event) = buildPromise {
-        when (action) {
-            "save" -> {
-                game.settings.setObject("regionSettings", currentSettings)
-                close().await()
+                    }
+                    row.combatTrack?.trackId?.ifBlank { row.combatTrack?.trackId = null }
+                    row.combatTrack?.playlistId?.ifBlank { row.combatTrack = null }
+                }
+
+                console.log(it)
             }
-
-            else -> console.log(action)
+            currentSettings = obj
+            if (currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
+                addDefaultRegion()
+            }
+            console.log(formData, currentSettings)
+            render()
+            null
         }
+
+    private fun addDefaultRegion() {
+        currentSettings.regions.push(
+            RegionSetting(
+                name = "New Region",
+                zoneDc = 15,
+                encounterDc = 12,
+                level = 1,
+                rollTableId = null,
+                combatTrack = null,
+            )
+        )
     }
 
-    override fun onInit() {
-        appHooks.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
-    }
 }
 
 fun registerRegionSettings(game: Game) {
@@ -163,6 +238,6 @@ fun registerRegionSettings(game: Game) {
         key = "regionsMenu",
         label = "Customize",
         name = "Regions",
-        app = RegionConfiguration(game).app
+        app = RegionConfiguration::class.js,
     )
 }

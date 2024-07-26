@@ -1,5 +1,6 @@
 {{#unless hideLabel}}<label {{#if checkbox}}class="form-element-checkbox-label"{{/if}}>{{label}}{{/unless}}
 {{#if select}}
+    {{value}}
         <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}}>
             {{#selectAllowsEmpty}}
                 {{selectOptions options selected=value blank="-"}}

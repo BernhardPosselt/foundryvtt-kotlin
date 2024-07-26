@@ -1,5 +1,6 @@
 package com.foundryvtt.core.applications.api
 
+import com.foundryvtt.core.AnyObject
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.DOMTokenList
@@ -46,15 +47,19 @@ open external class ApplicationV2(
     fun maximize(): Promise<Unit>
     fun bringToFront()
     fun changeTab(tab: String, group: String, options: ApplicationTabOptions)
-    protected fun _canRender(options: ApplicationRenderOptions): dynamic
-    protected fun _onFirstRender(context: ApplicationRenderContext, options: ApplicationRenderOptions): Promise<Unit>
-    protected fun _preRender(context: ApplicationRenderContext, options: ApplicationRenderOptions): Promise<Unit>
-    protected fun _onRender(context: ApplicationRenderContext, options: ApplicationRenderOptions)
-    protected fun _preClose(options: ApplicationRenderOptions): Promise<Unit>
-    protected fun _prePosition(position: ApplicationPosition)
-    protected fun _onPosition(position: ApplicationPosition)
-    protected fun _attachFrameListeners()
-    protected fun _onClickAction(event: PointerEvent, target: HTMLElement)
-    protected fun _onSubmitForm(formConfig: ApplicationFormConfiguration, event: Event): Promise<Unit>
-    protected fun _onChangeForm(formConfig: ApplicationFormConfiguration, event: Event): Promise<Unit>
+    protected open fun _canRender(options: ApplicationRenderOptions): dynamic
+    protected open fun _onFirstRender(
+        context: AnyObject,
+        options: ApplicationRenderOptions
+    ): Promise<Unit>
+
+    protected open fun _preRender(context: AnyObject, options: ApplicationRenderOptions): Promise<Unit>
+    protected open fun _onRender(context: AnyObject, options: ApplicationRenderOptions)
+    protected open fun _preClose(options: ApplicationRenderOptions): Promise<Unit>
+    protected open fun _prePosition(position: ApplicationPosition)
+    protected open fun _onPosition(position: ApplicationPosition)
+    protected open fun _attachFrameListeners()
+    protected open fun _onClickAction(event: PointerEvent, target: HTMLElement)
+    protected open fun _onSubmitForm(formConfig: ApplicationFormConfiguration, event: Event): Promise<Unit>
+    protected open fun _onChangeForm(formConfig: ApplicationFormConfiguration, event: Event): Promise<Unit>
 }

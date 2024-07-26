@@ -23,7 +23,7 @@ external interface HandlebarsRenderOptions {
 
 @JsName("foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-open external class HandlebarsApplication(
+open external class HandlebarsApplication<T>(
     options: ApplicationConfiguration = definedExternally
 ) : ApplicationV2 {
     @OptIn(ExperimentalStdlibApi::class)
@@ -36,25 +36,25 @@ open external class HandlebarsApplication(
 
     open val parts: Record<String, HandlebarsTemplatePart>
 
-    protected fun _preparePartContext(
+    protected open fun _preparePartContext(
         partId: String,
-        context: ApplicationRenderContext,
+        context: T,
         options: HandlebarsRenderOptions
-    ): Promise<ApplicationRenderContext>
+    ): Promise<T>
 
-    protected fun _preSyncPartState(
+    protected open fun _preSyncPartState(
         partId: String,
         newElement: HTMLElement,
         priorElement: HTMLElement,
         state: Record<String, Any>
     )
 
-    protected fun _syncPartState(
+    protected open fun _syncPartState(
         partId: String,
         newElement: HTMLElement,
         priorElement: HTMLElement,
         state: Record<String, Any>
     )
 
-    protected fun _attachPartListeners(partId: String, htmlElement: HTMLElement, options: ApplicationRenderOptions)
+    protected open fun _attachPartListeners(partId: String, htmlElement: HTMLElement, options: ApplicationRenderOptions)
 }

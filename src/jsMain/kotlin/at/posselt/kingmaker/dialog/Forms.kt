@@ -188,12 +188,14 @@ fun formContext(vararg rows: IntoFormElementContext): Array<FormElementContext> 
  * transformations and fixing until the object reaches its final
  * good state
  */
-fun <T> expandObjectAnd(value: AnyObject, and: (AnyObject) -> Unit): T {
-    val result = expandObject(value)
+fun <T> expandObjectAnd(value: AnyObject, and: (dynamic) -> Unit): T {
+    val result = normalizeArrays(expandObject(value))
     and(result)
     @Suppress("UNCHECKED_CAST")
     return result as T
 }
+
+external fun normalizeArrays(obj: Any): dynamic
 
 fun RollTable.toOption() = id?.let {
     SelectOption(label = name, value = it)

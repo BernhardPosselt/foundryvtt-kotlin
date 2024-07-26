@@ -58,7 +58,7 @@ fun Settings.createMenu(
     hint: String? = null,
     icon: String? = null,
     restricted: Boolean = false,
-    app: JsClass<ApplicationV2>
+    app: JsClass<out ApplicationV2>
 ) {
     registerMenu<ApplicationV2>(
         Config.MODULE_ID,

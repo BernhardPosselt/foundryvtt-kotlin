@@ -44,3 +44,4 @@ fun <F : Any, S> Map<F, S>.toRecord(): Record<F, S> =
 fun <F : Any, S> Array<Pair<F, S>>.toRecord(): Record<F, S> =
     recordOf(*this)
 
+fun String.nullIfBlank() = ifBlank { null }

@@ -51,7 +51,7 @@ external interface SettingsMenuData<T : ApplicationV2> {
     val label: String
     val hint: String?
     val icon: String?
-    val type: JsClass<T>
+    val type: JsClass<out T>
     val restricted: Boolean
 }
 

@@ -3,7 +3,6 @@ package com.foundryvtt.core.applications.api
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
-import js.core.Void
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
@@ -27,16 +26,12 @@ external interface ApplicationHeaderControlsEntry {
 
 @JsPlainObject
 external interface ApplicationPosition {
-    val top: Int
-    val left: Int
-
-    // Int or "auto"
-    val width: Any
-
-    // Int or "auto"
-    val height: Any
-    val scale: Int
-    val zIndex: Int
+    val top: Int?
+    val left: Int?
+    val width: Int?
+    val height: Int?
+    val scale: Int?
+    val zIndex: Int?
 }
 
 @JsPlainObject
@@ -107,9 +102,8 @@ external interface ApplicationClosingOptions {
 
 @JsPlainObject
 external interface ApplicationFormConfiguration {
-    val handler: (event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Void>
+    val handler: (event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Unit>
     val submitOnChange: Boolean
     val closeOnSubmit: Boolean
 }
 
-typealias ApplicationRenderContext = Record<String, Any>

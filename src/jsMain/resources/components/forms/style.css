@@ -9,6 +9,19 @@
 .km-dialog-form {
     table {
         margin: 0;
+
+        th {
+            text-align: center;
+        }
+
+        .small-heading {
+            width: 30px;
+        }
+
+        button[data-action] {
+            height: 32px;
+            margin: auto
+        }
     }
 
     .dialog-content {
@@ -23,6 +36,7 @@
             float: right;
         }
     }
+
 
     .help {
         font-size: var(--font-size-12);
