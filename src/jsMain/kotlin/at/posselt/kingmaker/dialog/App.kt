@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.dialog
 
 import com.foundryvtt.core.FormDataExtended
+import com.foundryvtt.core.HooksEventListener
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.ApplicationHeaderControlsEntry
 import com.foundryvtt.core.applications.api.ApplicationV2
@@ -41,6 +42,14 @@ open external class App<T : Any, D : Any>(arguments: AppArguments) {
     protected val instance: ApplicationV2?
 
     /**
+     * Wrapper for the Hooks.on method.
+     *
+     * Hooks registered using the on method are automatically removed via Hooks.off when
+     * the class gets destroyed
+     */
+    protected val appHooks: HooksEventListener
+
+    /**
      * Callback that happens in the application constructor right before
      * hook callbacks are bound
      *
@@ -77,19 +86,12 @@ open external class App<T : Any, D : Any>(arguments: AppArguments) {
     fun launch(): Promise<Unit>
 
     /**
-     * Register a hook function that is cleaned up when the application is closed.
-     * @param key first parameter of Hooks.on
-     * @param callback second parameter passed to Hooks.on
-     */
-    protected fun <H> registerHook(key: String, callback: Function<H>)
-
-    /**
      * Returns data that is available inside templates
      */
     protected open fun getTemplateContext(): Promise<D>
 
     /**
-     * Add an event listener. Must be called inside an overriden onInit() method
+     * Add an event listener. Must be called inside an overridden onInit() method
      *
      * @param selector a CSS selector that returns one or more results
      * @param evenType string of what event you want to listen for, defaults to 'click'

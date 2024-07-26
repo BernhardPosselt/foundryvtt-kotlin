@@ -11,6 +11,7 @@ import com.foundryvtt.core.FormDataExtended
 import com.foundryvtt.core.Settings
 import com.foundryvtt.core.data.fields.DataFieldOptions
 import com.foundryvtt.core.data.fields.ObjectField
+import com.foundryvtt.core.onUpdateWorldTime
 import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.html.org.w3c.dom.events.Event
@@ -69,6 +70,10 @@ class RegionConfiguration(
 
             else -> console.log(action)
         }
+    }
+
+    override fun onInit() {
+        appHooks.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
     }
 }
 

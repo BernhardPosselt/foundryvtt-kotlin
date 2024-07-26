@@ -10,8 +10,21 @@ external interface OnErrorOptions {
     val data: Any
 }
 
-external object Hooks {
+external interface HooksEventListener {
     fun <T> on(key: String, callback: Function<T>)
+}
+
+fun <O> HooksEventListener.onReady(callback: (Any) -> O) =
+    on("ready", callback)
+
+fun <O> HooksEventListener.onInit(callback: () -> O) =
+    on("init", callback)
+
+fun <O> HooksEventListener.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> O) =
+    on("updateWorldTime", callback)
+
+external object Hooks : HooksEventListener {
+    override fun <T> on(key: String, callback: Function<T>)
     fun <T> once(key: String, callback: Function<T>)
     fun <T> off(key: String, callback: Function<T>)
     fun callAll(key: String, args: Array<Any>)
@@ -19,11 +32,3 @@ external object Hooks {
     fun onError(location: String, error: Throwable, options: OnErrorOptions = definedExternally)
 }
 
-fun <O> Hooks.onReady(callback: (Any) -> O) =
-    on("ready", callback)
-
-fun <O> Hooks.onInit(callback: () -> O) =
-    on("init", callback)
-
-fun <O> Hooks.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> O) =
-    on("updateWorldTime", callback)

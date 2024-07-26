@@ -17,7 +17,6 @@ fun main() {
             loadTpls(
                 arrayOf(
                     "formElement" to "components/forms/form-element.hbs",
-                    "formTable" to "components/forms/form-table.hbs",
                 )
             )
             registerRegionSettings(game.settings)

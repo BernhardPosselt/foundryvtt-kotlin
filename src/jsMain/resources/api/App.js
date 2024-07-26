@@ -4,6 +4,12 @@
 class App {
     registeredHooks = [];
     eventListeners = [];
+    appHooks = {
+        on: (key, callback) => {
+            this.registeredHooks.push({key, callback});
+            return Hooks.on(key, callback);
+        },
+    }
 
     constructor(
         {
