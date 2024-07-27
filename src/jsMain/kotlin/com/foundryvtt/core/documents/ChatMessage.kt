@@ -1,7 +1,8 @@
 package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import js.objects.Record
 import js.objects.jso
@@ -17,8 +18,8 @@ external class ChatMessage : Document {
         fun getWhisperRecipients(name: String)
     }
 
-    override fun delete(operation: DatabaseGetOperation): Promise<ChatMessage>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<ChatMessage>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<ChatMessage>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<ChatMessage>
 
     val blind: Boolean
     val content: String
@@ -36,5 +37,5 @@ external class ChatMessage : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun ChatMessage.update(data: ChatMessage, operation: DatabaseGetOperation = jso()): Promise<ChatMessage> =
+fun ChatMessage.update(data: ChatMessage, operation: DatabaseUpdateOperation = jso()): Promise<ChatMessage> =
     update(data as AnyObject, operation)

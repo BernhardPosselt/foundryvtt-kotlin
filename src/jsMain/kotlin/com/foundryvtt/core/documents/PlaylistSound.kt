@@ -3,7 +3,8 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.AudioContext
 import com.foundryvtt.core.Sound
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlin.js.Promise
@@ -15,8 +16,8 @@ import kotlin.js.Promise
 open external class PlaylistSound : Document {
     companion object : DocumentStatic<PlaylistSound>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<PlaylistSound>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<PlaylistSound>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<PlaylistSound>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PlaylistSound>
 
     val sound: Sound?
     val fadeDuration: Int
@@ -38,5 +39,5 @@ open external class PlaylistSound : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PlaylistSound.update(data: PlaylistSound, operation: DatabaseGetOperation = jso()): Promise<PlaylistSound> =
+fun PlaylistSound.update(data: PlaylistSound, operation: DatabaseUpdateOperation = jso()): Promise<PlaylistSound> =
     update(data as AnyObject, operation)

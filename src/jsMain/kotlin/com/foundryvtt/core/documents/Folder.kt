@@ -1,7 +1,8 @@
 package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.abstract.DocumentConstructionContext
 import com.foundryvtt.core.applications.api.PromptOptions
@@ -29,8 +30,8 @@ external class Folder(
 ) : Document {
     companion object : DocumentStatic<Folder>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<Folder>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Folder>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<Folder>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Folder>
 
     val name: String
     val description: String
@@ -54,5 +55,5 @@ external class Folder(
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Folder.update(data: Folder, operation: DatabaseGetOperation = jso()): Promise<Folder> =
+fun Folder.update(data: Folder, operation: DatabaseUpdateOperation = jso()): Promise<Folder> =
     update(data as AnyObject, operation)

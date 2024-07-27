@@ -8,7 +8,8 @@ external interface Dc {
 }
 
 @JsPlainObject
-external interface PF2ERollData {
+external interface PF2ERollOptions {
     val rollMode: String?
     val dc: Dc?
+    val extraRollOptions: String?
 }

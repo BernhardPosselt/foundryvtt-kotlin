@@ -1,7 +1,8 @@
 package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlin.js.Promise
@@ -14,8 +15,8 @@ import kotlin.js.Promise
 external class User : Document {
     companion object : DocumentStatic<User>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<User>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<User>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<User>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<User>
 
     val isGM: Boolean
     val isBanned: Boolean
@@ -29,5 +30,5 @@ external class User : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun User.update(data: User, operation: DatabaseGetOperation = jso()): Promise<User> =
+fun User.update(data: User, operation: DatabaseUpdateOperation = jso()): Promise<User> =
     update(data as AnyObject, operation)

@@ -1,7 +1,8 @@
 package com.foundryvtt.pf2e.item
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -15,8 +16,8 @@ external interface PF2EActionData
 external class PF2EAction : PF2EItem {
     companion object : DocumentStatic<PF2EAction>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<PF2EAction>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<PF2EAction>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EAction>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EAction>
 
     val system: PF2EActionData
 }

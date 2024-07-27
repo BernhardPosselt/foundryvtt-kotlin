@@ -1,7 +1,8 @@
 package com.foundryvtt.pf2e.item
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -31,8 +32,8 @@ external interface PF2ECampaignFeatureData {
 external class PF2ECampaignFeature : PF2EItem {
     companion object : DocumentStatic<PF2ECampaignFeature>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<PF2ECampaignFeature>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<PF2ECampaignFeature>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ECampaignFeature>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECampaignFeature>
 
     val system: PF2ECampaignFeatureData
 }
@@ -40,6 +41,6 @@ external class PF2ECampaignFeature : PF2EItem {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun PF2ECampaignFeature.update(
     data: PF2ECampaignFeature,
-    operation: DatabaseGetOperation = jso()
+    operation: DatabaseUpdateOperation = jso()
 ): Promise<PF2ECampaignFeature> =
     update(data as AnyObject, operation)

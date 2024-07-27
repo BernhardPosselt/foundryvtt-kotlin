@@ -18,9 +18,9 @@ private suspend fun rollExplorationSkillCheck(
     dc: Int?,
 ) {
     if (explorationEffectName == "Search" && attribute == Perception) {
-        game.pf2e.actions["seek"]?.use(PF2EActionMacroUseOptions(actors = actors))
+        game.pf2e.actions.get("seek")?.use(PF2EActionMacroUseOptions(actors = actors))
     } else if (explorationEffectName == "Avoid Notice" && attribute == Skill.STEALTH) {
-        game.pf2e.actions["avoid-notice"]?.use(PF2EActionMacroUseOptions(actors = actors))
+        game.pf2e.actions.get("avoid-notice")?.use(PF2EActionMacroUseOptions(actors = actors))
     } else {
         actors.rollChecks(attribute, dc).awaitAll()
     }

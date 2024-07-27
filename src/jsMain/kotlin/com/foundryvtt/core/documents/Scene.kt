@@ -1,7 +1,8 @@
 package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlinx.js.JsPlainObject
@@ -67,8 +68,8 @@ external interface SceneGrid {
 external class Scene : Document {
     companion object : DocumentStatic<Scene>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<Scene>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Scene>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<Scene>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Scene>
 
     var name: String
     var img: String
@@ -111,5 +112,5 @@ external class Scene : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Scene.update(data: Scene, operation: DatabaseGetOperation = jso()): Promise<Scene> =
+fun Scene.update(data: Scene, operation: DatabaseUpdateOperation = jso()): Promise<Scene> =
     update(data as AnyObject, operation)

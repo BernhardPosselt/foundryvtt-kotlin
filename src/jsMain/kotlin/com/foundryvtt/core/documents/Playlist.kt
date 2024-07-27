@@ -1,7 +1,8 @@
 package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.collections.EmbeddedCollection
 import js.objects.jso
@@ -20,8 +21,8 @@ external interface PlayNextOptions {
 external class Playlist : Document {
     companion object : DocumentStatic<Playlist>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<Playlist>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Playlist>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<Playlist>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Playlist>
 
     var name: String
     var description: String
@@ -45,5 +46,5 @@ external class Playlist : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Playlist.update(data: Playlist, operation: DatabaseGetOperation = jso()): Promise<Playlist> =
+fun Playlist.update(data: Playlist, operation: DatabaseUpdateOperation = jso()): Promise<Playlist> =
     update(data as AnyObject, operation)

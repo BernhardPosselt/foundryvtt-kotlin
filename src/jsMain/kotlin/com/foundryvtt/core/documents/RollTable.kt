@@ -2,7 +2,8 @@ package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Roll
-import com.foundryvtt.core.abstract.DatabaseGetOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlinx.js.JsPlainObject
@@ -42,8 +43,8 @@ external interface RollTableRollOptions {
 external class RollTable : Document {
     companion object : DocumentStatic<RollTable>
 
-    override fun delete(operation: DatabaseGetOperation): Promise<RollTable>
-    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<RollTable>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<RollTable>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<RollTable>
 
     var name: String
     var img: String
@@ -67,5 +68,5 @@ external class RollTable : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun RollTable.update(data: RollTable, operation: DatabaseGetOperation = jso()): Promise<RollTable> =
+fun RollTable.update(data: RollTable, operation: DatabaseUpdateOperation = jso()): Promise<RollTable> =
     update(data as AnyObject, operation)

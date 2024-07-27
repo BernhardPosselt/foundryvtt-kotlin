@@ -22,6 +22,15 @@ external interface DatabaseGetOperation : DatabaseOperation {
     val parentUuid: String?
 }
 
+@JsPlainObject
+external interface DatabaseCreateOperation : DatabaseOperation
+
+@JsPlainObject
+external interface DatabaseUpdateOperation : DatabaseOperation
+
+@JsPlainObject
+external interface DatabaseDeleteOperation : DatabaseOperation
+
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Document.update(data: Document, operation: DatabaseGetOperation = jso()): Promise<Document> =
+fun Document.update(data: Document, operation: DatabaseUpdateOperation = jso()): Promise<Document> =
     update(data as AnyObject, operation)

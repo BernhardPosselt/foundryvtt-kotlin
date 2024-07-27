@@ -12,38 +12,38 @@ abstract external class Document(
     @OptIn(ExperimentalStdlibApi::class)
     @JsExternalInheritorsOnly
     open class DocumentStatic<D : Document> {
-        fun create(data: Any, operation: DatabaseGetOperation = definedExternally): Promise<D>
+        fun create(data: Any, operation: DatabaseCreateOperation = definedExternally): Promise<D>
 
-        fun create(data: D, operation: DatabaseGetOperation = definedExternally): Promise<D>
+        fun create(data: D, operation: DatabaseCreateOperation = definedExternally): Promise<D>
 
         fun createDocuments(
             data: Array<AnyObject>,
-            operation: DatabaseGetOperation = definedExternally
+            operation: DatabaseCreateOperation = definedExternally
         ): Promise<Array<D>>
 
         fun createDocuments(
             data: Array<D>,
-            operation: DatabaseGetOperation = definedExternally
+            operation: DatabaseCreateOperation = definedExternally
         ): Promise<Array<D>>
 
         fun updateDocuments(
             data: Array<AnyObject>,
-            operation: DatabaseGetOperation = definedExternally
+            operation: DatabaseUpdateOperation = definedExternally
         ): Promise<Array<D>>
 
         fun updateDocuments(
             data: Array<D>,
-            operation: DatabaseGetOperation = definedExternally
+            operation: DatabaseUpdateOperation = definedExternally
         ): Promise<Array<D>>
 
         fun deleteDocuments(
             data: Array<D>,
-            operation: DatabaseGetOperation = definedExternally
+            operation: DatabaseDeleteOperation = definedExternally
         ): Promise<Array<D>>
 
         fun deleteDocuments(
             data: Array<AnyObject>,
-            operation: DatabaseGetOperation = definedExternally
+            operation: DatabaseDeleteOperation = definedExternally
         ): Promise<Array<D>>
 
         fun get(id: String, operation: DatabaseGetOperation = definedExternally): Promise<D?>
@@ -57,10 +57,29 @@ abstract external class Document(
 
     open fun update(
         data: AnyObject,
-        operation: DatabaseGetOperation = definedExternally
+        operation: DatabaseUpdateOperation = definedExternally
     ): Promise<Document>
 
-    open fun delete(operation: DatabaseGetOperation = definedExternally): Promise<Document>
+    open fun delete(operation: DatabaseDeleteOperation = definedExternally): Promise<Document>
+
+    open fun <T : Document> createEmbeddedDocuments(
+        name: String,
+        data: Array<AnyObject>? = definedExternally,
+        operation: DatabaseCreateOperation = definedExternally
+    ): Promise<Array<T>>
+
+    open fun <T : Document> updateEmbeddedDocuments(
+        name: String,
+        data: Array<AnyObject>? = definedExternally,
+        operation: DatabaseUpdateOperation = definedExternally
+    ): Promise<Array<T>>
+
+    open fun <T : Document> deleteEmbeddedDocuments(
+        name: String,
+        ids: Array<String>,
+        operation: DatabaseDeleteOperation = definedExternally
+    ): Promise<Array<T>>
+
     open fun getFlag(scope: String, key: String): Any?
     open fun <T> setFlag(scope: String, key: String, value: T): Promise<T>
     open fun unsetFlag(scope: String, key: String): Promise<Any?>
