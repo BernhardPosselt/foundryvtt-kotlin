@@ -1,4 +1,4 @@
-package at.posselt.kingmaker.dialog
+package at.posselt.kingmaker.app
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended

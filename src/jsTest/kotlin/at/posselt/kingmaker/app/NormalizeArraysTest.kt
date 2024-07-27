@@ -1,5 +1,6 @@
-package at.posselt.kingmaker.dialog
+package at.posselt.kingmaker.app
 
+import js.objects.Record
 import js.objects.recordOf
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -9,7 +10,8 @@ class NormalizeArraysTest {
 
     @Test
     fun testFirstLevelArray() {
-        val test = recordOf(0 to "hi", 1 to "lo")
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+        val test = recordOf(0 to "hi", 1 to "lo") as Record<String, String>
         val result = normalizeArrays(test)
 
         assertContentEquals(arrayOf("hi", "lo"), result)

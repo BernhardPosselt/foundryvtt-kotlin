@@ -1,3 +1,5 @@
+@file:JsQualifier("foundry.applications.api")
+
 package com.foundryvtt.core.applications.api
 
 import com.foundryvtt.core.AnyObject
@@ -9,8 +11,6 @@ import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 
-@JsName("foundry.applications.api.ApplicationV2")
-@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class ApplicationV2(
     options: ApplicationConfiguration = definedExternally
 ) {

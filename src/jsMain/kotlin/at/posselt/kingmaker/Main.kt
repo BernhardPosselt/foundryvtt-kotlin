@@ -1,6 +1,8 @@
 package at.posselt.kingmaker
 
+import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.actor.playerCharacters
+import at.posselt.kingmaker.macros.rollPartyCheck
 import at.posselt.kingmaker.settings.registerRegionSettings
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
@@ -25,11 +27,12 @@ fun main() {
     }
 
     Hooks.onReady {
-        console.log(Any::class.js)
+
         val players = game.playerCharacters()
+        console.log(players)
 //        ConfigureRegions().render(ApplicationRenderOptions(force = true))
         buildPromise {
-//            rollPartyCheck(game.partyMembers())
+            rollPartyCheck(game.partyMembers())
 //            awardHeroPoints(players)
 //            awardXP(players)
         }

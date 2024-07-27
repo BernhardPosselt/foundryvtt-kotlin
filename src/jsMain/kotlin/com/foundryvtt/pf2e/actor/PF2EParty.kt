@@ -9,6 +9,8 @@ import kotlin.js.Promise
 @JsPlainObject
 external interface PF2EPartyData
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Actor.documentClasses.party")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class PF2EParty : PF2EActor {

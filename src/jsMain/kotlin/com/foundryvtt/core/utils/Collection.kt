@@ -1,17 +1,11 @@
+@file:JsQualifier("foundry.utils")
+
 package com.foundryvtt.core.utils
 
 import js.array.JsTuple2
 import js.array.ReadonlyArray
 import js.iterable.JsIterable
-import kotlinx.js.JsPlainObject
 
-@JsPlainObject
-external interface GetOptions {
-    val strict: Boolean?
-}
-
-@JsName("foundry.utils.Collection")
-@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class Collection<T>(
     values: ReadonlyArray<JsTuple2<String, T>> = definedExternally,
 ) : JsIterable<T> {

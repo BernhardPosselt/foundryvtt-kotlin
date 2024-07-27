@@ -24,6 +24,8 @@ external interface PF2ECampaignFeatureData {
     val level: PF2ECampaignFeatureLevel
 }
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Item.documentClasses.campaignFeature")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class PF2ECampaignFeature : PF2EItem {

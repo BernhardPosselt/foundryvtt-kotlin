@@ -1,12 +1,16 @@
-package at.posselt.kingmaker.dialog
+package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.utils.isJsObject
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.documents.Playlist
 import com.foundryvtt.core.documents.PlaylistSound
 import com.foundryvtt.core.documents.RollTable
 import com.foundryvtt.core.utils.expandObject
+import js.array.JsTuple2
+import js.array.ReadonlyArray
+import js.array.tupleOf
 import js.objects.Object
-import js.objects.jso
+import js.objects.Record
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject
 
@@ -193,35 +197,32 @@ fun formContext(vararg rows: IntoFormElementContext): Array<FormElementContext> 
 fun <T> expandObjectAnd(value: AnyObject, and: (dynamic) -> Unit): T {
     val result = normalizeArrays(expandObject(value))
     and(result)
-    @Suppress("UNCHECKED_CAST")
     return result as T
 }
 
-fun <T> isObject(x: T) =
-    jsTypeOf(x) == "object" && x != null
 
 /**
  * This utility is needed to dynamically and recursively convert nested objects
  * with integer keys into arrays since that's how Foundry handles forms
+ *
+ * @return either a Record or an array if the top level object was an array
  */
-@Suppress("UnsafeCastFromDynamic")
-fun normalizeArrays(obj: dynamic): dynamic {
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun <T : Any?> normalizeArrays(obj: Record<String, T>): dynamic {
     if (Object.hasOwn(obj, 0)) {
         return Object.keys(obj)
             .map(String::toInt)
             .sorted()
             .map {
                 val value = obj[it.toString()]
-                if (isObject(value)) normalizeArrays(value) else value
+                if (isJsObject(value)) normalizeArrays(value as AnyObject) else value
             }
             .toTypedArray()
     } else {
-        val result = jso<AnyObject>()
-        Object.entries<AnyObject>(obj).map {
+        return Object.fromEntries<AnyObject>(Object.entries(obj).map {
             val value = it.component2()
-            result[it.component1()] = if (isObject(value)) normalizeArrays(value) else value
-        }
-        return result
+            tupleOf(it.component1(), if (isJsObject(value)) normalizeArrays(value as AnyObject) else value)
+        }.toTypedArray())
     }
 }
 
@@ -236,3 +237,7 @@ fun Playlist.toOption() = id?.let {
 fun PlaylistSound.toOption() = id?.let {
     SelectOption(label = name, value = it)
 }
+
+fun <T> Object.Companion.fromEntries(entries: ReadonlyArray<JsTuple2<String, T>>): Record<String, T> =
+    asDynamic().fromEntries(entries)
+

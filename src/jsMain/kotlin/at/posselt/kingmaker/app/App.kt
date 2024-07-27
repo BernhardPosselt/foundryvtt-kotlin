@@ -1,4 +1,4 @@
-package at.posselt.kingmaker.dialog
+package at.posselt.kingmaker.app
 
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.AnyObject

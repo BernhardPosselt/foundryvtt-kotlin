@@ -20,7 +20,8 @@ external interface HandlebarsRenderOptions {
     val parts: Array<String>
 }
 
-
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class HandlebarsApplication<T>(

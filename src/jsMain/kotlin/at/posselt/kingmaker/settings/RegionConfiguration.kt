@@ -1,6 +1,6 @@
 package at.posselt.kingmaker.settings
 
-import at.posselt.kingmaker.dialog.*
+import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.resolveTemplatePath
 import com.foundryvtt.core.*

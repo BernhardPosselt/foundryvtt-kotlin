@@ -1,8 +1,8 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.dialog.NumberInput
-import at.posselt.kingmaker.dialog.formContext
-import at.posselt.kingmaker.dialog.prompt
+import at.posselt.kingmaker.app.NumberInput
+import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.prompt
 import at.posselt.kingmaker.utils.awaitAll
 import at.posselt.kingmaker.utils.postChatMessage
 import at.posselt.kingmaker.utils.postChatTemplate

@@ -19,6 +19,8 @@ external interface PF2EArmyData {
     val traits: PF2EArmyTraits
 }
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Actor.documentClasses.army")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class PF2EArmy : PF2EActor {

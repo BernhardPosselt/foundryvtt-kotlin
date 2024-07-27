@@ -6,6 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.promise
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.js.Promise
 
@@ -44,4 +46,16 @@ fun <F : Any, S> Map<F, S>.toRecord(): Record<F, S> =
 fun <F : Any, S> Array<Pair<F, S>>.toRecord(): Record<F, S> =
     recordOf(*this)
 
-fun String.nullIfBlank() = ifBlank { null }
+@Suppress(
+    "NOTHING_TO_INLINE",
+    "CANNOT_CHECK_FOR_EXTERNAL_INTERFACE",
+    "CANNOT_CHECK_FOR_ERASED",
+    "ERROR_IN_CONTRACT_DESCRIPTION"
+)
+@OptIn(ExperimentalContracts::class)
+inline fun isJsObject(x: Any?): Boolean {
+    contract {
+        returns(true) implies (x is Record<String, Any?>)
+    }
+    return jsTypeOf(x) == "object" && x !is Array<*> && x != null
+}

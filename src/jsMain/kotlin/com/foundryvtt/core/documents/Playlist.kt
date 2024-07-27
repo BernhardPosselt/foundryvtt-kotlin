@@ -10,6 +10,8 @@ external interface PlayNextOptions {
     val direction: Int?
 }
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.Playlist.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class Playlist : Document {

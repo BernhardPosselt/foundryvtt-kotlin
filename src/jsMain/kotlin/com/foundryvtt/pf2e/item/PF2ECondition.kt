@@ -9,6 +9,8 @@ import kotlin.js.Promise
 @JsPlainObject
 external interface PF2EConditionData
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Item.documentClasses.condition")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class PF2ECondition : PF2EItem {

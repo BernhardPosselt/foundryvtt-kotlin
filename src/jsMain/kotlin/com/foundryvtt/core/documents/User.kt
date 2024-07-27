@@ -7,6 +7,8 @@ import js.objects.jso
 import kotlin.js.Promise
 
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.User.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class User : Document {

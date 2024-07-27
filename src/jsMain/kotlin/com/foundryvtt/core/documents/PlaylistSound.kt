@@ -5,6 +5,8 @@ import com.foundryvtt.core.Sound
 import com.foundryvtt.core.abstract.Document
 import kotlin.js.Promise
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PlaylistSound.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class PlaylistSound : Document {

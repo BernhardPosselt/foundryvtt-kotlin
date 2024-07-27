@@ -17,6 +17,8 @@ external interface ExportCompendiumOptions {
     val folder: String?
 }
 
+// required to make instance of work, but since the classes are not registered here
+// at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.Folder.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class Folder(
