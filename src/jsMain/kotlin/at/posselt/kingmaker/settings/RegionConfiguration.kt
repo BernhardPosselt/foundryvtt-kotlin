@@ -113,14 +113,12 @@ class RegionConfiguration : App<RegionSettingsContext>(
         context: RegionSettingsContext,
         options: HandlebarsRenderOptions
     ): Promise<RegionSettingsContext> = buildPromise {
-        val playlistOptions = game.playlists?.contents
-            ?.mapNotNull { it.toOption() }
-            ?.sortedBy { it.label }
-            ?: emptyList()
-        val rolltableOptions = game.tables?.contents
-            ?.mapNotNull { it.toOption() }
-            ?.sortedBy { it.label }
-            ?: emptyList()
+        val playlistOptions = game.playlists.contents
+            .mapNotNull { it.toOption() }
+            .sortedBy { it.label }
+        val rolltableOptions = game.tables.contents
+            .mapNotNull { it.toOption() }
+            .sortedBy { it.label }
         RegionSettingsContext(
             useStolenLands = CheckboxInput(
                 value = currentSettings.useStolenLands,
@@ -139,7 +137,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
             ),
             formRows = currentSettings.regions.mapIndexed { index, row ->
                 val trackOptions = row.combatTrack?.playlistId?.let {
-                    game.playlists?.get(it)?.sounds?.contents?.mapNotNull { it.toOption() } ?: emptyList()
+                    game.playlists.get(it)?.sounds?.contents?.mapNotNull { it.toOption() } ?: emptyList()
                 } ?: emptyList()
                 console.log(row.combatTrack?.playlistId, row.combatTrack?.trackId)
                 arrayOf(
@@ -198,16 +196,8 @@ class RegionConfiguration : App<RegionSettingsContext>(
 
     override fun onSubmit(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Void> =
         buildPromise {
-            val obj = expandObjectAnd<RegionSettings>(formData.`object`) {
+            val obj = parseFormData<RegionSettings>(formData.`object`) {
                 it["regions"] = (it["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
-                it["regions"].forEach { row ->
-                    if (row.combatTrack.playlistId?.isBlank()) {
-
-                    }
-                    row.combatTrack?.trackId?.ifBlank { row.combatTrack?.trackId = null }
-                    row.combatTrack?.playlistId?.ifBlank { row.combatTrack = null }
-                }
-
                 console.log(it)
             }
             currentSettings = obj

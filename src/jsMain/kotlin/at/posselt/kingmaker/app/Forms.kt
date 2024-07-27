@@ -1,13 +1,13 @@
 package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.isJsObject
+import at.posselt.kingmaker.utils.toRecord
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.documents.Playlist
 import com.foundryvtt.core.documents.PlaylistSound
 import com.foundryvtt.core.documents.RollTable
 import com.foundryvtt.core.utils.expandObject
-import js.array.JsTuple2
-import js.array.ReadonlyArray
 import js.array.tupleOf
 import js.objects.Object
 import js.objects.Record
@@ -194,8 +194,15 @@ fun formContext(vararg rows: IntoFormElementContext): Array<FormElementContext> 
  * transformations and fixing until the object reaches its final
  * good state
  */
-fun <T> expandObjectAnd(value: AnyObject, and: (dynamic) -> Unit): T {
-    val result = normalizeArrays(expandObject(value))
+fun <T> parseFormData(value: AnyObject, and: (dynamic) -> Unit): T {
+    val filteredBlanks = value.asSequence()
+        .filter {
+            val rhs = it.component2()
+            if (rhs is String) rhs.isNotEmpty() else true
+        }
+        .toRecord()
+    val expanded = expandObject(filteredBlanks)
+    val result = normalizeArrays(expanded)
     and(result)
     return result as T
 }
@@ -219,10 +226,12 @@ fun <T : Any?> normalizeArrays(obj: Record<String, T>): dynamic {
             }
             .toTypedArray()
     } else {
-        return Object.fromEntries<AnyObject>(Object.entries(obj).map {
-            val value = it.component2()
-            tupleOf(it.component1(), if (isJsObject(value)) normalizeArrays(value as AnyObject) else value)
-        }.toTypedArray())
+        return obj.asSequence()
+            .map {
+                val value = it.component2()
+                tupleOf(it.component1(), if (isJsObject(value)) normalizeArrays(value as AnyObject) else value)
+            }
+            .toRecord()
     }
 }
 
@@ -238,6 +247,4 @@ fun PlaylistSound.toOption() = id?.let {
     SelectOption(label = name, value = it)
 }
 
-fun <T> Object.Companion.fromEntries(entries: ReadonlyArray<JsTuple2<String, T>>): Record<String, T> =
-    asDynamic().fromEntries(entries)
 
