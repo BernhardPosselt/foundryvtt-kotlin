@@ -2,7 +2,9 @@ package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Roll
+import com.foundryvtt.core.abstract.DatabaseGetOperation
 import com.foundryvtt.core.abstract.Document
+import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -35,7 +37,14 @@ external interface RollTableRollOptions {
     val _depth: Int?
 }
 
+@JsName("CONFIG.RollTable.documentClass")
+@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class RollTable : Document {
+    companion object : DocumentStatic<RollTable>
+
+    override fun delete(operation: DatabaseGetOperation): Promise<RollTable>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<RollTable>
+
     var name: String
     var img: String
     var description: String
@@ -45,7 +54,7 @@ external class RollTable : Document {
     var displayRoll: Boolean
     var folder: Folder
     var sort: Int
-    var onwership: Int
+    var onwership: Ownership
 
     val thumbnail: String
     fun toMessage(data: Array<TableResult>, options: TableMessageOptions = definedExternally): Promise<ChatMessage>
@@ -56,3 +65,7 @@ external class RollTable : Document {
     fun roll(options: RollTableRollOptions): Promise<RollTableDraw>
     fun getResultsForRoll(value: Int): Array<TableResult>
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun RollTable.update(data: RollTable, operation: DatabaseGetOperation = jso()): Promise<RollTable> =
+    update(data as AnyObject, operation)

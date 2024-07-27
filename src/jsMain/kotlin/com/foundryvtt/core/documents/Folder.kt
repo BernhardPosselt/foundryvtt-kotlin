@@ -1,11 +1,13 @@
 package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.abstract.DatabaseGetOperation
 import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.abstract.DocumentConstructionContext
 import com.foundryvtt.core.applications.api.PromptOptions
 import com.foundryvtt.core.collections.CompendiumCollection
 import com.foundryvtt.core.collections.DocumentCollection
+import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -25,6 +27,11 @@ external class Folder(
     data: AnyObject = definedExternally,
     options: DocumentConstructionContext = definedExternally
 ) : Document {
+    companion object : DocumentStatic<Folder>
+
+    override fun delete(operation: DatabaseGetOperation): Promise<Folder>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Folder>
+
     val name: String
     val description: String
     val folder: Folder
@@ -45,3 +52,7 @@ external class Folder(
     fun getSubFolders(recursive: Boolean = definedExternally): Array<Folder>
     fun getParentFolders(): Array<Folder>
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun Folder.update(data: Folder, operation: DatabaseGetOperation = jso()): Promise<Folder> =
+    update(data as AnyObject, operation)

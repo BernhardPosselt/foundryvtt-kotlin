@@ -1,7 +1,10 @@
 package com.foundryvtt.core.documents
 
+import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.abstract.DatabaseGetOperation
 import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.collections.EmbeddedCollection
+import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -15,6 +18,11 @@ external interface PlayNextOptions {
 @JsName("CONFIG.Playlist.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class Playlist : Document {
+    companion object : DocumentStatic<Playlist>
+
+    override fun delete(operation: DatabaseGetOperation): Promise<Playlist>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<Playlist>
+
     var name: String
     var description: String
     var sounds: EmbeddedCollection<PlaylistSound>
@@ -35,3 +43,7 @@ external class Playlist : Document {
     fun stopAll(): Promise<Playlist>
     fun cycleMode(): Promise<Playlist>
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun Playlist.update(data: Playlist, operation: DatabaseGetOperation = jso()): Promise<Playlist> =
+    update(data as AnyObject, operation)

@@ -1,7 +1,11 @@
 package com.foundryvtt.core.documents
 
+import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.abstract.DatabaseGetOperation
 import com.foundryvtt.core.abstract.Document
 import js.objects.Record
+import js.objects.jso
+import kotlin.js.Promise
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
@@ -12,6 +16,9 @@ external class ChatMessage : Document {
         fun applyRollMode(data: Any, rollMode: String)
         fun getWhisperRecipients(name: String)
     }
+
+    override fun delete(operation: DatabaseGetOperation): Promise<ChatMessage>
+    override fun update(data: AnyObject, operation: DatabaseGetOperation): Promise<ChatMessage>
 
     val blind: Boolean
     val content: String
@@ -27,3 +34,7 @@ external class ChatMessage : Document {
     fun applyRollMode(rollMode: String)
     fun getRollData(): Record<String, Any>
 }
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+fun ChatMessage.update(data: ChatMessage, operation: DatabaseGetOperation = jso()): Promise<ChatMessage> =
+    update(data as AnyObject, operation)
