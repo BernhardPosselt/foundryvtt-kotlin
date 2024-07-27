@@ -102,7 +102,7 @@ external interface ApplicationClosingOptions {
 
 @JsPlainObject
 external interface ApplicationFormConfiguration {
-    val handler: (event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Unit>
+    val handler: ((event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>) -> Promise<Unit>)?
     val submitOnChange: Boolean
     val closeOnSubmit: Boolean
 }

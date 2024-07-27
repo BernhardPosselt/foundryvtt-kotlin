@@ -67,8 +67,12 @@ class RegionConfiguration : App<RegionSettingsContext>(
         ),
         templatePath = resolveTemplatePath("applications/settings/configure-regions.hbs"),
         classes = arrayOf("km-dialog-form"),
-
+        tag = "form",
+        form = ApplicationFormConfiguration(
+            submitOnChange = true,
+            closeOnSubmit = false,
         )
+    )
 ) {
     init {
         appHook.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
