@@ -3,13 +3,12 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlin.js.Promise
 
 @JsName("CONFIG.TableResult.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class TableResult : Document {
+external class TableResult : ClientDocument {
     companion object : DocumentStatic<TableResult>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<TableResult>
@@ -18,6 +17,7 @@ external class TableResult : Document {
     val icon: String
     fun getChatText(): String
 
+    var _id: String
     var type: String
     var text: String
     var img: String

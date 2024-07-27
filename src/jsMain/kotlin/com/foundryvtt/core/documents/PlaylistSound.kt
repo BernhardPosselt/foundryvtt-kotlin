@@ -5,7 +5,6 @@ import com.foundryvtt.core.AudioContext
 import com.foundryvtt.core.Sound
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlin.js.Promise
 
@@ -13,12 +12,13 @@ import kotlin.js.Promise
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PlaylistSound.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-open external class PlaylistSound : Document {
+open external class PlaylistSound : ClientDocument {
     companion object : DocumentStatic<PlaylistSound>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PlaylistSound>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PlaylistSound>
 
+    var _id: String
     val sound: Sound?
     val fadeDuration: Int
     val context: AudioContext

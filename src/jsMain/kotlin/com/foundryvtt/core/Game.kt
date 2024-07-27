@@ -15,4 +15,5 @@ external object Game {
     val users: Users
     val tables: RollTables
     val scenes: Scenes
+    val journal: Journal
 }

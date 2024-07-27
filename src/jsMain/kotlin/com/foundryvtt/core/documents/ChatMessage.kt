@@ -3,7 +3,6 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import js.objects.Record
 import js.objects.jso
 import kotlin.js.Promise
@@ -12,7 +11,7 @@ import kotlin.js.Promise
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.ChatMessage.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class ChatMessage : Document {
+external class ChatMessage : ClientDocument {
     companion object : DocumentStatic<ChatMessage> {
         fun applyRollMode(data: Any, rollMode: String)
         fun getWhisperRecipients(name: String)
@@ -21,14 +20,16 @@ external class ChatMessage : Document {
     override fun delete(operation: DatabaseDeleteOperation): Promise<ChatMessage>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<ChatMessage>
 
-    val blind: Boolean
-    val content: String
-    val emote: Boolean
-    val flavor: String
-    val logged: Boolean
-    val timestamp: Int
-    val style: Int
-    val type: String
+    var _id: String
+    var blind: Boolean
+    var content: String
+    var emote: Boolean
+    var flavor: String
+    var logged: Boolean
+    var timestamp: Int
+    var style: Int
+    var type: String
+
     val _rollExpanded: Boolean
 
     fun prepareDerivedData()

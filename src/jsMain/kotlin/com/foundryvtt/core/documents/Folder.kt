@@ -27,12 +27,13 @@ external interface ExportCompendiumOptions {
 external class Folder(
     data: AnyObject = definedExternally,
     options: DocumentConstructionContext = definedExternally
-) : Document {
+) : ClientDocument {
     companion object : DocumentStatic<Folder>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Folder>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Folder>
 
+    var _id: String
     val name: String
     val description: String
     val folder: Folder

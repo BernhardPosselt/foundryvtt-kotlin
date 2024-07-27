@@ -2,8 +2,8 @@ package com.foundryvtt.pf2e
 
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.utils.Collection
-import com.foundryvtt.luxon.DateTime
 import com.foundryvtt.pf2e.actor.PF2ECharacter
+import io.moment.luxon.DateTime
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 

@@ -4,7 +4,6 @@ import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Roll
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -40,12 +39,13 @@ external interface RollTableRollOptions {
 
 @JsName("CONFIG.RollTable.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class RollTable : Document {
+external class RollTable : ClientDocument {
     companion object : DocumentStatic<RollTable>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<RollTable>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<RollTable>
 
+    var _id: String
     var name: String
     var img: String
     var description: String

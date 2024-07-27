@@ -9,19 +9,42 @@ import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface PF2ECharacterHeroPoints {
-    var value: Int
+external interface Value<T> {
+    var value: T
 }
 
 @JsPlainObject
-external interface PF2ECharacterResourcesData {
-    var heroPoints: PF2ECharacterHeroPoints
-}
+external interface StringValue : Value<String>
 
 @JsPlainObject
-external interface PF2ECharacterXPData {
-    var value: Int
+external interface IntValue : Value<Int>
+
+@JsPlainObject
+external interface MaxValue : IntValue {
     var max: Int
+}
+
+@JsPlainObject
+external interface MinValue : IntValue {
+    var min: Int
+}
+
+@JsPlainObject
+external interface MinMaxValue : MaxValue, MinValue
+
+@JsPlainObject
+external interface Resources {
+    var heroPoints: MaxValue
+}
+
+@JsPlainObject
+external interface Hp : IntValue {
+    var temp: Int
+}
+
+@JsPlainObject
+external interface Xp : MinMaxValue {
+    var pct: Int
 }
 
 @JsPlainObject
@@ -31,17 +54,73 @@ external interface PF2ECharacterLevelData {
 
 
 @JsPlainObject
-external interface PF2ECharacterDetailsData {
-    var xp: PF2ECharacterXPData
-    var level: PF2ECharacterLevelData
+external interface Details {
+    var xp: Xp
+    var level: IntValue
+    var keyability: StringValue
+    var attributes: Attributes
+    var age: StringValue
+    var height: StringValue
+    var weight: StringValue
+    var gender: StringValue
+    var ethnicity: StringValue
+    var nationality: StringValue
+}
+
+@JsPlainObject
+external interface Speeds : IntValue {
+    var otherSpeeds: Array<String>
+}
+
+@JsPlainObject
+external interface Attributes {
+    var hp: Hp
+    var speed: Speeds
+    var ac: IntValue
+    var perception: IntValue
+}
+
+@JsPlainObject
+external interface Saves {
+    var fortitude: IntValue
+    var reflex: IntValue
+    var will: IntValue
 }
 
 
 @JsPlainObject
-external interface PF2ECharacterData {
-    var resources: PF2ECharacterResourcesData
-    var details: PF2ECharacterDetailsData
-    var exploration: Array<String>?
+external interface Ability {
+    var mod: Int
+    var base: Int
+    var label: String
+    var shortLabel: String
+}
+
+
+@JsPlainObject
+external interface Abilities {
+    var str: Ability
+    var dex: Ability
+    var con: Ability
+    var int: Ability
+    var wis: Ability
+    var cha: Ability
+}
+
+@JsPlainObject
+external interface Traits {
+    var rarity: String
+}
+
+@JsPlainObject
+external interface PF2ECharacterSystem {
+    var attributes: Attributes
+    var resources: Resources
+    var details: Details
+    var exploration: Array<String>
+    var abilities: Abilities
+    var traits: Traits
+    var saves: Saves
 }
 
 // required to make instance of work, but since the classes are not registered here
@@ -54,8 +133,9 @@ external class PF2ECharacter : PF2EActor {
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ECharacter>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECharacter>
 
+    val abilities: Abilities
     val skills: Record<String, PF2EAttribute>
-    val system: PF2ECharacterData
+    val system: PF2ECharacterSystem
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

@@ -3,7 +3,6 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.collections.EmbeddedCollection
 import js.objects.jso
 import kotlinx.js.JsPlainObject
@@ -18,12 +17,13 @@ external interface PlayNextOptions {
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.Playlist.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class Playlist : Document {
+external class Playlist : ClientDocument {
     companion object : DocumentStatic<Playlist>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Playlist>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Playlist>
 
+    var _id: String
     var name: String
     var description: String
     var sounds: EmbeddedCollection<PlaylistSound>
@@ -36,7 +36,6 @@ external class Playlist : Document {
     var seed: Int
     var sort: Int
     val playbackOrder: Array<String>
-    val visible: Boolean
     fun playAll(): Promise<Playlist>
     fun playNext(soundId: String, options: PlayNextOptions = definedExternally)
     fun playSound(sound: PlaylistSound): Promise<Playlist>

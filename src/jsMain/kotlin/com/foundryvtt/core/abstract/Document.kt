@@ -80,6 +80,12 @@ abstract external class Document(
         operation: DatabaseDeleteOperation = definedExternally
     ): Promise<Array<T>>
 
+    open fun <T : Document> getEmbeddedDocument(
+        name: String,
+        id: String,
+        operation: DatabaseGetOperation = definedExternally
+    ): Promise<T>
+
     open fun getFlag(scope: String, key: String): Any?
     open fun <T> setFlag(scope: String, key: String, value: T): Promise<T>
     open fun unsetFlag(scope: String, key: String): Promise<Any?>

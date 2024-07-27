@@ -3,7 +3,6 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -65,12 +64,13 @@ external interface SceneGrid {
 
 @JsName("CONFIG.Scene.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class Scene : Document {
+external class Scene : ClientDocument {
     companion object : DocumentStatic<Scene>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Scene>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Scene>
 
+    var _id: String
     var name: String
     var img: String
     var active: Boolean

@@ -93,6 +93,7 @@ external class Token : Document {
     override fun delete(operation: DatabaseDeleteOperation): Promise<Token>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Token>
 
+    var _id: String
     var name: String
     var displayName: Int
     var displayBars: Int

@@ -3,7 +3,6 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.core.abstract.Document
 import js.objects.jso
 import kotlin.js.Promise
 
@@ -12,12 +11,13 @@ import kotlin.js.Promise
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.User.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class User : Document {
+external class User : ClientDocument {
     companion object : DocumentStatic<User>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<User>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<User>
 
+    var _id: String
     val isGM: Boolean
     val isBanned: Boolean
     val name: String
