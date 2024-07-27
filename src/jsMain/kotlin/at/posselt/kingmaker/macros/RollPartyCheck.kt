@@ -30,7 +30,7 @@ suspend fun rollPartyCheck(players: Array<PF2ECharacter>) {
         templateContext = recordOf(
             "formRows" to formContext(
                 NumberInput(label = "DC", name = "dc"),
-                CheckboxInput(label = "Private GM Roll", name = "private", value = true),
+                CheckboxInput(label = "Private GM Roll", name = "private", value = true, required = false),
                 Select(label = "Skill", name = "skill", options = skills.map {
                     SelectOption(label = it.label, value = it.value)
                 })

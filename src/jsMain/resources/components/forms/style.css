@@ -7,10 +7,20 @@
 }
 
 .km-dialog-form {
+    fieldset {
+        margin-bottom: 15px;
+        padding: 15px;
+        border: 1px solid;
+    }
+
+    input:invalid, textarea:invalid, select:invalid {
+        border-color: #a31010;
+    }
+
     table {
         margin: 0;
 
-        th {
+        th, input[type="text"], input[type="number"], select {
             text-align: center;
         }
 
@@ -49,6 +59,10 @@
 
     button:not(.full-width) {
         width: auto;
+    }
+
+    button.full-width {
+        margin-top: 10px;
     }
 
     button[data-action="save"] {

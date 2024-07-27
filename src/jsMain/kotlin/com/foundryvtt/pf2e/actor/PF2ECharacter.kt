@@ -28,11 +28,6 @@ external interface Xp : MinMaxValue {
     var pct: Int
 }
 
-@JsPlainObject
-external interface PF2ECharacterLevelData {
-    var value: Int
-}
-
 
 @JsPlainObject
 external interface Details {

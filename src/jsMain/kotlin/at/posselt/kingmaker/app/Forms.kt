@@ -28,7 +28,7 @@ external interface FormElementContext {
     val help: String?
     val value: Any?
     val select: Boolean
-    val selectAllowsEmpty: Boolean
+    val required: Boolean
     val number: Boolean
     val text: Boolean
     val textArea: Boolean
@@ -56,7 +56,7 @@ data class Select(
     override val name: String,
     val value: String? = null,
     val options: List<SelectOption>,
-    val allowsEmpty: Boolean = false,
+    val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
@@ -66,7 +66,7 @@ data class Select(
         help = help,
         value = value,
         select = true,
-        selectAllowsEmpty = allowsEmpty,
+        required = required,
         number = false,
         text = false,
         textArea = false,
@@ -85,6 +85,7 @@ data class TextInput(
     override val label: String,
     override val name: String,
     val value: String,
+    val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
@@ -94,7 +95,7 @@ data class TextInput(
         help = help,
         value = value,
         select = false,
-        selectAllowsEmpty = false,
+        required = required,
         number = false,
         text = true,
         textArea = false,
@@ -108,6 +109,7 @@ data class CheckboxInput(
     override val label: String,
     override val name: String,
     val value: Boolean = false,
+    val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
@@ -117,7 +119,7 @@ data class CheckboxInput(
         help = help,
         value = value,
         select = false,
-        selectAllowsEmpty = false,
+        required = required,
         number = false,
         text = false,
         textArea = false,
@@ -131,6 +133,7 @@ data class TextArea(
     override val label: String,
     override val name: String,
     val value: String,
+    val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
@@ -140,7 +143,7 @@ data class TextArea(
         help = help,
         value = value,
         select = false,
-        selectAllowsEmpty = false,
+        required = required,
         number = false,
         text = false,
         textArea = true,
@@ -154,6 +157,7 @@ data class NumberInput(
     override val label: String,
     override val name: String,
     val value: Int = 0,
+    val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
@@ -163,7 +167,7 @@ data class NumberInput(
         help = help,
         value = value,
         select = false,
-        selectAllowsEmpty = false,
+        required = required,
         number = true,
         text = false,
         textArea = false,

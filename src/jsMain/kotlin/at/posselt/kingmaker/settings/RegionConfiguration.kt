@@ -52,6 +52,7 @@ external interface RegionSettingsContext {
     var useStolenLands: FormElementContext
     var heading: Array<TableHead>
     var formRows: Array<Array<FormElementContext>>
+    var isValid: Boolean
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -79,6 +80,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
     }
 
     var currentSettings = game.settings.getObject<RegionSettings>("regionSettings")
+    var isValid = true
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (val action = target.dataset["action"]) {
@@ -120,6 +122,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
             .mapNotNull { it.toOption() }
             .sortedBy { it.label }
         RegionSettingsContext(
+            isValid = isValid,
             useStolenLands = CheckboxInput(
                 value = currentSettings.useStolenLands,
                 name = "useStolenLands",
@@ -139,7 +142,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
                 val trackOptions = row.combatTrack?.playlistId?.let {
                     game.playlists.get(it)?.sounds?.contents?.mapNotNull { it.toOption() } ?: emptyList()
                 } ?: emptyList()
-                console.log(row.combatTrack?.playlistId, row.combatTrack?.trackId)
+                console.log(row.combatTrack)
                 arrayOf(
                     TextInput(
                         name = "regions.$index.name",
@@ -169,15 +172,15 @@ class RegionConfiguration : App<RegionSettingsContext>(
                         name = "regions.$index.rollTableId",
                         label = "Roll Table",
                         value = row.rollTableId,
-                        allowsEmpty = true,
+                        required = false,
                         hideLabel = true,
                         options = rolltableOptions,
                     ).toContext(),
                     Select(
-                        name = "regions.$index.combatTrack.playListId",
+                        name = "regions.$index.combatTrack.playlistId",
                         label = "Combat Playlist",
                         value = row.combatTrack?.playlistId,
-                        allowsEmpty = true,
+                        required = false,
                         hideLabel = true,
                         options = playlistOptions
                     ).toContext(),
@@ -185,7 +188,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
                         name = "regions.$index.combatTrack.trackId",
                         label = "Combat Track",
                         value = row.combatTrack?.trackId,
-                        allowsEmpty = true,
+                        required = false,
                         hideLabel = true,
                         options = trackOptions
                     ).toContext(),
@@ -196,15 +199,17 @@ class RegionConfiguration : App<RegionSettingsContext>(
 
     override fun onSubmit(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Void> =
         buildPromise {
+            isValid = form.reportValidity()
             val obj = parseFormData<RegionSettings>(formData.`object`) {
                 it["regions"] = (it["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
                 console.log(it)
             }
             currentSettings = obj
-            if (currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
+            if (!currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
                 addDefaultRegion()
             }
-            console.log(formData, currentSettings)
+            console.log(formData)
+            console.log(JSON.stringify(currentSettings))
             render()
             null
         }
