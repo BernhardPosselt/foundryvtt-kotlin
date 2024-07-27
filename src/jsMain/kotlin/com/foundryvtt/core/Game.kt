@@ -16,4 +16,5 @@ external object Game {
     val tables: RollTables
     val scenes: Scenes
     val journal: Journal
+    val macros: Macros
 }

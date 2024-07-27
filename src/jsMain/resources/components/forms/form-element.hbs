@@ -8,20 +8,16 @@
 
             {{/if}}
         </select>
-{{/if}}
-{{#if number}}
+{{else if number}}
         <input type="number" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}}>
-{{/if}}
-{{#if text}}
+{{else if text}}
         <input type="text" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}}>
-{{/if}}
-{{#if checkbox}}
+{{else if checkbox}}
         <input type="checkbox" name="{{name}}" {{checked value}}  {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}}>
-{{/if}}
-{{#if textarea}}
+{{else if textarea}}
         <textarea name="{{name}}"  {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}}>{{value}}</textarea>
 {{/if}}

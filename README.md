@@ -17,9 +17,17 @@ Then link this directory to your foundry data folder:
 
 Build the project using:
 
+    ./gradlew assemble
+
+or if you want to both build it and run its tests:
+
     ./gradlew build
+
+To execute tests run:
+
+    ./gradlew jsTest
 
 Finally, start foundry
 
-    cd dev/FoundryVTT-12.328/
+    cd dev/FoundryVTT-12.330/
     ./foundryvtt

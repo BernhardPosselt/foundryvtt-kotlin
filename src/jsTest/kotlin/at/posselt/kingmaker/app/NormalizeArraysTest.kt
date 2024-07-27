@@ -9,10 +9,10 @@ import kotlin.test.assertEquals
 class NormalizeArraysTest {
 
     @Test
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
     fun testFirstLevelArray() {
-        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
         val test = recordOf(0 to "hi", 1 to "lo") as Record<String, String>
-        val result = normalizeArrays(test)
+        val result = normalizeArrays(test) as Array<String>
 
         assertContentEquals(arrayOf("hi", "lo"), result)
     }

@@ -3,6 +3,7 @@ package at.posselt.kingmaker.utils
 import js.array.JsTuple2
 import js.array.ReadonlyArray
 import js.array.toTypedArray
+import js.array.tupleOf
 import js.iterable.JsIterable
 import js.objects.Object
 import js.objects.Record
@@ -72,12 +73,15 @@ fun <T> Object.Companion.fromEntries(entries: ReadonlyArray<JsTuple2<String, T>>
 fun <T> Object.Companion.fromEntries(entries: JsIterable<JsTuple2<String, T>>): Record<String, T> =
     asDynamic().fromEntries(entries)
 
-fun <T : Any?> Object.Companion.entries2(obj: Record<String, T>): ReadonlyArray<JsTuple2<String, T>> =
+fun <T> Object.Companion.entries2(obj: Record<String, T>): ReadonlyArray<JsTuple2<String, T>> =
     asDynamic().entries(obj)
 
 
-fun <T : Any?> Record<String, T>.asSequence(): Sequence<JsTuple2<String, T>> =
+fun <T> Record<String, T>.asSequence(): Sequence<JsTuple2<String, T>> =
     Object.entries2(this).asSequence()
 
-fun <T : Any?> Sequence<JsTuple2<String, T>>.toRecord(): Record<String, T> =
+fun <T> Sequence<Pair<String, T>>.toRecord(): Record<String, T> =
+    Object.fromEntries(map { tupleOf(it.first, it.second) }.toTypedArray())
+
+fun <T> Sequence<JsTuple2<String, T>>.toRecord(): Record<String, T> =
     Object.fromEntries(toTypedArray())

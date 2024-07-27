@@ -35,7 +35,7 @@ external class NoteDocument(
     var y: Int
     var elevation: Int
     var sort: Int
-    var textureData: TextureData
+    var texture: TextureData
     var iconSize: Int
     var text: String
     var fontFamily: String

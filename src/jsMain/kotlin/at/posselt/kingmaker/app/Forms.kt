@@ -8,7 +8,7 @@ import com.foundryvtt.core.documents.Playlist
 import com.foundryvtt.core.documents.PlaylistSound
 import com.foundryvtt.core.documents.RollTable
 import com.foundryvtt.core.utils.expandObject
-import js.array.tupleOf
+import js.array.toTypedArray
 import js.objects.Object
 import js.objects.Record
 import js.objects.recordOf
@@ -208,6 +208,7 @@ fun <T> parseFormData(value: AnyObject, and: (dynamic) -> Unit): T {
     val expanded = expandObject(filteredBlanks)
     val result = normalizeArrays(expanded)
     and(result)
+    @Suppress("UNCHECKED_CAST")
     return result as T
 }
 
@@ -219,21 +220,29 @@ fun <T> parseFormData(value: AnyObject, and: (dynamic) -> Unit): T {
  * @return either a Record or an array if the top level object was an array
  */
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun <T : Any?> normalizeArrays(obj: Record<String, T>): dynamic {
+fun <T> normalizeArrays(obj: Record<String, T>): Any {
     if (Object.hasOwn(obj, 0)) {
-        return Object.keys(obj)
-            .map(String::toInt)
-            .sorted()
+        return obj.asSequence()
+            .sortedBy { it.component1().toInt() }
             .map {
-                val value = obj[it.toString()]
-                if (isJsObject(value)) normalizeArrays(value as AnyObject) else value
+                val value = it.component2()
+                if (isJsObject(value)) {
+                    normalizeArrays(value as AnyObject)
+                } else {
+                    value
+                }
             }
             .toTypedArray()
     } else {
         return obj.asSequence()
             .map {
                 val value = it.component2()
-                tupleOf(it.component1(), if (isJsObject(value)) normalizeArrays(value as AnyObject) else value)
+                val normalizedValue = if (isJsObject(value)) {
+                    normalizeArrays(value as AnyObject)
+                } else {
+                    value
+                }
+                it.component1() to normalizedValue
             }
             .toRecord()
     }

@@ -5,7 +5,33 @@ import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.objects.Record
 import js.objects.jso
+import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
+
+@JsPlainObject
+external interface ChatSpeakerData {
+    val scene: String
+    val actor: String
+    val token: String
+    val alias: String
+}
+
+
+@JsPlainObject
+external interface ChatMessageData {
+    val _id: String
+    val type: String?
+    val user: String
+    val timestamp: Int
+    val flavor: String
+    val content: String
+    val speaker: ChatSpeakerData
+    val whisper: Array<String>
+    val blind: Boolean?
+    val rolls: Array<String>
+    val sound: String
+    val emote: Boolean
+}
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
