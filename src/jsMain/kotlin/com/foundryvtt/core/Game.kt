@@ -11,4 +11,5 @@ external object Game {
     val folders: Folders?
     val users: Users
     val tables: RollTables?
+    val scenes: Scenes?
 }
