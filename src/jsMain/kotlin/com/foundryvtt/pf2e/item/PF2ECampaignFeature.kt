@@ -3,26 +3,18 @@ package com.foundryvtt.pf2e.item
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.pf2e.system.IntValue
+import com.foundryvtt.pf2e.system.ItemTraits
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface PF2ECampaignFeatureTraits {
-    val value: Array<String>
-}
-
-@JsPlainObject
-external interface PF2ECampaignFeatureLevel {
-    val value: Int
-}
-
-@JsPlainObject
 external interface PF2ECampaignFeatureData {
     val campaign: String
     val category: String
-    val traits: PF2ECampaignFeatureTraits
-    val level: PF2ECampaignFeatureLevel
+    val traits: ItemTraits
+    val level: IntValue
 }
 
 // required to make instance of work, but since the classes are not registered here

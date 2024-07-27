@@ -3,6 +3,7 @@ package com.foundryvtt.pf2e.item
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.pf2e.system.IntValue
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -21,6 +22,9 @@ external class PF2EEffect : PF2EItem {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EEffect>
 
     val system: PF2EEffectData
+    val isExpired: Boolean
+    val slug: String
+    val badge: IntValue
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

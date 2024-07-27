@@ -3,34 +3,15 @@ package com.foundryvtt.pf2e.actor
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.pf2e.system.IntValue
+import com.foundryvtt.pf2e.system.MaxValue
+import com.foundryvtt.pf2e.system.MinMaxValue
+import com.foundryvtt.pf2e.system.StringValue
 import js.objects.Record
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
-@JsPlainObject
-external interface Value<T> {
-    var value: T
-}
-
-@JsPlainObject
-external interface StringValue : Value<String>
-
-@JsPlainObject
-external interface IntValue : Value<Int>
-
-@JsPlainObject
-external interface MaxValue : IntValue {
-    var max: Int
-}
-
-@JsPlainObject
-external interface MinValue : IntValue {
-    var min: Int
-}
-
-@JsPlainObject
-external interface MinMaxValue : MaxValue, MinValue
 
 @JsPlainObject
 external interface Resources {

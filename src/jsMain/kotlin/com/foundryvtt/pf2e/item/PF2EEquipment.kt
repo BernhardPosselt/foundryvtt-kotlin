@@ -3,12 +3,15 @@ package com.foundryvtt.pf2e.item
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.pf2e.system.ItemTraits
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface PF2EEquipmentData
+external interface PF2EEquipmentData {
+    var traits: ItemTraits
+}
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier

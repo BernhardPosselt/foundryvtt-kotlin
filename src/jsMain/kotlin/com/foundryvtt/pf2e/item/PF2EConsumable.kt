@@ -3,12 +3,18 @@ package com.foundryvtt.pf2e.item
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.pf2e.system.ItemTraits
+import com.foundryvtt.pf2e.system.MaxValue
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface PF2EConsumableData
+external interface PF2EConsumableData {
+    var traits: ItemTraits
+    var uses: MaxValue
+    var quantity: Int
+}
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
@@ -21,6 +27,7 @@ external class PF2EConsumable : PF2EItem {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EConsumable>
 
     val system: PF2EConsumableData
+    val quantity: Int
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
