@@ -2,7 +2,7 @@ package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.actor.playerCharacters
-import at.posselt.kingmaker.macros.rollPartyCheck
+import at.posselt.kingmaker.macros.rollPartyCheckMacro
 import at.posselt.kingmaker.settings.registerRegionSettings
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
@@ -22,6 +22,7 @@ fun main() {
                 )
             )
             registerRegionSettings(game)
+            registerWeatherSettings(game)
         }
 
     }
@@ -32,7 +33,7 @@ fun main() {
         console.log(players)
 //        ConfigureRegions().render(ApplicationRenderOptions(force = true))
         buildPromise {
-            rollPartyCheck(game.partyMembers())
+            rollPartyCheckMacro(game.partyMembers())
 //            awardHeroPoints(players)
 //            awardXP(players)
         }

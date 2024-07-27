@@ -2,6 +2,7 @@ package at.posselt.kingmaker.app
 
 import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.isJsObject
+import at.posselt.kingmaker.utils.toMutableRecord
 import at.posselt.kingmaker.utils.toRecord
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.documents.Playlist
@@ -204,7 +205,7 @@ fun <T> parseFormData(value: AnyObject, and: (dynamic) -> Unit): T {
             val rhs = it.component2()
             if (rhs is String) rhs.isNotEmpty() else true
         }
-        .toRecord()
+        .toMutableRecord()
     val expanded = expandObject(filteredBlanks)
     val result = normalizeArrays(expanded)
     and(result)

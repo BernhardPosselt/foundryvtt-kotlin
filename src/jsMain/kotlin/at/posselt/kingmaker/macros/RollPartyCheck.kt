@@ -24,7 +24,7 @@ private external interface FormData {
     val private: Boolean
 }
 
-suspend fun rollPartyCheck(players: Array<PF2ECharacter>) {
+suspend fun rollPartyCheckMacro(players: Array<PF2ECharacter>) {
     prompt<FormData, Unit>(
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(

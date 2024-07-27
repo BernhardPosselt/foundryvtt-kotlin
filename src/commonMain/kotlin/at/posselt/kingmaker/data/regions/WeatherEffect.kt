@@ -1,5 +1,30 @@
 package at.posselt.kingmaker.data.regions
 
+enum class WeatherEffect(val value: String) {
+    SNOW("snow"),
+    RAIN("rain"),
+    SUNNY("sunny"),
+    LEAVES("leaves"),
+    RAIN_STORM("rainStorm"),
+    FOG("fog"),
+    BLIZZARD("blizzard");
+
+    companion object {
+        fun fromString(value: String): WeatherEffect {
+            return when (value) {
+                "snow" -> SNOW
+                "rain" -> RAIN
+                "sunny" -> SUNNY
+                "leaves" -> LEAVES
+                "rainStorm" -> RAIN_STORM
+                "fog" -> FOG
+                "blizzard" -> BLIZZARD
+                else -> throw IllegalArgumentException("$value is not a valid weather effect")
+            }
+        }
+    }
+}
+
 enum class Season(val value: String) {
     SPRING("spring"),
     SUMMER("summer"),

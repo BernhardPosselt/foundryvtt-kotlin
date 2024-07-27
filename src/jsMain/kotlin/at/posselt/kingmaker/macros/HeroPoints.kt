@@ -29,7 +29,7 @@ private data class PointsForPlayer(
 /**
  * Sets all hero points to 1
  */
-suspend fun resetHeroPoints(actors: Array<PF2ECharacter>) {
+suspend fun resetHeroPointsMacro(actors: Array<PF2ECharacter>) {
     val points = actors.map { PointsForPlayer(player = it, 1, AwardMode.SET) }.toTypedArray()
     updateHeroPoints(points)
     postChatMessage("Reset hero point values to 1")
@@ -50,13 +50,13 @@ private suspend fun updateHeroPoints(points: Array<PointsForPlayer>) {
 }
 
 
-suspend fun awardHeroPoints(players: Array<PF2ECharacter>) {
+suspend fun awardHeroPointsMacro(players: Array<PF2ECharacter>) {
     prompt<Record<String, Int>, Unit>(
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(
             "formRows" to formContext(
                 NumberInput(label = "All", name = "award-all"),
-                *players.map { NumberInput(label = it.name ?: "", name = it.uuid) }.toTypedArray()
+                *players.map { NumberInput(label = it.name, name = it.uuid) }.toTypedArray()
             )
         ),
         title = "Award Hero Points",

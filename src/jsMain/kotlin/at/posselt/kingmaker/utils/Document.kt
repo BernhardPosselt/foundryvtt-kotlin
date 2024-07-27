@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.utils
 
+import at.posselt.kingmaker.Config
 import com.foundryvtt.core.abstract.Document
 import js.objects.PropertyKey
 import js.objects.jso
@@ -7,6 +8,7 @@ import js.objects.recordOf
 import js.reflect.Proxy
 import js.reflect.ProxyHandler
 import js.symbol.Symbol
+import kotlinx.coroutines.await
 import kotlin.js.Promise
 
 
@@ -64,3 +66,11 @@ fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): Promise<D> {
     proxy.block()
     return update(result.toRecord()) as Promise<D>
 }
+
+suspend fun <D : Document, T> D.setAppFlag(key: String, flag: T) = buildPromise {
+    setFlag(Config.MODULE_ID, key, flag).await()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <D : Document, T> D.getAppFlag(key: String) =
+    getFlag(Config.MODULE_ID, key) as T?

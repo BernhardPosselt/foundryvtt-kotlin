@@ -4,7 +4,6 @@ import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.ApplicationV2
-import js.objects.jso
 import kotlinx.coroutines.await
 
 fun <T : DataField> Settings.registerField(
@@ -74,13 +73,21 @@ fun Settings.createMenu(
     )
 }
 
-fun Settings.getBoolean(key: String): Boolean = get(Config.MODULE_ID, key)
+fun Settings.getString(key: String): String =
+    get(Config.MODULE_ID, key)
+
+suspend fun Settings.setString(key: String, value: String) =
+    set(Config.MODULE_ID, key, value).await()
+
+fun Settings.getBoolean(key: String): Boolean =
+    get(Config.MODULE_ID, key)
 
 suspend fun Settings.setBoolean(key: String, value: Boolean) = buildPromise {
     set(Config.MODULE_ID, key, value).await()
 }
 
-fun <T> Settings.getObject(key: String): T = get(Config.MODULE_ID, key) ?: jso()
+fun <T : Any> Settings.getObject(key: String): T =
+    get(Config.MODULE_ID, key)
 
 suspend fun Settings.setObject(key: String, value: Any) = buildPromise {
     set(Config.MODULE_ID, key, value).await()

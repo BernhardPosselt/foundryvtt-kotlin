@@ -30,7 +30,7 @@ external interface XpFormData {
     val amount: Int
 }
 
-suspend fun awardXP(players: Array<PF2ECharacter>) {
+suspend fun awardXPMacro(players: Array<PF2ECharacter>) {
     prompt<XpFormData, Unit>(
         title = "Award Party XP",
         templatePath = "components/forms/form.hbs",
