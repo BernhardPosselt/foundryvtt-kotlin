@@ -5,6 +5,8 @@ import com.foundryvtt.core.documents.Playlist
 import com.foundryvtt.core.documents.PlaylistSound
 import com.foundryvtt.core.documents.RollTable
 import com.foundryvtt.core.utils.expandObject
+import js.objects.Object
+import js.objects.jso
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject
 
@@ -195,7 +197,33 @@ fun <T> expandObjectAnd(value: AnyObject, and: (dynamic) -> Unit): T {
     return result as T
 }
 
-external fun normalizeArrays(obj: Any): dynamic
+fun <T> isObject(x: T) =
+    jsTypeOf(x) == "object" && x != null
+
+/**
+ * This utility is needed to dynamically and recursively convert nested objects
+ * with integer keys into arrays since that's how Foundry handles forms
+ */
+@Suppress("UnsafeCastFromDynamic")
+fun normalizeArrays(obj: dynamic): dynamic {
+    if (Object.hasOwn(obj, 0)) {
+        return Object.keys(obj)
+            .map(String::toInt)
+            .sorted()
+            .map {
+                val value = obj[it.toString()]
+                if (isObject(value)) normalizeArrays(value) else value
+            }
+            .toTypedArray()
+    } else {
+        val result = jso<AnyObject>()
+        Object.entries<AnyObject>(obj).map {
+            val value = it.component2()
+            result[it.component1()] = if (isObject(value)) normalizeArrays(value) else value
+        }
+        return result
+    }
+}
 
 fun RollTable.toOption() = id?.let {
     SelectOption(label = name, value = it)

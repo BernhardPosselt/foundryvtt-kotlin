@@ -201,7 +201,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
             val obj = expandObjectAnd<RegionSettings>(formData.`object`) {
                 it["regions"] = (it["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
                 it["regions"].forEach { row ->
-                    if (row.combatTrack.playlistId.isBlank()) {
+                    if (row.combatTrack.playlistId?.isBlank()) {
 
                     }
                     row.combatTrack?.trackId?.ifBlank { row.combatTrack?.trackId = null }
