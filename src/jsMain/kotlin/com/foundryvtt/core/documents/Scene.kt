@@ -3,6 +3,7 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.core.collections.EmbeddedCollection
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -57,9 +58,28 @@ external interface SceneGrid {
     val style: String
     val thickness: Int
     val color: String
-    val alpha: String?
+    val alpha: Double?
     val distance: Int
     val unit: String
+}
+
+@JsPlainObject
+external interface EnvironmentData {
+    val hue: Double
+    val saturation: Double
+    val intensity: Double
+    val luminosity: Double
+    val shadows: Double
+}
+
+@JsPlainObject
+external interface SceneEnvironmentData {
+    val darknessLevel: Double
+    val darknessLevelLock: Boolean
+    val globalLight: GlobalLightData
+    val cycle: Boolean
+    val base: EnvironmentData
+    val dark: EnvironmentData
 }
 
 @JsName("CONFIG.Scene.documentClass")
@@ -81,18 +101,19 @@ external class Scene : ClientDocument {
     var thumb: String
     var width: Int
     var height: Int
-    var padding: Int
+    var padding: Double
     var initial: SceneInitial
     var grid: SceneGrid
+    var environment: SceneEnvironmentData
+    var drawings: EmbeddedCollection<DrawingDocument>
+    var tokens: EmbeddedCollection<Token>
+    var tiles: EmbeddedCollection<TileDocument>
+    var notes: EmbeddedCollection<NoteDocument>
 
-    //    var environment: SceneEnvironment
-    //    var drawings: EmbeddedCollection<Drawing>
-    //    var tokens: EmbeddedCollection<Token>
+    // TODO
     //    var lights: EmbeddedCollection<Light>
-    //    var notes: EmbeddedCollection<Note>
     //    var sounds: EmbeddedCollection<AmbientSound>
     //    var templates: EmbeddedCollection<MeasuredTemplate>
-    //    var tiles: EmbeddedCollection<Tile>
     //    var walls : EmbeddedCollection<Wall>
     var playlist: Playlist?
     var playlistSound: PlaylistSound?

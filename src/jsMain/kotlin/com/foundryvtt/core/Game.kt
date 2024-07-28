@@ -17,4 +17,5 @@ external object Game {
     val scenes: Scenes
     val journal: Journal
     val macros: Macros
+    val combats: CombatEncounters
 }

@@ -2,9 +2,11 @@ package com.foundryvtt.core.documents
 
 import com.foundryvtt.core.Actor
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.Document
+import com.foundryvtt.core.data.fields.SchemaField
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -82,13 +84,62 @@ external interface RingData {
     val subject: RingSubjectData
 }
 
+@JsPlainObject
+external interface ToggleCombatantOptions {
+    val active: Boolean?
+    val options: AnyObject?
+}
+
+@JsPlainObject
+external interface BarAttributeOptions {
+    val alternative: String?
+}
+
+@JsPlainObject
+external interface CreateCombatantOptions {
+    val combat: Combat?
+}
+
+@JsPlainObject
+external interface TrackedAttributesDescription {
+    val bar: Array<String>
+    var value: Array<String>
+}
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.Token.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 external class Token : Document {
-    companion object : DocumentStatic<Token>
+    companion object : DocumentStatic<Token> {
+        fun createCombatants(
+            tokens: Array<Token>,
+            options: CreateCombatantOptions = definedExternally
+        ): Promise<Array<Combatant>>
+
+        fun deleteCombatants(
+            tokens: Array<Token>,
+            options: CreateCombatantOptions = definedExternally
+        ): Promise<Array<Combatant>>
+
+        fun getTrackedAttributes(
+            data: AnyObject,
+            _path: Array<String> = definedExternally
+        ): TrackedAttributesDescription
+
+        fun getTrackedAttributes(data: String, _path: Array<String> = definedExternally): TrackedAttributesDescription
+        fun getTrackedAttributes(
+            data: DataModel,
+            _path: Array<String> = definedExternally
+        ): TrackedAttributesDescription
+
+        fun getTrackedAttributes(
+            data: SchemaField,
+            _path: Array<String> = definedExternally
+        ): TrackedAttributesDescription
+
+        fun getTrackedAttributeChoices(attributes: AnyObject): AnyObject
+    }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Token>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Token>
@@ -97,7 +148,7 @@ external class Token : Document {
     var name: String
     var displayName: Int
     var displayBars: Int
-    var actor: Actor
+    var actor: Actor?
     var actorId: String?
     var actorLink: Boolean
     var delta: Any?
@@ -113,7 +164,7 @@ external class Token : Document {
     var sort: Int
     var locked: Boolean
     var lockRotation: Boolean
-    var alpha: Int
+    var alpha: Double
     var hidden: Boolean
     var disposition: Int
     var bar1: BarData
@@ -123,6 +174,20 @@ external class Token : Document {
     var detectionModes: Array<DetectionModeData>
     var occludable: OccludableData
     var ring: RingData
+
+    val actors: Collection<Actor>
+    val baseActor: Actor?
+    val isOwner: Boolean
+    val isLinked: Boolean
+    val isSecret: Boolean
+    val combatant: Combatant?
+    val inCombat: Boolean
+//    val regions: JsSet<Region>
+
+    fun getBarAttribute(options: BarAttributeOptions = definedExternally): AnyObject?
+    fun hasStatusEffect(statusId: String): Boolean
+    fun toggleCombatant(options: ToggleCombatantOptions = definedExternally): Promise<Boolean>
+    fun updateVisionMode(visionMode: String, defaults: Boolean = definedExternally): Promise<Token>
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
