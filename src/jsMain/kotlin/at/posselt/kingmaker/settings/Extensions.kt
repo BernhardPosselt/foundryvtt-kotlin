@@ -44,7 +44,7 @@ inline fun <reified T : Any> Settings.registerScalar(
             config = hidden,
             default = default,
             requiresReload = requiresReload,
-            type = T::class,
+            type = T::class.js,
             scope = "world"
         )
     )

@@ -5,15 +5,6 @@ import com.foundryvtt.core.applications.api.ApplicationFormConfiguration
 import com.foundryvtt.core.applications.api.ApplicationHeaderControlsEntry
 import com.foundryvtt.core.applications.api.ApplicationPosition
 import com.foundryvtt.core.applications.api.Window
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.get
-import org.w3c.dom.pointerevents.PointerEvent
-
-interface Action<T : Enum<T>> {
-//    abstract companion object {
-//        abstract fun fromString(): T?
-//    }
-}
 
 data class MenuControl(
     val label: String,
@@ -52,9 +43,4 @@ abstract class FormApp<A : Enum<A>>(
             closeOnSubmit = closeOnSubmit,
         )
     )
-) {
-    override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
-        val actionString = target.dataset["action"] as String
-//        val enum = A.
-    }
-}
+)
