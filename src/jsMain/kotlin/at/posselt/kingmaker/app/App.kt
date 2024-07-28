@@ -26,7 +26,7 @@ data class AppEventListener(
  * Small utility class that takes care of unregistering Hooks and
  * provides a neat way of defining event listeners
  */
-open class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsFormApplication<C>(config) {
+abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsFormApplication<C>(config) {
     private val appHooks = arrayOf<AppHook<*>>()
     private val appEventListeners = arrayOf<AppEventListener>()
     protected val appHook = object : HooksEventListener {

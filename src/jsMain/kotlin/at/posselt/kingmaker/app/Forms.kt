@@ -113,7 +113,7 @@ data class CheckboxInput(
     override val label: String,
     override val name: String,
     val value: Boolean = false,
-    val required: Boolean = true,
+    val required: Boolean = false,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {

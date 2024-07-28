@@ -25,6 +25,7 @@
                         <td>
                             {{#if @index}}
                                 <button
+                                        type="button"
                                         data-action="delete"
                                         data-index="{{@index}}"
                                         title="Remove Row"
@@ -33,6 +34,7 @@
                                 </button>
                             {{else}}
                                 <button
+                                        type="button"
                                         data-action="delete"
                                         data-index="{{@index}}"
                                         title="Remove Row"
@@ -45,7 +47,7 @@
                 {{/each}}
                 </tbody>
             </table>
-            <button data-action="add" class="full-width">Add Region</button>
+            <button type="button" data-action="add" class="full-width">Add Region</button>
         </fieldset>
     {{/unless}}
     <button data-action="save" {{#unless isValid}}disabled{{/unless}}>Save</button>

@@ -2,19 +2,14 @@ package at.posselt.kingmaker.settings
 
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.utils.buildPromise
-import at.posselt.kingmaker.utils.resolveTemplatePath
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.*
 import com.foundryvtt.core.data.fields.DataFieldOptions
 import com.foundryvtt.core.data.fields.ObjectField
 import js.array.push
-import js.core.Void
-import kotlinx.browser.window
 import kotlinx.coroutines.await
-import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
@@ -57,29 +52,16 @@ external interface RegionSettingsContext {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-class RegionConfiguration : App<RegionSettingsContext>(
-    HandlebarsFormApplicationOptions(
-        window = Window(
-            title = "Regions",
-        ),
-        position = ApplicationPosition(
-            width = 900,
-        ),
-        templatePath = resolveTemplatePath("applications/settings/configure-regions.hbs"),
-        classes = arrayOf("km-dialog-form"),
-        tag = "form",
-        form = ApplicationFormConfiguration(
-            submitOnChange = true,
-            closeOnSubmit = false,
-        )
-    )
+class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
+    title = "Regions",
+    width = 900,
+    template = "applications/settings/configure-regions.hbs",
 ) {
     init {
         appHook.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
     }
 
-    var currentSettings = game.settings.getObject<RegionSettings>("regionSettings")
-    var isValid = true
+    private var currentSettings = game.settings.getObject<RegionSettings>("regionSettings")
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (val action = target.dataset["action"]) {
@@ -121,7 +103,7 @@ class RegionConfiguration : App<RegionSettingsContext>(
             .mapNotNull { it.toOption() }
             .sortedBy { it.label }
         RegionSettingsContext(
-            isValid = isValid,
+            isValid = isFormValid,
             useStolenLands = CheckboxInput(
                 value = currentSettings.useStolenLands,
                 name = "useStolenLands",
@@ -141,7 +123,6 @@ class RegionConfiguration : App<RegionSettingsContext>(
                 val trackOptions = row.combatTrack?.playlistId?.let {
                     game.playlists.get(it)?.sounds?.contents?.mapNotNull { it.toOption() } ?: emptyList()
                 } ?: emptyList()
-                console.log(row.combatTrack)
                 arrayOf(
                     TextInput(
                         name = "regions.$index.name",
@@ -196,22 +177,16 @@ class RegionConfiguration : App<RegionSettingsContext>(
         )
     }
 
-    override fun onSubmit(event: Event, form: HTMLFormElement, formData: FormDataExtended<AnyObject>): Promise<Void> =
-        buildPromise {
-            isValid = form.reportValidity()
-            val obj = parseFormData<RegionSettings>(formData.`object`) {
-                it["regions"] = (it["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
-                console.log(it)
-            }
-            currentSettings = obj
-            if (!currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
-                addDefaultRegion()
-            }
-            console.log(formData)
-            console.log(JSON.stringify(currentSettings))
-            render()
-            null
+    override fun onParsedSubmit(value: RegionSettings) = buildPromise {
+        currentSettings = value
+        if (!currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
+            addDefaultRegion()
         }
+    }
+
+    override fun fixObject(value: dynamic) {
+        value["regions"] = (value["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
+    }
 
     private fun addDefaultRegion() {
         currentSettings.regions.push(
