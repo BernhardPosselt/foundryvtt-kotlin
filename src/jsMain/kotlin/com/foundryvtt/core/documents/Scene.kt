@@ -1,6 +1,6 @@
 package com.foundryvtt.core.documents
 
-import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.collections.EmbeddedCollection
@@ -135,3 +135,18 @@ external class Scene : ClientDocument {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun Scene.update(data: Scene, operation: DatabaseUpdateOperation = jso()): Promise<Scene> =
     update(data as AnyObject, operation)
+
+fun <O> HooksEventListener.onPreCreateScene(callback: PreCreateDocumentCallback<Scene, O>) =
+    on("preCreateScene", callback)
+
+fun <O> HooksEventListener.onPreUpdateScene(callback: PreUpdateDocumentCallback<Scene, O>): Unit =
+    on("preUpdateScene", callback)
+
+fun <O> HooksEventListener.onPreDeleteScene(callback: PreDeleteDocumentCallback<Scene, O>) =
+    on("preDeleteScene", callback)
+
+fun <O> HooksEventListener.onCreateScene(callback: CreateDocumentCallback<Scene, O>) =
+    on("createScene", callback)
+
+fun <O> HooksEventListener.onUpdateScene(callback: UpdateDocumentCallback<Scene, O>) =
+    on("updateScene", callback)

@@ -1,7 +1,6 @@
 package com.foundryvtt.core.documents
 
-import com.foundryvtt.core.Actor
-import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
@@ -193,3 +192,19 @@ external class TokenDocument : Document {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun TokenDocument.update(data: TokenDocument, operation: DatabaseUpdateOperation = jso()): Promise<TokenDocument> =
     update(data as AnyObject, operation)
+
+
+fun <O> HooksEventListener.onPreCreateToken(callback: PreCreateDocumentCallback<TokenDocument, O>) =
+    on("preCreateToken", callback)
+
+fun <O> HooksEventListener.onPreUpdateToken(callback: PreUpdateDocumentCallback<TokenDocument, O>): Unit =
+    on("preUpdateToken", callback)
+
+fun <O> HooksEventListener.onPreDeleteToken(callback: PreDeleteDocumentCallback<TokenDocument, O>) =
+    on("preDeleteToken", callback)
+
+fun <O> HooksEventListener.onCreateToken(callback: CreateDocumentCallback<TokenDocument, O>) =
+    on("createToken", callback)
+
+fun <O> HooksEventListener.onUpdateToken(callback: UpdateDocumentCallback<TokenDocument, O>) =
+    on("updateToken", callback)

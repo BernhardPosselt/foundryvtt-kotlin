@@ -1,8 +1,6 @@
 package com.foundryvtt.core.documents
 
-import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.AudioContext
-import com.foundryvtt.core.Sound
+import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.objects.jso
@@ -41,3 +39,18 @@ open external class PlaylistSound : ClientDocument {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun PlaylistSound.update(data: PlaylistSound, operation: DatabaseUpdateOperation = jso()): Promise<PlaylistSound> =
     update(data as AnyObject, operation)
+
+fun <O> HooksEventListener.onPreCreatePlaylistSound(callback: PreCreateDocumentCallback<PlaylistSound, O>) =
+    on("preCreatePlaylistSound", callback)
+
+fun <O> HooksEventListener.onPreUpdatePlaylistSound(callback: PreUpdateDocumentCallback<PlaylistSound, O>): Unit =
+    on("preUpdatePlaylistSound", callback)
+
+fun <O> HooksEventListener.onPreDeletePlaylistSound(callback: PreDeleteDocumentCallback<PlaylistSound, O>) =
+    on("preDeletePlaylistSound", callback)
+
+fun <O> HooksEventListener.onCreatePlaylistSound(callback: CreateDocumentCallback<PlaylistSound, O>) =
+    on("createPlaylistSound", callback)
+
+fun <O> HooksEventListener.onUpdatePlaylistSound(callback: UpdateDocumentCallback<PlaylistSound, O>) =
+    on("updatePlaylistSound", callback)

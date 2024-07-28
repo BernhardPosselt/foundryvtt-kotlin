@@ -1,6 +1,6 @@
 package com.foundryvtt.core.documents
 
-import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.objects.jso
@@ -51,3 +51,18 @@ fun DrawingDocument.update(
     operation: DatabaseUpdateOperation = jso()
 ): Promise<DrawingDocument> =
     update(data as AnyObject, operation)
+
+fun <O> HooksEventListener.onPreCreateDrawing(callback: PreCreateDocumentCallback<DrawingDocument, O>) =
+    on("preCreateDrawing", callback)
+
+fun <O> HooksEventListener.onPreUpdateDrawing(callback: PreUpdateDocumentCallback<DrawingDocument, O>): Unit =
+    on("preUpdateDrawing", callback)
+
+fun <O> HooksEventListener.onPreDeleteDrawing(callback: PreDeleteDocumentCallback<DrawingDocument, O>) =
+    on("preDeleteDrawing", callback)
+
+fun <O> HooksEventListener.onCreateDrawing(callback: CreateDocumentCallback<DrawingDocument, O>) =
+    on("createDrawing", callback)
+
+fun <O> HooksEventListener.onUpdateDrawing(callback: UpdateDocumentCallback<DrawingDocument, O>) =
+    on("updateDrawing", callback)

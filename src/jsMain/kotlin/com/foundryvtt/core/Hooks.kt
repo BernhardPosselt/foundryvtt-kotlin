@@ -1,5 +1,11 @@
 package com.foundryvtt.core
 
+import com.foundryvtt.core.abstract.DatabaseCreateOperation
+import com.foundryvtt.core.abstract.DatabaseDeleteOperation
+import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import com.foundryvtt.core.applications.api.ApplicationV2
+import com.foundryvtt.core.applications.api.ContextMenuEntry
+import com.foundryvtt.core.documents.TokenDocument
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -14,6 +20,58 @@ external interface HooksEventListener {
     fun <T> on(key: String, callback: Function<T>)
 }
 
+typealias PreCreateDocumentCallback<T, O> = (
+    document: T,
+    data: AnyObject,
+    options: DatabaseCreateOperation,
+    userId: String
+) -> O
+
+typealias PreUpdateDocumentCallback<T, O> = (
+    document: T,
+    changed: AnyObject,
+    options: DatabaseUpdateOperation,
+    userId: String
+) -> O
+
+typealias PreDeleteDocumentCallback<T, O> = (
+    document: T,
+    options: DatabaseDeleteOperation,
+    userId: String
+) -> O
+
+typealias CreateDocumentCallback<T, O> = (
+    document: T,
+    data: AnyObject,
+    options: DatabaseCreateOperation,
+    userId: String
+) -> O
+
+typealias UpdateDocumentCallback<T, O> = (
+    document: T,
+    changed: AnyObject,
+    options: DatabaseUpdateOperation,
+    userId: String
+) -> O
+
+typealias DeleteDocumentCallback<T, O> = (
+    document: T,
+    options: DatabaseDeleteOperation,
+    userId: String
+) -> O
+
+typealias RenderApplication<O> = (
+    application: ApplicationV2,
+    html: Any, // jQuery
+    data: AnyObject,
+) -> O
+
+typealias ApplicationEntryContext<O> = (
+    application: ApplicationV2,
+    entryOptions: Array<ContextMenuEntry>
+) -> O
+
+
 fun <O> HooksEventListener.onReady(callback: (Any) -> O) =
     on("ready", callback)
 
@@ -22,6 +80,22 @@ fun <O> HooksEventListener.onInit(callback: () -> O) =
 
 fun <O> HooksEventListener.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> O) =
     on("updateWorldTime", callback)
+
+fun <O> HooksEventListener.onCanvasReady(callback: (Canvas) -> O) =
+    on("canvasReady", callback)
+
+fun <O> HooksEventListener.onRenderChatLog(callback: RenderApplication<O>) =
+    on("renderChatLog", callback)
+
+fun <O> HooksEventListener.onGetChatLogEntryContext(callback: ApplicationEntryContext<O>) =
+    on("getChatLogEntryContext", callback)
+
+fun <O> HooksEventListener.onSightRefresh(callback: (CanvasVisibility) -> O) =
+    on("sightRefresh", callback)
+
+fun <O> HooksEventListener.onApplyTokenStatusEffect(callback: (TokenDocument, String, Boolean) -> O) =
+    on("applyTokenStatusEffect", callback)
+
 
 external object Hooks : HooksEventListener {
     override fun <T> on(key: String, callback: Function<T>)

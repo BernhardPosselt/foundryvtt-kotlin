@@ -31,3 +31,18 @@ open external class Actor : ClientDocument {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun Actor.update(data: Actor, operation: DatabaseUpdateOperation = jso()): Promise<Actor> =
     update(data as AnyObject, operation)
+
+fun <O> HooksEventListener.onPreCreateActor(callback: PreCreateDocumentCallback<Actor, O>) =
+    on("preCreateActor", callback)
+
+fun <O> HooksEventListener.onPreUpdateActor(callback: PreUpdateDocumentCallback<Actor, O>): Unit =
+    on("preUpdateActor", callback)
+
+fun <O> HooksEventListener.onPreDeleteActor(callback: PreDeleteDocumentCallback<Actor, O>) =
+    on("preDeleteActor", callback)
+
+fun <O> HooksEventListener.onCreateActor(callback: CreateDocumentCallback<Actor, O>) =
+    on("createActor", callback)
+
+fun <O> HooksEventListener.onUpdateActor(callback: UpdateDocumentCallback<Actor, O>) =
+    on("updateActor", callback)

@@ -1,7 +1,6 @@
 package com.foundryvtt.core.documents
 
-import com.foundryvtt.core.Actor
-import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.objects.jso
@@ -50,3 +49,18 @@ external class Macro : ClientDocument {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun Macro.update(data: Macro, operation: DatabaseUpdateOperation = jso()): Promise<Macro> =
     update(data as AnyObject, operation)
+
+fun <O> HooksEventListener.onPreCreateMacro(callback: PreCreateDocumentCallback<Macro, O>) =
+    on("preCreateMacro", callback)
+
+fun <O> HooksEventListener.onPreUpdateMacro(callback: PreUpdateDocumentCallback<Macro, O>): Unit =
+    on("preUpdateMacro", callback)
+
+fun <O> HooksEventListener.onPreDeleteMacro(callback: PreDeleteDocumentCallback<Macro, O>) =
+    on("preDeleteMacro", callback)
+
+fun <O> HooksEventListener.onCreateMacro(callback: CreateDocumentCallback<Macro, O>) =
+    on("createMacro", callback)
+
+fun <O> HooksEventListener.onUpdateMacro(callback: UpdateDocumentCallback<Macro, O>) =
+    on("updateMacro", callback)

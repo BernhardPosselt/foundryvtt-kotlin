@@ -1,8 +1,6 @@
 package com.foundryvtt.core.documents
 
-import com.foundryvtt.core.AVSettingsData
-import com.foundryvtt.core.Actor
-import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.collections.JsSet
@@ -112,3 +110,18 @@ external class User : ClientDocument {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun User.update(data: User, operation: DatabaseUpdateOperation = jso()): Promise<User> =
     update(data as AnyObject, operation)
+
+fun <O> HooksEventListener.onPreCreateUser(callback: PreCreateDocumentCallback<User, O>) =
+    on("preCreateUser", callback)
+
+fun <O> HooksEventListener.onPreUpdateUser(callback: PreUpdateDocumentCallback<User, O>): Unit =
+    on("preUpdateUser", callback)
+
+fun <O> HooksEventListener.onPreDeleteUser(callback: PreDeleteDocumentCallback<User, O>) =
+    on("preDeleteUser", callback)
+
+fun <O> HooksEventListener.onCreateUser(callback: CreateDocumentCallback<User, O>) =
+    on("createUser", callback)
+
+fun <O> HooksEventListener.onUpdateUser(callback: UpdateDocumentCallback<User, O>) =
+    on("updateUser", callback)
