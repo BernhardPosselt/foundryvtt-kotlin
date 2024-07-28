@@ -14,7 +14,7 @@ import kotlin.js.Promise
 external interface MacroScope {
     val speaker: ChatSpeakerData
     val actor: Actor
-    val token: Token
+    val token: TokenDocument
     val event: Event
 }
 

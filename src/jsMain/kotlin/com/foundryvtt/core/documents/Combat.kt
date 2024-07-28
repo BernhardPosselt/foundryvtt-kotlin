@@ -56,7 +56,7 @@ external class Combat : ClientDocument {
 
     fun activate(options: DatabaseUpdateOperation = definedExternally): Promise<Combatant>
     fun getCombatantsByToken(token: String): Array<Combatant>
-    fun getCombatantsByToken(token: Token): Array<Combatant>
+    fun getCombatantsByToken(token: TokenDocument): Array<Combatant>
     fun getCombatantsByActor(actor: String): Array<Combatant>
     fun getCombatantsByActor(actor: Actor): Array<Combatant>
     fun startCombat(): Promise<Combat>

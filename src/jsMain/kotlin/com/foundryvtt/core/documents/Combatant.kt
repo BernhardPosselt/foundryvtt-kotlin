@@ -33,7 +33,7 @@ external class Combatant : ClientDocument {
     val combat: Combat?
     val isNPC: Boolean
     val actor: Actor?
-    val token: Token?
+    val token: TokenDocument?
     val players: Array<User>
     val isDefeated: Boolean
     fun getInitiativeRoll(formula: String): Roll

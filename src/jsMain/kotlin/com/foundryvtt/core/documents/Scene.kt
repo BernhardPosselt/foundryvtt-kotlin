@@ -106,7 +106,7 @@ external class Scene : ClientDocument {
     var grid: SceneGrid
     var environment: SceneEnvironmentData
     var drawings: EmbeddedCollection<DrawingDocument>
-    var tokens: EmbeddedCollection<Token>
+    var tokens: EmbeddedCollection<TokenDocument>
     var tiles: EmbeddedCollection<TileDocument>
     var notes: EmbeddedCollection<NoteDocument>
 

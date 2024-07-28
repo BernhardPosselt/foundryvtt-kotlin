@@ -74,7 +74,7 @@ external class User : ClientDocument {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<User>
 
     val active: Boolean
-    val targets: JsSet<Token>
+    val targets: JsSet<TokenDocument>
     val viewedScene: String?
     val isTrusted: Boolean
     val isSelf: Boolean

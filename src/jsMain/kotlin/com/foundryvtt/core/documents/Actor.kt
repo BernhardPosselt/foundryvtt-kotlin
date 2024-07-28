@@ -19,7 +19,7 @@ open external class Actor : ClientDocument {
     var name: String
     var img: String?
     var type: String
-    var prototypeToken: Token
+    var prototypeToken: TokenDocument
     var items: EmbeddedCollection<Item>
 
     // var effects: EmbeddedCollection<Effect>

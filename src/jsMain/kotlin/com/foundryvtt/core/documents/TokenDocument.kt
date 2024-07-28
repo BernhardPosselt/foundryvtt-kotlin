@@ -110,15 +110,15 @@ external interface TrackedAttributesDescription {
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.Token.documentClass")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class Token : Document {
-    companion object : DocumentStatic<Token> {
+external class TokenDocument : Document {
+    companion object : DocumentStatic<TokenDocument> {
         fun createCombatants(
-            tokens: Array<Token>,
+            tokens: Array<TokenDocument>,
             options: CreateCombatantOptions = definedExternally
         ): Promise<Array<Combatant>>
 
         fun deleteCombatants(
-            tokens: Array<Token>,
+            tokens: Array<TokenDocument>,
             options: CreateCombatantOptions = definedExternally
         ): Promise<Array<Combatant>>
 
@@ -141,8 +141,8 @@ external class Token : Document {
         fun getTrackedAttributeChoices(attributes: AnyObject): AnyObject
     }
 
-    override fun delete(operation: DatabaseDeleteOperation): Promise<Token>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Token>
+    override fun delete(operation: DatabaseDeleteOperation): Promise<TokenDocument>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TokenDocument>
 
     var _id: String
     var name: String
@@ -187,9 +187,9 @@ external class Token : Document {
     fun getBarAttribute(options: BarAttributeOptions = definedExternally): AnyObject?
     fun hasStatusEffect(statusId: String): Boolean
     fun toggleCombatant(options: ToggleCombatantOptions = definedExternally): Promise<Boolean>
-    fun updateVisionMode(visionMode: String, defaults: Boolean = definedExternally): Promise<Token>
+    fun updateVisionMode(visionMode: String, defaults: Boolean = definedExternally): Promise<TokenDocument>
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Token.update(data: Token, operation: DatabaseUpdateOperation = jso()): Promise<Token> =
+fun TokenDocument.update(data: TokenDocument, operation: DatabaseUpdateOperation = jso()): Promise<TokenDocument> =
     update(data as AnyObject, operation)
