@@ -1,11 +1,11 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.SceneWeatherSettings
 import at.posselt.kingmaker.app.CheckboxInput
 import at.posselt.kingmaker.app.formContext
 import at.posselt.kingmaker.app.prompt
-import at.posselt.kingmaker.getWeatherSettings
-import at.posselt.kingmaker.setWeatherSettings
+import at.posselt.kingmaker.weather.SceneWeatherSettings
+import at.posselt.kingmaker.weather.getWeatherSettings
+import at.posselt.kingmaker.weather.setWeatherSettings
 import com.foundryvtt.core.documents.Scene
 import js.objects.recordOf
 

@@ -1,6 +1,8 @@
 package com.foundryvtt.core
 
 import com.foundryvtt.core.collections.*
+import com.foundryvtt.core.documents.User
+import com.foundryvtt.core.utils.Collection
 
 external val game: Game
 
@@ -18,4 +20,6 @@ external object Game {
     val journal: Journal
     val macros: Macros
     val combats: CombatEncounters
+    val user: User
+    val modules: Collection<Module>
 }

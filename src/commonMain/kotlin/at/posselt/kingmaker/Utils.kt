@@ -29,8 +29,7 @@ fun String.unslugify(): String =
 
 fun String.deCamelCase(): String =
     this.split("(?=\\p{Upper})".toRegex())
-        .map { it.replaceFirstChar { c -> c.uppercase() } }
-        .joinToString(" ")
+        .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } }
 
 fun String.toEnumConstant(): String =
     this.split("(?=\\p{Upper})".toRegex())

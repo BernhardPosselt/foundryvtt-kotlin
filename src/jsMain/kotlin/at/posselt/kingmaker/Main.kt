@@ -5,7 +5,7 @@ import at.posselt.kingmaker.actor.playerCharacters
 import at.posselt.kingmaker.macros.awardHeroPointsMacro
 import at.posselt.kingmaker.macros.awardXPMacro
 import at.posselt.kingmaker.macros.rollPartyCheckMacro
-import at.posselt.kingmaker.settings.registerRegionSettings
+import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
 import com.foundryvtt.core.Hooks
@@ -23,8 +23,7 @@ fun main() {
                     "formElement" to "components/forms/form-element.hbs",
                 )
             )
-            registerRegionSettings(game)
-            registerWeatherSettings(game)
+            game.settings.kingmakerTools.register()
         }
 
     }

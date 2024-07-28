@@ -3,6 +3,9 @@ const foundry = {
         expandObject: () => {
         }
     },
+    data: {
+        fields: {}
+    },
     applications: {
         api: {
             HandlebarsApplicationMixin: (klass) => {

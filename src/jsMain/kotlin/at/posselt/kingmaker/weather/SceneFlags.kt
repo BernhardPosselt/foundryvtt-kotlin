@@ -1,16 +1,9 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.weather
 
-import at.posselt.kingmaker.data.regions.WeatherEffect
-import at.posselt.kingmaker.settings.registerScalar
 import at.posselt.kingmaker.utils.getAppFlag
 import at.posselt.kingmaker.utils.setAppFlag
-import com.foundryvtt.core.Game
 import com.foundryvtt.core.documents.Scene
 import kotlinx.js.JsPlainObject
-
-suspend fun setWeather(game: Game, weatherEffect: WeatherEffect?) {
-    console.log(weatherEffect)
-}
 
 @JsPlainObject
 external interface SceneWeatherSettings {
@@ -27,11 +20,3 @@ fun Scene.getWeatherSettings() =
         syncWeather = true,
         syncWeatherPlaylist = true,
     )
-
-fun registerWeatherSettings(game: Game) {
-    game.settings.registerScalar<String>(
-        key = "currentWeatherFx",
-        default = "",
-        name = "Current Weather Effect",
-    )
-}

@@ -7,6 +7,9 @@ import com.foundryvtt.pf2e.actor.PF2EFamiliar
 import com.foundryvtt.pf2e.actor.PF2EParty
 import js.array.toTypedArray
 
+val Game.isKingmakerInstalled: Boolean
+    get() = modules.get("pf2e-kingmaker")?.active ?: false
+
 
 fun Game.partyMembers(): Array<PF2ECharacter> =
     actors.contents

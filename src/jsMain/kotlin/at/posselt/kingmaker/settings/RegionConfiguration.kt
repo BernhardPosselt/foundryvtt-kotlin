@@ -4,10 +4,7 @@ import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.*
-import com.foundryvtt.core.data.fields.DataFieldOptions
-import com.foundryvtt.core.data.fields.ObjectField
 import js.array.push
-import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
@@ -61,13 +58,13 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
         appHook.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
     }
 
-    private var currentSettings = game.settings.getObject<RegionSettings>("regionSettings")
+    private var currentSettings = game.settings.kingmakerTools.getRegionSettings()
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (val action = target.dataset["action"]) {
             "save" -> {
                 buildPromise {
-                    game.settings.setObject("regionSettings", currentSettings).await()
+                    game.settings.kingmakerTools.setRegionSettings(currentSettings)
                     close()
                 }
             }
@@ -201,18 +198,4 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
         )
     }
 
-}
-
-fun registerRegionSettings(game: Game) {
-    game.settings.registerField(
-        key = "regionSettings",
-        name = "Region Settings",
-        type = ObjectField(DataFieldOptions(initial = RegionSettings(useStolenLands = true, regions = emptyArray()))),
-    )
-    game.settings.createMenu(
-        key = "regionsMenu",
-        label = "Customize",
-        name = "Regions",
-        app = RegionConfiguration::class.js,
-    )
 }

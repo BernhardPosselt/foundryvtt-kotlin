@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.Config
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.Document
 import js.objects.PropertyKey
 import js.objects.jso
@@ -53,19 +54,30 @@ private class Handler(
  * will produce {'name': 'test', 'system.details.level.value': 3}
  *
  * Note that you *must not* assign a property to itself, e.g.
- * * pf2eActor.typeSafeUpdate {
+ * * pf2eActor.buildUpdate {
  *  *     name = "test",
  *  *     system.details.level.value = system.details.level.value
- *  * }.await()
+ *  * }
  */
 @Suppress("UNCHECKED_CAST")
-fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): Promise<D> {
+fun <D : Document> D.buildUpdate(block: D.() -> Unit): AnyObject {
     val result = HashMap<String, Any?>()
     val proxy = Handler(updates = result)
         .asProxy(this) as D
     proxy.block()
-    return update(result.toRecord()) as Promise<D>
+    return result.toRecord()
+
 }
+
+/**
+ * Same as buildUpdate, but executes it as well
+ */
+@Suppress("UNCHECKED_CAST")
+fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): Promise<D> {
+    val result = buildUpdate(block)
+    return update(result) as Promise<D>
+}
+
 
 suspend fun <D : Document, T> D.setAppFlag(key: String, flag: T) = buildPromise {
     setFlag(Config.MODULE_ID, key, flag).await()
