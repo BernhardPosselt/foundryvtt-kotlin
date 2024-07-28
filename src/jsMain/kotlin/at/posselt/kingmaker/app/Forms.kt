@@ -1,5 +1,7 @@
 package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.isJsObject
 import at.posselt.kingmaker.utils.toMutableRecord
@@ -14,6 +16,7 @@ import js.objects.Object
 import js.objects.Record
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject
+import kotlin.enums.enumEntries
 
 @JsPlainObject
 external interface Option {
@@ -261,4 +264,26 @@ fun PlaylistSound.toOption() = id?.let {
     SelectOption(label = name, value = it)
 }
 
+inline fun <reified T : Enum<T>> Enum<T>.toSelect(
+    label: String,
+    name: String,
+    value: T? = null,
+    required: Boolean = true,
+    help: String? = null,
+    hideLabel: Boolean = false,
+) =
+    Select(
+        name = name,
+        label = label,
+        value = value?.toCamelCase(),
+        required = required,
+        help = help,
+        hideLabel = hideLabel,
+        options = enumEntries<T>().map {
+            it.toOption()
+        }
+    )
 
+
+fun <T : Enum<T>> Enum<T>.toOption() =
+    SelectOption(label = toLabel(), value = toCamelCase())

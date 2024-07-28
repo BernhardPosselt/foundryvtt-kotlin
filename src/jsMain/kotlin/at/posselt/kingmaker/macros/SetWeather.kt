@@ -1,11 +1,10 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.app.Select
-import at.posselt.kingmaker.app.SelectOption
 import at.posselt.kingmaker.app.formContext
 import at.posselt.kingmaker.app.prompt
+import at.posselt.kingmaker.app.toSelect
 import at.posselt.kingmaker.data.regions.WeatherEffect
-import at.posselt.kingmaker.deCamelCase
+import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.setWeather
 import at.posselt.kingmaker.settings.getString
 import com.foundryvtt.core.game
@@ -18,26 +17,23 @@ external interface WeatherEffectData {
 }
 
 suspend fun setWeatherMacro() {
-    val currentWeatherEffect = WeatherEffect.fromString(game.settings.getString("currentWeatherFx"))
-    val choices = WeatherEffect.entries
-        .map { SelectOption(label = it.value.deCamelCase(), value = it.value) }
+    val currentWeatherEffect = fromCamelCase<WeatherEffect>(game.settings.getString("currentWeatherFx"))!!
     prompt<WeatherEffectData, Unit>(
         title = "Set Weather",
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(
             "formRows" to formContext(
-                Select(
+                currentWeatherEffect.toSelect(
                     name = "weather",
                     label = "Weather",
-                    options = choices,
-                    value = currentWeatherEffect.value,
+                    value = currentWeatherEffect,
                 )
             )
         )
     ) {
         val effect = it.weather
             .takeIf(String::isNotBlank)
-            ?.let(WeatherEffect::fromString)
+            ?.let { fromCamelCase<WeatherEffect>(it) }
         setWeather(game, effect)
     }
 }

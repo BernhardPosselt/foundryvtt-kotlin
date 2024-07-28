@@ -61,7 +61,6 @@ class RegionConfiguration : App<RegionSettingsContext>(
     HandlebarsFormApplicationOptions(
         window = Window(
             title = "Regions",
-            controls = arrayOf(ApplicationHeaderControlsEntry(label = "hi", action = "boo"))
         ),
         position = ApplicationPosition(
             width = 900,

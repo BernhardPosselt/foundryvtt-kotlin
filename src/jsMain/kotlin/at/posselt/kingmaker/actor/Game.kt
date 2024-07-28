@@ -1,47 +1,37 @@
 package at.posselt.kingmaker.actor
 
-import at.posselt.kingmaker.data.actor.ActorTypes
 import com.foundryvtt.core.Game
-import com.foundryvtt.pf2e.actor.*
+import com.foundryvtt.pf2e.actor.PF2EArmy
+import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actor.PF2EFamiliar
+import com.foundryvtt.pf2e.actor.PF2EParty
 import js.array.toTypedArray
 
 
-fun Game.playerActorsOfType(types: Set<ActorTypes>): Array<PF2EActor> =
-    @Suppress("UNCHECKED_CAST")
-    (actors?.contents
-        ?.asSequence()
-        ?.filter { types.contains(ActorTypes.fromString(it.type)) && it.hasPlayerOwner }
-        ?.toTypedArray() as Array<PF2EActor>?)
-        ?: emptyArray()
-
 fun Game.partyMembers(): Array<PF2ECharacter> =
-    actors?.contents
-        ?.asSequence()
-        ?.filterIsInstance<PF2EParty>()
-        ?.flatMap { it.members.asSequence() }
-        ?.toTypedArray()
-        ?: emptyArray()
+    actors.contents
+        .asSequence()
+        .filterIsInstance<PF2EParty>()
+        .flatMap { it.members.asSequence() }
+        .toTypedArray()
 
 fun Game.playerCharacters(): Array<PF2ECharacter> =
-    actors?.contents
-        ?.asSequence()
-        ?.filterIsInstance<PF2ECharacter>()
-        ?.filter { it.hasPlayerOwner }
-        ?.toTypedArray()
-        ?: emptyArray()
+    actors.contents
+        .asSequence()
+        .filterIsInstance<PF2ECharacter>()
+        .filter { it.hasPlayerOwner }
+        .toTypedArray()
 
 fun Game.playerFamiliars(): Array<PF2EFamiliar> =
-    actors?.contents
-        ?.asSequence()
-        ?.filterIsInstance<PF2EFamiliar>()
-        ?.filter { it.hasPlayerOwner }
-        ?.toTypedArray()
-        ?: emptyArray()
+    actors.contents
+        .asSequence()
+        .filterIsInstance<PF2EFamiliar>()
+        .filter { it.hasPlayerOwner }
+        .toTypedArray()
 
 fun Game.playerArmies(): Array<PF2EArmy> =
-    actors?.contents
-        ?.asSequence()
-        ?.filterIsInstance<PF2EArmy>()
-        ?.filter { it.hasPlayerOwner }
-        ?.toTypedArray()
-        ?: emptyArray()
+    actors.contents
+        .asSequence()
+        .filterIsInstance<PF2EArmy>()
+        .filter { it.hasPlayerOwner }
+        .toTypedArray()

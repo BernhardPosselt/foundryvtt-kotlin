@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.data.checks.RollMode
+import at.posselt.kingmaker.toCamelCase
 import com.foundryvtt.core.documents.ChatMessage
 import js.objects.Record
 import js.objects.jso
@@ -18,6 +19,6 @@ suspend fun postChatTemplate(
 
 suspend fun postChatMessage(message: String, rollMode: RollMode? = null) {
     val data = recordOf("content" to message)
-    rollMode?.let { ChatMessage.applyRollMode(data, it.value) }
+    rollMode?.let { ChatMessage.applyRollMode(data, it.toCamelCase()) }
     ChatMessage.create(data).await()
 }

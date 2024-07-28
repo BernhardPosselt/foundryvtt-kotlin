@@ -1,5 +1,7 @@
 package at.posselt.kingmaker.data.actor
 
+import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.unslugify
 
 
@@ -13,58 +15,32 @@ sealed interface Attribute {
             @Suppress("SwallowException")
             return when (value) {
                 "perception" -> Perception
-                else -> {
-                    try {
-                        Skill.fromString(value)
-                    } catch (e: IllegalArgumentException) {
-                        Lore(value)
-                    }
-                }
+                else -> fromCamelCase<Skill>(value) ?: Lore(value)
             }
         }
     }
 }
 
-enum class Skill(override val value: String) : Attribute {
-    ACROBATICS("acrobatics"),
-    ARCANA("arcana"),
-    ATHLETICS("athletics"),
-    CRAFTING("crafting"),
-    DECEPTION("deception"),
-    DIPLOMACY("diplomacy"),
-    INTIMIDATION("intimidation"),
-    MEDICINE("medicine"),
-    NATURE("nature"),
-    OCCULTISM("occultism"),
-    PERFORMANCE("performance"),
-    RELIGION("religion"),
-    SOCIETY("society"),
-    STEALTH("stealth"),
-    SURVIVAL("survival"),
-    THIEVERY("thievery");
+enum class Skill : Attribute {
+    ACROBATICS,
+    ARCANA,
+    ATHLETICS,
+    CRAFTING,
+    DECEPTION,
+    DIPLOMACY,
+    INTIMIDATION,
+    MEDICINE,
+    NATURE,
+    OCCULTISM,
+    PERFORMANCE,
+    RELIGION,
+    SOCIETY,
+    STEALTH,
+    SURVIVAL,
+    THIEVERY;
 
-    companion object {
-        fun fromString(value: String) =
-            when (value) {
-                "acrobatics" -> ACROBATICS
-                "arcana" -> ARCANA
-                "athletics" -> ATHLETICS
-                "crafting" -> CRAFTING
-                "deception" -> DECEPTION
-                "diplomacy" -> DIPLOMACY
-                "intimidation" -> INTIMIDATION
-                "medicine" -> MEDICINE
-                "nature" -> NATURE
-                "occultism" -> OCCULTISM
-                "performance" -> PERFORMANCE
-                "religion" -> RELIGION
-                "society" -> SOCIETY
-                "stealth" -> STEALTH
-                "survival" -> SURVIVAL
-                "thievery" -> THIEVERY
-                else -> throw IllegalArgumentException("unknown skill: $value")
-            }
-    }
+    override val value: String
+        get() = toCamelCase()
 }
 
 data object Perception : Attribute {
@@ -73,21 +49,10 @@ data object Perception : Attribute {
 
 class Lore(override val value: String) : Attribute
 
-enum class SkillRank(val value: Int) {
-    UNTRAINED(0),
-    TRAINED(1),
-    EXPERT(2),
-    MASTER(3),
-    LEGENDARY(4);
-
-    companion object {
-        fun fromInt(value: Int) = when (value) {
-            0 -> UNTRAINED
-            1 -> TRAINED
-            2 -> EXPERT
-            3 -> MASTER
-            4 -> LEGENDARY
-            else -> throw IllegalArgumentException("unknown rank $value")
-        }
-    }
+enum class SkillRank {
+    UNTRAINED,
+    TRAINED,
+    EXPERT,
+    MASTER,
+    LEGENDARY;
 }

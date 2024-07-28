@@ -1,82 +1,35 @@
 package at.posselt.kingmaker.data.regions
 
-enum class WeatherEffect(val value: String) {
-    SNOW("snow"),
-    RAIN("rain"),
-    SUNNY("sunny"),
-    LEAVES("leaves"),
-    RAIN_STORM("rainStorm"),
-    FOG("fog"),
-    BLIZZARD("blizzard");
-
-    companion object {
-        fun fromString(value: String): WeatherEffect {
-            return when (value) {
-                "snow" -> SNOW
-                "rain" -> RAIN
-                "sunny" -> SUNNY
-                "leaves" -> LEAVES
-                "rainStorm" -> RAIN_STORM
-                "fog" -> FOG
-                "blizzard" -> BLIZZARD
-                else -> throw IllegalArgumentException("$value is not a valid weather effect")
-            }
-        }
-    }
+enum class WeatherEffect {
+    SNOW,
+    RAIN,
+    SUNNY,
+    LEAVES,
+    RAIN_STORM,
+    FOG,
+    BLIZZARD;
 }
 
-enum class Season(val value: String) {
-    SPRING("spring"),
-    SUMMER("summer"),
-    FALL("fall"),
-    WINTER("winter");
-
-    companion object {
-        fun fromString(value: String): Season {
-            return when (value) {
-                "spring" -> SPRING
-                "summer" -> SUMMER
-                "fall" -> FALL
-                "winter" -> WINTER
-                else -> throw IllegalArgumentException("$value is not a season")
-            }
-        }
-    }
+enum class Season {
+    SPRING,
+    SUMMER,
+    FALL,
+    WINTER;
 }
 
-enum class Month(val value: String, val index: Int) {
-    ABADIUS("abadius", 1),
-    CALISTRIL("calistril", 2),
-    PHARAST("pharast", 3),
-    GOZRAN("gozran", 4),
-    DESNUS("desnus", 5),
-    SARENITH("sarenith", 6),
-    ERASTUS("erastus", 7),
-    ARODUS("arodus", 8),
-    ROVA("rova", 9),
-    LAMASHAN("lamashan", 10),
-    NETH("neth", 11),
-    KUTHONA("kuthona", 12);
-
-    companion object {
-        fun fromString(value: String): Month {
-            return when (value) {
-                "abadius" -> ABADIUS
-                "calistril" -> CALISTRIL
-                "pharast" -> PHARAST
-                "gozran" -> GOZRAN
-                "desnus" -> DESNUS
-                "sarenith" -> SARENITH
-                "erastus" -> ERASTUS
-                "arodus" -> ARODUS
-                "rova" -> ROVA
-                "lamashan" -> LAMASHAN
-                "neth" -> NETH
-                "kuthona" -> KUTHONA
-                else -> throw IllegalArgumentException("$value is not a month")
-            }
-        }
-    }
+enum class Month {
+    ABADIUS,
+    CALISTRIL,
+    PHARAST,
+    GOZRAN,
+    DESNUS,
+    SARENITH,
+    ERASTUS,
+    ARODUS,
+    ROVA,
+    LAMASHAN,
+    NETH,
+    KUTHONA;
 }
 
 data class WeatherMonth(
