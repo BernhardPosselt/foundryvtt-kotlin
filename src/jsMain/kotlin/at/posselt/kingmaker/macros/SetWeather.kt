@@ -17,7 +17,8 @@ external interface WeatherEffectData {
 }
 
 suspend fun setWeatherMacro() {
-    val currentWeatherEffect = fromCamelCase<WeatherEffect>(game.settings.kingmakerTools.getCurrentWeatherFx())!!
+    val currentWeatherEffect =
+        fromCamelCase<WeatherEffect>(game.settings.kingmakerTools.getCurrentWeatherFx()) ?: WeatherEffect.NONE
     prompt<WeatherEffectData, Unit>(
         title = "Set Weather",
         templatePath = "components/forms/form.hbs",
@@ -33,7 +34,8 @@ suspend fun setWeatherMacro() {
     ) {
         val effect = it.weather
             .takeIf(String::isNotBlank)
-            ?.let { fromCamelCase<WeatherEffect>(it) }
+            ?.let { name -> fromCamelCase<WeatherEffect>(name) }
+            ?: WeatherEffect.NONE
         setWeather(game, effect)
     }
 }

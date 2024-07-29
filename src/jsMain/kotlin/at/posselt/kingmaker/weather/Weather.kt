@@ -1,45 +1,84 @@
 package at.posselt.kingmaker.weather
 
 import at.posselt.kingmaker.data.regions.WeatherEffect
+import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.isFirstGM
+import at.posselt.kingmaker.settings.KingmakerToolsSettings
 import at.posselt.kingmaker.settings.kingmakerTools
+import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.Game
+import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.documents.Scene
+import com.foundryvtt.core.documents.onPreUpdateScene
+import com.foundryvtt.core.documents.onUpdateScene
 
-suspend fun setWeather(game: Game, weatherEffect: WeatherEffect?) {
-    console.log(weatherEffect)
-}
 
-private fun getSceneWeatherValue(game: Game, scene: Scene) {
-    if (scene.getWeatherSettings().syncWeather) {
+private fun getScenesToSyncWeather(game: Game) =
+    listOf(game.scenes.current, game.scenes.active)
+        .asSequence()
+        .filterNotNull()
+        .distinctBy(Scene::id)
+        .toList()
 
-    }
-}
-
-private suspend fun syncSceneWeather(game: Game, scene: Scene) {
-//    val effectName = getSceneWeatherValue()
-}
-
-suspend fun syncSceneWeatherPlaylist(game: Game, it: Scene) {
-    TODO("Not yet implemented")
-}
-
+/**
+ * Read the persisted weather effect name and sound and apply them
+ */
 suspend fun syncWeather(game: Game) {
-    if (game.isFirstGM() && game.settings.kingmakerTools.getEnableWeather()) {
-        val current = game.scenes.current
-        val active = game.scenes.active
-        if (active != null && current != null && active.id == current.id) {
-            syncSceneWeather(game, active)
-        } else {
-            active?.let { syncSceneWeather(game, it) }
-            current?.let { syncSceneWeather(game, it) }
+    val settings = game.settings.kingmakerTools
+    if (game.isFirstGM() && settings.getEnableWeather()) {
+        val weather = getCurrentWeatherFx(settings)
+        getScenesToSyncWeather(game)
+            .filter { it.getWeatherSettings().syncWeather }
+            .forEach { setSceneWeatherFx(it, weather) }
+        if (settings.getEnableWeatherSoundFx()) {
+            game.scenes.active
+                ?.takeIf { it.getWeatherSettings().syncWeatherPlaylist }
+                ?.let { changeSoundTo(game, weather) }
         }
-        active?.let { syncSceneWeatherPlaylist(game, it) }
     }
 }
 
+fun getCurrentWeatherFx(settings: KingmakerToolsSettings) =
+    if (settings.getEnableSheltered()) {
+        WeatherEffect.NONE
+    } else {
+        fromCamelCase<WeatherEffect>(settings.getCurrentWeatherFx()) ?: WeatherEffect.NONE
+    }
+
+suspend fun setWeather(game: Game, weatherEffect: WeatherEffect) {
+    game.settings.kingmakerTools.setCurrentWeatherFx(weatherEffect.toCamelCase())
+    syncWeather(game)
+}
 
 
-
-
-
+fun registerWeatherHooks(game: Game) {
+    // these hooks are run when the gm switches scenes and ensures that
+    // the new scene is synced to the current weather effect and playlist
+    val settings = game.settings.kingmakerTools
+    // update scene weather
+    Hooks.onPreUpdateScene { document, changed, _, _ ->
+        val shouldSyncWeather = game.isFirstGM()
+                && settings.getEnableWeather()
+                && document.getWeatherSettings().syncWeather
+                && changed["active"] == true
+        if (shouldSyncWeather) {
+            val weather = getCurrentWeatherFx(settings)
+            changed["weather"] = toSceneWeatherString(weather)
+        }
+    }
+    // update playlist
+    Hooks.onUpdateScene { document, changed, _, _ ->
+        val shouldSyncWeather = game.isFirstGM()
+                && settings.getEnableWeather()
+                && settings.getEnableWeatherSoundFx()
+                && document.getWeatherSettings().syncWeatherPlaylist
+                && changed["active"] == true
+        if (shouldSyncWeather) {
+            val weather = getCurrentWeatherFx(settings)
+            buildPromise {
+                changeSoundTo(game, weather)
+            }
+        }
+    }
+}

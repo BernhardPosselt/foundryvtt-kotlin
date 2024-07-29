@@ -3,7 +3,6 @@ package at.posselt.kingmaker.macros
 import at.posselt.kingmaker.app.NumberInput
 import at.posselt.kingmaker.app.formContext
 import at.posselt.kingmaker.app.prompt
-import at.posselt.kingmaker.utils.awaitAll
 import at.posselt.kingmaker.utils.postChatMessage
 import at.posselt.kingmaker.utils.postChatTemplate
 import at.posselt.kingmaker.utils.typeSafeUpdate
@@ -11,6 +10,9 @@ import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.array.toTypedArray
 import js.objects.Record
 import js.objects.recordOf
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,7 +37,7 @@ suspend fun resetHeroPointsMacro(actors: Array<PF2ECharacter>) {
     postChatMessage("Reset hero point values to 1")
 }
 
-private suspend fun updateHeroPoints(points: Array<PointsForPlayer>) {
+private suspend fun updateHeroPoints(points: Array<PointsForPlayer>): Unit = coroutineScope {
     points.map {
         val actor = it.player
         val actualPoints = when (it.mode) {
@@ -43,8 +45,10 @@ private suspend fun updateHeroPoints(points: Array<PointsForPlayer>) {
             AwardMode.ADD -> actor.system.resources.heroPoints.value + it.points
             AwardMode.SET -> it.points
         }
-        it.player.typeSafeUpdate {
-            system.resources.heroPoints.value = min(3, actualPoints)
+        async {
+            it.player.typeSafeUpdate {
+                system.resources.heroPoints.value = min(3, actualPoints)
+            }
         }
     }.awaitAll()
 }

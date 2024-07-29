@@ -284,6 +284,5 @@ inline fun <reified T : Enum<T>> Enum<T>.toSelect(
         }
     )
 
-
 fun <T : Enum<T>> Enum<T>.toOption() =
     SelectOption(label = toLabel(), value = toCamelCase())

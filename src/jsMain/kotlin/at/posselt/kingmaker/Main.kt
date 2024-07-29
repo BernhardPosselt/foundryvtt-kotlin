@@ -8,13 +8,14 @@ import at.posselt.kingmaker.macros.rollPartyCheckMacro
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.loadTpls
+import at.posselt.kingmaker.weather.registerWeatherHooks
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.game
 import com.foundryvtt.core.onInit
 import com.foundryvtt.core.onReady
+import js.objects.recordOf
 
 fun main() {
-
     Hooks.onInit {
         buildPromise {
             // register partials
@@ -25,10 +26,11 @@ fun main() {
             )
             game.settings.kingmakerTools.register()
         }
-
+        registerWeatherHooks(game)
     }
 
     Hooks.onReady {
+        console.log(recordOf("test" to "hi")["test2"]?.length)
         val players = game.playerCharacters()
         buildPromise {
             rollPartyCheckMacro(game.partyMembers())

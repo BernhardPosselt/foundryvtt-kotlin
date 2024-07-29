@@ -2,9 +2,15 @@ package at.posselt.kingmaker
 
 import kotlin.enums.enumEntries
 
+/**
+ * Use this to deserialize foundry enum strings
+ */
 inline fun <reified T : Enum<T>> fromCamelCase(value: String): T? =
     enumEntries<T>().find { it.name == value.toEnumConstant() }
 
+/**
+ * Use this to serialize to foundry enum strings
+ */
 fun <T : Enum<T>> Enum<T>.toCamelCase(): String =
     name.split("_")
         .joinToString("") { it.lowercase().replaceFirstChar(Char::uppercase) }

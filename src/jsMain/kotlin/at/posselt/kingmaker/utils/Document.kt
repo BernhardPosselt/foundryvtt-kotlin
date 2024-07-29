@@ -10,7 +10,6 @@ import js.reflect.Proxy
 import js.reflect.ProxyHandler
 import js.symbol.Symbol
 import kotlinx.coroutines.await
-import kotlin.js.Promise
 
 
 val isProxy = Symbol("isProxy")
@@ -73,9 +72,9 @@ fun <D : Document> D.buildUpdate(block: D.() -> Unit): AnyObject {
  * Same as buildUpdate, but executes it as well
  */
 @Suppress("UNCHECKED_CAST")
-fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): Promise<D> {
+suspend fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): D {
     val result = buildUpdate(block)
-    return update(result) as Promise<D>
+    return update(result).await() as D
 }
 
 

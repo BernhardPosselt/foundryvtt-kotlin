@@ -131,7 +131,7 @@ object KingmakerToolsSettings {
         game.settings.getString("currentWeatherFx")
 
     private val nonUserVisibleSettings = object {
-        val strings = mapOf("currentWeatherFx" to "")
+        val strings = mapOf("currentWeatherFx" to "NONE")
         val booleans = mapOf(
             "enableSheltered" to false,
         )

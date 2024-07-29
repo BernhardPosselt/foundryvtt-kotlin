@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.data.regions
 
 enum class WeatherEffect {
+    NONE,
     SNOW,
     RAIN,
     SUNNY,
