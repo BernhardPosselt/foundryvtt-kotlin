@@ -3,7 +3,6 @@ package com.foundryvtt.pf2e
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.utils.Collection
 import com.foundryvtt.pf2e.actor.PF2ECharacter
-import io.moment.luxon.DateTime
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -36,7 +35,6 @@ external class PF2EActionMacros : Collection<PF2EActionMacro> {
 
 @JsPlainObject
 external interface PF2EWorldClock {
-    val worldTime: DateTime
     val month: String
 }
 

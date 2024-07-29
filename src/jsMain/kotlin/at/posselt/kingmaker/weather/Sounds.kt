@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.weather
 
+import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.actor.isKingmakerInstalled
 import at.posselt.kingmaker.data.regions.WeatherEffect
 import at.posselt.kingmaker.toCamelCase
@@ -21,21 +22,22 @@ private fun findWeatherSoundByName(game: Game, playlistId: String, soundName: St
         ?.sounds
         ?.getName(soundName)
 
-private const val KINGMAKER_PLAYLIST_ID = "c6WJzHWMM72zP19H"
 
 /**
  * Retrieves a sound from the official Kingmaker -> SFX -> Loops playlist
  */
-private fun findKingmakerWeatherSound(game: Game, weatherEffect: WeatherEffect): PlaylistSound? =
-    if (game.isKingmakerInstalled) {
+private fun findKingmakerWeatherSound(game: Game, weatherEffect: WeatherEffect): PlaylistSound? {
+    val id = Config.kingmakerModule.weather.playlistId
+    return if (game.isKingmakerInstalled) {
         when (weatherEffect) {
-            WeatherEffect.SNOW -> findWeatherSoundByName(game, KINGMAKER_PLAYLIST_ID, "Cold Wind")
-            WeatherEffect.RAIN -> findWeatherSoundByName(game, KINGMAKER_PLAYLIST_ID, "Rain")
-            WeatherEffect.RAIN_STORM -> findWeatherSoundByName(game, KINGMAKER_PLAYLIST_ID, "Thunderstorm")
-            WeatherEffect.BLIZZARD -> findWeatherSoundByName(game, KINGMAKER_PLAYLIST_ID, "Colder Wind")
+            WeatherEffect.SNOW -> findWeatherSoundByName(game, id, "Cold Wind")
+            WeatherEffect.RAIN -> findWeatherSoundByName(game, id, "Rain")
+            WeatherEffect.RAIN_STORM -> findWeatherSoundByName(game, id, "Thunderstorm")
+            WeatherEffect.BLIZZARD -> findWeatherSoundByName(game, id, "Colder Wind")
             else -> null
         }
     } else null
+}
 
 private fun findPlayingWeatherPlaylists(game: Game, weatherEffects: List<WeatherEffect>) =
     weatherEffects.mapNotNull { findWeatherPlaylist(game, it) }

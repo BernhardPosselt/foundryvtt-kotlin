@@ -3,6 +3,7 @@ package com.foundryvtt.core
 import com.foundryvtt.core.collections.*
 import com.foundryvtt.core.documents.User
 import com.foundryvtt.core.utils.Collection
+import io.socket.Socket
 
 external val game: Game
 
@@ -23,4 +24,7 @@ external object Game {
     val user: User
     val modules: Collection<Module>
     val packs: CompendiumPacks
+    val time: GameTime
+    val socket: Socket
 }
+

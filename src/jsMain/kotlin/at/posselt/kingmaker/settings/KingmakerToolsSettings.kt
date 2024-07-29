@@ -10,6 +10,7 @@ import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.ApplicationV2
 import com.foundryvtt.core.data.fields.DataFieldOptions
 import com.foundryvtt.core.data.fields.ObjectField
+import js.core.JsNumber
 import js.objects.Record
 import kotlinx.coroutines.await
 
@@ -21,7 +22,7 @@ private fun <T : DataField> Settings.registerField(
     type: T,
 ) {
     register<T>(
-        Config.MODULE_ID,
+        Config.moduleId,
         key,
         SettingsData<T>(
             name = name,
@@ -30,6 +31,31 @@ private fun <T : DataField> Settings.registerField(
             requiresReload = requiresReload,
             type = type,
             scope = "world"
+        )
+    )
+}
+
+fun Settings.registerInt(
+    key: String,
+    name: String,
+    hint: String? = null,
+    default: Int = 0,
+    hidden: Boolean = false,
+    requiresReload: Boolean = false,
+    choices: Record<String, Int>? = null,
+) {
+    register<Int>(
+        Config.moduleId,
+        key,
+        SettingsData<Int>(
+            name = name,
+            hint = hint ?: undefined,
+            config = !hidden,
+            default = default,
+            requiresReload = requiresReload,
+            type = JsNumber::class.js,
+            scope = "world",
+            choices = choices ?: undefined,
         )
     )
 }
@@ -44,17 +70,17 @@ private inline fun <reified T : Any> Settings.registerScalar(
     choices: Record<String, T>? = null,
 ) {
     register<T>(
-        Config.MODULE_ID,
+        Config.moduleId,
         key,
         SettingsData<T>(
             name = name,
-            hint = hint,
-            config = hidden,
-            default = default,
+            hint = hint ?: undefined,
+            config = !hidden,
+            default = default ?: undefined,
             requiresReload = requiresReload,
             type = T::class.js,
             scope = "world",
-            choices = choices,
+            choices = choices ?: undefined,
         )
     )
 }
@@ -69,7 +95,7 @@ private fun Settings.createMenu(
     app: JsClass<out ApplicationV2>
 ) {
     registerMenu<ApplicationV2>(
-        Config.MODULE_ID,
+        Config.moduleId,
         key,
         SettingsMenuData<ApplicationV2>(
             name = name,
@@ -83,31 +109,31 @@ private fun Settings.createMenu(
 }
 
 private fun Settings.getInt(key: String): Int =
-    get(Config.MODULE_ID, key)
+    get(Config.moduleId, key)
 
 suspend fun Settings.setInt(key: String, value: Int) {
-    set(Config.MODULE_ID, key, value).await()
+    set(Config.moduleId, key, value).await()
 }
 
 private fun Settings.getString(key: String): String =
-    get(Config.MODULE_ID, key)
+    get(Config.moduleId, key)
 
 suspend fun Settings.setString(key: String, value: String) {
-    set(Config.MODULE_ID, key, value).await()
+    set(Config.moduleId, key, value).await()
 }
 
 private fun Settings.getBoolean(key: String): Boolean =
-    get(Config.MODULE_ID, key)
+    get(Config.moduleId, key)
 
 private suspend fun Settings.setBoolean(key: String, value: Boolean) {
-    set(Config.MODULE_ID, key, value).await()
+    set(Config.moduleId, key, value).await()
 }
 
 private fun <T : Any> Settings.getObject(key: String): T =
-    get(Config.MODULE_ID, key)
+    get(Config.moduleId, key)
 
 private suspend fun Settings.setObject(key: String, value: Any) {
-    set(Config.MODULE_ID, key, value).await()
+    set(Config.moduleId, key, value).await()
 }
 
 val Settings.kingmakerTools: KingmakerToolsSettings
@@ -157,28 +183,22 @@ object KingmakerToolsSettings {
     fun getCurrentWeatherFx(): String =
         game.settings.getString("currentWeatherFx")
 
-    private val nonUserVisibleSettings = object {
-        val strings = mapOf("currentWeatherFx" to "NONE")
+    private object nonUserVisibleSettings {
         val booleans = mapOf(
             "enableSheltered" to false,
         )
+        val strings = mapOf("currentWeatherFx" to "none")
     }
 
-    private val userVisibleSettings = object {
-        val strings = mapOf<String, String>()
+    private object userVisibleSettings {
         val booleans = mapOf(
             "enableWeather" to true,
-        )
-        val ints = mapOf<String, Int>(
-
         )
     }
 
     fun register() {
         registerSimple(game.settings, nonUserVisibleSettings.strings, hidden = true)
         registerSimple(game.settings, nonUserVisibleSettings.booleans, hidden = true)
-        registerSimple(game.settings, userVisibleSettings.ints, hidden = false)
-        registerSimple(game.settings, userVisibleSettings.strings, hidden = false)
         registerSimple(game.settings, userVisibleSettings.booleans, hidden = false)
         registerCustom(game.settings)
     }
@@ -190,10 +210,10 @@ private inline fun <reified T : Any> registerSimple(
     values: Map<String, T>,
     hidden: Boolean,
 ) {
-    values.forEach { (key, default) ->
+    values.forEach { (key, value) ->
         settings.registerScalar<T>(
             key = key,
-            default = default,
+            default = value,
             name = key.deCamelCase(),
             hidden = hidden,
         )
@@ -232,7 +252,7 @@ private fun registerCustom(settings: Settings) {
         name = "Play Weather Sounds",
         default = true,
     )
-    settings.registerScalar<Int>(
+    settings.registerInt(
         key = "weatherHazardRange",
         name = "Weather Hazard Range",
         default = 4,

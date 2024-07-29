@@ -7,7 +7,7 @@ import js.objects.Record
 import js.objects.jso
 import kotlinx.coroutines.await
 
-private const val DIST_PATH = "modules/${Config.MODULE_ID}/dist"
+private const val DIST_PATH = "modules/${Config.moduleId}/dist"
 
 fun resolveTemplatePath(path: String) = "$DIST_PATH/$path"
 

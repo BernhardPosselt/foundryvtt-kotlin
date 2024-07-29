@@ -19,10 +19,6 @@ data class Zone(
     val combatTrack: CombatTrack? = null,
 )
 
-object KingmakerModule {
-    const val defaultTrack = "The Shrike Hills"
-    const val playlistSourceId: String = "7CiwVus60FiuKFhK"
-}
 
 val stolenLandsZones = arrayOf(
     Zone(

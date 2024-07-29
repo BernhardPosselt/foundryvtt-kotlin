@@ -79,9 +79,9 @@ suspend fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): D {
 
 
 suspend fun <D : Document, T> D.setAppFlag(key: String, flag: T) = buildPromise {
-    setFlag(Config.MODULE_ID, key, flag).await()
+    setFlag(Config.moduleId, key, flag).await()
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <D : Document, T> D.getAppFlag(key: String) =
-    getFlag(Config.MODULE_ID, key) as T?
+    getFlag(Config.moduleId, key) as T?
