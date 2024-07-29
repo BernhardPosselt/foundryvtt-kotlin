@@ -252,3 +252,76 @@ class Lore : Attribute
 
 fun x(attribute: Attribute) {}
 ```
+
+## Null/Undefined/void
+
+A function that returns Unit will be compiled to a function that correctly returns undefined. 
+
+If you need to export your class to JS however using @JsExport, you might need to return Void instead, e.g. Promise<Void> and end that with a return null.
+
+Passing values to JS APIs that have optional parameters is tricky. There are a couple cases:
+
+* Passing an object using @JsPlainObject: these properties will be omitted if you don't pass a value; they will not be omitted if you pass null however. Example:
+    ```kt
+    @JsPlainObject
+    external interface Test {
+        val required: Boolean
+        val optional: Boolean?
+    }
+    
+    val x = Test(required=true)  // compiles to {required: true}
+    val x = Test(required=true, optional=null)  // compiles to {required: true, optional: null}
+    ```
+* Passing a null to a function will turn it into a JS null value
+* Passing **undefined** to a function instead if you want to pass undefined. This is also important for default parameters, which you should write as:
+    ```kt
+    fun x(value: String, optionalValue: String? = undefined) {
+        callJsFunction(value, optionalValue)
+    } 
+    ```
+* null safe accessors will return null instead of undefined:
+    ```js
+    const js = undefined
+    js?.value // undefined
+  
+    const js2 = null
+    js2?.value // undefined
+    ```
+    
+    ```kt
+    val y: String? = null 
+    y?.length // null
+    
+    val x: String? = undefined
+    x?.length // null
+    ```
+
+## Scalar Mappings
+
+The following don't work:
+* Int::class.js
+* Double::class.js
+* Float::class.js
+
+Instead, use JsNumber::class.js
+
+The following work:
+* String::class.js
+* Any Other Class that is defined as a JS class
+
+## Equality
+Kotlin compiles equality pretty much as you'd expect it to behave, if it was Kotlin. The only difference is that Double values are equal to Ints if they are the same number technically.
+
+=== is basically only used to compare null and undefined
+
+In general, === in Kotlin translates to === in JS. == in Kotlin however translates to a special function:
+```kt
+// Kotlin below
+null == undefined // true
+null === undefined // false
+"3" == 3 // false in Kotlin, true in JS
+0 == "" // false in Kotlin, true in JS
+1.0 == 1 // true
+// objects with "equals" methods use that one
+// === checks are used for everything else
+```
