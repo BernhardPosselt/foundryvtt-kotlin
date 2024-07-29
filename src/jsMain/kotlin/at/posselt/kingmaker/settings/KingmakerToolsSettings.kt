@@ -17,7 +17,7 @@ import kotlinx.coroutines.await
 private fun <T : DataField> Settings.registerField(
     key: String,
     name: String,
-    hint: String? = null,
+    hint: String? = undefined,
     requiresReload: Boolean = false,
     type: T,
 ) {
@@ -38,24 +38,24 @@ private fun <T : DataField> Settings.registerField(
 fun Settings.registerInt(
     key: String,
     name: String,
-    hint: String? = null,
+    hint: String? = undefined,
     default: Int = 0,
     hidden: Boolean = false,
     requiresReload: Boolean = false,
-    choices: Record<String, Int>? = null,
+    choices: Record<String, Int>? = undefined,
 ) {
     register<Int>(
         Config.moduleId,
         key,
         SettingsData<Int>(
             name = name,
-            hint = hint ?: undefined,
+            hint = hint,
             config = !hidden,
             default = default,
             requiresReload = requiresReload,
             type = JsNumber::class.js,
             scope = "world",
-            choices = choices ?: undefined,
+            choices = choices,
         )
     )
 }
@@ -63,24 +63,24 @@ fun Settings.registerInt(
 private inline fun <reified T : Any> Settings.registerScalar(
     key: String,
     name: String,
-    hint: String? = null,
-    default: T? = null,
+    hint: String? = undefined,
+    default: T? = undefined,
     hidden: Boolean = false,
     requiresReload: Boolean = false,
-    choices: Record<String, T>? = null,
+    choices: Record<String, T>? = undefined,
 ) {
     register<T>(
         Config.moduleId,
         key,
         SettingsData<T>(
             name = name,
-            hint = hint ?: undefined,
+            hint = hint,
             config = !hidden,
-            default = default ?: undefined,
+            default = default,
             requiresReload = requiresReload,
             type = T::class.js,
             scope = "world",
-            choices = choices ?: undefined,
+            choices = choices,
         )
     )
 }
@@ -89,8 +89,8 @@ private fun Settings.createMenu(
     key: String,
     name: String,
     label: String,
-    hint: String? = null,
-    icon: String? = null,
+    hint: String? = undefined,
+    icon: String? = undefined,
     restricted: Boolean = false,
     app: JsClass<out ApplicationV2>
 ) {
@@ -190,17 +190,52 @@ object KingmakerToolsSettings {
         val strings = mapOf("currentWeatherFx" to "none")
     }
 
-    private object userVisibleSettings {
-        val booleans = mapOf(
-            "enableWeather" to true,
-        )
-    }
 
     fun register() {
         registerSimple(game.settings, nonUserVisibleSettings.strings, hidden = true)
         registerSimple(game.settings, nonUserVisibleSettings.booleans, hidden = true)
-        registerSimple(game.settings, userVisibleSettings.booleans, hidden = false)
-        registerCustom(game.settings)
+        game.settings.registerField(
+            key = "regionSettings",
+            name = "Region Settings",
+            type = ObjectField(
+                DataFieldOptions(
+                    initial = RegionSettings(
+                        useStolenLands = true,
+                        regions = emptyArray<RegionSetting>()
+                    )
+                )
+            ),
+        )
+        game.settings.createMenu(
+            key = "regionsMenu",
+            label = "Customize",
+            name = "Regions",
+            app = RegionConfiguration::class.js,
+        )
+        game.settings.registerScalar(
+            name = "Enable Weather",
+            key = "enableWeather",
+            default = true,
+        )
+        game.settings.registerScalar<Boolean>(
+            key = "enableWeatherSoundFx",
+            name = "Play Weather Sounds",
+            default = true,
+        )
+        game.settings.registerScalar<String>(
+            key = "weatherRollMode",
+            name = "Weather Roll Mode",
+            choices = RollMode.entries.asSequence()
+                .map { it.toCamelCase() to it.label }
+                .toMutableRecord(),
+            default = "gmroll"
+        )
+        game.settings.registerInt(
+            key = "weatherHazardRange",
+            name = "Weather Hazard Range",
+            default = 4,
+            hint = "Roll Weather Events up to Party Level plus this value"
+        )
     }
 }
 
@@ -220,42 +255,3 @@ private inline fun <reified T : Any> registerSimple(
     }
 }
 
-private fun registerCustom(settings: Settings) {
-    settings.registerField(
-        key = "regionSettings",
-        name = "Region Settings",
-        type = ObjectField(
-            DataFieldOptions(
-                initial = RegionSettings(
-                    useStolenLands = true,
-                    regions = emptyArray()
-                )
-            )
-        ),
-    )
-    settings.createMenu(
-        key = "regionsMenu",
-        label = "Customize",
-        name = "Regions",
-        app = RegionConfiguration::class.js,
-    )
-    settings.registerScalar<String>(
-        key = "weatherRollMode",
-        name = "Weather Roll Mode",
-        choices = RollMode.entries.asSequence()
-            .map { it.toCamelCase() to it.label }
-            .toMutableRecord(),
-        default = "gmroll"
-    )
-    settings.registerScalar<Boolean>(
-        key = "enableWeatherSoundFx",
-        name = "Play Weather Sounds",
-        default = true,
-    )
-    settings.registerInt(
-        key = "weatherHazardRange",
-        name = "Weather Hazard Range",
-        default = 4,
-        hint = "Roll Weather Events up to Party Level plus this value"
-    )
-}

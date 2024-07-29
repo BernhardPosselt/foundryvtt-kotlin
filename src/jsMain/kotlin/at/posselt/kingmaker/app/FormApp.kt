@@ -27,7 +27,7 @@ abstract class FormApp<T, O>(
     submitOnChange: Boolean = true,
     closeOnSubmit: Boolean = false,
     controls: Array<MenuControl> = emptyArray(),
-    width: Int? = null,
+    width: Int? = undefined,
     val debug: Boolean = false,
 ) : App<T>(
     HandlebarsFormApplicationOptions(

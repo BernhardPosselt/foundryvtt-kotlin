@@ -12,7 +12,7 @@ import kotlinx.coroutines.await
 suspend fun d20Check(
     dc: Int,
     modifier: Int = 0,
-    flavor: String? = null,
+    flavor: String? = undefined,
     rollMode: RollMode = RollMode.PUBLICROLL,
     toChat: Boolean = true,
 ): DegreeOfSuccess {
