@@ -22,4 +22,5 @@ external object Game {
     val combats: CombatEncounters
     val user: User
     val modules: Collection<Module>
+    val packs: CompendiumPacks
 }

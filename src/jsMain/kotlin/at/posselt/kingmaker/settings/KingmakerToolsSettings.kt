@@ -168,10 +168,9 @@ object KingmakerToolsSettings {
         val strings = mapOf<String, String>()
         val booleans = mapOf(
             "enableWeather" to true,
-            "enableWeatherSoundFx" to true,
         )
-        val ints = mapOf(
-            "weatherHazardRange" to 4
+        val ints = mapOf<String, Int>(
+
         )
     }
 
@@ -227,5 +226,16 @@ private fun registerCustom(settings: Settings) {
             .map { it.toCamelCase() to it.label }
             .toMutableRecord(),
         default = "gmroll"
+    )
+    settings.registerScalar<Boolean>(
+        key = "enableWeatherSoundFx",
+        name = "Play Weather Sounds",
+        default = true,
+    )
+    settings.registerScalar<Int>(
+        key = "weatherHazardRange",
+        name = "Weather Hazard Range",
+        default = 4,
+        hint = "Roll Weather Events up to Party Level plus this value"
     )
 }
