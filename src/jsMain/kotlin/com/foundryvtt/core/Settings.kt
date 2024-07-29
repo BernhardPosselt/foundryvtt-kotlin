@@ -39,7 +39,7 @@ external interface SettingsData<T> {
     val default: T?
     val requiresReload: Boolean?
     val type: Any  // Number, Object, Array, Boolean class or data field or data model
-    val choices: Record<String, String>?
+    val choices: Record<String, T>?
     val onChange: ((value: T) -> Unit)?
     val range: SettingsRange?
     val input: CustomFormInput<T>?

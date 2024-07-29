@@ -1,11 +1,16 @@
 package at.posselt.kingmaker.settings
 
 import at.posselt.kingmaker.Config
+import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.deCamelCase
+import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.utils.toMutableRecord
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.ApplicationV2
 import com.foundryvtt.core.data.fields.DataFieldOptions
 import com.foundryvtt.core.data.fields.ObjectField
+import js.objects.Record
 import kotlinx.coroutines.await
 
 private fun <T : DataField> Settings.registerField(
@@ -13,7 +18,7 @@ private fun <T : DataField> Settings.registerField(
     name: String,
     hint: String? = null,
     requiresReload: Boolean = false,
-    type: T
+    type: T,
 ) {
     register<T>(
         Config.MODULE_ID,
@@ -36,6 +41,7 @@ private inline fun <reified T : Any> Settings.registerScalar(
     default: T? = null,
     hidden: Boolean = false,
     requiresReload: Boolean = false,
+    choices: Record<String, T>? = null,
 ) {
     register<T>(
         Config.MODULE_ID,
@@ -47,7 +53,8 @@ private inline fun <reified T : Any> Settings.registerScalar(
             default = default,
             requiresReload = requiresReload,
             type = T::class.js,
-            scope = "world"
+            scope = "world",
+            choices = choices,
         )
     )
 }
@@ -75,6 +82,13 @@ private fun Settings.createMenu(
     )
 }
 
+private fun Settings.getInt(key: String): Int =
+    get(Config.MODULE_ID, key)
+
+suspend fun Settings.setInt(key: String, value: Int) {
+    set(Config.MODULE_ID, key, value).await()
+}
+
 private fun Settings.getString(key: String): String =
     get(Config.MODULE_ID, key)
 
@@ -100,6 +114,19 @@ val Settings.kingmakerTools: KingmakerToolsSettings
     get() = KingmakerToolsSettings
 
 object KingmakerToolsSettings {
+    suspend fun setWeatherHazardRange(value: Int) =
+        game.settings.setInt("weatherHazardRange", value)
+
+    fun getWeatherHazardRange(): Int =
+        game.settings.getInt("weatherHazardRange")
+
+    suspend fun setWeatherRollMode(value: RollMode) =
+        game.settings.setString("weatherRollMode", value.toCamelCase())
+
+    fun getWeatherRollMode(): RollMode =
+        fromCamelCase<RollMode>(game.settings.getString("weatherRollMode"))
+            ?: throw IllegalStateException("Null value set for setting 'weatherRollMode'")
+
     suspend fun setEnableWeatherSoundFx(value: Boolean) =
         game.settings.setBoolean("enableWeatherSoundFx", value)
 
@@ -143,11 +170,15 @@ object KingmakerToolsSettings {
             "enableWeather" to true,
             "enableWeatherSoundFx" to true,
         )
+        val ints = mapOf(
+            "weatherHazardRange" to 4
+        )
     }
 
     fun register() {
         registerSimple(game.settings, nonUserVisibleSettings.strings, hidden = true)
         registerSimple(game.settings, nonUserVisibleSettings.booleans, hidden = true)
+        registerSimple(game.settings, userVisibleSettings.ints, hidden = false)
         registerSimple(game.settings, userVisibleSettings.strings, hidden = false)
         registerSimple(game.settings, userVisibleSettings.booleans, hidden = false)
         registerCustom(game.settings)
@@ -188,5 +219,13 @@ private fun registerCustom(settings: Settings) {
         label = "Customize",
         name = "Regions",
         app = RegionConfiguration::class.js,
+    )
+    settings.registerScalar<String>(
+        key = "weatherRollMode",
+        name = "Weather Roll Mode",
+        choices = RollMode.entries.asSequence()
+            .map { it.toCamelCase() to it.label }
+            .toMutableRecord(),
+        default = "gmroll"
     )
 }

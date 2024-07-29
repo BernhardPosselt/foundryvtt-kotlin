@@ -39,7 +39,7 @@ suspend fun syncWeather(game: Game) {
     }
 }
 
-fun getCurrentWeatherFx(settings: KingmakerToolsSettings) =
+private fun getCurrentWeatherFx(settings: KingmakerToolsSettings) =
     if (settings.getEnableSheltered()) {
         WeatherEffect.NONE
     } else {
