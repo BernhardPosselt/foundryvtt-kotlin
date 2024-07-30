@@ -12,6 +12,12 @@ object Config {
         object weather {
             const val playlistId = "c6WJzHWMM72zP19H"
         }
+
+        object rollTables {
+            const val compendium = "pf2e-kingmaker-tools.kingmaker-tools-rolltables"
+
+            object uuids
+        }
     }
 }
 

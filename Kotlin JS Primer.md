@@ -298,7 +298,7 @@ Passing values to JS APIs that have optional parameters is tricky. There are a c
 
 ## Scalar Mappings
 
-The following don't work:
+The following don't translate to JS' **Number**:
 * Int::class.js
 * Double::class.js
 * Float::class.js
@@ -307,6 +307,7 @@ Instead, use JsNumber::class.js
 
 The following work:
 * String::class.js
+* Boolean::class.js
 * Any Other Class that is defined as a JS class
 
 ## Equality

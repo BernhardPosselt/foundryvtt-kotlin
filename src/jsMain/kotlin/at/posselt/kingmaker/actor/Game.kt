@@ -10,6 +10,11 @@ import js.array.toTypedArray
 val Game.isKingmakerInstalled: Boolean
     get() = modules.get("pf2e-kingmaker")?.active ?: false
 
+fun Game.averagePartyLevel(): Int =
+    partyMembers()
+        .map { it.level }
+        .average()
+        .toInt()
 
 fun Game.partyMembers(): Array<PF2ECharacter> =
     actors.contents
