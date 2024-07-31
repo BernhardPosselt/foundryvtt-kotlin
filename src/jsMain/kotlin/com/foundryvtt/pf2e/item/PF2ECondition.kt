@@ -18,11 +18,11 @@ external class PF2ECondition : PF2EItem {
     companion object : DocumentStatic<PF2ECondition>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ECondition>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECondition>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECondition?>
 
     val system: PF2EConditionData
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2ECondition.update(data: PF2ECondition, operation: DatabaseUpdateOperation = jso()): Promise<PF2ECondition> =
+fun PF2ECondition.update(data: PF2ECondition, operation: DatabaseUpdateOperation = jso()): Promise<PF2ECondition?> =
     update(data as AnyObject, operation)

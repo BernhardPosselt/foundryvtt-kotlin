@@ -54,10 +54,6 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
     width = 900,
     template = "applications/settings/configure-regions.hbs",
 ) {
-    init {
-        appHook.onUpdateWorldTime { it, _, _, _ -> console.log(it) }
-    }
-
     private var currentSettings = game.settings.kingmakerTools.getRegionSettings()
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
@@ -76,7 +72,6 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
 
             "delete" -> {
                 target.dataset["index"]?.toInt()?.let {
-                    console.log(it)
                     currentSettings.regions = currentSettings.regions
                         .filterIndexed { index, _ -> index != it }
                         .toTypedArray()

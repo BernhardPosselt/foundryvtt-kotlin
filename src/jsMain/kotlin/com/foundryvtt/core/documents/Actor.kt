@@ -12,7 +12,7 @@ open external class Actor : ClientDocument {
     companion object : DocumentStatic<Actor>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Actor>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Actor>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Actor?>
 
     // schema
     var _id: String
@@ -29,7 +29,7 @@ open external class Actor : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Actor.update(data: Actor, operation: DatabaseUpdateOperation = jso()): Promise<Actor> =
+fun Actor.update(data: Actor, operation: DatabaseUpdateOperation = jso()): Promise<Actor?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateActor(callback: PreCreateDocumentCallback<Actor, O>) =

@@ -165,6 +165,12 @@ object KingmakerToolsSettings {
     fun getEnableSheltered(): Boolean =
         game.settings.getBoolean("enableSheltered")
 
+    suspend fun setAutoRollWeather(value: Boolean) =
+        game.settings.setBoolean("autoRollWeather", value)
+
+    fun getAutoRollWeather(): Boolean =
+        game.settings.getBoolean("autoRollWeather")
+
     suspend fun setEnableWeather(value: Boolean) =
         game.settings.setBoolean("enableWeather", value)
 
@@ -176,6 +182,12 @@ object KingmakerToolsSettings {
 
     fun getRegionSettings(): RegionSettings =
         game.settings.getObject("regionSettings")
+
+    suspend fun setClimateSettings(settings: ClimateSettings) =
+        game.settings.setObject("climateSettings", settings)
+
+    fun getClimateSettings(): ClimateSettings =
+        game.settings.getObject("climateSettings")
 
     suspend fun setCurrentWeatherFx(value: String) =
         game.settings.setString("currentWeatherFx", value)
@@ -210,7 +222,25 @@ object KingmakerToolsSettings {
             key = "regionsMenu",
             label = "Customize",
             name = "Regions",
-            app = RegionConfiguration::class.js,
+            app = ClimateConfiguration::class.js,
+        )
+        game.settings.registerField(
+            key = "climateSettings",
+            name = "Climate Settings",
+            type = ObjectField(
+                DataFieldOptions(
+                    initial = ClimateSettings(
+                        useStolenLands = true,
+                        months = getDefaultMonths(),
+                    )
+                )
+            )
+        )
+        game.settings.createMenu(
+            key = "climateMenu",
+            label = "Customize",
+            name = "Climate",
+            app = ClimateConfiguration::class.js,
         )
         game.settings.registerScalar(
             name = "Enable Weather",
@@ -229,6 +259,12 @@ object KingmakerToolsSettings {
                 .map { it.toCamelCase() to it.label }
                 .toMutableRecord(),
             default = "gmroll"
+        )
+        game.settings.registerScalar<Boolean>(
+            key = "autoRollWeather",
+            name = "Auto Roll Weather",
+            hint = "When a new day begins (00:00), automatically roll weather",
+            default = true,
         )
         game.settings.registerInt(
             key = "weatherHazardRange",

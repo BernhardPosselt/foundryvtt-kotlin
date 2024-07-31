@@ -25,7 +25,7 @@ external class PF2ECampaignFeature : PF2EItem {
     companion object : DocumentStatic<PF2ECampaignFeature>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ECampaignFeature>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECampaignFeature>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECampaignFeature?>
 
     val system: PF2ECampaignFeatureData
 }
@@ -34,5 +34,5 @@ external class PF2ECampaignFeature : PF2EItem {
 fun PF2ECampaignFeature.update(
     data: PF2ECampaignFeature,
     operation: DatabaseUpdateOperation = jso()
-): Promise<PF2ECampaignFeature> =
+): Promise<PF2ECampaignFeature?> =
     update(data as AnyObject, operation)

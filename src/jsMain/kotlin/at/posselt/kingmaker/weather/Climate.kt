@@ -1,17 +1,21 @@
 package at.posselt.kingmaker.weather
 
+import at.posselt.kingmaker.Config
+import at.posselt.kingmaker.actor.averagePartyLevel
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.data.regions.*
+import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.getCurrentMonth
+import at.posselt.kingmaker.rolltables.rollWithCompendiumFallback
+import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.DieValue
 import at.posselt.kingmaker.utils.d20Check
 import at.posselt.kingmaker.utils.postChatMessage
 import com.foundryvtt.core.Game
-import com.foundryvtt.core.documents.RollTable
-import com.foundryvtt.core.documents.RollTableDraw
 import com.foundryvtt.core.documents.TableMessageOptions
 import js.objects.recordOf
 
-private val hazardLevelRegex = "\\(Hazard (?<level>\\d+)\\)".toRegex(RegexOption.IGNORE_CASE)
+private val hazardLevelRegex = "\\(Hazard (?<level>\\d+)\\+?\\)".toRegex(RegexOption.IGNORE_CASE)
 
 /**
  * All Weather Events results from the roll table should include a "(Hazard X)"
@@ -23,21 +27,32 @@ private fun parseHazardLevel(eventName: String): Int? =
     }
 
 private suspend fun rollWeatherEvent(
+    game: Game,
     averagePartyLevel: Int,
     maximumRange: Int,
     rollMode: RollMode,
 ) {
-    val table: RollTable = js("") // TODO
-    val draw: RollTableDraw = js("") // TODO
+    val tableName = Config.rollTables.weather
+    val result = game.rollWithCompendiumFallback(
+        tableName = tableName,
+        fallbackName = tableName,
+        rollMode = rollMode,
+        displayChat = false
+    )
+    if (result == null) {
+        console.error("Could neither find table with name '$tableName' in world or compendium '${Config.rollTables.compendium}'")
+        return
+    }
+    val (table, draw) = result
     val text = draw.results.firstOrNull()?.text
     val hazardLevel = text?.let(::parseHazardLevel)
     if (hazardLevel == null) {
-        console.error("Can not parse hazard level from weather events table result, add a (Hazard X) part where X is the level of the hazard")
+        console.error("Can not parse hazard level from weather events table result '$text', add a (Hazard X) part where X is the level of the hazard")
         return
     }
     if (hazardLevel > averagePartyLevel + maximumRange) {
         console.log("Re-Rolling event, level $hazardLevel is more than $maximumRange higher than party level $averagePartyLevel")
-        rollWeatherEvent(averagePartyLevel, maximumRange, rollMode)
+        rollWeatherEvent(game, averagePartyLevel, maximumRange, rollMode)
     } else {
         table.toMessage(
             draw.results,
@@ -46,7 +61,7 @@ private suspend fun rollWeatherEvent(
     }
 }
 
-suspend fun rollWeather(
+private suspend fun rollWeather(
     game: Game,
     month: Month,
     climate: Array<Climate>,
@@ -57,11 +72,13 @@ suspend fun rollWeather(
     climate.find { it.month == month }
         ?.let {
             // 1. roll flat checks
-            val checkPrecipitation = d20Check(
-                it.precipitationDc,
-                flavor = "Checking for Precipitation with DC ${it.precipitationDc}",
-                rollMode = rollMode,
-            )
+            val checkPrecipitation = it.precipitationDc?.let { precipitationDc ->
+                d20Check(
+                    precipitationDc,
+                    flavor = "Checking for Precipitation with DC ${precipitationDc}",
+                    rollMode = rollMode,
+                )
+            }
             val checkCold = it.coldDc?.let { coldDc ->
                 d20Check(
                     coldDc,
@@ -69,36 +86,40 @@ suspend fun rollWeather(
                     rollMode = rollMode,
                 )
             }
-            // 2. check if weather events happen
-            val checkEvent = d20Check(
-                it.weatherEventDc,
-                flavor = "Checking for Weather Event with DC ${it.weatherEventDc}",
-                rollMode = rollMode,
-            )
-            val checkSecondEvent = checkEvent.dieValue
-                .takeIf(DieValue::isNat20)
-                ?.run {
-                    d20Check(
-                        it.weatherEventDc,
-                        flavor = "Checking for Second Weather Event with DC ${it.weatherEventDc}",
-                        rollMode = rollMode,
-                    )
-                }
-            // 3. roll weather events
-            if (checkEvent.degreeOfSuccess.succeeded()) rollWeatherEvent(
-                averagePartyLevel,
-                maximumRange,
-                rollMode,
-            )
-            if (checkSecondEvent?.degreeOfSuccess?.succeeded() == true) rollWeatherEvent(
-                averagePartyLevel,
-                maximumRange,
-                rollMode,
-            )
+            it.weatherEventDc?.let { weatherEventDc ->
+                // 2. check if weather events happen
+                val checkEvent = d20Check(
+                    weatherEventDc,
+                    flavor = "Checking for Weather Event with DC ${weatherEventDc}",
+                    rollMode = rollMode,
+                )
+                val checkSecondEvent = checkEvent.dieValue
+                    .takeIf(DieValue::isNat20)
+                    ?.run {
+                        d20Check(
+                            weatherEventDc,
+                            flavor = "Checking for Second Weather Event with DC ${weatherEventDc}",
+                            rollMode = rollMode,
+                        )
+                    }
+                // 3. roll weather events
+                if (checkEvent.degreeOfSuccess.succeeded()) rollWeatherEvent(
+                    game,
+                    averagePartyLevel,
+                    maximumRange,
+                    rollMode,
+                )
+                if (checkSecondEvent?.degreeOfSuccess?.succeeded() == true) rollWeatherEvent(
+                    game,
+                    averagePartyLevel,
+                    maximumRange,
+                    rollMode,
+                )
+            }
             // 4. post weather result to chat
             val type = findWeatherType(
                 isCold = checkCold?.degreeOfSuccess?.succeeded() == true,
-                hasPrecipitation = checkPrecipitation.degreeOfSuccess.succeeded(),
+                hasPrecipitation = checkPrecipitation?.degreeOfSuccess?.succeeded() == true,
             )
             val weatherEffect = when (type) {
                 WeatherType.COLD -> {
@@ -124,4 +145,30 @@ suspend fun rollWeather(
             // 5. set new weather
             setWeather(game, weatherEffect)
         }
+}
+
+suspend fun rollWeather(game: Game) {
+    val settings = game.settings.kingmakerTools
+    val climateSettings = settings.getClimateSettings()
+    val climate = if (climateSettings.useStolenLands) {
+        stolenLandsWeather
+    } else {
+        climateSettings.months.mapIndexed { index, climateSetting ->
+            Climate(
+                month = getMonth(index),
+                season = fromCamelCase<Season>(climateSetting.season)!!,
+                coldDc = climateSetting.coldDc,
+                precipitationDc = climateSetting.precipitationDc,
+                weatherEventDc = climateSetting.weatherEventDc,
+            )
+        }.toTypedArray()
+    }
+    rollWeather(
+        game = game,
+        month = game.getCurrentMonth(),
+        climate = climate,
+        averagePartyLevel = game.averagePartyLevel(),
+        maximumRange = settings.getWeatherHazardRange(),
+        rollMode = settings.getWeatherRollMode(),
+    )
 }

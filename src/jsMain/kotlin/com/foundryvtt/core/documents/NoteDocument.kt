@@ -26,7 +26,7 @@ external class NoteDocument(
     companion object : DocumentStatic<NoteDocument>;
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<NoteDocument>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<NoteDocument>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<NoteDocument?>
 
     var _id: String
     var entryId: String
@@ -46,7 +46,7 @@ external class NoteDocument(
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun NoteDocument.update(data: NoteDocument, operation: DatabaseUpdateOperation = jso()): Promise<NoteDocument> =
+fun NoteDocument.update(data: NoteDocument, operation: DatabaseUpdateOperation = jso()): Promise<NoteDocument?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateNote(callback: PreCreateDocumentCallback<NoteDocument, O>) =

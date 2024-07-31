@@ -69,7 +69,7 @@ external class User : ClientDocument {
     companion object : DocumentStatic<User>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<User>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<User>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<User?>
 
     val active: Boolean
     val targets: JsSet<TokenDocument>
@@ -108,7 +108,7 @@ external class User : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun User.update(data: User, operation: DatabaseUpdateOperation = jso()): Promise<User> =
+fun User.update(data: User, operation: DatabaseUpdateOperation = jso()): Promise<User?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateUser(callback: PreCreateDocumentCallback<User, O>) =

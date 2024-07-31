@@ -78,7 +78,7 @@ fun <O> HooksEventListener.onReady(callback: (Any) -> O) =
 fun <O> HooksEventListener.onInit(callback: () -> O) =
     on("init", callback)
 
-fun <O> HooksEventListener.onUpdateWorldTime(callback: (worldTime: Int, dt: Int, options: Any, userId: String) -> O) =
+fun <O> HooksEventListener.onUpdateWorldTime(callback: (worldTime: Int, deltaInSeconds: Int, options: Any, userId: String) -> O) =
     on("updateWorldTime", callback)
 
 fun <O> HooksEventListener.onCanvasReady(callback: (Canvas) -> O) =

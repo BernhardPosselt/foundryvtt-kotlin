@@ -31,7 +31,7 @@ external class Folder(
     companion object : DocumentStatic<Folder>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Folder>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Folder>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Folder?>
 
     var _id: String
     val name: String
@@ -56,7 +56,7 @@ external class Folder(
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Folder.update(data: Folder, operation: DatabaseUpdateOperation = jso()): Promise<Folder> =
+fun Folder.update(data: Folder, operation: DatabaseUpdateOperation = jso()): Promise<Folder?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateFolder(callback: PreCreateDocumentCallback<Folder, O>) =

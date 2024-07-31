@@ -58,7 +58,7 @@ abstract external class Document(
     open fun update(
         data: AnyObject,
         operation: DatabaseUpdateOperation = definedExternally
-    ): Promise<Document>
+    ): Promise<Document?>
 
     open fun delete(operation: DatabaseDeleteOperation = definedExternally): Promise<Document>
 

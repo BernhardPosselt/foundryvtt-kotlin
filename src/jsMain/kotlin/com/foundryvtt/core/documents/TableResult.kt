@@ -12,7 +12,7 @@ external class TableResult : ClientDocument {
     companion object : DocumentStatic<TableResult>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<TableResult>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TableResult>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TableResult?>
 
     val icon: String
     fun getChatText(): String
@@ -29,7 +29,7 @@ external class TableResult : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun TableResult.update(data: TableResult, operation: DatabaseUpdateOperation = jso()): Promise<TableResult> =
+fun TableResult.update(data: TableResult, operation: DatabaseUpdateOperation = jso()): Promise<TableResult?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateTableResult(callback: PreCreateDocumentCallback<TableResult, O>) =

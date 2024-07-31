@@ -14,7 +14,7 @@ external class Combatant : ClientDocument {
     companion object : DocumentStatic<Combatant>;
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Combatant>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Combatant>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Combatant?>
 
     var _id: String
     var type: String
@@ -40,7 +40,7 @@ external class Combatant : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Combatant.update(data: Combatant, operation: DatabaseUpdateOperation = jso()): Promise<Combatant> =
+fun Combatant.update(data: Combatant, operation: DatabaseUpdateOperation = jso()): Promise<Combatant?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateCombatant(callback: PreCreateDocumentCallback<Combatant, O>) =

@@ -14,7 +14,7 @@ open external class PlaylistSound : ClientDocument {
     companion object : DocumentStatic<PlaylistSound>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PlaylistSound>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PlaylistSound>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PlaylistSound?>
 
     var _id: String
     val sound: Sound?
@@ -37,7 +37,7 @@ open external class PlaylistSound : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PlaylistSound.update(data: PlaylistSound, operation: DatabaseUpdateOperation = jso()): Promise<PlaylistSound> =
+fun PlaylistSound.update(data: PlaylistSound, operation: DatabaseUpdateOperation = jso()): Promise<PlaylistSound?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreatePlaylistSound(callback: PreCreateDocumentCallback<PlaylistSound, O>) =

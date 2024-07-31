@@ -141,7 +141,7 @@ external class TokenDocument : Document {
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<TokenDocument>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TokenDocument>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TokenDocument?>
 
     var _id: String
     var name: String
@@ -190,7 +190,7 @@ external class TokenDocument : Document {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun TokenDocument.update(data: TokenDocument, operation: DatabaseUpdateOperation = jso()): Promise<TokenDocument> =
+fun TokenDocument.update(data: TokenDocument, operation: DatabaseUpdateOperation = jso()): Promise<TokenDocument?> =
     update(data as AnyObject, operation)
 
 

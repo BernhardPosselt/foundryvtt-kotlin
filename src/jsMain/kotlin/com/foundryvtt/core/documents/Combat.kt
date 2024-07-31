@@ -33,7 +33,7 @@ external class Combat : ClientDocument {
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Combat>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Combat>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Combat?>
 
     var _id: String
     var type: String
@@ -75,7 +75,7 @@ external class Combat : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Combat.update(data: Combat, operation: DatabaseUpdateOperation = jso()): Promise<Combat> =
+fun Combat.update(data: Combat, operation: DatabaseUpdateOperation = jso()): Promise<Combat?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateCombat(callback: PreCreateDocumentCallback<Combat, O>) =

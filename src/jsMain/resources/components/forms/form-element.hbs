@@ -1,6 +1,7 @@
 {{#unless hideLabel}}<label {{#if checkbox}}class="form-element-checkbox-label"{{/if}}>{{label}}{{/unless}}
 {{#if select}}
-        <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if required}}required{{/if}}>
+        <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
+                required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}}>
             {{#if required}}
                 {{selectOptions options selected=value}}
             {{else}}
@@ -13,13 +14,13 @@
                 required}}required{{/if}}>
 {{else if text}}
         <input type="text" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
-                required}}required{{/if}}>
+                required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}}>
 {{else if checkbox}}
         <input type="checkbox" name="{{name}}" {{checked value}}  {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}}>
 {{else if textarea}}
         <textarea name="{{name}}"  {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
-                required}}required{{/if}}>{{value}}</textarea>
+                required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}}>{{value}}</textarea>
 {{/if}}
 {{#if help}}
         <div class="help">{{help}}</div>

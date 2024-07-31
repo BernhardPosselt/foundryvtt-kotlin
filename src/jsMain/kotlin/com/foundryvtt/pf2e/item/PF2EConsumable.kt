@@ -24,12 +24,12 @@ external class PF2EConsumable : PF2EItem {
     companion object : DocumentStatic<PF2EConsumable>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EConsumable>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EConsumable>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EConsumable?>
 
     val system: PF2EConsumableData
     val quantity: Int
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2EConsumable.update(data: PF2EConsumable, operation: DatabaseUpdateOperation = jso()): Promise<PF2EConsumable> =
+fun PF2EConsumable.update(data: PF2EConsumable, operation: DatabaseUpdateOperation = jso()): Promise<PF2EConsumable?> =
     update(data as AnyObject, operation)

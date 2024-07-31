@@ -15,6 +15,7 @@ import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.documents.Scene
 import com.foundryvtt.core.documents.onPreUpdateScene
 import com.foundryvtt.core.documents.onUpdateScene
+import com.foundryvtt.core.onUpdateWorldTime
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -78,6 +79,15 @@ fun registerWeatherHooks(game: Game) {
             val weather = getCurrentWeatherFx(settings)
             buildPromise {
                 changeSoundTo(game, weather)
+            }
+        }
+    }
+    Hooks.onUpdateWorldTime { _, deltaInSeconds, _, _ ->
+        if (game.settings.kingmakerTools.getAutoRollWeather()) {
+            if (dayHasChanged(game, deltaInSeconds)) {
+                buildPromise {
+                    rollWeather(game)
+                }
             }
         }
     }

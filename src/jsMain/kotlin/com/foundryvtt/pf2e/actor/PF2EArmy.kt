@@ -28,11 +28,11 @@ external class PF2EArmy : PF2EActor {
     companion object : DocumentStatic<PF2EArmy>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EArmy>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EArmy>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EArmy?>
 
     val system: PF2EArmyData
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2EArmy.update(data: PF2EArmy, operation: DatabaseUpdateOperation = jso()): Promise<PF2EArmy> =
+fun PF2EArmy.update(data: PF2EArmy, operation: DatabaseUpdateOperation = jso()): Promise<PF2EArmy?> =
     update(data as AnyObject, operation)

@@ -32,7 +32,7 @@ external class TileDocument : ClientDocument {
     companion object : DocumentStatic<TileDocument>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<TileDocument>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TileDocument>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<TileDocument?>
 
     var _id: String
     var texture: TextureData
@@ -52,7 +52,7 @@ external class TileDocument : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun TileDocument.update(data: TileDocument, operation: DatabaseUpdateOperation = jso()): Promise<TileDocument> =
+fun TileDocument.update(data: TileDocument, operation: DatabaseUpdateOperation = jso()): Promise<TileDocument?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateTile(callback: PreCreateDocumentCallback<TileDocument, O>) =

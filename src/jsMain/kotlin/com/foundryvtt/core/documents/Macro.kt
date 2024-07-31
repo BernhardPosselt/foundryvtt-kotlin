@@ -25,7 +25,7 @@ external class Macro : ClientDocument {
     companion object : DocumentStatic<Macro>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Macro>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Macro>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Macro?>
 
     val isAuthor: Boolean
     val canExecute: Boolean
@@ -47,7 +47,7 @@ external class Macro : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Macro.update(data: Macro, operation: DatabaseUpdateOperation = jso()): Promise<Macro> =
+fun Macro.update(data: Macro, operation: DatabaseUpdateOperation = jso()): Promise<Macro?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateMacro(callback: PreCreateDocumentCallback<Macro, O>) =

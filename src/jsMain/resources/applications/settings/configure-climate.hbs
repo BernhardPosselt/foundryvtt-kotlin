@@ -1,0 +1,37 @@
+<div>
+    <fieldset>
+        <legend>Use Stolen Lands Climate</legend>
+        <div class="row">
+            {{> formElement useStolenLands}}
+        </div>
+    </fieldset>
+    {{#unless useStolenLands.value}}
+        <fieldset>
+            <legend>Climate Overrides</legend>
+            <table>
+                <thead>
+                <tr>
+                    {{#each heading}}
+                        <th class="{{#each classes}}{{this}}{{/each}}">{{label}}</th>
+                    {{/each}}
+                </tr>
+                </thead>
+                <tbody>
+                {{#each formRows}}
+                    <tr>
+                        {{#each this}}
+                            {{#if isFormElement}}
+                                <td>{{> formElement this}}</td>
+                            {{else}}
+                                <td>{{this}}</td>
+                            {{/if}}
+                        {{/each}}
+                        <td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </fieldset>
+    {{/unless}}
+    <button data-action="save" {{#unless isValid}}disabled{{/unless}}>Save</button>
+</div>

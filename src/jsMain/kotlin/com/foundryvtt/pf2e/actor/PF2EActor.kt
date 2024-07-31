@@ -40,7 +40,7 @@ open external class PF2EActor : Actor {
     companion object : DocumentStatic<Actor>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EActor>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EActor>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EActor?>
 
     val perception: PF2EAttribute
     val level: Int
@@ -56,5 +56,5 @@ open external class PF2EActor : Actor {
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2EActor.update(data: PF2EActor, operation: DatabaseUpdateOperation = jso()): Promise<PF2EActor> =
+fun PF2EActor.update(data: PF2EActor, operation: DatabaseUpdateOperation = jso()): Promise<PF2EActor?> =
     update(data as AnyObject, operation)

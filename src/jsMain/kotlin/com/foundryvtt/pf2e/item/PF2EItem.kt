@@ -11,10 +11,10 @@ open external class PF2EItem : Item {
     companion object : DocumentStatic<Item>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EItem>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EItem>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EItem?>
     val sourceId: String
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2EItem.update(data: PF2EItem, operation: DatabaseUpdateOperation = jso()): Promise<PF2EItem> =
+fun PF2EItem.update(data: PF2EItem, operation: DatabaseUpdateOperation = jso()): Promise<PF2EItem?> =
     update(data as AnyObject, operation)

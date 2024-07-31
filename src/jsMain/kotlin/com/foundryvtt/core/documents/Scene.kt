@@ -88,7 +88,7 @@ external class Scene : ClientDocument {
     companion object : DocumentStatic<Scene>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Scene>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Scene>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Scene?>
 
     var _id: String
     var name: String
@@ -133,7 +133,7 @@ external class Scene : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Scene.update(data: Scene, operation: DatabaseUpdateOperation = jso()): Promise<Scene> =
+fun Scene.update(data: Scene, operation: DatabaseUpdateOperation = jso()): Promise<Scene?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateScene(callback: PreCreateDocumentCallback<Scene, O>) =

@@ -69,7 +69,7 @@ external class JournalEntryPage(
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<JournalEntryPage>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<JournalEntryPage>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<JournalEntryPage?>
 
     val toc: Record<String, JournalEntryPageHeading>
 
@@ -89,7 +89,7 @@ external class JournalEntryPage(
 fun JournalEntryPage.update(
     data: JournalEntryPage,
     operation: DatabaseUpdateOperation = jso()
-): Promise<JournalEntryPage> =
+): Promise<JournalEntryPage?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateJournalEntryPage(callback: PreCreateDocumentCallback<JournalEntryPage, O>) =

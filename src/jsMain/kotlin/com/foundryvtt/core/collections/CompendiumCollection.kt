@@ -62,7 +62,7 @@ open external class CompendiumCollection<T : Document>(
     fun setFolder(folder: Folders?): Promise<Unit>
     fun getIndex(options: GetIndexOptions = definedExternally): Promise<Collection<T>>
     fun getDocument(id: String): Promise<Document?>
-    fun getDocuments(query: AnyObject): Promise<Array<Document>>
+    fun getDocuments(query: AnyObject = definedExternally): Promise<Array<Document>>
     fun getUserLevel(user: User): Int
     fun importDocument(document: Document): Promise<Document>
     fun importFolder(folder: Folders, options: ImportFolderOptions): Promise<Unit>

@@ -35,10 +35,10 @@ enum class Month {
 
 data class Climate(
     val coldDc: Int? = null,
-    val precipitationDc: Int,
+    val precipitationDc: Int? = null,
     val month: Month,
     val season: Season,
-    val weatherEventDc: Int = 18
+    val weatherEventDc: Int? = 18
 )
 
 val stolenLandsWeather = arrayOf(
@@ -62,6 +62,9 @@ enum class WeatherType {
     RAINY,
     SUNNY,
 }
+
+fun getMonth(index: Int): Month =
+    Month.entries[index]
 
 fun findWeatherType(isCold: Boolean, hasPrecipitation: Boolean) =
     if (isCold && hasPrecipitation) {

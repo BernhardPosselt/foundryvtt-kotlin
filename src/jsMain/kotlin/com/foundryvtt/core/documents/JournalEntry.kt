@@ -28,7 +28,7 @@ external class JournalEntry(
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<JournalEntry>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<JournalEntry>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<JournalEntry?>
 
     fun panToNote(options: PanToNoteOptions): Promise<Unit>
 
@@ -41,7 +41,7 @@ external class JournalEntry(
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun JournalEntry.update(data: JournalEntry, operation: DatabaseUpdateOperation = jso()): Promise<JournalEntry> =
+fun JournalEntry.update(data: JournalEntry, operation: DatabaseUpdateOperation = jso()): Promise<JournalEntry?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateJournalEntry(callback: PreCreateDocumentCallback<JournalEntry, O>) =

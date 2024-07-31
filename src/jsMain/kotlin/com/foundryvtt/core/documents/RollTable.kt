@@ -42,7 +42,7 @@ external class RollTable : ClientDocument {
     companion object : DocumentStatic<RollTable>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<RollTable>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<RollTable>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<RollTable?>
 
     var _id: String
     var name: String
@@ -67,7 +67,7 @@ external class RollTable : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun RollTable.update(data: RollTable, operation: DatabaseUpdateOperation = jso()): Promise<RollTable> =
+fun RollTable.update(data: RollTable, operation: DatabaseUpdateOperation = jso()): Promise<RollTable?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateRollTable(callback: PreCreateDocumentCallback<RollTable, O>) =

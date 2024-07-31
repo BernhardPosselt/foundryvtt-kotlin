@@ -21,7 +21,7 @@ external class PF2EAction : PF2EItem {
     companion object : DocumentStatic<PF2EAction>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EAction>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EAction>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EAction?>
 
     val system: PF2EActionData
 }

@@ -107,7 +107,7 @@ external class PF2ECharacter : PF2EActor {
     companion object : DocumentStatic<PF2ECharacter>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ECharacter>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECharacter>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECharacter?>
 
     val abilities: Abilities
     val skills: Record<String, PF2EAttribute>
@@ -115,5 +115,5 @@ external class PF2ECharacter : PF2EActor {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2ECharacter.update(data: PF2ECharacter, operation: DatabaseUpdateOperation = jso()): Promise<PF2ECharacter> =
+fun PF2ECharacter.update(data: PF2ECharacter, operation: DatabaseUpdateOperation = jso()): Promise<PF2ECharacter?> =
     update(data as AnyObject, operation)

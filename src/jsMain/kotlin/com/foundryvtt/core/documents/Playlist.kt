@@ -21,7 +21,7 @@ external class Playlist : ClientDocument {
     companion object : DocumentStatic<Playlist>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Playlist>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Playlist>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Playlist?>
 
     var _id: String
     var name: String
@@ -45,7 +45,7 @@ external class Playlist : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Playlist.update(data: Playlist, operation: DatabaseUpdateOperation = jso()): Promise<Playlist> =
+fun Playlist.update(data: Playlist, operation: DatabaseUpdateOperation = jso()): Promise<Playlist?> =
     update(data as AnyObject, operation)
 
 

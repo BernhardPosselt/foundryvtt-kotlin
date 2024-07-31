@@ -14,7 +14,6 @@ import com.foundryvtt.core.utils.expandObject
 import js.array.toTypedArray
 import js.objects.Object
 import js.objects.Record
-import js.objects.recordOf
 import kotlinx.js.JsPlainObject
 import kotlin.enums.enumEntries
 
@@ -39,6 +38,13 @@ external interface FormElementContext {
     val checkbox: Boolean
     val options: Array<Option>
     val hideLabel: Boolean
+    val overrideType: String?
+    val isFormElement: Boolean
+}
+
+enum class OverrideType(val value: String) {
+    NUMBER("Number"),
+    BOOLEAN("Boolean"),
 }
 
 data class SelectOption(
@@ -61,10 +67,12 @@ data class Select(
     val value: String? = null,
     val options: List<SelectOption>,
     val required: Boolean = true,
+    val overrideType: OverrideType? = null,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
+        isFormElement = true,
         label = label,
         name = name,
         help = help,
@@ -75,6 +83,7 @@ data class Select(
         text = false,
         textArea = false,
         checkbox = false,
+        overrideType = overrideType?.value,
         options = options.map { opt ->
             Option(
                 label = opt.label,
@@ -83,6 +92,90 @@ data class Select(
         }.toTypedArray(),
         hideLabel = hideLabel,
     )
+
+    companion object {
+        fun flatCheck(
+            label: String,
+            name: String,
+            value: Int? = null,
+            required: Boolean = true,
+            help: String? = null,
+            hideLabel: Boolean = false,
+        ) = Select(
+            label = label,
+            name = name,
+            value = value.toString(),
+            required = required,
+            help = help,
+            hideLabel = hideLabel,
+            overrideType = OverrideType.NUMBER,
+            options = generateSequence(1) { it + 1 }
+                .take(20)
+                .map { SelectOption(it.toString(), it.toString()) }
+                .toList()
+        )
+
+        fun dc(
+            label: String,
+            name: String,
+            value: Int? = null,
+            required: Boolean = true,
+            help: String? = null,
+            hideLabel: Boolean = false,
+        ) = Select(
+            label = label,
+            name = name,
+            value = value.toString(),
+            required = required,
+            help = help,
+            hideLabel = hideLabel,
+            overrideType = OverrideType.NUMBER,
+            options = generateSequence(0) { it + 1 }
+                .take(61)
+                .map { SelectOption(it.toString(), it.toString()) }
+                .toList()
+        )
+
+        fun level(
+            label: String,
+            name: String,
+            value: Int? = null,
+            required: Boolean = true,
+            help: String? = null,
+            hideLabel: Boolean = false,
+        ) = Select(
+            label = label,
+            name = name,
+            value = value.toString(),
+            required = required,
+            help = help,
+            hideLabel = hideLabel,
+            overrideType = OverrideType.NUMBER,
+            options = generateSequence(-1) { it + 1 }
+                .take(27)
+                .map { SelectOption(it.toString(), it.toString()) }
+                .toList()
+        )
+
+        inline fun <reified T : Enum<T>> fromEnum(
+            label: String,
+            name: String,
+            value: T? = null,
+            required: Boolean = true,
+            help: String? = null,
+            hideLabel: Boolean = false,
+        ) = Select(
+            name = name,
+            label = label,
+            value = value?.toCamelCase(),
+            required = required,
+            help = help,
+            hideLabel = hideLabel,
+            options = enumEntries<T>().map {
+                SelectOption(label = it.toLabel(), value = it.toCamelCase())
+            }
+        )
+    }
 }
 
 data class TextInput(
@@ -92,8 +185,10 @@ data class TextInput(
     val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
+    val overrideType: OverrideType? = null,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
+        isFormElement = true,
         label = label,
         name = name,
         help = help,
@@ -104,6 +199,7 @@ data class TextInput(
         text = true,
         textArea = false,
         checkbox = false,
+        overrideType = overrideType?.value,
         options = emptyArray(),
         hideLabel = hideLabel,
     )
@@ -118,6 +214,7 @@ data class CheckboxInput(
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
+        isFormElement = true,
         label = label,
         name = name,
         help = help,
@@ -140,8 +237,10 @@ data class TextArea(
     val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
+    val overrideType: OverrideType? = null,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
+        isFormElement = true,
         label = label,
         name = name,
         help = help,
@@ -153,6 +252,7 @@ data class TextArea(
         textArea = true,
         checkbox = false,
         options = emptyArray(),
+        overrideType = overrideType?.value,
         hideLabel = hideLabel,
     )
 }
@@ -166,6 +266,7 @@ data class NumberInput(
     override val hideLabel: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
+        isFormElement = true,
         label = label,
         name = name,
         help = help,
@@ -180,14 +281,6 @@ data class NumberInput(
         hideLabel = hideLabel,
     )
 }
-
-fun towDimensionalContext(
-    heading: Array<String>,
-    rows: Array<Array<IntoFormElementContext>>
-) = recordOf(
-    "heading" to heading,
-    "formRows" to rows,
-)
 
 /**
  * Custom function to build a form declaratively rather than having
@@ -263,26 +356,3 @@ fun Playlist.toOption() = id?.let {
 fun PlaylistSound.toOption() = id?.let {
     SelectOption(label = name, value = it)
 }
-
-inline fun <reified T : Enum<T>> Enum<T>.toSelect(
-    label: String,
-    name: String,
-    value: T? = null,
-    required: Boolean = true,
-    help: String? = null,
-    hideLabel: Boolean = false,
-) =
-    Select(
-        name = name,
-        label = label,
-        value = value?.toCamelCase(),
-        required = required,
-        help = help,
-        hideLabel = hideLabel,
-        options = enumEntries<T>().map {
-            it.toOption()
-        }
-    )
-
-fun <T : Enum<T>> Enum<T>.toOption() =
-    SelectOption(label = toLabel(), value = toCamelCase())

@@ -19,7 +19,7 @@ external class PF2EEffect : PF2EItem {
     companion object : DocumentStatic<PF2EEffect>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EEffect>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EEffect>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EEffect?>
 
     val system: PF2EEffectData
     val isExpired: Boolean
@@ -28,5 +28,5 @@ external class PF2EEffect : PF2EItem {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2EEffect.update(data: PF2EEffect, operation: DatabaseUpdateOperation = jso()): Promise<PF2EEffect> =
+fun PF2EEffect.update(data: PF2EEffect, operation: DatabaseUpdateOperation = jso()): Promise<PF2EEffect?> =
     update(data as AnyObject, operation)

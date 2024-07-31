@@ -10,7 +10,7 @@ open external class Item : ClientDocument {
     companion object : DocumentStatic<Item>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<Item>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Item>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<Item?>
 
     val actor: Actor?
     val thumbnail: String
@@ -26,7 +26,7 @@ open external class Item : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun Item.update(data: Item, operation: DatabaseUpdateOperation = jso()): Promise<Item> =
+fun Item.update(data: Item, operation: DatabaseUpdateOperation = jso()): Promise<Item?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateItem(callback: PreCreateDocumentCallback<Item, O>) =

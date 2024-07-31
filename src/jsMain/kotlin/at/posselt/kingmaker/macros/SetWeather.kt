@@ -1,8 +1,8 @@
 package at.posselt.kingmaker.macros
 
+import at.posselt.kingmaker.app.Select
 import at.posselt.kingmaker.app.formContext
 import at.posselt.kingmaker.app.prompt
-import at.posselt.kingmaker.app.toSelect
 import at.posselt.kingmaker.data.regions.WeatherEffect
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.settings.kingmakerTools
@@ -24,7 +24,7 @@ suspend fun setWeatherMacro() {
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(
             "formRows" to formContext(
-                currentWeatherEffect.toSelect(
+                Select.fromEnum<WeatherEffect>(
                     name = "weather",
                     label = "Weather",
                     value = currentWeatherEffect,

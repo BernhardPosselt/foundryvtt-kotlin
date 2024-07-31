@@ -22,7 +22,7 @@ private class Handler(
     private fun buildPath(p: String) = if (currentPath.isEmpty()) p else "$currentPath.$p"
 
     fun set(target: dynamic, p: PropertyKey, value: dynamic, receiver: Any) {
-        if (value[isProxy] === isProxy)
+        if (value?.isProxy === isProxy)
             throw IllegalArgumentException(
                 "You are assigning an attribute to a proxy. " +
                         "Did you mean to assign a value instead?"
@@ -74,7 +74,7 @@ fun <D : Document> D.buildUpdate(block: D.() -> Unit): AnyObject {
 @Suppress("UNCHECKED_CAST")
 suspend fun <D : Document> D.typeSafeUpdate(block: D.() -> Unit): D {
     val result = buildUpdate(block)
-    return update(result).await() as D
+    return (update(result).await() as D?) ?: this
 }
 
 

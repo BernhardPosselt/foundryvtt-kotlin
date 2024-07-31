@@ -1,11 +1,12 @@
 package at.posselt.kingmaker.weather
 
 import at.posselt.kingmaker.data.regions.WeatherEffect
+import at.posselt.kingmaker.getPF2EWorldTime
 import at.posselt.kingmaker.isFirstGM
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.toCamelCase
 import com.foundryvtt.core.Game
-
+import kotlinx.datetime.*
 
 /**
  * Read the persisted weather effect name and sound and apply them
@@ -31,3 +32,12 @@ suspend fun setWeather(game: Game, weatherEffect: WeatherEffect) {
     syncWeather(game)
 }
 
+fun dayHasChanged(game: Game, deltaInSeconds: Int): Boolean {
+    val now = game.getPF2EWorldTime()
+    val beforeUpdate = now.toInstant(TimeZone.UTC)
+        .minus(deltaInSeconds, DateTimeUnit.SECOND)
+        .toLocalDateTime(TimeZone.UTC)
+    return now.dayOfMonth != beforeUpdate.dayOfMonth
+            || now.month != beforeUpdate.month
+            || now.year != beforeUpdate.year
+}

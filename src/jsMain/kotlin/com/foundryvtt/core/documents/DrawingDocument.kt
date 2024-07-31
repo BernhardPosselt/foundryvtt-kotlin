@@ -16,7 +16,7 @@ external class DrawingDocument : ClientDocument {
     companion object : DocumentStatic<DrawingDocument>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<DrawingDocument>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<DrawingDocument>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<DrawingDocument?>
 
     val isAuthor: Boolean
 
@@ -49,7 +49,7 @@ external class DrawingDocument : ClientDocument {
 fun DrawingDocument.update(
     data: DrawingDocument,
     operation: DatabaseUpdateOperation = jso()
-): Promise<DrawingDocument> =
+): Promise<DrawingDocument?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateDrawing(callback: PreCreateDocumentCallback<DrawingDocument, O>) =

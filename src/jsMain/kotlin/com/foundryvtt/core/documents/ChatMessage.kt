@@ -44,7 +44,7 @@ external class ChatMessage : ClientDocument {
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<ChatMessage>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<ChatMessage>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<ChatMessage?>
 
     var _id: String
     var blind: Boolean
@@ -64,7 +64,7 @@ external class ChatMessage : ClientDocument {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun ChatMessage.update(data: ChatMessage, operation: DatabaseUpdateOperation = jso()): Promise<ChatMessage> =
+fun ChatMessage.update(data: ChatMessage, operation: DatabaseUpdateOperation = jso()): Promise<ChatMessage?> =
     update(data as AnyObject, operation)
 
 fun <O> HooksEventListener.onPreCreateChatMessage(callback: PreCreateDocumentCallback<ChatMessage, O>) =

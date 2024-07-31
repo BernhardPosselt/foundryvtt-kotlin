@@ -19,12 +19,12 @@ external class PF2EFamiliar : PF2EActor {
     companion object : DocumentStatic<PF2EFamiliar>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EFamiliar>
-    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EFamiliar>
+    override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EFamiliar?>
 
     val skills: Record<String, PF2EAttribute>
     val system: PF2EFamiliarData
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun PF2EFamiliar.update(data: PF2EFamiliar, operation: DatabaseUpdateOperation = jso()): Promise<PF2EFamiliar> =
+fun PF2EFamiliar.update(data: PF2EFamiliar, operation: DatabaseUpdateOperation = jso()): Promise<PF2EFamiliar?> =
     update(data as AnyObject, operation)
