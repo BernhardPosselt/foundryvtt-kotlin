@@ -276,6 +276,12 @@ object KingmakerToolsSettings {
             hint = "If enabled, will play rain and snow tracks from the official Kingmaker module. You can override this behavior by creating playlists named like \"weather.blizzard\" or \"weather.rain\".",
             default = true,
         )
+        game.settings.registerScalar<Boolean>(
+            key = "autoRollWeather",
+            name = "Auto Roll Weather",
+            hint = "When a new day begins (00:00), automatically roll weather",
+            default = true,
+        )
         game.settings.registerScalar<String>(
             key = "weatherRollMode",
             name = "Weather Roll Mode",
@@ -284,17 +290,11 @@ object KingmakerToolsSettings {
                 .toMutableRecord(),
             default = "gmroll"
         )
-        game.settings.registerScalar<Boolean>(
-            key = "autoRollWeather",
-            name = "Auto Roll Weather",
-            hint = "When a new day begins (00:00), automatically roll weather",
-            default = true,
-        )
         game.settings.registerInt(
             key = "weatherHazardRange",
             name = "Weather Hazard Range",
             default = 4,
-            hint = "Roll weather events up to Party Level plus this value"
+            hint = "Roll weather events up and equal to Party Level plus this value"
         )
         game.settings.registerScalar<String>(
             key = "kingdomEventRollMode",
