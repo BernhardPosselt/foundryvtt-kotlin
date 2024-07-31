@@ -272,7 +272,8 @@ object KingmakerToolsSettings {
         )
         game.settings.registerScalar<Boolean>(
             key = "enableWeatherSoundFx",
-            name = "Play Weather Sounds",
+            name = "Enable Ambient Weather Sounds",
+            hint = "If enabled, will play rain and snow tracks from the official Kingmaker module. You can override this behavior by creating playlists named like \"weather.blizzard\" or \"weather.rain\".",
             default = true,
         )
         game.settings.registerScalar<String>(
@@ -293,7 +294,7 @@ object KingmakerToolsSettings {
             key = "weatherHazardRange",
             name = "Weather Hazard Range",
             default = 4,
-            hint = "Roll Weather Events up to Party Level plus this value"
+            hint = "Roll weather events up to Party Level plus this value"
         )
         game.settings.registerScalar<String>(
             key = "kingdomEventRollMode",
@@ -304,6 +305,13 @@ object KingmakerToolsSettings {
             default = "gmroll",
             hidden = true,
         )
+        game.settings.registerScalar<Boolean>(
+            key = "enableCombatTracks",
+            name = "Enable Combat Tracks",
+            hint = "If enabled, starts a combat track depending on the current region, actor or scene. Region combat tracks  overrides for the Stolen Lands have to be named after the region, e.g. \"Kingmaker.Rostland Hinterlands\"; \"Kingmaker.Default\" is played if no region playlist is found instead. If you customize regions, you can set them in the Customize Regions settings instead",
+            default = true,
+        )
+
     }
 }
 
