@@ -103,9 +103,9 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
             ).toContext(),
             heading = arrayOf(
                 TableHead("Name"),
-                TableHead("Level", arrayOf("small-heading")),
-                TableHead("Zone DC", arrayOf("small-heading")),
-                TableHead("Encounter DC", arrayOf("small-heading")),
+                TableHead("Level", arrayOf("number-select-heading")),
+                TableHead("Zone DC", arrayOf("number-select-heading")),
+                TableHead("Encounter DC", arrayOf("number-select-heading")),
                 TableHead("Roll Table"),
                 TableHead("Combat Playlist"),
                 TableHead("Combat Track"),
@@ -122,19 +122,19 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                         value = row.name,
                         hideLabel = true
                     ).toContext(),
-                    NumberInput(
+                    Select.level(
                         name = "regions.$index.level",
                         label = "Level",
                         value = row.level,
                         hideLabel = true
                     ).toContext(),
-                    NumberInput(
+                    Select.dc(
                         name = "regions.$index.zoneDc",
                         label = "Zone DC",
                         value = row.zoneDc,
                         hideLabel = true
                     ).toContext(),
-                    NumberInput(
+                    Select.flatCheck(
                         name = "regions.$index.encounterDc",
                         label = "Encounter DC",
                         value = row.encounterDc,
