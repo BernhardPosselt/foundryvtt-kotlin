@@ -243,9 +243,9 @@ object KingmakerToolsSettings {
         )
         game.settings.createMenu(
             key = "regionsMenu",
-            label = "Customize",
+            label = "Customize Regions",
             name = "Regions",
-            app = ClimateConfiguration::class.js,
+            app = RegionConfiguration::class.js,
         )
         game.settings.registerField(
             key = "climateSettings",
@@ -261,7 +261,7 @@ object KingmakerToolsSettings {
         )
         game.settings.createMenu(
             key = "climateMenu",
-            label = "Customize",
+            label = "Customize Climate",
             name = "Climate",
             app = ClimateConfiguration::class.js,
         )

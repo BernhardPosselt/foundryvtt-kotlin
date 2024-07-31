@@ -51,7 +51,7 @@ external interface RegionSettingsContext {
 @JsExport
 class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
     title = "Regions",
-    width = 900,
+    width = 1024,
     template = "applications/settings/configure-regions.hbs",
 ) {
     private var currentSettings = game.settings.kingmakerTools.getRegionSettings()
