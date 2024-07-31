@@ -7,7 +7,7 @@ import at.posselt.kingmaker.data.regions.WeatherEffect
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.weather.setWeather
-import com.foundryvtt.core.game
+import com.foundryvtt.core.Game
 import js.objects.recordOf
 import kotlinx.js.JsPlainObject
 
@@ -16,7 +16,7 @@ external interface WeatherEffectData {
     val weather: String
 }
 
-suspend fun setWeatherMacro() {
+suspend fun setWeatherMacro(game: Game) {
     val currentWeatherEffect =
         fromCamelCase<WeatherEffect>(game.settings.kingmakerTools.getCurrentWeatherFx()) ?: WeatherEffect.NONE
     prompt<WeatherEffectData, Unit>(

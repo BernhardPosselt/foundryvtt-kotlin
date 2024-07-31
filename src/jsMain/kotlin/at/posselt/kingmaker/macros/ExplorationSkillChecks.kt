@@ -37,7 +37,7 @@ suspend fun rollExplorationSkillCheckMacro(
     game: Game,
     explorationEffectName: String,
     attributeName: String,
-    dc: Int?,
+    dc: Int? = null,
 ) {
     val actors = game.partyMembers()
         .filter { it.runsExplorationActivity(explorationEffectName) }

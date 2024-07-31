@@ -140,6 +140,18 @@ val Settings.kingmakerTools: KingmakerToolsSettings
     get() = KingmakerToolsSettings
 
 object KingmakerToolsSettings {
+    suspend fun setKingdomEventsTable(value: String) =
+        game.settings.setString("kingdomEventsTable", value)
+
+    fun getKingdomEventsTable(): String =
+        game.settings.getString("kingdomEventsTable")
+
+    suspend fun setKingdomCultTable(value: String) =
+        game.settings.setString("kingdomCultTable", value)
+
+    fun getKingdomCultTable(): String =
+        game.settings.getString("kingdomCultTable")
+
     suspend fun setWeatherHazardRange(value: Int) =
         game.settings.setInt("weatherHazardRange", value)
 
@@ -152,6 +164,13 @@ object KingmakerToolsSettings {
     fun getWeatherRollMode(): RollMode =
         fromCamelCase<RollMode>(game.settings.getString("weatherRollMode"))
             ?: throw IllegalStateException("Null value set for setting 'weatherRollMode'")
+
+    suspend fun setKingdomEventRollMode(value: RollMode) =
+        game.settings.setString("kingdomEventRollMode", value.toCamelCase())
+
+    fun getKingdomEventRollMode(): RollMode =
+        fromCamelCase<RollMode>(game.settings.getString("kingdomEventRollMode"))
+            ?: throw IllegalStateException("Null value set for setting 'kingdomEventRollMode'")
 
     suspend fun setEnableWeatherSoundFx(value: Boolean) =
         game.settings.setBoolean("enableWeatherSoundFx", value)
@@ -199,7 +218,11 @@ object KingmakerToolsSettings {
         val booleans = mapOf(
             "enableSheltered" to false,
         )
-        val strings = mapOf("currentWeatherFx" to "none")
+        val strings = mapOf(
+            "currentWeatherFx" to "none",
+            "kingdomEventsTable" to "Random Kingdom Events",
+            "kingdomCultTable" to "Random Cult Events",
+        )
     }
 
 
@@ -271,6 +294,15 @@ object KingmakerToolsSettings {
             name = "Weather Hazard Range",
             default = 4,
             hint = "Roll Weather Events up to Party Level plus this value"
+        )
+        game.settings.registerScalar<String>(
+            key = "kingdomEventRollMode",
+            name = "Kingdom Event Roll Mode",
+            choices = RollMode.entries.asSequence()
+                .map { it.toCamelCase() to it.label }
+                .toMutableRecord(),
+            default = "gmroll",
+            hidden = true,
         )
     }
 }
