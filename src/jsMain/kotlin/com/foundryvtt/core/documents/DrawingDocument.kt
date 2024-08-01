@@ -66,3 +66,6 @@ fun <O> HooksEventListener.onCreateDrawing(callback: CreateDocumentCallback<Draw
 
 fun <O> HooksEventListener.onUpdateDrawing(callback: UpdateDocumentCallback<DrawingDocument, O>) =
     on("updateDrawing", callback)
+
+fun <O> HooksEventListener.onDeleteDrawing(callback: DeleteDocumentCallback<DrawingDocument, O>) =
+    on("deleteDrawing", callback)

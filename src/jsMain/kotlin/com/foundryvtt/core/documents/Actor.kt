@@ -46,3 +46,6 @@ fun <O> HooksEventListener.onCreateActor(callback: CreateDocumentCallback<Actor,
 
 fun <O> HooksEventListener.onUpdateActor(callback: UpdateDocumentCallback<Actor, O>) =
     on("updateActor", callback)
+
+fun <O> HooksEventListener.onDeleteActor(callback: DeleteDocumentCallback<Actor, O>) =
+    on("deleteActor", callback)

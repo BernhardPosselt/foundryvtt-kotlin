@@ -69,3 +69,6 @@ fun <O> HooksEventListener.onCreateTile(callback: CreateDocumentCallback<TileDoc
 
 fun <O> HooksEventListener.onUpdateTile(callback: UpdateDocumentCallback<TileDocument, O>) =
     on("updateTile", callback)
+
+fun <O> HooksEventListener.onDeleteTile(callback: DeleteDocumentCallback<TileDocument, O>) =
+    on("deleteTile", callback)

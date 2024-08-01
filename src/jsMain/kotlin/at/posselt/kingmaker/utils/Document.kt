@@ -3,6 +3,7 @@ package at.posselt.kingmaker.utils
 import at.posselt.kingmaker.Config
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.Document
+import com.foundryvtt.core.fromUuid
 import js.objects.PropertyKey
 import js.objects.jso
 import js.objects.recordOf
@@ -85,3 +86,8 @@ suspend fun <D : Document, T> D.setAppFlag(key: String, flag: T) = buildPromise 
 @Suppress("UNCHECKED_CAST")
 fun <D : Document, T> D.getAppFlag(key: String) =
     getFlag(Config.moduleId, key) as T?
+
+suspend inline fun <reified T> fromUuidTypeSafe(uuid: String): T? =
+    fromUuid(uuid).await()
+        ?.takeIfInstance<T>()
+

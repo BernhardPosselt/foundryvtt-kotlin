@@ -13,8 +13,8 @@ import kotlin.js.Promise
 
 @JsPlainObject
 external interface CombatTrack {
-    var playlistId: String
-    var trackId: String?
+    var playlistUuid: String
+    var trackUuid: String?
 }
 
 @JsPlainObject
@@ -23,7 +23,7 @@ external interface RegionSetting {
     var zoneDc: Int
     var encounterDc: Int
     var level: Int
-    var rollTableId: String?
+    var rollTableUuid: String?
     var combatTrack: CombatTrack?
 }
 
@@ -89,10 +89,10 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
         options: HandlebarsRenderOptions
     ): Promise<RegionSettingsContext> = buildPromise {
         val playlistOptions = game.playlists.contents
-            .mapNotNull { it.toOption() }
+            .mapNotNull { it.toOption(useUuid = true) }
             .sortedBy { it.label }
         val rolltableOptions = game.tables.contents
-            .mapNotNull { it.toOption() }
+            .mapNotNull { it.toOption(useUuid = true) }
             .sortedBy { it.label }
         RegionSettingsContext(
             isValid = isFormValid,
@@ -112,8 +112,8 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                 TableHead("Remove", arrayOf("small-heading"))
             ),
             formRows = currentSettings.regions.mapIndexed { index, row ->
-                val trackOptions = row.combatTrack?.playlistId?.let {
-                    game.playlists.get(it)?.sounds?.contents?.mapNotNull { it.toOption() } ?: emptyList()
+                val trackOptions = row.combatTrack?.playlistUuid?.let {
+                    game.playlists.get(it)?.sounds?.contents?.mapNotNull { it.toOption(useUuid = true) } ?: emptyList()
                 } ?: emptyList()
                 arrayOf(
                     TextInput(
@@ -141,25 +141,25 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                         hideLabel = true,
                     ).toContext(),
                     Select(
-                        name = "regions.$index.rollTableId",
+                        name = "regions.$index.rollTableUuid",
                         label = "Roll Table",
-                        value = row.rollTableId,
+                        value = row.rollTableUuid,
                         required = false,
                         hideLabel = true,
                         options = rolltableOptions,
                     ).toContext(),
                     Select(
-                        name = "regions.$index.combatTrack.playlistId",
+                        name = "regions.$index.combatTrack.playlistUuid",
                         label = "Combat Playlist",
-                        value = row.combatTrack?.playlistId,
+                        value = row.combatTrack?.playlistUuid,
                         required = false,
                         hideLabel = true,
                         options = playlistOptions
                     ).toContext(),
                     Select(
-                        name = "regions.$index.combatTrack.trackId",
+                        name = "regions.$index.combatTrack.trackUuid",
                         label = "Combat Track",
-                        value = row.combatTrack?.trackId,
+                        value = row.combatTrack?.trackUuid,
                         required = false,
                         hideLabel = true,
                         options = trackOptions
@@ -187,7 +187,7 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                 zoneDc = 15,
                 encounterDc = 12,
                 level = 1,
-                rollTableId = null,
+                rollTableUuid = null,
                 combatTrack = null,
             )
         )

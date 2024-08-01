@@ -73,3 +73,6 @@ fun <O> HooksEventListener.onCreateFolder(callback: CreateDocumentCallback<Folde
 
 fun <O> HooksEventListener.onUpdateFolder(callback: UpdateDocumentCallback<Folder, O>) =
     on("updateFolder", callback)
+
+fun <O> HooksEventListener.onDeleteFolder(callback: DeleteDocumentCallback<Folder, O>) =
+    on("deleteFolder", callback)

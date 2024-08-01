@@ -125,3 +125,6 @@ fun <O> HooksEventListener.onCreateUser(callback: CreateDocumentCallback<User, O
 
 fun <O> HooksEventListener.onUpdateUser(callback: UpdateDocumentCallback<User, O>) =
     on("updateUser", callback)
+
+fun <O> HooksEventListener.onDeleteUser(callback: DeleteDocumentCallback<User, O>) =
+    on("deleteUser", callback)

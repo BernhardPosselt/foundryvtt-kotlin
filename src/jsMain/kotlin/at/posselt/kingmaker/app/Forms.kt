@@ -345,14 +345,29 @@ fun <T> normalizeArrays(obj: Record<String, T>): Any {
     }
 }
 
-fun RollTable.toOption() = id?.let {
-    SelectOption(label = name, value = it)
-}
+fun RollTable.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        SelectOption(label = name, value = uuid)
+    } else {
+        id?.let {
+            SelectOption(label = name, value = it)
+        }
+    }
 
-fun Playlist.toOption() = id?.let {
-    SelectOption(label = name, value = it)
-}
+fun Playlist.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        SelectOption(label = name, value = uuid)
+    } else {
+        id?.let {
+            SelectOption(label = name, value = it)
+        }
+    }
 
-fun PlaylistSound.toOption() = id?.let {
-    SelectOption(label = name, value = it)
-}
+fun PlaylistSound.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        SelectOption(label = name, value = uuid)
+    } else {
+        id?.let {
+            SelectOption(label = name, value = it)
+        }
+    }

@@ -54,3 +54,6 @@ fun <O> HooksEventListener.onCreatePlaylistSound(callback: CreateDocumentCallbac
 
 fun <O> HooksEventListener.onUpdatePlaylistSound(callback: UpdateDocumentCallback<PlaylistSound, O>) =
     on("updatePlaylistSound", callback)
+
+fun <O> HooksEventListener.onDeletePlaylistSound(callback: DeleteDocumentCallback<PlaylistSound, O>) =
+    on("deletePlaylistSound", callback)

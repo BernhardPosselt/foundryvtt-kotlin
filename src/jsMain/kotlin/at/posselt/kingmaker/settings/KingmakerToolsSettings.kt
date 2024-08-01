@@ -178,6 +178,12 @@ object KingmakerToolsSettings {
     fun getEnableWeatherSoundFx(): Boolean =
         game.settings.getBoolean("enableWeatherSoundFx")
 
+    suspend fun setEnableCombatTracks(value: Boolean) =
+        game.settings.setBoolean("enableCombatTracks", value)
+
+    fun getEnableCombatTracks(): Boolean =
+        game.settings.getBoolean("enableCombatTracks")
+
     suspend fun setEnableSheltered(value: Boolean) =
         game.settings.setBoolean("enableSheltered", value)
 

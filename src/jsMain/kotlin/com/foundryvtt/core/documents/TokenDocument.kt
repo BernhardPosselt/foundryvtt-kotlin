@@ -208,3 +208,6 @@ fun <O> HooksEventListener.onCreateToken(callback: CreateDocumentCallback<TokenD
 
 fun <O> HooksEventListener.onUpdateToken(callback: UpdateDocumentCallback<TokenDocument, O>) =
     on("updateToken", callback)
+
+fun <O> HooksEventListener.onDeleteToken(callback: DeleteDocumentCallback<TokenDocument, O>) =
+    on("deleteToken", callback)

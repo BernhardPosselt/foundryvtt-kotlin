@@ -57,3 +57,6 @@ fun <O> HooksEventListener.onCreateCombatant(callback: CreateDocumentCallback<Co
 
 fun <O> HooksEventListener.onUpdateCombatant(callback: UpdateDocumentCallback<Combatant, O>) =
     on("updateCombatant", callback)
+
+fun <O> HooksEventListener.onDeleteCombatant(callback: DeleteDocumentCallback<Combatant, O>) =
+    on("deleteCombatant", callback)

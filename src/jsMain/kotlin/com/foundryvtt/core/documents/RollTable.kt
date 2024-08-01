@@ -84,3 +84,6 @@ fun <O> HooksEventListener.onCreateRollTable(callback: CreateDocumentCallback<Ro
 
 fun <O> HooksEventListener.onUpdateRollTable(callback: UpdateDocumentCallback<RollTable, O>) =
     on("updateRollTable", callback)
+
+fun <O> HooksEventListener.onDeleteRollTable(callback: DeleteDocumentCallback<RollTable, O>) =
+    on("deleteRollTable", callback)

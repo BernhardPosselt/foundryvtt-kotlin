@@ -63,3 +63,6 @@ fun <O> HooksEventListener.onCreatePlaylist(callback: CreateDocumentCallback<Pla
 
 fun <O> HooksEventListener.onUpdatePlaylist(callback: UpdateDocumentCallback<Playlist, O>) =
     on("updatePlaylist", callback)
+
+fun <O> HooksEventListener.onDeletePlaylist(callback: DeleteDocumentCallback<Playlist, O>) =
+    on("deletePlaylist", callback)

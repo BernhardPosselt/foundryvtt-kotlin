@@ -43,3 +43,6 @@ fun <O> HooksEventListener.onCreateItem(callback: CreateDocumentCallback<Item, O
 
 fun <O> HooksEventListener.onUpdateItem(callback: UpdateDocumentCallback<Item, O>) =
     on("updateItem", callback)
+
+fun <O> HooksEventListener.onDeleteItem(callback: DeleteDocumentCallback<Item, O>) =
+    on("deleteItem", callback)

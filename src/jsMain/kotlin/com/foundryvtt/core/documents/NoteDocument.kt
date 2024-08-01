@@ -63,3 +63,6 @@ fun <O> HooksEventListener.onCreateNote(callback: CreateDocumentCallback<NoteDoc
 
 fun <O> HooksEventListener.onUpdateNote(callback: UpdateDocumentCallback<NoteDocument, O>) =
     on("updateNote", callback)
+
+fun <O> HooksEventListener.onDeleteNote(callback: DeleteDocumentCallback<NoteDocument, O>) =
+    on("deleteNote", callback)

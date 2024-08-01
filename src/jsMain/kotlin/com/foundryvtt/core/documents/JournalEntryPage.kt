@@ -106,3 +106,6 @@ fun <O> HooksEventListener.onCreateJournalEntryPage(callback: CreateDocumentCall
 
 fun <O> HooksEventListener.onUpdateJournalEntryPage(callback: UpdateDocumentCallback<JournalEntryPage, O>) =
     on("updateJournalEntryPage", callback)
+
+fun <O> HooksEventListener.onDeleteJournalEntryPage(callback: DeleteDocumentCallback<JournalEntryPage, O>) =
+    on("deleteJournalEntryPage", callback)

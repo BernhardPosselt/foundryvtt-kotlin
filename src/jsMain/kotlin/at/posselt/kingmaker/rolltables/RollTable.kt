@@ -18,14 +18,26 @@ suspend fun Game.rollWithCompendiumFallback(
     fallbackName: String? = null,
     compendium: String = Config.rollTables.compendium,
 ): TableAndDraw? {
-    val table = tables.getName(tableName)
+    val table = findRollTableWithCompendiumFallback(
+        tableName = tableName,
+        fallbackName = fallbackName,
+        compendium = compendium,
+    )
+    return table?.let {
+        val roll = it.draw(DrawOptions(rollMode = rollMode.toCamelCase(), displayChat = displayChat)).await()
+        TableAndDraw(it, roll)
+    }
+}
+
+suspend fun Game.findRollTableWithCompendiumFallback(
+    tableName: String,
+    fallbackName: String? = null,
+    compendium: String = Config.rollTables.compendium,
+): RollTable? {
+    return tables.getName(tableName)
         ?: packs.get(compendium)
             ?.getDocuments()
             ?.await()
             ?.filterIsInstance<RollTable>()
             ?.find { it.name == (fallbackName ?: tableName) }
-    return table?.let {
-        val roll = it.draw(DrawOptions(rollMode = rollMode.toCamelCase(), displayChat = displayChat)).await()
-        TableAndDraw(it, roll)
-    }
 }

@@ -81,3 +81,6 @@ fun <O> HooksEventListener.onCreateChatMessage(callback: CreateDocumentCallback<
 
 fun <O> HooksEventListener.onUpdateChatMessage(callback: UpdateDocumentCallback<ChatMessage, O>) =
     on("updateChatMessage", callback)
+
+fun <O> HooksEventListener.onDeleteChatMessage(callback: DeleteDocumentCallback<ChatMessage, O>) =
+    on("deleteChatMessage", callback)

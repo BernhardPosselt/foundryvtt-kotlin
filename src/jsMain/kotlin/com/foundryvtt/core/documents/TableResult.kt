@@ -46,3 +46,6 @@ fun <O> HooksEventListener.onCreateTableResult(callback: CreateDocumentCallback<
 
 fun <O> HooksEventListener.onUpdateTableResult(callback: UpdateDocumentCallback<TableResult, O>) =
     on("updateTableResult", callback)
+
+fun <O> HooksEventListener.onDeleteTableResult(callback: DeleteDocumentCallback<TableResult, O>) =
+    on("deleteTableResult", callback)

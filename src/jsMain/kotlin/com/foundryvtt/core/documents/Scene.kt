@@ -150,3 +150,6 @@ fun <O> HooksEventListener.onCreateScene(callback: CreateDocumentCallback<Scene,
 
 fun <O> HooksEventListener.onUpdateScene(callback: UpdateDocumentCallback<Scene, O>) =
     on("updateScene", callback)
+
+fun <O> HooksEventListener.onDeleteScene(callback: DeleteDocumentCallback<Scene, O>) =
+    on("deleteScene", callback)

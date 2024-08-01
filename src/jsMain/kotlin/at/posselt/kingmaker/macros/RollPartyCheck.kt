@@ -29,7 +29,7 @@ suspend fun rollPartyCheckMacro(players: Array<PF2ECharacter>) {
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(
             "formRows" to formContext(
-                NumberInput(label = "DC", name = "dc"),
+                Select.dc(label = "DC", name = "dc", required = false),
                 CheckboxInput(label = "Private GM Roll", name = "private", value = true, required = false),
                 Select(label = "Skill", name = "skill", options = skills.map {
                     SelectOption(label = it.label, value = it.value)

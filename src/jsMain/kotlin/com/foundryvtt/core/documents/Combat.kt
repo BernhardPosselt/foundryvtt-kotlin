@@ -92,3 +92,6 @@ fun <O> HooksEventListener.onCreateCombat(callback: CreateDocumentCallback<Comba
 
 fun <O> HooksEventListener.onUpdateCombat(callback: UpdateDocumentCallback<Combat, O>) =
     on("updateCombat", callback)
+
+fun <O> HooksEventListener.onDeleteCombat(callback: DeleteDocumentCallback<Combat, O>) =
+    on("deleteCombat", callback)

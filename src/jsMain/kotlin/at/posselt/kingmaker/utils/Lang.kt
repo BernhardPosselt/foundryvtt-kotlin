@@ -81,3 +81,6 @@ fun <T> Sequence<JsTuple2<String, T>>.toMutableRecord(): Record<String, T> =
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 fun <T> Sequence<Pair<String, T>>.toMutableRecord(): Record<String, T> =
     Object.fromEntries(map { tupleOf(it.first, it.second) }.toTypedArray()) as Record<String, T>
+
+inline fun <reified T> Any.takeIfInstance(): T? =
+    if (this is T) this else null

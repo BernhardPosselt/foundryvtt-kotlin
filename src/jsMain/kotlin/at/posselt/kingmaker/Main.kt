@@ -2,6 +2,7 @@ package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.actor.playerCharacters
+import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.buildPromise
@@ -25,6 +26,7 @@ fun main() {
             game.settings.kingmakerTools.register()
         }
         registerWeatherHooks(game)
+        registerCombatTrackHooks(game)
         game.pf2eKingmakerTools2 = PF2EKingmakerTools(
             macros = ToolsMacros(
                 toggleWeatherMacro = { buildPromise { toggleWeatherMacro(game) } },
@@ -52,6 +54,7 @@ fun main() {
                     }
                 },
                 rollSkillDialog = { buildPromise { rollPartyCheckMacro(game.partyMembers()) } },
+                setSceneCombatPlaylistDialogMacro = { actor -> buildPromise { combatTrackMacro(game, actor) } }
             )
         )
     }

@@ -64,3 +64,6 @@ fun <O> HooksEventListener.onCreateMacro(callback: CreateDocumentCallback<Macro,
 
 fun <O> HooksEventListener.onUpdateMacro(callback: UpdateDocumentCallback<Macro, O>) =
     on("updateMacro", callback)
+
+fun <O> HooksEventListener.onDeleteMacro(callback: DeleteDocumentCallback<Macro, O>) =
+    on("deleteMacro", callback)
