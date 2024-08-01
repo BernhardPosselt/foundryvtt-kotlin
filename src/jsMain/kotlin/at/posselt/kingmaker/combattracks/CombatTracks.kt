@@ -45,17 +45,18 @@ suspend fun Scene.startMusic() {
 }
 
 suspend fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): CombatTrack? =
+    // check for actor overrides
     combatants.asSequence()
-        .mapNotNull { it.actor }
+        .mapNotNull(Combatant::actor)
         .filterIsInstance<PF2EActor>()
-        .mapNotNull { it.getCombatTrack() }
+        .mapNotNull(PF2EActor::getCombatTrack)
         .mapNotNull { playlists.getName(it.name) }
         .mapNotNull { CombatTrack(playlistUuid = it.uuid) }
         .firstOrNull()
-        ?: active.getCombatTrack()
+        ?: active.getCombatTrack()  // or scene overrides
             ?.let { playlists.getName(it.name) }
             ?.let { CombatTrack(playlistUuid = it.uuid) }
-        ?: findCurrentRegion()?.combatTrack
+        ?: findCurrentRegion()?.combatTrack // otherwise fall back to region
 
 suspend fun Game.startCombatTrack(combatants: Array<Combatant>, active: Scene) {
     findCombatTrack(combatants, active)?.let {
