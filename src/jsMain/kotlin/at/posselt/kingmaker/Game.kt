@@ -18,13 +18,13 @@ external interface ToolsMacros {
     val rollExplorationSkillCheck: (String, String) -> Unit
     val rollSkillDialog: () -> Unit
     val setSceneCombatPlaylistDialogMacro: (PF2EActor?) -> Unit
-//    val realmTileDialogMacro: () -> Unit
+    val toTimeOfDayMacro: () -> Unit
+    //    val realmTileDialogMacro: () -> Unit
 //    val structureTokenMappingMacro: () -> Unit
 //    val editStructureMacro: (Actor) -> Unit
 //    val openCampingSheet: () -> Unit
 //    val viewKingdomMacro: () -> Unit
 //    val toggleCombatTracksMacro: () -> Unit
-//    val toTimeOfDayMacro: () -> Unit
 }
 
 

@@ -59,7 +59,7 @@ suspend fun <T, R> prompt(
     templateContext: Record<String, Any?> = jso(),
     await: Boolean = false,
     promptType: PromptType = PromptType.OK,
-    submit: suspend (T) -> R
+    submit: suspend (T) -> R,
 ) {
     val content = tpl(templatePath, templateContext)
     val button = DialogV2Button(
@@ -79,6 +79,48 @@ suspend fun <T, R> prompt(
             classes = arrayOf("km-dialog-form"),
             window = Window(title = title),
             ok = button,
+            rejectClose = false,
+        )
+    )
+    if (await) prompt.await()
+}
+
+data class WaitButton<T, R>(
+    val label: String,
+    val action: String? = null,
+    val icon: String? = undefined,
+    val callback: suspend (data: T, action: String) -> R,
+)
+
+suspend fun <T, R> wait(
+    title: String,
+    templatePath: String,
+    templateContext: Record<String, Any?> = jso(),
+    await: Boolean = false,
+    buttons: List<WaitButton<T, R>>,
+) {
+    val content = tpl(templatePath, templateContext)
+    val v2Buttons = buttons.mapIndexed { index, button ->
+        val action = button.action ?: button.label
+        DialogV2Button(
+            action = action,
+            label = button.label,
+            icon = button.icon,
+            callback = { ev, btn, dialog ->
+                val data = FormDataExtended<T>(btn.form!!)
+                buildPromise {
+                    button.callback(data.`object`, action)
+                }
+            },
+            default = index == buttons.size - 1,
+        )
+    }.toTypedArray()
+    val prompt = DialogV2.wait(
+        WaitOptions(
+            content = content,
+            classes = arrayOf("km-dialog-form"),
+            window = Window(title = title),
+            buttons = v2Buttons,
             rejectClose = false,
         )
     )

@@ -84,3 +84,4 @@ fun <T> Sequence<Pair<String, T>>.toMutableRecord(): Record<String, T> =
 
 inline fun <reified T> Any.takeIfInstance(): T? =
     if (this is T) this else null
+

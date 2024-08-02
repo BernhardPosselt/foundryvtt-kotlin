@@ -14,6 +14,7 @@ import com.foundryvtt.core.utils.expandObject
 import js.array.toTypedArray
 import js.objects.Object
 import js.objects.Record
+import kotlinx.datetime.*
 import kotlinx.js.JsPlainObject
 import kotlin.enums.enumEntries
 
@@ -33,6 +34,7 @@ external interface FormElementContext {
     val select: Boolean
     val required: Boolean
     val number: Boolean
+    val time: Boolean
     val text: Boolean
     val textArea: Boolean
     val checkbox: Boolean
@@ -81,6 +83,7 @@ data class Select(
         required = required,
         number = false,
         text = false,
+        time = false,
         textArea = false,
         checkbox = false,
         overrideType = overrideType?.value,
@@ -197,6 +200,7 @@ data class TextInput(
         required = required,
         number = false,
         text = true,
+        time = false,
         textArea = false,
         checkbox = false,
         overrideType = overrideType?.value,
@@ -220,6 +224,7 @@ data class CheckboxInput(
         help = help,
         value = value,
         select = false,
+        time = false,
         required = required,
         number = false,
         text = false,
@@ -246,6 +251,7 @@ data class TextArea(
         help = help,
         value = value,
         select = false,
+        time = false,
         required = required,
         number = false,
         text = false,
@@ -272,8 +278,36 @@ data class NumberInput(
         help = help,
         value = value,
         select = false,
+        time = false,
         required = required,
         number = true,
+        text = false,
+        textArea = false,
+        checkbox = false,
+        options = emptyArray(),
+        hideLabel = hideLabel,
+    )
+}
+
+data class TimeInput(
+    override val label: String,
+    override val name: String,
+    val value: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
+    val required: Boolean = true,
+    override val help: String? = null,
+    override val hideLabel: Boolean = false,
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
+        isFormElement = true,
+        label = label,
+        name = name,
+        help = help,
+        value = value,
+        select = false,
+        time = true,
+        required = required,
+        number = false,
         text = false,
         textArea = false,
         checkbox = false,

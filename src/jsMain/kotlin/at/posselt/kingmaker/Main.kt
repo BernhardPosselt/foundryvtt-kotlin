@@ -54,7 +54,8 @@ fun main() {
                     }
                 },
                 rollSkillDialog = { buildPromise { rollPartyCheckMacro(game.partyMembers()) } },
-                setSceneCombatPlaylistDialogMacro = { actor -> buildPromise { combatTrackMacro(game, actor) } }
+                setSceneCombatPlaylistDialogMacro = { actor -> buildPromise { combatTrackMacro(game, actor) } },
+                toTimeOfDayMacro = { buildPromise { setTimeOfDayMacro(game) } }
             )
         )
     }
