@@ -46,8 +46,8 @@ fun main() {
                     buildPromise {
                         rollExplorationSkillCheckMacro(
                             game,
-                            skill,
-                            effect
+                            attributeName = skill,
+                            explorationEffectName = effect,
                         )
                     }
                 },

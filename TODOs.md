@@ -7,8 +7,6 @@
 
 ## Test Macros
 
-* Roll Percpetion exploration
-* Roll Stealth Exploration
 * Scene Weather settings
 * Combat Tracks
 * Combat Track Macro

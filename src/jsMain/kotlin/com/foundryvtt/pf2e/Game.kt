@@ -8,7 +8,8 @@ import kotlin.js.Promise
 
 @JsPlainObject
 external interface PF2EActionMacroUseOptions {
-    val actors: Array<PF2ECharacter>
+    val actors: Array<PF2ECharacter>?
+    val target: Array<Any>? // TokenDocument or Actor
 }
 
 external class PF2EActionMacro {
