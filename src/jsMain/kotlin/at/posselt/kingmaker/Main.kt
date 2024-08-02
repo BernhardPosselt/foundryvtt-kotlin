@@ -1,7 +1,6 @@
 package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
-import at.posselt.kingmaker.actor.playerCharacters
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
 import at.posselt.kingmaker.settings.kingmakerTools
@@ -60,11 +59,6 @@ fun main() {
     }
 
     Hooks.onReady {
-        val players = game.playerCharacters()
-        buildPromise {
-            rollPartyCheckMacro(game.partyMembers())
-            awardHeroPointsMacro(players)
-            awardXPMacro(players)
-        }
+
     }
 }

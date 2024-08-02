@@ -82,6 +82,4 @@ fun <T> Sequence<JsTuple2<String, T>>.toMutableRecord(): Record<String, T> =
 fun <T> Sequence<Pair<String, T>>.toMutableRecord(): Record<String, T> =
     Object.fromEntries(map { tupleOf(it.first, it.second) }.toTypedArray()) as Record<String, T>
 
-inline fun <reified T> Any.takeIfInstance(): T? =
-    if (this is T) this else null
 

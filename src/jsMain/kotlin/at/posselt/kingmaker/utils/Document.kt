@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.Config
+import at.posselt.kingmaker.takeIfInstance
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.fromUuid

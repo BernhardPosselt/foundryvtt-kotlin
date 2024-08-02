@@ -1,4 +1,4 @@
-package at.posselt.kingmaker.utils
+package at.posselt.kingmaker
 
 import kotlinx.datetime.LocalDateTime
 import kotlin.test.Test

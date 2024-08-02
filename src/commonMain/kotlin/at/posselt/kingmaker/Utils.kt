@@ -40,3 +40,8 @@ fun String.deCamelCase(): String =
 fun String.toEnumConstant(): String =
     this.split("(?=\\p{Upper})".toRegex())
         .joinToString("_") { it.uppercase() }
+
+
+inline fun <reified T> Any.takeIfInstance(): T? =
+    if (this is T) this else null
+

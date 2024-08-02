@@ -1,11 +1,11 @@
 package at.posselt.kingmaker.macros
 
+import at.posselt.kingmaker.SetTimeOfDayMode
 import at.posselt.kingmaker.app.TimeInput
 import at.posselt.kingmaker.app.WaitButton
 import at.posselt.kingmaker.app.formContext
 import at.posselt.kingmaker.app.wait
-import at.posselt.kingmaker.utils.SetTimeOfDayMode
-import at.posselt.kingmaker.utils.secondsBetweenNowAndTarget
+import at.posselt.kingmaker.secondsBetweenNowAndTarget
 import at.posselt.kingmaker.utils.toInstant
 import com.foundryvtt.core.Game
 import js.objects.recordOf
