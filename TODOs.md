@@ -7,7 +7,6 @@
 
 ## Test Macros
 
-* Roll Kingmaker Weather: Sunny does not properly sync the scene
 * Roll Percpetion exploration
 * Roll Stealth Exploration
 * Scene Weather settings

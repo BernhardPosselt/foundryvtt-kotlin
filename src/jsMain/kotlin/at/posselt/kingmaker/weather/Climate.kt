@@ -135,7 +135,7 @@ private suspend fun rollWeather(
 
                 WeatherType.SUNNY -> {
                     postChatMessage("Weather: Sunny")
-                    WeatherEffect.SNOW
+                    WeatherEffect.SUNNY
                 }
             }
             // 5. set new weather
