@@ -38,7 +38,7 @@ private val options = listOf(
 suspend fun editRealmTileMacro(game: Game) {
     val drawings = game.canvas.drawings.controlled.map { it.document }
     val tiles = game.canvas.tiles.controlled.map { it.document }
-    if (drawings.isEmpty() || tiles.isEmpty()) {
+    if (drawings.isEmpty() && tiles.isEmpty()) {
         ui.notifications.error("Please select drawings or tiles")
         return
     }
