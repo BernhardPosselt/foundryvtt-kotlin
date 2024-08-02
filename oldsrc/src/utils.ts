@@ -30,12 +30,6 @@ export function getLevelBasedDC(level: number): number {
     return 14 + level + Math.floor(level / 3);
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function getSelectedCharacter(game: Game): any {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    return game.user?.character as unknown as any;
-}
-
 export function createUUIDLink(uuid: string, label?: string): string {
     if (label === undefined) {
         return `@UUID[${uuid}]`;
@@ -327,10 +321,6 @@ export function deCamelCase(value: string): string {
         .split(' ')
         .map(capitalize)
         .join(' ');
-}
-
-export function usableInForms(value: string): boolean {
-    return /^[^'"<>\\]+$/.test(value);
 }
 
 export function slugifyable(value: string): boolean {

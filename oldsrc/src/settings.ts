@@ -2,12 +2,6 @@ export type RollMode = keyof CONFIG.Dice.RollModes
 
 const namespace = 'pf2e-kingmaker-tools';
 
-export function getRollMode(game: Game, settingsKey: string): RollMode {
-    const rollMode = getStringSetting(game, settingsKey) as RollMode;
-    return rollMode ?? 'publicroll';
-
-}
-
 export function getNumberSetting(game: Game, settingsKey: string): number {
     return game.settings.get(namespace, settingsKey) as number | undefined ?? 0;
 

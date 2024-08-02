@@ -12,27 +12,12 @@ declare global {
     interface Game {
         pf2eKingmakerTools: {
             macros: {
-                toggleCombatTracksMacro: () => void,
                 realmTileDialogMacro: () => void,
-                toggleWeatherMacro: () => void,
-                toggleShelteredMacro: () => void,
-                setCurrentWeatherMacro: () => void,
                 structureTokenMappingMacro: () => void,
-                sceneWeatherSettingsMacro: () => void,
-                toTimeOfDayMacro: () => void,
-                kingdomEventsMacro: () => void,
-                rollKingmakerWeatherMacro: () => void,
                 viewKingdomMacro: () => void,
                 openCampingSheet: () => void,
                 /* eslint-disable @typescript-eslint/no-explicit-any */
                 editStructureMacro: (actor: any) => Promise<void>,
-                rollExplorationSkillCheck: (skill: string, effect: string) => Promise<void>,
-                rollSkillDialog: () => Promise<void>,
-                awardXpMacro: () => Promise<void>,
-                resetHeroPointsMacro: () => Promise<void>,
-                awardHeroPointsMacro: () => Promise<void>,
-                /* eslint-disable @typescript-eslint/no-explicit-any */
-                setSceneCombatPlaylistDialogMacro: (actor: Actor | undefined) => Promise<void>,
             };
         };
         pf2e: {

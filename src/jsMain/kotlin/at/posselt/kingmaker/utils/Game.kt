@@ -34,8 +34,8 @@ external interface PF2EKingmakerTools {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-inline var Game.pf2eKingmakerTools2: PF2EKingmakerTools
-    get() = asDynamic().pf2eKingmakerTools2 as PF2EKingmakerTools
+inline var Game.pf2eKingmakerTools: PF2EKingmakerTools
+    get() = asDynamic().pf2eKingmakerTools as PF2EKingmakerTools
     set(value) {
-        asDynamic().pf2eKingmakerTools2 = value
+        asDynamic().pf2eKingmakerTools = value
     }

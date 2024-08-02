@@ -25,7 +25,7 @@ fun main() {
         }
         registerWeatherHooks(game)
         registerCombatTrackHooks(game)
-        game.pf2eKingmakerTools2 = PF2EKingmakerTools(
+        game.pf2eKingmakerTools = PF2EKingmakerTools(
             macros = ToolsMacros(
                 toggleWeatherMacro = { buildPromise { toggleWeatherMacro(game) } },
                 toggleShelteredMacro = { buildPromise { toggleShelteredMacro(game) } },

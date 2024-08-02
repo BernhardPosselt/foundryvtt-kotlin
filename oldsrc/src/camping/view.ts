@@ -115,7 +115,7 @@ async function toViewActivity(
 export async function toViewActor(uuid: string): Promise<ViewActor> {
     const actor = await fromUuid(uuid) as Actor | null;
     return {
-        image: actor?.img ?? 'modules/pf2e-kingmaker-tools/static/img/add-actor.webp',
+        image: actor?.img ?? 'modules/pf2e-kingmaker-tools/img/camping/add-actor.webp',
         uuid,
     };
 }
