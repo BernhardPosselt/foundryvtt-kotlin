@@ -5,6 +5,8 @@ import at.posselt.kingmaker.data.regions.getMonth
 import at.posselt.kingmaker.toUtcInstant
 import com.foundryvtt.core.Game
 import kotlinx.datetime.*
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import kotlin.js.Date
 
 fun Game.getPF2EWorldTime(): LocalDateTime {
@@ -25,3 +27,20 @@ fun Date.toLocalUtcDateTime() =
 
 fun LocalDateTime.toJsUtcDate() =
     Date(toUtcInstant().epochSeconds)
+
+fun LocalTime.Companion.fromDateInputString(value: String): LocalTime =
+    parse(value, Format {
+        hour(padding = Padding.ZERO)
+        char(':')
+        minute(padding = Padding.ZERO)
+    })
+
+fun Instant.toLocalUtcDate(): LocalDate =
+    toLocalDateTime(TimeZone.UTC).date
+
+fun LocalTime.toDateInputString(): String =
+    format(LocalTime.Format {
+        hour(padding = Padding.ZERO)
+        char(':')
+        minute(padding = Padding.ZERO)
+    })

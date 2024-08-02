@@ -21,6 +21,7 @@ fun Game.partyMembers(): Array<PF2ECharacter> =
         .asSequence()
         .filterIsInstance<PF2EParty>()
         .flatMap { it.members.asSequence() }
+        .filterIsInstance<PF2ECharacter>()
         .toTypedArray()
 
 fun Game.playerCharacters(): Array<PF2ECharacter> =

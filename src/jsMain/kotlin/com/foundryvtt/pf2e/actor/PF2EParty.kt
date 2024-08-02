@@ -20,7 +20,7 @@ external class PF2EParty : PF2EActor {
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EParty>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EParty?>
 
-    val members: Array<PF2ECharacter>
+    val members: Array<PF2EActor>
     val system: PF2EPartyData
 }
 

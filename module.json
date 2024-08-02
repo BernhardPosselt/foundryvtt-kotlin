@@ -11,7 +11,8 @@
   "license": "LICENSE",
   "styles": [
     "styles/style.css",
-    "styles/camping.css"
+    "styles/camping.css",
+    "dist/style.css"
   ],
   "packs": [
     {
