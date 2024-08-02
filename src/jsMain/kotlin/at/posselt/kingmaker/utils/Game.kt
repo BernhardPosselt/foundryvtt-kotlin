@@ -1,4 +1,4 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.utils
 
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2EActor

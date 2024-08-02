@@ -9,10 +9,11 @@ import at.posselt.kingmaker.utils.secondsBetweenNowAndTarget
 import at.posselt.kingmaker.utils.toInstant
 import com.foundryvtt.core.Game
 import js.objects.recordOf
+import kotlinx.browser.localStorage
 import kotlinx.coroutines.await
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import kotlinx.js.JsPlainObject
 import kotlin.js.Date
 
@@ -23,8 +24,12 @@ private external interface TimeOfDayData {
 
 
 suspend fun setTimeOfDayMacro(game: Game) {
-    val value = Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC)
+    val stored = localStorage.getItem("kingmaker-tools.time-input") ?: "00:00"
+    val time = LocalTime.parse(stored, LocalTime.Format {
+        hour(padding = Padding.ZERO)
+        char(':')
+        minute(padding = Padding.ZERO)
+    })
     wait<TimeOfDayData, Unit>(
         title = "Advance/Retract to Time of Day",
         templatePath = "components/forms/form.hbs",
@@ -33,21 +38,35 @@ suspend fun setTimeOfDayMacro(game: Game) {
                 TimeInput(
                     name = "time",
                     label = "Time",
-                    value = value,
+                    value = time,
                 ),
             )
         ),
         buttons = listOf(
             WaitButton(label = "Retract") { data, action ->
-                val seconds =
-                    secondsBetweenNowAndTarget(Clock.System.now(), data.date.toInstant(), SetTimeOfDayMode.RETRACT)
-                game.time.advance(seconds.toInt()).await()
+                val now = Clock.System.now()
+                val target = data.date.toInstant()
+                val seconds = secondsBetweenNowAndTarget(now, target, SetTimeOfDayMode.RETRACT)
+                advanceTimeTo(game, seconds, target)
             },
             WaitButton(label = "Advance") { data, action ->
-                val seconds =
-                    secondsBetweenNowAndTarget(Clock.System.now(), data.date.toInstant(), SetTimeOfDayMode.ADVANCE)
-                game.time.advance(seconds.toInt()).await()
+                val now = Clock.System.now()
+                val target = data.date.toInstant()
+                val seconds = secondsBetweenNowAndTarget(now, target, SetTimeOfDayMode.ADVANCE)
+                advanceTimeTo(game, seconds, target)
             },
         )
+    )
+}
+
+private suspend fun advanceTimeTo(game: Game, seconds: Long, target: Instant) {
+    game.time.advance(seconds.toInt()).await()
+    val time = target.toLocalDateTime(TimeZone.UTC)
+    localStorage.setItem(
+        "kingmaker-tools.time-input", time.format(LocalDateTime.Format {
+            hour(padding = Padding.ZERO)
+            char(':')
+            minute(padding = Padding.ZERO)
+        })
     )
 }

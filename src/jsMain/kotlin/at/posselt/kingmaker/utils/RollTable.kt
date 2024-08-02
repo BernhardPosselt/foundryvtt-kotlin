@@ -1,4 +1,4 @@
-package at.posselt.kingmaker.rolltables
+package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.data.checks.RollMode

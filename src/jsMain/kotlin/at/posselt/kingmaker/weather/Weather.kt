@@ -1,10 +1,10 @@
 package at.posselt.kingmaker.weather
 
 import at.posselt.kingmaker.data.regions.WeatherEffect
-import at.posselt.kingmaker.getPF2EWorldTime
-import at.posselt.kingmaker.isFirstGM
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.utils.getPF2EWorldTime
+import at.posselt.kingmaker.utils.isFirstGM
 import com.foundryvtt.core.Game
 import kotlinx.datetime.*
 

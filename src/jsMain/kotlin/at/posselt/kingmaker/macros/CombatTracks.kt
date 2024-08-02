@@ -12,7 +12,7 @@ import kotlinx.js.JsPlainObject
 
 @JsPlainObject
 private external interface CombatTrackData {
-    val playlist: String
+    val playlistId: String
 }
 
 suspend fun combatTrackMacro(game: Game, actor: PF2EActor?) {
@@ -22,10 +22,10 @@ suspend fun combatTrackMacro(game: Game, actor: PF2EActor?) {
         return
     }
     val name = actor?.name ?: currentScene.name
-    val playlistName = if (actor == null) {
-        currentScene.getCombatTrack()?.name
+    val playlistId = if (actor == null) {
+        currentScene.getCombatTrack()?.id
     } else {
-        actor.getCombatTrack()?.name
+        actor.getCombatTrack()?.id
     }
     prompt<CombatTrackData, Unit>(
         templatePath = "components/forms/form.hbs",
@@ -33,9 +33,9 @@ suspend fun combatTrackMacro(game: Game, actor: PF2EActor?) {
             "formRows" to formContext(
                 Select(
                     required = false,
-                    name = "playlist",
+                    name = "playlistId",
                     label = "Playlist",
-                    value = playlistName,
+                    value = playlistId,
                     options = game.playlists.contents.mapNotNull { it.toOption() }
                 )
             )
@@ -43,9 +43,9 @@ suspend fun combatTrackMacro(game: Game, actor: PF2EActor?) {
         title = "Combat Track: $name",
     ) { data ->
         if (actor == null) {
-            currentScene.setCombatTrack(CombatTrackPlaylist(name = data.playlist))
+            currentScene.setCombatTrack(CombatTrackPlaylist(id = data.playlistId))
         } else {
-            actor.setCombatTrack(CombatTrackPlaylist(name = data.playlist))
+            actor.setCombatTrack(CombatTrackPlaylist(id = data.playlistId))
         }
     }
 }

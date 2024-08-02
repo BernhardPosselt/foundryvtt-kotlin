@@ -2,14 +2,10 @@ package at.posselt.kingmaker.weather
 
 import at.posselt.kingmaker.data.regions.WeatherEffect
 import at.posselt.kingmaker.fromCamelCase
-import at.posselt.kingmaker.isFirstGM
 import at.posselt.kingmaker.settings.KingmakerToolsSettings
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.toCamelCase
-import at.posselt.kingmaker.utils.buildPromise
-import at.posselt.kingmaker.utils.getAppFlag
-import at.posselt.kingmaker.utils.setAppFlag
-import at.posselt.kingmaker.utils.typeSafeUpdate
+import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.documents.Scene

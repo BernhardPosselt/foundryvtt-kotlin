@@ -5,12 +5,8 @@ import at.posselt.kingmaker.actor.averagePartyLevel
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.data.regions.*
 import at.posselt.kingmaker.fromCamelCase
-import at.posselt.kingmaker.getCurrentMonth
-import at.posselt.kingmaker.rolltables.rollWithCompendiumFallback
 import at.posselt.kingmaker.settings.kingmakerTools
-import at.posselt.kingmaker.utils.DieValue
-import at.posselt.kingmaker.utils.d20Check
-import at.posselt.kingmaker.utils.postChatMessage
+import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.documents.TableMessageOptions
 import js.objects.recordOf

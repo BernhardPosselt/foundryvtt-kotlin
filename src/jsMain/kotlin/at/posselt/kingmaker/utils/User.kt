@@ -1,4 +1,4 @@
-package at.posselt.kingmaker
+package at.posselt.kingmaker.utils
 
 import com.foundryvtt.core.Game
 

@@ -15,6 +15,8 @@ import js.array.toTypedArray
 import js.objects.Object
 import js.objects.Record
 import kotlinx.datetime.*
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import kotlinx.js.JsPlainObject
 import kotlin.enums.enumEntries
 
@@ -292,8 +294,7 @@ data class NumberInput(
 data class TimeInput(
     override val label: String,
     override val name: String,
-    val value: LocalDateTime = Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
+    val value: LocalTime,
     val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
@@ -303,7 +304,11 @@ data class TimeInput(
         label = label,
         name = name,
         help = help,
-        value = value,
+        value = value.format(LocalTime.Format {
+            hour(padding = Padding.ZERO)
+            char(':')
+            minute(padding = Padding.ZERO)
+        }),
         select = false,
         time = true,
         required = required,

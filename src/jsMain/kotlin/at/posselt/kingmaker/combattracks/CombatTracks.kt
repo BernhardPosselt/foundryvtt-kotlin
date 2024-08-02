@@ -14,7 +14,7 @@ import kotlinx.js.JsPlainObject
 
 @JsPlainObject
 external interface CombatTrackPlaylist {
-    val name: String
+    val id: String
 }
 
 fun PF2EActor.getCombatTrack(): CombatTrackPlaylist? =
@@ -50,11 +50,11 @@ suspend fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): C
         .mapNotNull(Combatant::actor)
         .filterIsInstance<PF2EActor>()
         .mapNotNull(PF2EActor::getCombatTrack)
-        .mapNotNull { playlists.getName(it.name) }
+        .mapNotNull { playlists.get(it.id) }
         .mapNotNull { CombatTrack(playlistUuid = it.uuid) }
         .firstOrNull()
         ?: active.getCombatTrack()  // or scene overrides
-            ?.let { playlists.getName(it.name) }
+            ?.let { playlists.get(it.id) }
             ?.let { CombatTrack(playlistUuid = it.uuid) }
         ?: findCurrentRegion()?.combatTrack // otherwise fall back to region
 

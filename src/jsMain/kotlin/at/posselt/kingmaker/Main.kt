@@ -5,8 +5,7 @@ import at.posselt.kingmaker.actor.playerCharacters
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
 import at.posselt.kingmaker.settings.kingmakerTools
-import at.posselt.kingmaker.utils.buildPromise
-import at.posselt.kingmaker.utils.loadTpls
+import at.posselt.kingmaker.utils.*
 import at.posselt.kingmaker.weather.registerWeatherHooks
 import at.posselt.kingmaker.weather.rollWeather
 import com.foundryvtt.core.Hooks
