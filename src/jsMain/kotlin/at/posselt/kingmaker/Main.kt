@@ -55,6 +55,7 @@ fun main() {
                 setSceneCombatPlaylistDialogMacro = { actor -> buildPromise { combatTrackMacro(game, actor) } },
                 toTimeOfDayMacro = { buildPromise { setTimeOfDayMacro(game) } },
                 toggleCombatTracksMacro = { buildPromise { toggleCombatTracksMacro(game) } },
+                realmTileDialogMacro = { buildPromise { editRealmTileMacro(game) } }
             )
         )
     }

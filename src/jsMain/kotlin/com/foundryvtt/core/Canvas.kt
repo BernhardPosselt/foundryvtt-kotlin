@@ -1,5 +1,8 @@
 package com.foundryvtt.core
 
+import com.foundryvtt.core.layers.DrawingsLayer
+import com.foundryvtt.core.layers.TilesLayer
+import com.foundryvtt.core.layers.TokenLayer
 import js.collections.JsSet
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -60,4 +63,6 @@ external class Canvas {
 
     // I give up, someone else continue
     val tokens: TokenLayer
+    val drawings: DrawingsLayer
+    val tiles: TilesLayer
 }

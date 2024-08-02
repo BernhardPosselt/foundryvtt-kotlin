@@ -16,26 +16,24 @@ import {migrate} from './migrations';
 import {updateKingdomArmyConsumption} from './armies/utils';
 import {openJournal} from './foundry-utils';
 import {structureTokenMappingDialog} from './kingdom/dialogs/structure-token-mapping-dialog';
-import {realmTileDialog} from './kingdom/dialogs/realm-tile-dialog';
 import {showStructureHints} from './kingdom/structures';
 
 
 Hooks.on('ready', async () => {
     if (game instanceof Game) {
         const gameInstance = game;
-        gameInstance.pf2eKingmakerTools.macros.realmTileDialogMacro = realmTileDialog.bind(null, game),
-            gameInstance.pf2eKingmakerTools.macros.structureTokenMappingMacro = structureTokenMappingDialog.bind(null, game),
-            gameInstance.pf2eKingmakerTools.macros.viewKingdomMacro = showKingdom.bind(null, game),
-            /* eslint-disable @typescript-eslint/no-explicit-any */
-            gameInstance.pf2eKingmakerTools.macros.openCampingSheet = (): void => openCampingSheet(gameInstance),
-            gameInstance.pf2eKingmakerTools.macros.editStructureMacro = async (actor: any): Promise<void> => {
-                if (actor === undefined) {
-                    ui.notifications?.error('Please select an actor');
-                } else {
-                    console.log(actor);
-                    await showStructureEditDialog(gameInstance, actor.token.baseActor);
-                }
-            };
+        gameInstance.pf2eKingmakerTools.macros.structureTokenMappingMacro = structureTokenMappingDialog.bind(null, game);
+        gameInstance.pf2eKingmakerTools.macros.viewKingdomMacro = showKingdom.bind(null, game);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        gameInstance.pf2eKingmakerTools.macros.openCampingSheet = (): void => openCampingSheet(gameInstance);
+        gameInstance.pf2eKingmakerTools.macros.editStructureMacro = async (actor: any): Promise<void> => {
+            if (actor === undefined) {
+                ui.notifications?.error('Please select an actor');
+            } else {
+                console.log(actor);
+                await showStructureEditDialog(gameInstance, actor.token.baseActor);
+            }
+        };
         gameInstance.settings.register('pf2e-kingmaker-tools', 'showManual', {
             name: 'Show Manual',
             scope: 'world',

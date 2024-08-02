@@ -26,5 +26,6 @@ external object Game {
     val packs: CompendiumPacks
     val time: GameTime
     val socket: Socket
+    val canvas: Canvas
 }
 
