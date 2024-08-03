@@ -83,6 +83,7 @@ tasks {
     }
 }
 
+// TODO: remove once fully migrated
 tasks.register<Copy>("copyOldJs") {
     from("oldsrc/dist/main.js") {
         rename(".*", "oldmain.js")
