@@ -66,6 +66,7 @@ kotlin {
                 implementation(libs.kotlin.plain.objects)
                 implementation(libs.kotlinx.html)
                 implementation(libs.kotlinx.coroutines.js)
+                implementation(libs.jsonschemavalidator.js)
             }
         }
         val jsTest by getting {

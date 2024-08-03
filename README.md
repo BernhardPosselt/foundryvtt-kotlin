@@ -120,15 +120,15 @@ Click on the + to add a new mapping for each schema. Then add the following (see
 * **Name**: Name of the Schema
 * **Schema file or URL**: Path to the Schema file in [./schemas/](./schemas/)
 * **Schema Version**: Always **JSON Schema version 7**
-* Then click on the **+** below and **Add file pattern or path** 
+* Then click on the **+** below and **Directory** 
  
 Schemas:
 
 * Recipes:
   * **Name**: Recipes
   * **Schema file or URL**: schemas/recipes.json
-  * **Pattern**: src/\*/\*\*/recipes.json
+  * **Directory**: data/recipes
 * Structures:
 * **Name**: Structures
 * **Schema file or URL**: schemas/structures.json
-* **Pattern**: src/\*/\*\*/structures.json
+* **Directory**: data/structures

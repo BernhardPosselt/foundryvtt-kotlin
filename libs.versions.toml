@@ -1,6 +1,7 @@
 [versions]
 kotlin = "2.0.20-RC"
 coroutines = "1.9.0-RC"
+schema-validator = "0.2.2"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.1" }
@@ -14,7 +15,8 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-wrappers-js = { module = "org.jetbrains.kotlin-wrappers:kotlin-js" }
 kotlin-test-js = { module = "org.jetbrains.kotlin:kotlin-test-js-runner", version.ref = "kotlin" }
 kotlinx-coroutines-js = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js", version.ref = "coroutines" }
-jsonschemavalidator = { module = "io.github.optimumcode:json-schema-validator", version = "0.2.2" }
+jsonschemavalidator = { module = "io.github.optimumcode:json-schema-validator", version.ref = "schema-validator" }
+jsonschemavalidator-js = { module = "io.github.optimumcode:json-schema-validator-js", version.ref = "schema-validator" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
