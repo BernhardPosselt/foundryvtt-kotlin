@@ -3,7 +3,7 @@
 This module ships macros, journal entries, roll tables, effect items, additional tooling for OGL/CUP licensed content
 from the Kingmaker Adventure Path for Pathfinder 2nd Edition.
 
-If you are interested in hacking on the code base, take a look at the [Kotlin JS Primer](./Kotlin%20JS%20Primer.md) for a quick intro on how to interact with the js api. 
+If you are interested in hacking on the code base, take a look at the [Kotlin JS Primer](./docs/Kotlin%20JS%20Primer.md) for a quick intro on how to interact with the js api. 
 
 ## Licensing
 
