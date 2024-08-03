@@ -76,5 +76,5 @@ abstract class FormApp<T, O>(
 
     }
 
-    protected abstract fun onParsedSubmit(value: O): Promise<Unit>
+    protected abstract fun onParsedSubmit(value: O): Promise<Void>
 }

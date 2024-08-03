@@ -135,5 +135,6 @@ class ClimateConfiguration : FormApp<ClimateSettingsContext, ClimateSettings>(
 
     override fun onParsedSubmit(value: ClimateSettings) = buildPromise {
         currentSettings = value
+        null
     }
 }

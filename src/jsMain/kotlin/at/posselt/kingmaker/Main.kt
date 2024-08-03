@@ -61,6 +61,6 @@ fun main() {
     }
 
     Hooks.onReady {
-
+        console.log(game.partyMembers())
     }
 }

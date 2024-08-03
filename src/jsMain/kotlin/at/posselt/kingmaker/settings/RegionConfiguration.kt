@@ -174,6 +174,7 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
         if (!currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
             addDefaultRegion()
         }
+        null
     }
 
     override fun fixObject(value: dynamic) {

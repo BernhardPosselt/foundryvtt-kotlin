@@ -66,7 +66,7 @@ suspend fun Game.startCombatTrack(combatants: Array<Combatant>, active: Scene) {
             scenes.active?.stopMusic()
             fromUuidTypeSafe<PlaylistSound>(trackUuid)
                 ?.typeSafeUpdate { playing = true }
-        } else if (playlistUuid != null) {
+        } else {
             scenes.active?.stopMusic()
             fromUuidTypeSafe<Playlist>(playlistUuid)
                 ?.playAll()
@@ -82,7 +82,7 @@ suspend fun Game.stopCombatTrack(combatants: Array<Combatant>, active: Scene) {
             fromUuidTypeSafe<PlaylistSound>(trackUuid)
                 ?.typeSafeUpdate { playing = false }
             scenes.active?.startMusic()
-        } else if (playlistUuid != null) {
+        } else {
             fromUuidTypeSafe<Playlist>(playlistUuid)
                 ?.stopAll()
             scenes.active?.startMusic()

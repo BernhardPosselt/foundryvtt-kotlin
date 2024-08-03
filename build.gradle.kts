@@ -3,15 +3,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 
-/**
- * Usage:
- *
- * Build project:
- * ./gradlew jsBrowserProductionWebpack
- * Run local dev server:
- * ./gradlew jsBrowserDevelopmentWebpack -t
- */
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -27,6 +18,9 @@ repositories {
 }
 
 kotlin {
+//    compilerOptions {
+//        freeCompilerArgs.add("-XXLanguage:+JsAllowInvalidCharsIdentifiersEscaping")
+//    }
     js {
         useEsModules()
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -53,6 +47,7 @@ kotlin {
     sourceSets {
         // enable kotlin test for all modules
         commonMain.dependencies {
+            implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines)
