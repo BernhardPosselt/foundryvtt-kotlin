@@ -90,6 +90,9 @@ tasks.register<JsonSchemaValidator>("validateJsonFiles") {
     schema(layout.projectDirectory.file("schemas/recipes.json")) {
         add(layout.projectDirectory.file("src/jsMain/resources/data/recipes.json"))
     }
+    schema(layout.projectDirectory.file("schemas/structures.json")) {
+        add(layout.projectDirectory.file("src/jsMain/resources/data/structures.json"))
+    }
 }
 
 // TODO: remove once fully migrated

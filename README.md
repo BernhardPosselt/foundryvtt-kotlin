@@ -3,8 +3,6 @@
 This module ships macros, journal entries, roll tables, effect items, additional tooling for OGL/CUP licensed content
 from the Kingmaker Adventure Path for Pathfinder 2nd Edition.
 
-If you are interested in hacking on the code base, take a look at the [Kotlin JS Primer](./docs/Kotlin%20JS%20Primer.md) for a quick intro on how to interact with the js api. 
-
 ## Licensing
 
 All Pathfinder content uses the [Open Gaming License](./OpenGameLicense.md) and [CUP](https://paizo.com/community/communityuse)
@@ -63,6 +61,8 @@ If you've enabled the official module, the following things are automatically ta
 ![camping-sheet-1.png](./docs/images/camping-sheet-1.png)
 
 ## Development
+
+If you are interested in hacking on the code base, take a look at the [Kotlin JS Primer](./docs/Kotlin%20JS%20Primer.md) for a quick intro on how to interact with the js api.
 
 ### Setup
 
@@ -128,4 +128,7 @@ Schemas:
   * **Name**: Recipes
   * **Schema file or URL**: schemas/recipes.json
   * **Pattern**: src/\*/\*\*/recipes.json
- 
+* Structures:
+* **Name**: Structures
+* **Schema file or URL**: schemas/structures.json
+* **Pattern**: src/\*/\*\*/structures.json

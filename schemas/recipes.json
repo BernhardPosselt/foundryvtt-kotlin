@@ -5,65 +5,7 @@
   "description": "A list of recipes",
   "type": "array",
   "items": {
-    "type": "object",
-    "required": [
-      "name",
-      "basicIngredients",
-      "specialIngredients",
-      "cookingLoreDC",
-      "survivalDC",
-      "uuid",
-      "level",
-      "cost",
-      "rarity",
-      "criticalSuccess",
-      "success",
-      "criticalFailure"
-    ],
-    "properties": {
-      "name": {
-        "type": "string"
-      },
-      "basicIngredients": {
-        "type": "number"
-      },
-      "specialIngredients": {
-        "type": "number"
-      },
-      "cookingLoreDC": {
-        "type": "number"
-      },
-      "survivalDC": {
-        "type": "number"
-      },
-      "uuid": {
-        "type": "string"
-      },
-      "level": {
-        "type": "number"
-      },
-      "cost": {
-        "type": "string"
-      },
-      "rarity": {
-        "$ref": "#/$defs/Rarity"
-      },
-      "isHomebrew": {
-        "type": "boolean"
-      },
-      "criticalSuccess": {
-        "$ref": "#/$defs/CookingOutcome"
-      },
-      "success": {
-        "$ref": "#/$defs/CookingOutcome"
-      },
-      "criticalFailure": {
-        "$ref": "#/$defs/CookingOutcome"
-      },
-      "favoriteMeal": {
-        "$ref": "#/$defs/CookingOutcome"
-      }
-    }
+    "$ref": "#/$defs/Recipe"
   },
   "$defs": {
     "Rarity": {
@@ -74,6 +16,67 @@
         "rare",
         "unique"
       ]
+    },
+    "Recipe": {
+      "type": "object",
+      "required": [
+        "name",
+        "basicIngredients",
+        "specialIngredients",
+        "cookingLoreDC",
+        "survivalDC",
+        "uuid",
+        "level",
+        "cost",
+        "rarity",
+        "criticalSuccess",
+        "success",
+        "criticalFailure"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "basicIngredients": {
+          "type": "number"
+        },
+        "specialIngredients": {
+          "type": "number"
+        },
+        "cookingLoreDC": {
+          "type": "number"
+        },
+        "survivalDC": {
+          "type": "number"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "level": {
+          "type": "number"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "rarity": {
+          "$ref": "#/$defs/Rarity"
+        },
+        "isHomebrew": {
+          "type": "boolean"
+        },
+        "criticalSuccess": {
+          "$ref": "#/$defs/CookingOutcome"
+        },
+        "success": {
+          "$ref": "#/$defs/CookingOutcome"
+        },
+        "criticalFailure": {
+          "$ref": "#/$defs/CookingOutcome"
+        },
+        "favoriteMeal": {
+          "$ref": "#/$defs/CookingOutcome"
+        }
+      }
     },
     "CookingOutcome": {
       "type": "object",
