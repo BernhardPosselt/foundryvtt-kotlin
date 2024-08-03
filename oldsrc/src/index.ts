@@ -1,7 +1,6 @@
 import {isFirstGm, rollModeChoices} from './utils';
 import {getBooleanSetting, setSetting} from './settings';
 import {showKingdom} from './kingdom/sheet';
-import {showStructureEditDialog} from './kingdom/dialogs/edit-structure-rules';
 import {getKingdom} from './kingdom/storage';
 import {addOngoingEvent, changeDegree, parseUpgradeMeta, reRoll} from './kingdom/rolls';
 import {kingdomChatButtons} from './kingdom/chat-buttons';
@@ -26,14 +25,6 @@ Hooks.on('ready', async () => {
         gameInstance.pf2eKingmakerTools.macros.viewKingdomMacro = showKingdom.bind(null, game);
         /* eslint-disable @typescript-eslint/no-explicit-any */
         gameInstance.pf2eKingmakerTools.macros.openCampingSheet = (): void => openCampingSheet(gameInstance);
-        gameInstance.pf2eKingmakerTools.macros.editStructureMacro = async (actor: any): Promise<void> => {
-            if (actor === undefined) {
-                ui.notifications?.error('Please select an actor');
-            } else {
-                console.log(actor);
-                await showStructureEditDialog(gameInstance, actor.token.baseActor);
-            }
-        };
         gameInstance.settings.register('pf2e-kingmaker-tools', 'showManual', {
             name: 'Show Manual',
             scope: 'world',

@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.utils
 
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2EActor
 import kotlinx.js.JsPlainObject
@@ -21,8 +22,8 @@ external interface ToolsMacros {
     val toTimeOfDayMacro: () -> Unit
     val toggleCombatTracksMacro: () -> Unit
     val realmTileDialogMacro: () -> Unit
+    val editStructureMacro: (Actor?) -> Unit
 //    val structureTokenMappingMacro: () -> Unit
-//    val editStructureMacro: (Actor) -> Unit
 //    val openCampingSheet: () -> Unit
 //    val viewKingdomMacro: () -> Unit
 }

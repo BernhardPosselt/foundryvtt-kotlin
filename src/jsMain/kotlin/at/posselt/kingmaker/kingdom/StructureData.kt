@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.kingdom
 
 import kotlinx.js.JsPlainObject
+import kotlinx.serialization.json.JsonElement
 
 @JsPlainObject
 external interface RuinAmount {
@@ -107,3 +108,9 @@ external interface StructureData {
 
 @JsModule("./data/structures.json")
 external val structures: Array<StructureData>
+
+@JsModule("./schemas/structure.json")
+external val structureSchema: JsonElement
+
+@JsModule("./schemas/structure-ref.json")
+external val structureRefSchema: JsonElement

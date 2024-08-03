@@ -44,6 +44,7 @@ external interface FormElementContext {
     val hideLabel: Boolean
     val overrideType: String?
     val isFormElement: Boolean
+    val elementClasses: String
 }
 
 enum class OverrideType(val value: String) {
@@ -74,6 +75,7 @@ data class Select(
     val overrideType: OverrideType? = null,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -96,6 +98,7 @@ data class Select(
             )
         }.toTypedArray(),
         hideLabel = hideLabel,
+        elementClasses = elementClasses.joinToString(" "),
     )
 
     companion object {
@@ -191,6 +194,7 @@ data class TextInput(
     override val help: String? = null,
     override val hideLabel: Boolean = false,
     val overrideType: OverrideType? = null,
+    val elementClasses: List<String> = emptyList(),
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -208,6 +212,7 @@ data class TextInput(
         overrideType = overrideType?.value,
         options = emptyArray(),
         hideLabel = hideLabel,
+        elementClasses = elementClasses.joinToString(" "),
     )
 }
 
@@ -218,6 +223,7 @@ data class CheckboxInput(
     val required: Boolean = false,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -234,6 +240,7 @@ data class CheckboxInput(
         checkbox = true,
         options = emptyArray(),
         hideLabel = hideLabel,
+        elementClasses = elementClasses.joinToString(" "),
     )
 }
 
@@ -245,6 +252,7 @@ data class TextArea(
     override val help: String? = null,
     override val hideLabel: Boolean = false,
     val overrideType: OverrideType? = null,
+    val elementClasses: List<String> = emptyList(),
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -262,6 +270,7 @@ data class TextArea(
         options = emptyArray(),
         overrideType = overrideType?.value,
         hideLabel = hideLabel,
+        elementClasses = elementClasses.joinToString(" "),
     )
 }
 
@@ -272,6 +281,7 @@ data class NumberInput(
     val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -288,6 +298,7 @@ data class NumberInput(
         checkbox = false,
         options = emptyArray(),
         hideLabel = hideLabel,
+        elementClasses = elementClasses.joinToString(" "),
     )
 }
 
@@ -298,6 +309,7 @@ data class TimeInput(
     val required: Boolean = true,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -318,6 +330,7 @@ data class TimeInput(
         checkbox = false,
         options = emptyArray(),
         hideLabel = hideLabel,
+        elementClasses = elementClasses.joinToString(" "),
     )
 }
 

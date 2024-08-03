@@ -59,6 +59,7 @@ suspend fun <T, R> prompt(
     templateContext: Record<String, Any?> = jso(),
     await: Boolean = false,
     promptType: PromptType = PromptType.OK,
+    width: Int? = undefined,
     submit: suspend (T) -> R,
 ) {
     val content = tpl(templatePath, templateContext)
@@ -80,6 +81,7 @@ suspend fun <T, R> prompt(
             window = Window(title = title),
             ok = button,
             rejectClose = false,
+            position = ApplicationPosition(width = width)
         )
     )
     if (await) prompt.await()

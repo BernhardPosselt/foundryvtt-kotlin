@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* The **Edit Structure Rules** broken in V12 and needs to be re-imported from the compendium
+
 ## [1.1.1] - 2024-07-17
 
 ### Fixed

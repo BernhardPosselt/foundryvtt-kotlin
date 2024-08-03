@@ -17,6 +17,10 @@
         border-color: #a31010;
     }
 
+    textarea.larger-textarea {
+        min-height: 500px;
+    }
+
     table {
         margin: 0;
 
