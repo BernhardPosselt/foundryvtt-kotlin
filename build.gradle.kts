@@ -1,4 +1,7 @@
+import at.posselt.kingmaker.plugins.ChangeModuleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 
 /**
  * Usage:
@@ -26,11 +29,13 @@ repositories {
 kotlin {
     js {
         useEsModules()
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             moduleKind = JsModuleKind.MODULE_ES
             useEsClasses = true
         }
         browser {
+            @OptIn(ExperimentalDistributionDsl::class)
             distribution {
                 outputDirectory = file("dist")
             }
@@ -73,5 +78,40 @@ tasks {
     getByName<Delete>("clean") {
         delete.add("dist")
     }
+    getByName("assemble") {
+        finalizedBy("copyOldJs")
+    }
 }
 
+tasks.register<Copy>("copyOldJs") {
+    from("oldsrc/dist/main.js") {
+        rename(".*", "oldmain.js")
+    }
+    into("dist/")
+}
+
+tasks.register<ChangeModuleVersion>("changeModuleVersion") {
+    moduleVersion = project.property("moduleVersion") as String
+}
+
+/**
+ * Run using ./gradlew package -PmoduleVersion=0.0.1
+ */
+tasks.register<Zip>("package") {
+    dependsOn("clean", "build", "copyOldJs", "changeModuleVersion")
+    tasks.named("build").get().mustRunAfter("clean")
+    archiveFileName.set("release.zip")
+    destinationDirectory.set(layout.buildDirectory.dir("package"))
+    from("dist") { into("dist") }
+    from("docs") { into("docs") }
+    from("img") { into("img") }
+    from("packs") { into("packs") }
+    from("styles") { into("styles") }
+    from("templates") { into("templates") }
+    from("CHANGELOG.md")
+    from("LICENSE")
+    from("OpenGameLicense.md")
+    from("README.md")
+    from("token-map.json")
+    from("module.json")
+}

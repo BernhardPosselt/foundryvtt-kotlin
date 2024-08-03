@@ -5,7 +5,7 @@
   "scripts": [
     "dist/api/HandlebarsFormApplication.js",
     "dist/main.js",
-    "oldsrc/dist/main.js"
+    "dist/oldmain.js"
   ],
   "url": "https://github.com/BernhardPosselt/pf2e-kingmaker-tools",
   "license": "LICENSE",
