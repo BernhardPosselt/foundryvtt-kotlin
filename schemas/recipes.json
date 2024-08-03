@@ -7,15 +7,101 @@
   "items": {
     "type": "object",
     "required": [
-      "name"
+      "name",
+      "basicIngredients",
+      "specialIngredients",
+      "cookingLoreDC",
+      "survivalDC",
+      "uuid",
+      "level",
+      "cost",
+      "rarity",
+      "criticalSuccess",
+      "success",
+      "criticalFailure"
     ],
     "properties": {
-      "type": {
-        "type": "string"
-      },
       "name": {
         "type": "string"
+      },
+      "basicIngredients": {
+        "type": "number"
+      },
+      "specialIngredients": {
+        "type": "number"
+      },
+      "cookingLoreDC": {
+        "type": "number"
+      },
+      "survivalDC": {
+        "type": "number"
+      },
+      "uuid": {
+        "type": "string"
+      },
+      "level": {
+        "type": "number"
+      },
+      "cost": {
+        "type": "string"
+      },
+      "rarity": {
+        "$ref": "#/$defs/Rarity"
+      },
+      "isHomebrew": {
+        "type": "boolean"
+      },
+      "criticalSuccess": {
+        "$ref": "#/$defs/CookingOutcome"
+      },
+      "success": {
+        "$ref": "#/$defs/CookingOutcome"
+      },
+      "criticalFailure": {
+        "$ref": "#/$defs/CookingOutcome"
+      },
+      "favoriteMeal": {
+        "$ref": "#/$defs/CookingOutcome"
       }
+    }
+  },
+  "$defs": {
+    "Rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "unique"
+      ]
+    },
+    "CookingOutcome": {
+      "type": "object",
+      "properties": {
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MealEffect"
+          }
+        },
+        "chooseRandomly": {
+          "type": "boolean"
+        }
+      }
+    },
+    "MealEffect": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "removeAfterRest": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "uuid"
+      ]
     }
   }
 }

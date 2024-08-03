@@ -84,7 +84,7 @@ tasks {
 
 tasks.register<JsonSchemaValidator>("validateJsonFiles") {
     schema(layout.projectDirectory.file("schemas/recipes.json")) {
-        add(layout.projectDirectory.file("src/jsMain/resources/recipes.json"))
+        add(layout.projectDirectory.file("src/jsMain/resources/data/recipes.json"))
     }
 }
 
