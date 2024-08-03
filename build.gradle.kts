@@ -54,19 +54,23 @@ kotlin {
             implementation(libs.kotlinx.coroutines)
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.kotlin.test)
         }
         // define a jsMain module
         val jsMain by getting {
             dependencies {
                 implementation(project.dependencies.enforcedPlatform(libs.kotlin.wrappers))
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-js")
+                implementation(libs.kotlin.wrappers.js)
                 implementation(libs.kotlin.plain.objects)
                 implementation(libs.kotlinx.html)
                 implementation(libs.kotlinx.coroutines.js)
             }
         }
-        val jsTest by getting {}
+        val jsTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test.js)
+            }
+        }
     }
 }
 
