@@ -26,7 +26,7 @@ suspend fun sceneWeatherSettingsMacro(scene: Scene) {
                 CheckboxInput(
                     name = "syncWeatherPlaylist",
                     label = "Sync Weather Playlist",
-                    value = settings.syncWeather,
+                    value = settings.syncWeatherPlaylist,
                     help = "If enabled, plays the current weather effect playlist"
                 ),
             )

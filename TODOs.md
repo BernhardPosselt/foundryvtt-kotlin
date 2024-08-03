@@ -6,8 +6,3 @@
 * random encounters have been moved into a different compendium
 
 ## Test Macros
-
-* Scene Weather settings
-* Combat Tracks
-* Combat Track Macro
-* Toggle Shelter from weather

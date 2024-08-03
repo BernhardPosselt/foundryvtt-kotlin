@@ -30,26 +30,28 @@ fun Game.getCurrentRegionName() =
 
 suspend fun Game.findCurrentRegion(): RegionSetting? {
     val regionName = getCurrentRegionName()
-    val kingmakerTools = settings.kingmakerTools
-    return if (kingmakerTools.getRegionSettings().useStolenLands) {
+    val regionSettings = settings.kingmakerTools.getRegionSettings()
+    return if (regionSettings.useStolenLands) {
         stolenLandsZones
             .find { it.name == regionName }
             ?.let {
+                val rolltableUuid = findRollTableWithCompendiumFallback(
+                    tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}",
+                    fallbackName = it.name,
+                )?.uuid
+                val combatTrack = (playlists.getCombatOverrideTrack(it.combatTrackName)
+                    ?: playlists.getKingmakerCombatTrack(it.combatTrackName))
                 RegionSetting(
                     name = it.name,
                     zoneDc = it.zoneDc,
                     encounterDc = it.encounterDc,
                     level = it.level,
-                    rollTableUuid = findRollTableWithCompendiumFallback(
-                        tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}",
-                        fallbackName = it.name,
-                    )?.uuid,
-                    combatTrack = playlists.getCombatOverrideTrack(it.combatTrackName)
-                        ?: playlists.getKingmakerCombatTrack(it.combatTrackName),
+                    rollTableUuid = rolltableUuid,
+                    combatTrack = combatTrack,
                 )
             }
     } else {
-        kingmakerTools.getRegionSettings().regions
+        regionSettings.regions
             .find { it.name == regionName }
     }
 }
