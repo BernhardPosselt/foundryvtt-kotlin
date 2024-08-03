@@ -12,9 +12,9 @@ All Pathfinder content uses the [Open Gaming License](./OpenGameLicense.md) and 
 > FoundryVTT module is not published, endorsed, or specifically approved by Paizo. For more information about Paizo Inc.
 > and Paizo products, visit paizo.com.
 
-The source code is licensed under the AGPLv3 license, except for [src/jsMain/kotlin/com/foundryvtt](./src/jsMain/kotlin/com/foundryvtt), which includes api descriptions which can not be copyrighted. Treat these as [CC0 (Public Domain)](./src/jsMain/kotlin/com/foundryvtt/LICENSE).
+The source code is licensed under the AGPLv3 license, except for the [src/jsMain/kotlin/com/foundryvtt](./src/jsMain/kotlin/com/foundryvtt) folder which is licensed under [CC0 - Public Domain](./src/jsMain/kotlin/com/foundryvtt/LICENSE).
 
-All images in the [static/img/structures](static/img/structures) folder are licensed under [CC0 - Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) by [Mark Pearce](https://github.com/MarkPearce). They were [generated and retouched using a MidJourney subscriber account](https://github.com/BernhardPosselt/pf2e-kingmaker-tools/issues/76). According to their [Terms of Service](https://docs.midjourney.com/docs/terms-of-service), subscribers to MidJourney that are not part of a company own all the generated images.
+All images in the [img/structures](./img/structures) folder are licensed under [CC0 - Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) by [Mark Pearce](https://github.com/MarkPearce). They were [generated and retouched using a MidJourney subscriber account](https://github.com/BernhardPosselt/pf2e-kingmaker-tools/issues/76). According to their [Terms of Service](https://docs.midjourney.com/docs/terms-of-service), subscribers to MidJourney that are not part of a company own all the generated images.
 
 ## Installation
 
