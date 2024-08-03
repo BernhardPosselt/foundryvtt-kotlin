@@ -1,12 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/BernhardPosselt/pf2e-kingmaker-tools/schemas/recipes.json",
-  "title": "Recipes",
-  "description": "A list of recipes",
-  "type": "array",
-  "items": {
-    "$ref": "#/$defs/Recipe"
-  },
+  "$id": "https://posselt.at/pf2e-kingmaker-tools/schemas/recipe.json",
+  "title": "Recipe",
+  "description": "A recipe",
+  "$ref": "#/$defs/Recipe",
   "$defs": {
     "Rarity": {
       "type": "string",

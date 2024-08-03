@@ -1,0 +1,39 @@
+{
+    "name": "Baked Spider Legs",
+    "basicIngredients": 4,
+    "specialIngredients": 1,
+    "survivalDC": 22,
+    "cookingLoreDC": 20,
+    "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.OXKHrajfyBjEBLTM",
+    "level": 5,
+    "cost": "8 gp",
+    "rarity": "common",
+    "criticalFailure": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.0faDj5jOYlPTwB21"
+            }
+        ]
+    },
+    "favoriteMeal": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.M2gTzsYSnmcq7Lho"
+            }
+        ]
+    },
+    "criticalSuccess": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.MVrKXXHzxzyfy3mi"
+            }
+        ]
+    },
+    "success": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.kmHHmbR283uOoDK9"
+            }
+        ]
+    }
+}

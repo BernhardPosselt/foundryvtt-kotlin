@@ -1,32 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/BernhardPosselt/pf2e-kingmaker-tools/schemas/structures.json",
-  "title": "Structures",
+  "$id": "https://posselt.at/pf2e-kingmaker-tools/schemas/structure.json",
+  "title": "Structure",
   "description": "A list of structures",
-  "type": "array",
-  "items": {
-    "oneOf": [
-      {
-        "$ref": "#/$defs/Ref"
-      },
-      {
-        "$ref": "#/$defs/Structure"
-      }
-    ]
-  },
+  "$ref": "#/$defs/Structure",
   "$defs": {
-    "Ref": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ref"
-      ],
-      "properties": {
-        "ref": {
-          "type": "string"
-        }
-      }
-    },
     "Structure": {
       "additionalProperties": false,
       "type": "object",

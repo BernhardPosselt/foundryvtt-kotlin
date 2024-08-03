@@ -1,5 +1,7 @@
 import at.posselt.kingmaker.plugins.ChangeModuleVersion
 import at.posselt.kingmaker.plugins.JsonSchemaValidator
+import at.posselt.kingmaker.plugins.PackJsonFile
+import at.posselt.kingmaker.plugins.UnpackJsonFile
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
@@ -78,6 +80,9 @@ tasks {
     getByName<Delete>("clean") {
         delete.add("dist")
     }
+    getByName("jsProcessResources") {
+        dependsOn("packJsonFiles")
+    }
     getByName("assemble") {
         finalizedBy("copyOldJs")
     }
@@ -86,16 +91,23 @@ tasks {
     }
 }
 
+/**
+ * At build time, validate all json files in data/
+ */
 tasks.register<JsonSchemaValidator>("validateJsonFiles") {
-    schema(layout.projectDirectory.file("src/commonMain/resources/schemas/recipes.json")) {
-        add(layout.projectDirectory.file("src/commonMain/resources/data/recipes.json"))
-    }
-    schema(layout.projectDirectory.file("src/commonMain/resources/schemas/structures.json")) {
-        add(layout.projectDirectory.file("src/commonMain/resources/data/structures.json"))
-    }
+    addSchema(
+        layout.projectDirectory.file("src/commonMain/resources/schemas/recipe.json"),
+        layout.projectDirectory.dir("data/recipes"),
+    )
+    addSchema(
+        layout.projectDirectory.file("src/commonMain/resources/schemas/structure.json"),
+        layout.projectDirectory.dir("data/structures"),
+    )
 }
 
-// TODO: remove once fully migrated
+/**
+ * At build time, copy the old js file back into the dist folder
+ */
 tasks.register<Copy>("copyOldJs") {
     from("oldsrc/dist/main.js") {
         rename(".*", "oldmain.js")
@@ -103,15 +115,39 @@ tasks.register<Copy>("copyOldJs") {
     into("dist/")
 }
 
+/**
+ * Updates the version attribute in module.json when packaging the zip
+ */
 tasks.register<ChangeModuleVersion>("changeModuleVersion") {
     moduleVersion = project.property("moduleVersion") as String
+}
+
+/**
+ * Split a json array in src/commonMain/resources/data/ into
+ * multiple json files
+ *
+ * Run using ./gradlew unpackJsonFile -Pfile=recipes.json
+ */
+tasks.register<UnpackJsonFile>("unpackJsonFile") {
+    val file = project.property("file")
+    targetFile = layout.projectDirectory.file("src/commonMain/resources/data/$file")
+    outputDirectory = layout.projectDirectory.dir("data")
+}
+
+/**
+ * Concatenates all files in src/commonMain/resources/data/DIRECTORY into
+ * one big json file in dist/
+ */
+tasks.register<PackJsonFile>("packJsonFiles") {
+    sourceDirectory = layout.projectDirectory.dir("data/")
+    targetDirectory = layout.projectDirectory.dir("src/commonMain/resources/data/")
 }
 
 /**
  * Run using ./gradlew package -PmoduleVersion=0.0.1
  */
 tasks.register<Zip>("package") {
-    dependsOn("clean", "build", "copyOldJs", "changeModuleVersion")
+    dependsOn("clean", "build", "copyOldJs", "packJsonFiles", "changeModuleVersion")
     tasks.named("build").get().mustRunAfter("clean")
     archiveFileName.set("release.zip")
     destinationDirectory.set(layout.buildDirectory)

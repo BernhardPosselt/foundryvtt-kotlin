@@ -1,0 +1,39 @@
+{
+    "name": "Shepherd's Pie",
+    "basicIngredients": 4,
+    "specialIngredients": 0,
+    "cookingLoreDC": 18,
+    "survivalDC": 20,
+    "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.GsPVSA1GNm4tvmcR",
+    "level": 2,
+    "cost": "2 gp",
+    "rarity": "uncommon",
+    "criticalSuccess": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.3a5uIGu77TLQE9ZB"
+            }
+        ]
+    },
+    "criticalFailure": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.84dIJjkOdLeHWkx2"
+            }
+        ]
+    },
+    "success": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.COa19ug1vjTGHy04"
+            }
+        ]
+    },
+    "favoriteMeal": {
+        "effects": [
+            {
+                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.RL8zdU7YyoiduDva"
+            }
+        ]
+    }
+}
