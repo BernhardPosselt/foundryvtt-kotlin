@@ -9,7 +9,7 @@ version="$1"
 token="$2"
 ftoken="$3"
 
-./package.sh "$1"
+./gradlew package -PmoduleVersion="$1"
 
 # push new code
 git add module.json

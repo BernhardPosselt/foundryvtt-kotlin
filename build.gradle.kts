@@ -101,7 +101,7 @@ tasks.register<Zip>("package") {
     dependsOn("clean", "build", "copyOldJs", "changeModuleVersion")
     tasks.named("build").get().mustRunAfter("clean")
     archiveFileName.set("release.zip")
-    destinationDirectory.set(layout.buildDirectory.dir("package"))
+    destinationDirectory.set(layout.buildDirectory)
     from("dist") { into("dist") }
     from("docs") { into("docs") }
     from("img") { into("img") }
