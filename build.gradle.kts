@@ -1,4 +1,5 @@
 import at.posselt.kingmaker.plugins.ChangeModuleVersion
+import at.posselt.kingmaker.plugins.JsonSchemaValidator
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
@@ -75,6 +76,15 @@ tasks {
     }
     getByName("assemble") {
         finalizedBy("copyOldJs")
+    }
+    getByName("check") {
+        finalizedBy("validateJsonFiles")
+    }
+}
+
+tasks.register<JsonSchemaValidator>("validateJsonFiles") {
+    schema(layout.projectDirectory.file("schemas/recipes.json")) {
+        add(layout.projectDirectory.file("src/jsMain/resources/recipes.json"))
     }
 }
 

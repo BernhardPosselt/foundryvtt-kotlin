@@ -22,41 +22,6 @@ All images in the [static/img/structures](static/img/structures) folder are lice
 
 The package is available through the [module registry](https://foundryvtt.com/packages/pf2e-kingmaker-tools)
 
-## Development Setup
-
-Install the following things:
-
-* JVM 21
-* git
-* node
-* yarn
-
-First, clone the repository into a local folder, e.g. **/home/bernhard/dev**:
-
-    cd /home/bernhard/dev
-    git clone https://github.com/BernhardPosselt/pf2e-kingmaker-tools.git 
-
-Then link this directory to your foundry data folder:
-
-    ln -s /home/bernhard/dev/pf2e-kingmaker-tools/ /home/bernhard/.local/share/FoundryVTT/Data/modules/pf2e-kingmaker-tools/
-
-Build the project using:
-
-    ./gradlew assemble
-
-or if you want to both build it and run its tests:
-
-    ./gradlew build
-
-To execute tests run:
-
-    ./gradlew jsTest
-
-Finally, start foundry
-
-    cd dev/FoundryVTT-12.330/
-    ./foundryvtt
-
 
 ## Functionality
 
@@ -91,8 +56,76 @@ If you've enabled the official module, the following things are automatically ta
 
 ### Screenshots
 
-![kingdom-sheet.png](docs%2Fimages%2Fkingdom-sheet.png)
+![kingdom-sheet.png](./docs/images/kingdom-sheet.png)
 
-![settlements.png](docs%2Fimages%2Fsettlements.png)
+![settlements.png](./docs/images/settlements.png)
 
-![camping-sheet-1.png](docs%2Fimages%2Fcamping-sheet-1.png)
+![camping-sheet-1.png](./docs/images/camping-sheet-1.png)
+
+## Development
+
+### Setup
+
+Install the following things:
+
+* JDK 21
+* git
+* node
+* yarn
+
+First, clone the repository into a local folder, e.g. **/home/bernhard/dev**:
+
+    cd /home/bernhard/dev
+    git clone https://github.com/BernhardPosselt/pf2e-kingmaker-tools.git 
+
+Then link this directory to your foundry data folder:
+
+    ln -s /home/bernhard/dev/pf2e-kingmaker-tools/ /home/bernhard/.local/share/FoundryVTT/Data/modules/pf2e-kingmaker-tools/
+
+First, build the old JS code using:
+
+    cd oldsrc
+    yarn install
+    yarn run build
+
+Then, you can keep building the project using:
+
+    ./gradlew assemble
+
+or if you want to both build it and run its tests:
+
+    ./gradlew build
+
+To execute tests run:
+
+    ./gradlew jsTest
+
+Finally, start foundry
+
+    cd dev/FoundryVTT-12.330/
+    ./foundryvtt
+
+You can release a new version using:
+
+    ./release.sh "1.1.1" "$GITHUB_TOKEN" "$FOUNDRY_TOKEN"
+
+### Enable Schema Autocompletion Support in IntelliJ
+
+Some files are in JSON rather than actual code. To get autocompletion for these in IntelliJ, you need to enable custom schemas.
+
+In settings, go to **Languages & Frameworks > Schemas and DTDs > JSON Schema Mappings**.
+
+Click on the + to add a new mapping for each schema. Then add the following (see a list of values further down below):
+
+* **Name**: Name of the Schema
+* **Schema file or URL**: Path to the Schema file in [./schemas/](./schemas/)
+* **Schema Version**: Always **JSON Schema version 7**
+* Then click on the **+** below and **Add file pattern or path** 
+ 
+Schemas:
+
+* Recipes:
+  * **Name**: Recipes
+  * **Schema file or URL**: schemas/recipes.json
+  * **Pattern**: src/\*/\*\*/recipes.json
+ 
