@@ -87,11 +87,11 @@ tasks {
 }
 
 tasks.register<JsonSchemaValidator>("validateJsonFiles") {
-    schema(layout.projectDirectory.file("schemas/recipes.json")) {
-        add(layout.projectDirectory.file("src/jsMain/resources/data/recipes.json"))
+    schema(layout.projectDirectory.file("src/commonMain/resources/schemas/recipes.json")) {
+        add(layout.projectDirectory.file("src/commonMain/resources/data/recipes.json"))
     }
-    schema(layout.projectDirectory.file("schemas/structures.json")) {
-        add(layout.projectDirectory.file("src/jsMain/resources/data/structures.json"))
+    schema(layout.projectDirectory.file("src/commonMain/resources/schemas/structures.json")) {
+        add(layout.projectDirectory.file("src/commonMain/resources/data/structures.json"))
     }
 }
 
