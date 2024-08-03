@@ -11,15 +11,10 @@ import at.posselt.kingmaker.utils.getKingmakerCombatTrack
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.actor.PF2ENpc
-import kotlinx.js.JsPlainObject
 
-@JsPlainObject
-external interface Camping {
-    val currentRegion: String
-}
 
-fun PF2ENpc.getCamping(): Camping? =
-    getAppFlag<PF2ENpc, Camping?>("camping-sheet")
+fun PF2ENpc.getCamping(): CampingData? =
+    getAppFlag<PF2ENpc, CampingData?>("camping-sheet")
         ?.let(::deepClone)
 
 fun Game.getCampingActor(): PF2ENpc? =

@@ -17,7 +17,7 @@ external interface CookingOutcome {
 
 
 @JsPlainObject
-external interface Recipe {
+external interface RecipeData {
     val name: String
     val basicIngredients: Int
     val specialIngredients: Int
@@ -35,4 +35,4 @@ external interface Recipe {
 }
 
 @JsModule("./data/recipes.json")
-external val recipes: Array<Recipe>
+external val recipes: Array<RecipeData>

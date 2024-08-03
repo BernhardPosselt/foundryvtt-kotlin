@@ -75,7 +75,7 @@ external interface Construction {
 
 
 @JsPlainObject
-external interface Structure {
+external interface StructureData {
     val name: String
     val stacksWith: String?
     val construction: Construction?
@@ -106,4 +106,4 @@ external interface Structure {
 }
 
 @JsModule("./data/structures.json")
-external val structures: Array<Structure>
+external val structures: Array<StructureData>
