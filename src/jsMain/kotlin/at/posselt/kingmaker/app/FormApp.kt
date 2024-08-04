@@ -16,7 +16,7 @@ import kotlin.js.Promise
 
 data class MenuControl(
     val label: String,
-    val icon: String?,
+    val icon: String? = null,
     val action: String
 )
 
@@ -27,12 +27,11 @@ abstract class FormApp<T, O>(
     submitOnChange: Boolean = true,
     closeOnSubmit: Boolean = false,
     controls: Array<MenuControl> = emptyArray(),
+    classes: Array<String> = emptyArray(),
     width: Int? = undefined,
-    id: String? = undefined,
     val debug: Boolean = false,
 ) : App<T>(
     HandlebarsFormApplicationOptions(
-        id = id,
         window = Window(
             title = title,
             controls = controls.map {
@@ -47,7 +46,7 @@ abstract class FormApp<T, O>(
             width = width,
         ),
         templatePath = resolveTemplatePath(template),
-        classes = if (isDialogForm) arrayOf("km-dialog-form") else emptyArray(),
+        classes = if (isDialogForm) arrayOf("km-dialog-form").plus(classes) else classes,
         tag = "form",
         form = ApplicationFormConfiguration(
             submitOnChange = submitOnChange,

@@ -1,2 +1,15 @@
 @import "./applications/camping/style.css";
 @import "./components/forms/style.css";
+@import "./components/tabs/style.css";
+
+:root {
+    --primary-km: #275125;
+    --secondary-km: #789035;
+    --untrained: #424242;
+    --trained: #171f69;
+    --expert: #3c005e;
+    --master: #664400;
+    --legendary: #5e0000;
+    --sidebar-size: 301px;
+}
+

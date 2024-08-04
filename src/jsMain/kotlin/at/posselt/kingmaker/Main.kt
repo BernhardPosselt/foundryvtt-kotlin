@@ -20,6 +20,7 @@ fun main() {
             loadTpls(
                 arrayOf(
                     "formElement" to "components/forms/form-element.hbs",
+                    "tabs" to "components/tabs/tabs.hbs",
                 )
             )
             game.settings.kingmakerTools.register()

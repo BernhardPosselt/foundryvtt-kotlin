@@ -1,51 +1,62 @@
 <div>
     <div id="km-camping-time-tracker" class="km-row">
-        <button id="km-camping-minus-hour" type="button" data-hours="1">
-            -1h
-        </button>
         <button id="km-camping-minus-hour" type="button" data-hours="2">
             -2h
         </button>
+        <button id="km-camping-minus-hour" type="button" data-hours="1">
+            -1h
+        </button>
         <button id="km-camping-minus-hexploration" type="button">-
         </button>
-        <div id="km-camping-sun">
-            <i class="fa-regular fa-sun"></i>
-            <div id="km-time">13:45</div>
+        <div id="km-camping-time">
+            <div id="km-camping-time-wrapper">
+                <i class="fa-regular fa-sun"></i>
+                <div>13:45</div>
+            </div>
         </div>
         <button id="km-camping-plus-hexploration" type="button">+</button>
-        <button id="km-camping-plus-hour" type="button" data-hours="2">
-            +2h
-        </button>
         <button id="km-camping-plus-hour" type="button" data-hours="1">
             +1h
+        </button>
+        <button id="km-camping-plus-hour" type="button" data-hours="2">
+            +2h
         </button>
     </div>
     <div id="km-camping-hexploration" class="km-row">
         <div><b>Adventuring For: </b> 05:00</div>
-        <div><label>Party Speed (ft.)</label> <input type="number"></div>
         <div><b>Hexploration Activities:</b> 1/3</div>
-    </div>
-    <div id="km-camping-random-encounters" class="km-row">
-        <div><label> Region <select>
+        <div><label>Region: <select>
             <option>Rostland</option>
         </select></label></div>
-        <div id="km-camping-encounter-dc">
-            <button type="button"><i class="fa-solid fa-plus"></i></button>
-            <div><b>DC:</b> 12</div>
-            <button type="button"><i class="fa-solid fa-minus"></i></button>
-            <button type="button"><i class="fa-solid fa-rotate-left"></i></button>
-        </div>
         <div id="km-camping-encounter">
-            <button type="button"><i class="fa-solid fa-skull"></i></button>
+            <button type="button"><i class="fa-solid fa-minus"></i></button>
+            <div><b>Encounter DC:</b> 12</div>
+            <button type="button"><i class="fa-solid fa-plus"></i></button>
+            <button type="button"><i class="fa-solid fa-rotate-left"></i></button>
+            <button type="button" data-action="roll-encounter"><i class="fa-solid fa-skull"></i></button>
             <button type="button"><i class="fa-solid fa-dice-d20"></i><i class="fa-solid fa-skull"></i></button>
         </div>
-        <div id="km-camping-tabs" class="km-row">
-            <ul>
-                <li>Prepare Camp</li>
-                <li>Camping Activities</li>
-                <li>Eating</li>
-                <li>Resting</li>
-            </ul>
-        </div>
+    </div>
+    <ul class="km-tabs">
+        <li class="km-tab-active"><a>Prepare Camp</a></li>
+        <li><a>Camping Activities</a></li>
+        <li><a>Eating</a></li>
+        <li><a>Resting</a></li>
+    </ul>
+    <div id="km-camping-content">
+        <ul class="km-camping-actors">
+            <li><img src="/systems/pf2e/icons/iconics/AmiriFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/HarskFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/LiniFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/SeelahFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/EzrenFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/FumbusFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/LemFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/QuinnFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/ValerosFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/SeoniFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/KyraFull.webp"></li>
+            <li><img src="/systems/pf2e/icons/iconics/MerisielFull.webp"></li>
+        </ul>
     </div>
 </div>
