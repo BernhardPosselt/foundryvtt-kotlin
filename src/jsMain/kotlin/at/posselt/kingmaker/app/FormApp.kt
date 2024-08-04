@@ -28,9 +28,11 @@ abstract class FormApp<T, O>(
     closeOnSubmit: Boolean = false,
     controls: Array<MenuControl> = emptyArray(),
     width: Int? = undefined,
+    id: String? = undefined,
     val debug: Boolean = false,
 ) : App<T>(
     HandlebarsFormApplicationOptions(
+        id = id,
         window = Window(
             title = title,
             controls = controls.map {

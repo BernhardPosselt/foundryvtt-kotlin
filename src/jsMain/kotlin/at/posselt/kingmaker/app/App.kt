@@ -60,4 +60,8 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
             )
         )
     }
+
+    suspend fun launch() {
+        render(ApplicationRenderOptions(force = true)).await()
+    }
 }

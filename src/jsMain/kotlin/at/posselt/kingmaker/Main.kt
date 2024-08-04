@@ -1,7 +1,7 @@
 package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
-import at.posselt.kingmaker.camping.recipes
+import at.posselt.kingmaker.camping.CampingSheet
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
 import at.posselt.kingmaker.settings.kingmakerTools
@@ -63,7 +63,9 @@ fun main() {
     }
 
     Hooks.onReady {
-        console.log(game.partyMembers())
-        console.log(recipes)
+        val camping = CampingSheet()
+        buildPromise {
+            camping.launch()
+        }
     }
 }

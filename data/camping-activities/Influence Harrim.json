@@ -1,0 +1,20 @@
+{
+    "name": "Influence Harrim",
+    "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.D83mNy8bYqKULEnu",
+    "isLocked": true,
+    "isSecret": false,
+    "skillRequirements": [],
+    "skills": "any",
+    "criticalSuccess": {
+        "message": "You gain 2 Influence Points with Harrim"
+    },
+    "success": {
+        "message": "You gain 1 Influence Points with Harrim"
+    },
+    "failure": {
+        "message": "You gain no Influence Points with Harrim"
+    },
+    "criticalFailure": {
+        "message": "You lose 1 Influence Points with Harrim"
+    }
+}

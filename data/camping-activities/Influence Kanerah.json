@@ -1,0 +1,20 @@
+{
+    "name": "Influence Kanerah",
+    "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.D83mNy8bYqKULEnu",
+    "isLocked": true,
+    "isSecret": false,
+    "skillRequirements": [],
+    "skills": "any",
+    "criticalSuccess": {
+        "message": "You gain 2 Influence Points with Kanerah"
+    },
+    "success": {
+        "message": "You gain 1 Influence Points with Kanerah"
+    },
+    "failure": {
+        "message": "You gain no Influence Points with Kanerah"
+    },
+    "criticalFailure": {
+        "message": "You lose 1 Influence Points with Kanerah"
+    }
+}

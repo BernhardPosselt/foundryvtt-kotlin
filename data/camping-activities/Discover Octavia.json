@@ -1,0 +1,20 @@
+{
+    "name": "Discover Octavia",
+    "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.nCwES51tV7FmrfCN",
+    "isLocked": true,
+    "isSecret": true,
+    "skillRequirements": [],
+    "skills": "any",
+    "criticalSuccess": {
+        "message": "Choose two of the following: You learn which skill that can Influence Octavia has the lowest DC (skipping any skills that you already know), one of Octavia’s personal biases, one of Octavia’s resistances, or one of Octavia’s weaknesses. you can choose the same option twice to learn two pieces of information from the same category."
+    },
+    "success": {
+        "message": "Choose one of the following: You learn which skill that can Influence Octavia has the lowest DC (skipping any skills that you already know), one of Octavia’s personal biases, one of Octavia’s resistances, or one of Octavia’s weaknesses."
+    },
+    "failure": {
+        "message": "You learn no information."
+    },
+    "criticalFailure": {
+        "message": "Choose a piece of information to learn about, as success, but the information is incorrect. For instance, you might think Octavia is susceptible to flattery when actually Octavia is resistant to flattery."
+    }
+}
