@@ -18,7 +18,7 @@ external interface CampingSheetFormData
 class CampingSheet : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
-    width = 1024,
+    width = 960,
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players"),

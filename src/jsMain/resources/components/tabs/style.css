@@ -4,7 +4,7 @@ ul.km-tabs {
     padding: 0;
     display: flex;
     justify-content: space-between;
-    background-color: var(--secondary-km);
+    /*background-color: var(--secondary-km);*/
     position: relative;
     box-shadow: 0 5px 10px 0px #555;
 
@@ -17,11 +17,12 @@ ul.km-tabs {
 
         a {
             display: block;
-            color: rgb(17, 17, 17);
+            /*color: rgb(17, 17, 17);*/
         }
 
         &.km-tab-active {
-            background-color: var(--primary-km);
+            /*background-color: var(--primary-km);*/
+            background-color: var(--color-warm-2);
             color: white;
             box-shadow: 0 0 10px #222;
             border-top-right-radius: 5px;
