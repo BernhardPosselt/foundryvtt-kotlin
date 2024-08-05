@@ -50,16 +50,29 @@
         <li><img src="/systems/pf2e/icons/iconics/SeoniFull.webp"></li>
         <li><img src="/systems/pf2e/icons/iconics/KyraFull.webp"></li>
         <li><img src="/systems/pf2e/icons/iconics/MerisielFull.webp"></li>
-    </ul>
-    <ul class="km-tabs">
-        <li class="km-tab-active"><a>Prepare Camp</a></li>
-        <li><a>Camping Activities</a></li>
-        <li><a>Eating</a></li>
-        <li><a>Resting</a></li>
+        <li><img src="./img/camping/add-actor.webp"></li>
     </ul>
     <div id="km-camping-content">
-        <div class="km-camping-activities">
-
+        <button class="km-camping-previous"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="km-camping-activities-wrapper">
+            <h1>Prepare Camp</h1>
+            <div class="km-camping-activities">
+                <div class="km-camping-activity">
+                    <header>Prepare Camp
+                    </header>
+                    <div class="km-camping-activity-portrait">
+                        <button action="clear" type="button"><i class="fa-regular fa-circle-xmark"></i></button>
+                        <img src="/systems/pf2e/icons/iconics/MerisielFull.webp">
+                    </div>
+                    <div class="km-camping-activity-check">
+                        <select>
+                            <option>Critical Success</option>
+                        </select>
+                        <button action="roll" type="button"><i class="fa-solid fa-dice-d20"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
+        <button class="km-camping-next"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
 </div>

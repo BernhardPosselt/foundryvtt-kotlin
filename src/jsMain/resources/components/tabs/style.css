@@ -6,7 +6,7 @@ ul.km-tabs {
     justify-content: space-between;
     /*background-color: var(--secondary-km);*/
     position: relative;
-    box-shadow: 0 5px 10px 0px #555;
+    box-shadow: 0 5px 10px 0px #111;
 
     li {
         flex: 1;

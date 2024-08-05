@@ -134,7 +134,152 @@ ul.km-camping-actors {
     }
 }
 
-.km-camping-activities {
+
+#km-camping-content {
+    background-image: url("../../../img/camping/backgrounds/night.jpg");
+    background-position: 150px -140px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     height: 600px;
-    background-image: url("../../../img/camping/x.jpg");
+
+    h1 {
+        text-align: center;
+        width: fit-content;
+        margin: 0 auto;
+        margin-top: 15px;
+        -webkit-text-stroke-color: #000;
+        -webkit-text-stroke-width: 1px;
+    }
+
+    .km-camping-activities-wrapper {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .km-camping-activities {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .km-camping-activity {
+            width: 170px;
+            border: 1px solid;
+            border-radius: 5px;
+
+            i {
+                margin-right: 0;
+            }
+
+            header {
+                text-align: center;
+                background: var(--background);
+                line-height: 30px;
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+                border-bottom: 1px solid;
+            }
+
+            .km-camping-activity-portrait {
+                position: relative;
+                display: flex;
+
+                button[action] {
+                    border: 0;
+                    background: var(--background);
+                    border-radius: 100%;
+
+                    &:hover {
+                        i {
+                            background-color: #931010;
+                            border-radius: 100%;
+                        }
+
+                        box-shadow: none;
+                    }
+                }
+
+                button[action="clear"] {
+                    position: absolute;
+                    width: 30px;
+                    height: 30px;
+                    font-size: 30px;
+                    top: 5px;
+                    right: 5px;
+                }
+
+
+                img {
+                    height: 160px;
+                    width: 100%;
+                    object-fit: cover;
+                    object-position: top;
+                    border: 0;
+                    border-radius: 0;
+                }
+            }
+
+            .km-camping-activity-check {
+                display: flex;
+
+                select {
+                    border-top: 1px solid;
+                    border-radius: 0;
+                    border-bottom-left-radius: 5px;
+                }
+
+                button[action="roll"] {
+                    background: var(--background);
+                    border-radius: 0;
+                    border-bottom-right-radius: 5px;
+                    margin: 0;
+                    border: 0;
+                    border-top: 1px solid;
+                    border-left: 1px solid;
+
+                    &:hover {
+                        box-shadow: none;
+                        background-color: var(--primary-km);
+                    }
+                }
+            }
+        }
+    }
+
+    button.km-camping-previous,
+    button.km-camping-next {
+        height: 200px;
+        width: 20px;
+        font-size: 50px;
+        padding: 50px;
+        border: 0;
+        background: transparent;
+        -webkit-text-stroke-color: #000;
+        -webkit-text-stroke-width: 1px;
+
+        &:hover {
+            box-shadow: none;
+        }
+    }
+}
+
+.theme-light {
+    #km-camping-content {
+        background-position: 230px -140px;
+        background-image: url("../../../img/camping/backgrounds/day.jpg");
+    }
+
+    .km-camping-activity {
+        background: url("/ui/parchment.jpg") repeat;
+    }
+
+    .km-camping-next,
+    .km-camping-previous {
+        color: rgba(255, 255, 255, .9);
+    }
 }
