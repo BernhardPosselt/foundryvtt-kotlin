@@ -47,30 +47,33 @@
         <li><img src="/systems/pf2e/icons/iconics/LemFull.webp"></li>
         <li><img src="/systems/pf2e/icons/iconics/QuinnFull.webp"></li>
         <li><img src="/systems/pf2e/icons/iconics/ValerosFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/SeoniFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/KyraFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/MerisielFull.webp"></li>
-        <li><img src="./img/camping/add-actor.webp"></li>
+        <li class="km-camping-add-actor">
+            <span>Drop Actor from Sidebar</span>
+            <i class="fa-solid fa-plus"></i>
+        </li>
     </ul>
+    <!-- add km-camping-day class to switch to different bg-->
     <div id="km-camping-content">
         <button class="km-camping-previous"><i class="fa-solid fa-chevron-left"></i></button>
         <div class="km-camping-activities-wrapper">
             <h1>Prepare Camp</h1>
             <div class="km-camping-activities">
-                <div class="km-camping-activity">
-                    <header>Prepare Camp
-                    </header>
-                    <div class="km-camping-activity-portrait">
-                        <button action="clear" type="button"><i class="fa-regular fa-circle-xmark"></i></button>
-                        <img src="/systems/pf2e/icons/iconics/MerisielFull.webp">
+                {{#each size}}
+                    <div class="km-camping-activity">
+                        <header>Prepare Camp
+                        </header>
+                        <div class="km-camping-activity-portrait">
+                            <button action="clear" type="button"><i class="fa-regular fa-circle-xmark"></i></button>
+                            <img src="/systems/pf2e/icons/iconics/MerisielFull.webp">
+                        </div>
+                        <div class="km-camping-activity-check">
+                            <select>
+                                <option>Critical Success</option>
+                            </select>
+                            <button action="roll" type="button"><i class="fa-solid fa-dice-d20"></i></button>
+                        </div>
                     </div>
-                    <div class="km-camping-activity-check">
-                        <select>
-                            <option>Critical Success</option>
-                        </select>
-                        <button action="roll" type="button"><i class="fa-solid fa-dice-d20"></i></button>
-                    </div>
-                </div>
+                {{/each}}
             </div>
         </div>
         <button class="km-camping-next"><i class="fa-solid fa-chevron-right"></i></button>
