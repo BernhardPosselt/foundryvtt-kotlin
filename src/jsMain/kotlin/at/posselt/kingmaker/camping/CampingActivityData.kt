@@ -34,7 +34,7 @@ external interface CampingActivityData {
     val name: String
     val journalUuid: String?
     val skillRequirements: Array<SkillRequirement>
-    val dc: Any?
+    val dc: Any?  // zone, actorLevel or a number
     val skills: Array<String>
     val modifyRandomEncounterDc: ModifyEncounterDc?
     val isSecret: Boolean

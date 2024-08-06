@@ -4,16 +4,15 @@ import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.actor.Lore
 import at.posselt.kingmaker.data.actor.Perception
 import at.posselt.kingmaker.data.actor.Skill
+import at.posselt.kingmaker.toCamelCase
 import com.foundryvtt.pf2e.actor.PF2EAttribute
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 
-
-fun PF2ECharacter.resolveSkill(skill: String): PF2EAttribute? = skills[skill]
-
-fun PF2ECharacter.resolveAttribute(skill: Attribute): PF2EAttribute? = when (skill) {
-    is Skill, is Lore -> resolveSkill(skill.value)
+fun PF2ECharacter.resolveAttribute(attribute: Attribute): PF2EAttribute? = when (attribute) {
     is Perception -> perception
+    is Skill -> skills[attribute.toCamelCase()]!!
+    is Lore -> skills[attribute.value] ?: skills[attribute.lorePrefixValue]
 }
 
 fun PF2ECharacter.runsExplorationActivity(name: String) =
-    system.exploration?.mapNotNull { id -> items.get(id)?.name }?.any { name == it } ?: false
+    system.exploration.mapNotNull { id -> items.get(id)?.name }.any { name == it }

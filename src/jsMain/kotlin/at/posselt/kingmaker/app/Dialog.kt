@@ -8,51 +8,12 @@ import js.objects.Record
 import js.objects.jso
 import kotlinx.coroutines.await
 
-
-suspend fun <T, R> confirm(
-    title: String,
-    confirmButtonLabel: String = "Ok",
-    cancelButtonLabel: String = "Cancel",
-    templatePath: String,
-    templateContext: Record<String, Any?> = jso(),
-    await: Boolean = false,
-    submit: suspend (T) -> R
-) {
-    val content = tpl(templatePath, templateContext)
-    val confirmButton = DialogV2Button(
-        action = "ok",
-        label = confirmButtonLabel,
-        default = true,
-    ) { ev, button, dialog ->
-        val data = FormDataExtended<T>(button.form!!)
-        buildPromise {
-            submit(data.`object`)
-        }
-    }
-    val cancelButton = DialogV2Button(
-        action = "cancel",
-        label = cancelButtonLabel,
-        default = true,
-    )
-    val prompt = DialogV2.confirm(
-        ConfirmOptions(
-            content = content,
-            classes = arrayOf("km-dialog-form"),
-            window = Window(title = title),
-            yes = confirmButton,
-            no = cancelButton,
-            rejectClose = false,
-        )
-    )
-    if (await) prompt.await()
-}
-
 enum class PromptType(val label: String, val icon: String? = null) {
     ROLL("Roll", "fa-solid fa-dice-d20"),
     OK("Ok"),
 }
 
-suspend fun <T, R> prompt(
+suspend fun <I, O> prompt(
     title: String,
     buttonLabel: String? = null,
     templatePath: String,
@@ -60,7 +21,7 @@ suspend fun <T, R> prompt(
     await: Boolean = false,
     promptType: PromptType = PromptType.OK,
     width: Int? = undefined,
-    submit: suspend (T) -> R,
+    submit: suspend (I) -> O,
 ) {
     val content = tpl(templatePath, templateContext)
     val button = DialogV2Button(
@@ -69,7 +30,7 @@ suspend fun <T, R> prompt(
         default = true,
         icon = promptType.icon,
     ) { ev, button, dialog ->
-        val data = FormDataExtended<T>(button.form!!)
+        val data = FormDataExtended<I>(button.form!!)
         buildPromise {
             submit(data.`object`)
         }
@@ -84,7 +45,7 @@ suspend fun <T, R> prompt(
             position = ApplicationPosition(width = width)
         )
     )
-    if (await) prompt.await()
+    prompt.await()
 }
 
 data class WaitButton<T, R>(
@@ -94,12 +55,12 @@ data class WaitButton<T, R>(
     val callback: suspend (data: T, action: String) -> R,
 )
 
-suspend fun <T, R> wait(
+suspend fun <I, O> wait(
     title: String,
     templatePath: String,
     templateContext: Record<String, Any?> = jso(),
     await: Boolean = false,
-    buttons: List<WaitButton<T, R>>,
+    buttons: List<WaitButton<I, O>>,
 ) {
     val content = tpl(templatePath, templateContext)
     val v2Buttons = buttons.mapIndexed { index, button ->
@@ -109,7 +70,7 @@ suspend fun <T, R> wait(
             label = button.label,
             icon = button.icon,
             callback = { ev, btn, dialog ->
-                val data = FormDataExtended<T>(btn.form!!)
+                val data = FormDataExtended<I>(btn.form!!)
                 buildPromise {
                     button.callback(data.`object`, action)
                 }

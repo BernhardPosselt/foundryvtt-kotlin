@@ -65,6 +65,7 @@ fun main() {
     }
 
     Hooks.onReady {
+        console.log(js("5") as Int)
         val camping = CampingSheet()
         buildPromise {
             camping.launch()

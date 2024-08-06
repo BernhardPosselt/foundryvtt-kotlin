@@ -9,6 +9,8 @@ sealed interface Attribute {
     val value: String
     val label: String
         get() = value.unslugify()
+    val lorePrefixValue: String
+        get() = "$value-lore"
 
     companion object {
         fun fromString(value: String): Attribute {
@@ -48,7 +50,7 @@ data object Perception : Attribute {
 
 class Lore(override val value: String) : Attribute
 
-enum class SkillRank {
+enum class Proficiency {
     UNTRAINED,
     TRAINED,
     EXPERT,

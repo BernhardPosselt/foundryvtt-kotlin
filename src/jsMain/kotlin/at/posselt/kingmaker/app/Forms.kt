@@ -124,8 +124,8 @@ data class Select(
         )
 
         fun dc(
-            label: String,
-            name: String,
+            label: String = "DC",
+            name: String = "dc",
             value: Int? = null,
             required: Boolean = true,
             help: String? = null,

@@ -11,5 +11,5 @@ external interface Dc {
 external interface PF2ERollOptions {
     val rollMode: String?
     val dc: Dc?
-    val extraRollOptions: String?
+    val extraRollOptions: Array<String>?
 }
