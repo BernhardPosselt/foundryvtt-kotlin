@@ -14,9 +14,9 @@ open external class DialogV2(options: DialogV2Options) : ApplicationV2 {
     @JsExternalInheritorsOnly
     open class DialogV2Static : ApplicationV2Static {
         protected fun _onClickButton(event: PointerEvent, target: HTMLButtonElement)
-        fun confirm(options: ConfirmOptions): Promise<Any>
-        fun prompt(options: PromptOptions): Promise<Any>
-        fun wait(options: WaitOptions): Promise<Any>
+        fun confirm(options: ConfirmOptions): Promise<Any?>
+        fun prompt(options: PromptOptions): Promise<Any?>
+        fun wait(options: WaitOptions): Promise<Any?>
     }
 
     companion object : DialogV2Static

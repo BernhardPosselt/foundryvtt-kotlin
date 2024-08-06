@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.utils
 
+import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.toCamelCase
 import com.foundryvtt.core.documents.ChatMessage
@@ -7,6 +8,27 @@ import js.objects.Record
 import js.objects.jso
 import js.objects.recordOf
 import kotlinx.coroutines.await
+
+suspend fun postDegreeOfSuccess(
+    degreeOfSuccess: DegreeOfSuccess,
+    message: String? = null,
+    rollMode: RollMode? = null,
+    metaHtml: String = "",
+) {
+    val message = tpl(
+        "chatmessages/degree-of-success.hbs", recordOf(
+            "isCriticalFailure" to (DegreeOfSuccess.CRITICAL_FAILURE == degreeOfSuccess),
+            "isFailure" to (DegreeOfSuccess.FAILURE == degreeOfSuccess),
+            "isSuccess" to (DegreeOfSuccess.SUCCESS == degreeOfSuccess),
+            "isCriticalSuccess" to (DegreeOfSuccess.CRITICAL_SUCCESS == degreeOfSuccess),
+            "degreeLabel" to degreeOfSuccess.toCamelCase(),
+            "meta" to metaHtml,
+            "message" to message,
+        )
+    )
+    postChatMessage(message, rollMode)
+}
+
 
 suspend fun postChatTemplate(
     templatePath: String,

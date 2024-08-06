@@ -19,6 +19,9 @@ external interface DialogV2Button {
 external interface BaseDialogV2Options : ApplicationConfiguration {
     val content: String
     val buttons: Array<DialogV2Button>?
+
+    // this receives either the action of clicked button, or if the button had a
+    // callback, the awaited result of said button
     val submit: ((Any) -> Promise<Unit>)?
     val modal: Boolean?
 }

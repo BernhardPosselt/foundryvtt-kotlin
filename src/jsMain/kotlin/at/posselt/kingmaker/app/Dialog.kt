@@ -13,12 +13,55 @@ enum class PromptType(val label: String, val icon: String? = null) {
     OK("Ok"),
 }
 
+/**
+ * Typesafe wrapper around the insanity that is DialogV2
+ *
+ * How await is implemented:
+ * * If you click close, a JS Error is being thrown
+ * * If a button is clicked:
+ *    the value returned from said button's callback is being returned if it has a callback
+ *    otherwise the action string of the button is being returned
+ *    otherwise undefined is being returned
+ */
+suspend fun <I, O> awaitablePrompt(
+    title: String,
+    buttonLabel: String? = null,
+    templatePath: String,
+    templateContext: Record<String, Any?> = jso(),
+    promptType: PromptType = PromptType.OK,
+    width: Int? = undefined,
+    submit: suspend (I) -> O,
+): O {
+    val content = tpl(templatePath, templateContext)
+    val button = DialogV2Button(
+        action = "ok",
+        label = buttonLabel ?: promptType.label,
+        default = true,
+        icon = promptType.icon,
+    ) { ev, button, dialog ->
+        val data = FormDataExtended<I>(button.form!!)
+        buildPromise {
+            submit(data.`object`)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    return DialogV2.prompt(
+        PromptOptions(
+            content = content,
+            classes = arrayOf("km-dialog-form"),
+            window = Window(title = title),
+            ok = button,
+            position = ApplicationPosition(width = width)
+        )
+    ).await() as O
+}
+
 suspend fun <I, O> prompt(
     title: String,
     buttonLabel: String? = null,
     templatePath: String,
     templateContext: Record<String, Any?> = jso(),
-    await: Boolean = false,
     promptType: PromptType = PromptType.OK,
     width: Int? = undefined,
     submit: suspend (I) -> O,
@@ -35,7 +78,7 @@ suspend fun <I, O> prompt(
             submit(data.`object`)
         }
     }
-    val prompt = DialogV2.prompt(
+    DialogV2.prompt(
         PromptOptions(
             content = content,
             classes = arrayOf("km-dialog-form"),
@@ -45,7 +88,6 @@ suspend fun <I, O> prompt(
             position = ApplicationPosition(width = width)
         )
     )
-    prompt.await()
 }
 
 data class WaitButton<T, R>(
@@ -59,7 +101,6 @@ suspend fun <I, O> wait(
     title: String,
     templatePath: String,
     templateContext: Record<String, Any?> = jso(),
-    await: Boolean = false,
     buttons: List<WaitButton<I, O>>,
 ) {
     val content = tpl(templatePath, templateContext)
@@ -78,7 +119,7 @@ suspend fun <I, O> wait(
             default = index == buttons.size - 1,
         )
     }.toTypedArray()
-    val prompt = DialogV2.wait(
+    DialogV2.wait(
         WaitOptions(
             content = content,
             classes = arrayOf("km-dialog-form"),
@@ -87,5 +128,4 @@ suspend fun <I, O> wait(
             rejectClose = false,
         )
     )
-    if (await) prompt.await()
 }

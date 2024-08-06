@@ -2,7 +2,8 @@ package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.actor.resolveAttribute
 import at.posselt.kingmaker.app.Select
-import at.posselt.kingmaker.app.prompt
+import at.posselt.kingmaker.app.SelectOption
+import at.posselt.kingmaker.app.awaitablePrompt
 import at.posselt.kingmaker.camping.CampingActivityData
 import at.posselt.kingmaker.camping.SkillRequirement
 import at.posselt.kingmaker.data.actor.*
@@ -12,9 +13,9 @@ import at.posselt.kingmaker.data.regions.Zone
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.fromOrdinal
 import at.posselt.kingmaker.slugify
-import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.unslugify
+import at.posselt.kingmaker.utils.postDegreeOfSuccess
 import com.foundryvtt.core.Game
-import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
 import com.foundryvtt.pf2e.actor.PF2ECharacter
@@ -22,16 +23,58 @@ import js.array.push
 import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
-import kotlin.js.Promise
 
-fun actorSatisfiesSkillRequirement(
-    actor: PF2ECharacter,
+@JsPlainObject
+private external interface AskDcData {
+    val dc: Int
+}
+
+private suspend fun askDc(activity: String): Int {
+    return awaitablePrompt<AskDcData, Int>(
+        title = "$activity: Select DC",
+        templatePath = "components/forms/form.hbs",
+        templateContext = recordOf(
+            "formRows" to Select.dc().toContext()
+        ),
+    ) {
+        it.dc
+    }
+}
+
+@JsPlainObject
+private external interface AskSkillData {
+    val skill: String
+}
+
+private suspend fun askSkill(
+    activity: String,
+    skills: List<String>,
+): String {
+    return awaitablePrompt<AskSkillData, String>(
+        title = "$activity: Select Skill",
+        templatePath = "components/forms/form.hbs",
+        templateContext = recordOf(
+            "formRows" to Select(
+                label = "Skill",
+                name = "skill",
+                required = true,
+                options = skills.map {
+                    SelectOption(label = it.unslugify(), value = it)
+                },
+            ).toContext()
+        ),
+    ) {
+        it.skill
+    }
+}
+
+fun PF2ECharacter.satisfiesSkillRequirement(
     skill: String,
     skillRequirements: Array<SkillRequirement>
 ): Boolean {
     val requirements = skillRequirements
         .find { it.skill == skill }
-    val rank = actor.skills[skill]?.rank ?: 0
+    val rank = skills[skill]?.rank ?: 0
     return if (requirements == null) {
         true
     } else {
@@ -41,61 +84,62 @@ fun actorSatisfiesSkillRequirement(
     }
 }
 
-suspend fun campingCheck(
+/**
+ * @throws Error if a popup asking for a skill or dc is closed
+ */
+suspend fun campingActivityCheck(
     game: Game,
     actor: PF2ECharacter,
     zone: Zone,
     activity: CampingActivityData,
-    disableSkillRequirements: Boolean
-) {
-    // TODO: ask dc when null
-    val skills = activity.skills
-        .filter {
-            if (disableSkillRequirements) {
-                true
-            } else {
-                actorSatisfiesSkillRequirement(actor, it, activity.skillRequirements)
-            }
+    disableSkillRequirements: Boolean,
+): DegreeOfSuccess? {
+    val activityName = activity.name
+    val extraRollOptions = arrayOf("action:${activityName.slugify()}")
+    val dc = when (val activityDc = activity.dc) {
+        "zone" -> zone.zoneDc
+        "actorLevel" -> getLevelBasedDC(actor.level)
+        null -> askDc(activityName)
+        is String -> activityDc.toInt()
+        else -> activityDc as Int
+    }
+    val skills = activity.skills.filter {
+        if (disableSkillRequirements) {
+            true
+        } else {
+            actor.satisfiesSkillRequirement(it, activity.skillRequirements)
         }
-    val firstSkill = skills.firstOrNull()
-    if (firstSkill == null) {
-        ui.notifications.error("${actor.name} does not fulfill the proficiency requirements to perform ${activity.name}")
-        return
-    } else if (skills.size > 1) {
-        // TODO: get skill popup
+    }
+    val skill = if (skills.size > 1) {
+        askSkill(activityName, skills)
     } else {
-        performCampingCheck(
+        skills.firstOrNull()
+    }
+    return skill?.let {
+        val result = performCampingCheck(
             game = game,
             actor = actor,
-            attribute = Attribute.fromString(firstSkill),
+            attribute = Attribute.fromString(it),
             isSecret = activity.isSecret,
-            activity = activity,
-            zone = zone,
+            extraRollOptions = extraRollOptions,
+            dc = dc,
         )
+        if (result != null) {
+            val config = when (result) {
+                DegreeOfSuccess.CRITICAL_FAILURE -> activity.criticalFailure
+                DegreeOfSuccess.FAILURE -> activity.failure
+                DegreeOfSuccess.SUCCESS -> activity.success
+                DegreeOfSuccess.CRITICAL_SUCCESS -> activity.criticalSuccess
+            }
+            postDegreeOfSuccess(degreeOfSuccess = result, message = config?.message)
+            if (config?.checkRandomEncounter == true) {
+                // TODO: post random encounter check
+            }
+        }
+        result
     }
 }
 
-
-@JsPlainObject
-external interface AskDcData {
-    val dc: Int
-}
-
-private suspend fun askDc(reason: String): Int {
-    return Promise { resolve, reject ->
-        buildPromise {
-            prompt<AskDcData, Unit>(
-                title = "Provide DC: $reason",
-                templatePath = "components/forms/form.hbs",
-                templateContext = recordOf(
-                    "formRows" to Select.dc().toContext()
-                ),
-            ) {
-                resolve(it.dc)
-            }
-        }
-    }.await()
-}
 
 private suspend fun performCampingCheck(
     game: Game,
@@ -103,33 +147,21 @@ private suspend fun performCampingCheck(
     attribute: Attribute,
     isSecret: Boolean = false,
     isWatch: Boolean = false,
-    activity: CampingActivityData? = null,
-    zone: Zone,
+    extraRollOptions: Array<String> = emptyArray(),
+    dc: Int,
 ): DegreeOfSuccess? {
-    val dc = when (activity?.dc) {
-        "zone" -> zone.zoneDc
-        "actorLevel" -> getLevelBasedDC(actor.level)
-        null -> askDc(activity?.name ?: attribute.label)
-        else -> activity.dc as Int
-    }
     val data = PF2ERollOptions(
         rollMode = if (isSecret) "blindroll" else undefined,
         dc = Dc(value = dc),
-        extraRollOptions = arrayOf("camping")
+        extraRollOptions = arrayOf("camping") + extraRollOptions
     )
-    if (activity != null) {
-        data.extraRollOptions?.push("action:${activity.name.slugify()}")
-    }
     if (isWatch) {
         data.extraRollOptions?.push("watch")
     }
-    val result = actor.resolveAttribute(attribute)
+    return actor.resolveAttribute(attribute)
         ?.roll(data)
         ?.await()
         ?.let { fromOrdinal<DegreeOfSuccess>(it.degreeOfSuccess) }
-    // TODO: post result
-    // TODO: check for random encounter
-    return result
 }
 
 
