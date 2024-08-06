@@ -1,12 +1,12 @@
 <div>
     <div id="km-camping-time-tracker" class="km-row">
-        <button id="km-camping-minus-hour" type="button" data-hours="2">
+        <button class="km-camping-action" id="km-camping-minus-hour" type="button" data-hours="2">
             -2h
         </button>
-        <button id="km-camping-minus-hour" type="button" data-hours="1">
+        <button class="km-camping-action" id="km-camping-minus-hour" type="button" data-hours="1">
             -1h
         </button>
-        <button id="km-camping-minus-hexploration" type="button">-1
+        <button class="km-camping-action" id="km-camping-minus-hexploration" type="button">-1
         </button>
         <div id="km-camping-time">
             <div id="km-camping-time-wrapper">
@@ -14,12 +14,15 @@
                 <div>13:45</div>
             </div>
         </div>
-        <button id="km-camping-plus-hexploration" type="button">+1</button>
-        <button id="km-camping-plus-hour" type="button" data-hours="1">
+        <button class="km-camping-action" id="km-camping-plus-hexploration" type="button">+1</button>
+        <button class="km-camping-action" id="km-camping-plus-hour" type="button" data-hours="1">
             +1h
         </button>
-        <button id="km-camping-plus-hour" type="button" data-hours="2">
+        <button class="km-camping-action" id="km-camping-plus-hour" type="button" data-hours="2">
             +2h
+        </button>
+        <button class="km-camping-action night-mode" id="km-camping-rest" type="button">
+            <span>Rest </span><i class="fa-solid fa-bed"></i>
         </button>
     </div>
     <div id="km-camping-hexploration" class="km-row">
@@ -38,15 +41,14 @@
         </div>
     </div>
     <ul class="km-camping-actors">
-        <li><img src="/systems/pf2e/icons/iconics/AmiriFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/HarskFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/LiniFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/SeelahFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/EzrenFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/FumbusFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/LemFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/QuinnFull.webp"></li>
-        <li><img src="/systems/pf2e/icons/iconics/ValerosFull.webp"></li>
+        {{#each actors}}
+            <li>
+                <a href="#"><img src="{{image}}"></a>
+                <button class="km-camping-action" action="clear" type="button"><i
+                        class="fa-regular fa-circle-xmark"></i>
+                </button>
+            </li>
+        {{/each}}
         <li class="km-camping-add-actor">
             <span>Drop Actor from Sidebar</span>
             <i class="fa-solid fa-plus"></i>
@@ -58,22 +60,10 @@
         <div class="km-camping-activities-wrapper">
             <h1>Prepare Camp</h1>
             <div class="km-camping-activities">
-                {{#each size}}
-                    <div class="km-camping-activity">
-                        <header>Prepare Camp
-                        </header>
-                        <div class="km-camping-activity-portrait">
-                            <button action="clear" type="button"><i class="fa-regular fa-circle-xmark"></i></button>
-                            <img src="/systems/pf2e/icons/iconics/MerisielFull.webp">
-                        </div>
-                        <div class="km-camping-activity-check">
-                            <select>
-                                <option>Critical Success</option>
-                            </select>
-                            <button action="roll" type="button"><i class="fa-solid fa-dice-d20"></i></button>
-                        </div>
-                    </div>
+                {{#each actors}}
+                    {{> campingTile this}}
                 {{/each}}
+                {{> campingTile choose=true}}
             </div>
         </div>
         <button class="km-camping-next"><i class="fa-solid fa-chevron-right"></i></button>

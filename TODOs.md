@@ -5,5 +5,7 @@
 * migrate buildings with extra images from static to img directory
 * random encounters have been moved into a different compendium
 * Hexploration speed im sheet konfigurierbar machen
+* Apply meal effects should ask if it should consume rations and ingredients instead of clicking on separate buttons
+* Ship Influence Statblocks
 
 ## Test Macros

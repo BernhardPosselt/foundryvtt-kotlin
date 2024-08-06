@@ -19,6 +19,7 @@ fun main() {
             // register partials
             loadTpls(
                 arrayOf(
+                    "campingTile" to "applications/camping/camping-tile.hbs",
                     "formElement" to "components/forms/form-element.hbs",
                     "tabs" to "components/tabs/tabs.hbs",
                 )

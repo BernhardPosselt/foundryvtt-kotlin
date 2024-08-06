@@ -14,7 +14,7 @@ All Pathfinder content uses the [Open Gaming License](./OpenGameLicense.md) and 
 
 The source code is licensed under the AGPLv3 license, except for the [src/jsMain/kotlin/com/foundryvtt](./src/jsMain/kotlin/com/foundryvtt) folder which is licensed under [Apache License 2.0](./src/jsMain/kotlin/com/foundryvtt/LICENSE).
 
-All images in the [img/structures](./img/structures) folder are licensed under [CC0 - Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) by [Mark Pearce](https://github.com/MarkPearce). They were [generated and retouched using a MidJourney subscriber account](https://github.com/BernhardPosselt/pf2e-kingmaker-tools/issues/76). According to their [Terms of Service](https://docs.midjourney.com/docs/terms-of-service), subscribers to MidJourney that are not part of a company own all the generated images.
+All images in the [img/structures](./img/structures) and [img/camping/backgrounds](./img/camping/backgrounds) are licensed under [CC0 - Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) by [Mark Pearce](https://github.com/MarkPearce). They were [generated and retouched using a MidJourney subscriber account](https://github.com/BernhardPosselt/pf2e-kingmaker-tools/issues/76). According to their [Terms of Service](https://docs.midjourney.com/docs/terms-of-service), subscribers to MidJourney that are not part of a company own all the generated images.
 
 ## Installation
 

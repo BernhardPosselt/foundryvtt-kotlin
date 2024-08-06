@@ -29,11 +29,13 @@ abstract class FormApp<T, O>(
     controls: Array<MenuControl> = emptyArray(),
     classes: Array<String> = emptyArray(),
     width: Int? = undefined,
+    resizable: Boolean? = undefined,
     val debug: Boolean = false,
 ) : App<T>(
     HandlebarsFormApplicationOptions(
         window = Window(
             title = title,
+            resizable = resizable,
             controls = controls.map {
                 ApplicationHeaderControlsEntry(
                     label = it.label,

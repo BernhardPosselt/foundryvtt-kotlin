@@ -10,6 +10,10 @@
     --expert: #3c005e;
     --master: #664400;
     --legendary: #5e0000;
+    --critical-success: #0f235a;
+    --success: #1e4597;
+    --failure: #c52424;
+    --critical-failure: #871b1b;
     --sidebar-size: 301px;
 }
 
