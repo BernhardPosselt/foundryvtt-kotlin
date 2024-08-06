@@ -4,6 +4,7 @@ import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.data.regions.stolenLandsZones
 import at.posselt.kingmaker.settings.RegionSetting
 import at.posselt.kingmaker.settings.kingmakerTools
+import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.findRollTableWithCompendiumFallback
 import at.posselt.kingmaker.utils.getAppFlag
 import at.posselt.kingmaker.utils.getCombatOverrideTrack
@@ -48,6 +49,7 @@ suspend fun Game.findCurrentRegion(): RegionSetting? {
                     level = it.level,
                     rollTableUuid = rolltableUuid,
                     combatTrack = combatTrack,
+                    terrain = it.terrain.toCamelCase(),
                 )
             }
     } else {

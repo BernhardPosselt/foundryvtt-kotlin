@@ -1,6 +1,9 @@
 package at.posselt.kingmaker.settings
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.data.regions.Terrain
+import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.*
@@ -23,6 +26,7 @@ external interface RegionSetting {
     var zoneDc: Int
     var encounterDc: Int
     var level: Int
+    var terrain: String
     var rollTableUuid: String?
     var combatTrack: CombatTrack?
 }
@@ -45,13 +49,14 @@ external interface RegionSettingsContext {
     var heading: Array<TableHead>
     var formRows: Array<Array<FormElementContext>>
     var isValid: Boolean
+    var allowDelete: Boolean
 }
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
     title = "Regions",
-    width = 1024,
+    width = 1200,
     template = "applications/settings/configure-regions.hbs",
 ) {
     private var currentSettings = game.settings.kingmakerTools.getRegionSettings()
@@ -104,6 +109,7 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
             heading = arrayOf(
                 TableHead("Name"),
                 TableHead("Level", arrayOf("number-select-heading")),
+                TableHead("Terrain"),
                 TableHead("Zone DC", arrayOf("number-select-heading")),
                 TableHead("Encounter DC", arrayOf("number-select-heading")),
                 TableHead("Roll Table"),
@@ -111,9 +117,11 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                 TableHead("Combat Track"),
                 TableHead("Remove", arrayOf("small-heading"))
             ),
+            allowDelete = currentSettings.regions.size > 1,
             formRows = currentSettings.regions.mapIndexed { index, row ->
-                val trackOptions = row.combatTrack?.playlistUuid?.let {
-                    game.playlists.get(it)?.sounds?.contents?.mapNotNull { it.toOption(useUuid = true) } ?: emptyList()
+                val trackOptions = row.combatTrack?.playlistUuid?.let { uuid ->
+                    game.playlists.find { it.uuid == uuid }?.sounds?.contents?.mapNotNull { it.toOption(useUuid = true) }
+                        ?: emptyList()
                 } ?: emptyList()
                 arrayOf(
                     TextInput(
@@ -126,6 +134,12 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                         name = "regions.$index.level",
                         label = "Level",
                         value = row.level,
+                        hideLabel = true
+                    ).toContext(),
+                    Select.fromEnum<Terrain>(
+                        name = "regions.$index.terrain",
+                        label = "Terrain",
+                        value = fromCamelCase<Terrain>(row.terrain),
                         hideLabel = true
                     ).toContext(),
                     Select.dc(
@@ -190,6 +204,7 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
                 level = 1,
                 rollTableUuid = null,
                 combatTrack = null,
+                terrain = Terrain.PLAINS.toCamelCase(),
             )
         )
     }

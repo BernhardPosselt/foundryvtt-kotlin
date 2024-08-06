@@ -1,5 +1,16 @@
 package at.posselt.kingmaker.data.regions
 
+
+enum class Terrain {
+    AQUATIC,
+    DESERT,
+    PLAINS,
+    HILLS,
+    FOREST,
+    MOUNTAIN,
+    SWAMP,
+}
+
 sealed interface CombatTrack
 
 data class KingmakerCombatTrack(
@@ -12,6 +23,7 @@ data class Zone(
     val encounterDc: Int,
     val level: Int,
     val combatTrackName: String,
+    val terrain: Terrain,
 )
 
 val stolenLandsZones = arrayOf(
@@ -21,6 +33,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 0,
         combatTrackName = "The Shrike Hills",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Rostland Hinterlands",
@@ -28,6 +41,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 1,
         combatTrackName = "The Shrike Hills",
+        terrain = Terrain.PLAINS,
     ),
     Zone(
         name = "Greenbelt",
@@ -35,6 +49,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 14,
         level = 2,
         combatTrackName = "The Shrike Hills",
+        terrain = Terrain.FOREST,
     ),
     Zone(
         name = "Tuskwater",
@@ -42,6 +57,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 3,
         combatTrackName = "Glenebon",
+        terrain = Terrain.FOREST,
     ),
     Zone(
         name = "Kamelands",
@@ -49,6 +65,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 4,
         combatTrackName = "Glenebon",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Narlmarches",
@@ -56,6 +73,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 14,
         level = 5,
         combatTrackName = "The Narlmarches",
+        terrain = Terrain.FOREST,
     ),
     Zone(
         name = "Sellen Hills",
@@ -63,6 +81,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 6,
         combatTrackName = "Glenebon",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Dunsward",
@@ -70,6 +89,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 7,
         combatTrackName = "Dunsward",
+        terrain = Terrain.PLAINS,
     ),
     Zone(
         name = "Nomen Heights",
@@ -77,6 +97,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 8,
         combatTrackName = "Dunsward",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Tors of Levenies",
@@ -84,6 +105,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 16,
         level = 9,
         combatTrackName = "Dunsward",
+        terrain = Terrain.MOUNTAIN,
     ),
     Zone(
         name = "Hooktongue",
@@ -91,6 +113,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 14,
         level = 10,
         combatTrackName = "The Narlmarches",
+        terrain = Terrain.SWAMP,
     ),
     Zone(
         name = "Drelev",
@@ -98,6 +121,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 11,
         combatTrackName = "Glenebon",
+        terrain = Terrain.PLAINS,
     ),
     Zone(
         name = "Tiger Lords",
@@ -105,6 +129,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 12,
         combatTrackName = "Glenebon",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Rushlight",
@@ -112,6 +137,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 13,
         combatTrackName = "The Shrike Hills",
+        terrain = Terrain.PLAINS,
     ),
     Zone(
         name = "Glenebon Lowlands",
@@ -119,6 +145,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 14,
         combatTrackName = "Glenebon",
+        terrain = Terrain.PLAINS,
     ),
     Zone(
         name = "Pitax",
@@ -126,6 +153,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 15,
         combatTrackName = "Capital Under Attack",
+        terrain = Terrain.PLAINS,
     ),
     Zone(
         name = "Glenebon Uplands",
@@ -133,6 +161,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 16,
         combatTrackName = "Glenebon",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Numeria",
@@ -140,6 +169,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 12,
         level = 17,
         combatTrackName = "Glenebon",
+        terrain = Terrain.HILLS,
     ),
     Zone(
         name = "Thousand Voices",
@@ -147,6 +177,7 @@ val stolenLandsZones = arrayOf(
         encounterDc = 14,
         level = 18,
         combatTrackName = "First World",
+        terrain = Terrain.FOREST,
     ),
     Zone(
         name = "Branthlend Mountains",
@@ -154,5 +185,6 @@ val stolenLandsZones = arrayOf(
         encounterDc = 16,
         level = 19,
         combatTrackName = "Glenebon",
+        terrain = Terrain.MOUNTAIN,
     ),
 )

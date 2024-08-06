@@ -38,6 +38,7 @@
                                         data-action="delete"
                                         data-index="{{@index}}"
                                         title="Remove Row"
+                                        {{#unless ../allowDelete}}disabled{{/unless}}
                                 >
                                     <i class="fa-solid fa-minus"></i>
                                 </button>
