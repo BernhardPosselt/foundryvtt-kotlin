@@ -51,7 +51,9 @@ class CampingSheet : FormApp<CampingSheetContext, CampingSheetFormData>(
                 console.log(documentRef)
             }
         }
-        onDocumentRefDrop(".km-camping-activity", setOf(".km-camping-actor")) { dragEvent, documentRef ->
+        onDocumentRefDrop(
+            ".km-camping-activity",
+            { it.dragstartSelector == ".km-camping-actor" || it.type == "Item" }) { dragEvent, documentRef ->
             console.log(documentRef)
             if (documentRef is ActorRef) {
                 console.log(documentRef)

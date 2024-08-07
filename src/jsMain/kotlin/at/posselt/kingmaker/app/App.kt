@@ -112,7 +112,7 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
      */
     protected open fun onDocumentRefDrop(
         selector: String,
-        allowedDragSelectors: Set<String>? = null,
+        allowDrop: ((GenericRef) -> Boolean)? = null,
         callback: (DragEvent, DocumentRef<*>) -> Unit
     ) {
         appEventListeners.push(
@@ -123,7 +123,7 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
                     if (event !is DragEvent) throw IllegalStateException("should never receive no DragEvent")
                     event.dataTransfer?.getData("text/plain")
                         ?.let(::toGenericRef)
-                        ?.takeIf { allowedDragSelectors?.contains(it.selector) ?: true }
+                        ?.takeIf { allowDrop?.let { f -> f(it) } ?: true }
                         ?.let {
                             val ref = when (it.type) {
                                 "Actor" -> ActorRef(it.uuid)

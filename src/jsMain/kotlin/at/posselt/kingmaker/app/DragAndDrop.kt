@@ -17,7 +17,7 @@ class GenericRef(
     val type: String,
     val uuid: String,
     val itemType: String? = null,
-    val selector: String? = null,
+    val dragstartSelector: String? = null,
 )
 
 fun toGenericRef(dropData: String): GenericRef? {
@@ -29,9 +29,9 @@ fun toGenericRef(dropData: String): GenericRef? {
     return if (uuid is String && type is String) {
         val src = if (selector is String) selector else null
         if (itemType is String) {
-            GenericRef(data = data, type = type, uuid = uuid, itemType = itemType, selector = src)
+            GenericRef(data = data, type = type, uuid = uuid, itemType = itemType, dragstartSelector = src)
         } else {
-            GenericRef(data = data, type = type, uuid = uuid, selector = src)
+            GenericRef(data = data, type = type, uuid = uuid, dragstartSelector = src)
         }
     } else {
         null
