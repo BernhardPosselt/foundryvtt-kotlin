@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.app.ActorRef
 import at.posselt.kingmaker.app.FormApp
 import at.posselt.kingmaker.app.MenuControl
 import at.posselt.kingmaker.utils.buildPromise
@@ -38,8 +39,26 @@ class CampingSheet : FormApp<CampingSheetContext, CampingSheetFormData>(
         MenuControl(label = "Recipes", action = "recipes"),
         MenuControl(label = "Settings", action = "settings"),
         MenuControl(label = "Help", action = "help"),
-    )
+    ),
+    scrollable = arrayOf("#km-camping-content", ".km-camping-actors")
 ) {
+
+
+    init {
+        onDocumentRefDragstart(".km-camping-actor")
+        onDocumentRefDrop(".km-camping-add-actor") { dragEvent, documentRef ->
+            if (documentRef is ActorRef) {
+                console.log(documentRef)
+            }
+        }
+        onDocumentRefDrop(".km-camping-activity", setOf(".km-camping-actor")) { dragEvent, documentRef ->
+            console.log(documentRef)
+            if (documentRef is ActorRef) {
+                console.log(documentRef)
+            }
+        }
+    }
+
     override fun _preparePartContext(
         partId: String,
         context: CampingSheetContext,

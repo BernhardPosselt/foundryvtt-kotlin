@@ -17,6 +17,7 @@ function HandlebarsFormApplication(clazz) {
                 Hack.PARTS = {
                     form: {
                         template: config.templatePath,
+                        scrollable: config.scrollable,
                     }
                 }
             }

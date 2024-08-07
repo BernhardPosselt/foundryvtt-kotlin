@@ -7,6 +7,8 @@ import com.foundryvtt.core.documents.Item
 import js.objects.jso
 import kotlin.js.Promise
 
+// this has no class to check in an instanceof check since it's a hack in the 2e system
+// you need to match against actual instances
 open external class PF2EItem : Item {
     companion object : DocumentStatic<Item>
 

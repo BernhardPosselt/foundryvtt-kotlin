@@ -28,6 +28,7 @@ abstract class FormApp<T, O>(
     closeOnSubmit: Boolean = false,
     controls: Array<MenuControl> = emptyArray(),
     classes: Array<String> = emptyArray(),
+    scrollable: Array<String> = emptyArray(),
     width: Int? = undefined,
     resizable: Boolean? = undefined,
     val debug: Boolean = false,
@@ -48,6 +49,7 @@ abstract class FormApp<T, O>(
             width = width,
         ),
         templatePath = resolveTemplatePath(template),
+        scrollable = scrollable,
         classes = if (isDialogForm) arrayOf("km-dialog-form").plus(classes) else classes,
         tag = "form",
         form = ApplicationFormConfiguration(

@@ -17,6 +17,7 @@ import kotlin.js.Promise
 @JsPlainObject
 external interface HandlebarsFormApplicationOptions : ApplicationConfiguration {
     val templatePath: String
+    val scrollable: Array<String>
 }
 
 

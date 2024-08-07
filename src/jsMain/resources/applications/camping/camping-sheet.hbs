@@ -42,7 +42,7 @@
     </div>
     <ul class="km-camping-actors">
         {{#each actors}}
-            <li>
+            <li class="km-camping-actor" draggable="true" data-uuid="{{uuid}}" data-type="Actor">
                 <a href="#"><img src="{{image}}"></a>
                 <button class="km-camping-action" action="clear" type="button"><i
                         class="fa-regular fa-circle-xmark"></i>
