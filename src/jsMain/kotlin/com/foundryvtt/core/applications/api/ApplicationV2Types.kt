@@ -6,12 +6,26 @@ import com.foundryvtt.core.FormDataExtended
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLFormElement
+import org.w3c.dom.*
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 typealias ApplicationClickAction = (event: PointerEvent, target: HTMLElement) -> Promise<Unit>
+
+@JsPlainObject
+external interface ApplicationWindow {
+    val header: HTMLElement
+    val resize: HTMLElement
+    val title: HTMLHeadingElement
+    val icon: HTMLElement
+    val close: HTMLButtonElement
+    val controls: HTMLButtonElement
+    val controlsDropdown: HTMLDivElement
+    val onDrag: Function<Unit>
+    val onResize: Function<Unit>
+    val pointerStartPosition: ApplicationPosition
+    val pointerMoveThrottle: Boolean
+}
 
 @JsPlainObject
 external interface ApplicationHeaderControlsEntry {

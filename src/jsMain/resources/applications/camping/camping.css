@@ -24,10 +24,11 @@
     }
 
     button.km-camping-action[action="clear"] {
+        display: none;
         position: absolute;
-        width: 20px;
-        height: 20px;
-        font-size: 20px;
+        width: 1em;
+        height: 1em;
+        font-size: 1.5em;
         top: .1em;
         right: .1em;
 
@@ -178,6 +179,12 @@ ul.km-camping-actors {
     border-bottom: 1px solid;
     box-sizing: content-box;
 
+    li:hover {
+        button.km-camping-action[action="clear"] {
+            display: flex;
+        }
+    }
+
     li {
         list-style-type: none;
         margin-bottom: 0;
@@ -230,14 +237,14 @@ ul.km-camping-actors {
 }
 
 #km-camping-content {
-    background-image: url("../../../img/camping/backgrounds/forest-night.webp");
+    background-image: url("../../../img/camping/backgrounds/forest-day.webp");
     background-size: cover;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: calc(100vh - 310px);
     overflow-y: auto;
-    padding: 15px 60px;
+    padding: 0 60px;
 
     h1 {
         text-align: center;
@@ -264,6 +271,13 @@ ul.km-camping-actors {
         justify-content: center;
         flex-wrap: wrap;
         gap: 10px;
+        padding-bottom: 15px;
+
+        .km-camping-activity:hover {
+            button.km-camping-action[action="clear"] {
+                display: flex;
+            }
+        }
 
         .km-camping-activity {
             font-size: var(--font-size-13);

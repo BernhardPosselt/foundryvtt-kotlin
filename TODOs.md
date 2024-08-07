@@ -7,5 +7,6 @@
 * Hexploration speed im sheet konfigurierbar machen
 * Apply meal effects should ask if it should consume rations and ingredients instead of clicking on separate buttons
 * Ship Influence Statblocks
+* Put combat efects to chat after rolling perception check
 
 ## Test Macros
