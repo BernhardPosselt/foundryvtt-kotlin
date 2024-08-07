@@ -18,10 +18,10 @@ data class AppHook<T>(
     val callback: Function<T>,
 )
 
-data class AppEventListener<T : Event>(
+data class AppEventListener<Event>(
     val selector: String,
     val eventType: String,
-    val callback: (T) -> Unit,
+    val callback: (Event) -> Unit,
 )
 
 
@@ -31,7 +31,7 @@ data class AppEventListener<T : Event>(
  */
 abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsFormApplication<C>(config) {
     private val appHooks = arrayOf<AppHook<*>>()
-    private val appEventListeners = arrayOf<AppEventListener<*>>()
+    private val appEventListeners = arrayOf<AppEventListener<Event>>()
     protected val appHook = object : HooksEventListener {
         override fun <T> on(key: String, callback: Function<T>) {
             appHooks.push(AppHook(key = key, callback = callback))
@@ -50,8 +50,7 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
         appEventListeners.forEach {
             element.querySelectorAll(it.selector).asList()
                 .forEach { el ->
-                    @Suppress("UNCHECKED_CAST")
-                    el.addEventListener(it.eventType, it.callback as (Event) -> Unit)
+                    el.addEventListener(it.eventType, it.callback)
                 }
         }
         return super._onRender(context, options)
@@ -72,7 +71,8 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
             AppEventListener(
                 selector = selector,
                 eventType = "dragstart",
-                callback = { event: DragEvent ->
+                callback = { event: Event ->
+                    if (event !is DragEvent) throw IllegalStateException("should never receive no DragEvent")
                     event.stopPropagation()
                     val target = event.currentTarget as HTMLElement
                     val type = target.dataset["type"]
@@ -119,7 +119,8 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
             AppEventListener(
                 selector = selector,
                 eventType = "drop",
-                callback = { event: DragEvent ->
+                callback = { event: Event ->
+                    if (event !is DragEvent) throw IllegalStateException("should never receive no DragEvent")
                     event.dataTransfer?.getData("text/plain")
                         ?.let(::toGenericRef)
                         ?.takeIf { allowedDragSelectors?.contains(it.selector) ?: true }
