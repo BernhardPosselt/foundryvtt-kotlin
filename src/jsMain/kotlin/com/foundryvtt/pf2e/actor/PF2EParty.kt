@@ -8,7 +8,19 @@ import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface PF2EPartyData
+external interface PF2EPartySpeed {
+    val total: Int
+}
+
+@JsPlainObject
+external interface PF2EPartyAttributes {
+    val speed: PF2EPartySpeed
+}
+
+@JsPlainObject
+external interface PF2EPartyData {
+    val attributes: PF2EPartyAttributes
+}
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier

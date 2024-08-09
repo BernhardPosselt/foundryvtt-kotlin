@@ -1,18 +1,25 @@
 <div>
     <div id="km-camping-time-tracker" class="km-row" style="background-position: {{pxTimeOffset}}px">
-        <button class="km-camping-action {{#if night.retract2}}night-mode{{/if}}" id="km-camping-minus-hour"
-                type="button" data-hours="2"
+        <button class="km-camping-action {{#if night.retract2}}night-mode{{/if}}"
+                data-action="advance-hour"
+                type="button"
+                data-hours="-2"
                 title="Retract 2 Hours">
             -2h
         </button>
-        <button class="km-camping-action {{#if night.retract1}}night-mode{{/if}}" id="km-camping-minus-hour"
-                type="button" data-hours="1"
+        <button class="km-camping-action {{#if night.retract1}}night-mode{{/if}}"
+                data-action="advance-hour"
+                type="button"
+                data-hours="-1"
                 title="Retract 1 Hour">
             -1h
         </button>
-        <button class="km-camping-action {{#if night.retractHex}}night-mode{{/if}}" id="km-camping-minus-hexploration"
+        <button class="km-camping-action {{#if night.retractHex}}night-mode{{/if}}"
+                id="km-camping-minus-hexploration"
                 type="button"
-                title="Retract 1 Hexploration Activity">-1
+                data-action="advance-hexploration"
+                data-activities="-1"
+                title="Retract 1 Hexploration Activity ({{hexplorationActivityDuration}})">-1
         </button>
         <div id="km-camping-time" class="{{#if night.time}}night-mode{{/if}}">
             <div id="km-camping-time-wrapper">
@@ -24,27 +31,38 @@
                 <div>{{time}}</div>
             </div>
         </div>
-        <button class="km-camping-action {{#if night.advanceHex}}night-mode{{/if}}" id="km-camping-plus-hexploration"
+        <button class="km-camping-action {{#if night.advanceHex}}night-mode{{/if}}"
+                id="km-camping-plus-hexploration"
                 type="button"
-                title="Advance 1 Hexploration Activity">+1
+                data-action="advance-hexploration"
+                data-activities="1"
+                title="Advance 1 Hexploration Activity ({{hexplorationActivityDuration}})">+1
         </button>
-        <button class="km-camping-action {{#if night.advance1}}night-mode{{/if}}" id="km-camping-plus-hour"
-                type="button" data-hours="1" title="Advance 1 Hour">
+        <button class="km-camping-action {{#if night.advance1}}night-mode{{/if}}"
+                data-action="advance-hour"
+                type="button"
+                data-hours="1"
+                title="Advance 1 Hour">
             +1h
         </button>
-        <button class="km-camping-action {{#if night.advance2}}night-mode{{/if}}" id="km-camping-plus-hour"
-                type="button" data-hours="2"
+        <button class="km-camping-action {{#if night.advance2}}night-mode{{/if}}"
+                data-action="advance-hour"
+                type="button"
+                data-hours="2"
                 title="Advance 2 Hours">
             +2h
         </button>
-        <button class="km-camping-action {{#if night.rest}}night-mode{{/if}}" id="km-camping-rest"
-                type="button" title="Begin Rest">
+        <button class="km-camping-action {{#if night.rest}}night-mode{{/if}}"
+                id="km-camping-rest"
+                type="button"
+                data-action="rest"
+                title="Begin Rest">
             <span>Rest (12:03h) </span><i class="fa-solid fa-bed"></i>
         </button>
     </div>
     <div id="km-camping-hexploration" class="km-row">
-        <div><b>Adventuring For: </b> 05:00</div>
-        <div><b>Hexploration Activities:</b> 1/3</div>
+        <div><b>Adventuring For: </b> {{adventuringFor}}</div>
+        <div><b>Hexploration Activities:</b> {{hexplorationActivitiesAvailable}}/{{hexplorationActivitiesMax}}</div>
         <div><label>Region: <select>
             <option>Rostland</option>
         </select></label></div>

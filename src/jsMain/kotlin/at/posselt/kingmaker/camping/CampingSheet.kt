@@ -1,8 +1,10 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.ActorRef
 import at.posselt.kingmaker.app.FormApp
 import at.posselt.kingmaker.app.MenuControl
+import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
@@ -11,6 +13,9 @@ import com.foundryvtt.pf2e.actor.*
 import js.core.Void
 import kotlinx.datetime.*
 import kotlinx.js.JsPlainObject
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.get
+import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 @JsPlainObject
@@ -50,6 +55,10 @@ external interface CampingSheetContext {
     val terrain: String
     val pxTimeOffset: Int
     val night: NightModes
+    val hexplorationActivityDuration: String
+    val hexplorationActivitiesAvailable: Int
+    val hexplorationActivitiesMax: String
+    val adventuringFor: String
 }
 
 @JsPlainObject
@@ -127,6 +136,45 @@ class CampingSheet(
         }
     }
 
+    override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
+        when (target.dataset["action"]) {
+            "advance-hour" -> advanceHours(target)
+            "advance-hexploration" -> advanceHexplorationActivities(target)
+            "rest" -> console.log("resting!!!")
+        }
+    }
+
+    private fun advanceHexplorationActivities(target: HTMLElement) {
+        val seconds = getHexplorationActivitySeconds()
+        game.time.advance(seconds * (target.dataset["activities"]?.toInt() ?: 0))
+    }
+
+    private fun getHexplorationActivitySeconds(): Int =
+        ((8 * 3600).toDouble() / getHexplorationActivities()).toInt()
+
+    private fun getHexplorationActivities(): Double {
+        // TODO: add a setting to override activities gained
+        val speed = game.party()?.system?.attributes?.speed?.total ?: 25
+        return calculateHexplorationActivities(speed)
+    }
+
+    private fun getHexplorationActivitiesDuration(): String =
+        LocalTime.fromSecondOfDay(getHexplorationActivitySeconds()).toDateInputString()
+
+    private fun getHexplorationActivitiesAvailable(camping: CampingData): Int =
+        ((8 * 3600 - (game.time.worldTime - camping.dailyPrepsAtTime)) / getHexplorationActivitySeconds())
+
+    private fun getAdventuringFor(camping: CampingData): String {
+        val elapsedSeconds = game.time.worldTime - camping.dailyPrepsAtTime
+        val isNegative = camping.dailyPrepsAtTime > game.time.worldTime
+        return formatSeconds(elapsedSeconds, isNegative)
+    }
+
+
+    fun advanceHours(target: HTMLElement) {
+        game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
+    }
+
     override fun _preparePartContext(
         partId: String,
         context: CampingSheetContext,
@@ -173,6 +221,10 @@ class CampingSheet(
                 }
             }.toTypedArray(),
             night = calculateNightModes(time),
+            hexplorationActivityDuration = getHexplorationActivitiesDuration(),
+            hexplorationActivitiesAvailable = getHexplorationActivitiesAvailable(camping),
+            hexplorationActivitiesMax = "${getHexplorationActivities()}",
+            adventuringFor = getAdventuringFor(camping),
         )
     }
 

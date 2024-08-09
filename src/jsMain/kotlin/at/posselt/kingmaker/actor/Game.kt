@@ -16,6 +16,13 @@ fun Game.averagePartyLevel(): Int =
         .average()
         .toInt()
 
+fun Game.party(): PF2EParty? =
+    actors.contents
+        .asSequence()
+        .filterIsInstance<PF2EParty>()
+        .firstOrNull()
+
+
 fun Game.partyMembers(): Array<PF2ECharacter> =
     actors.contents
         .asSequence()
