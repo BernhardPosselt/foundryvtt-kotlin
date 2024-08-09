@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
@@ -146,6 +147,21 @@ class CampingSheet(
             "advance-hour" -> advanceHours(target)
             "advance-hexploration" -> advanceHexplorationActivities(target)
             "rest" -> console.log("resting!!!")
+            "open-journal" -> {
+                event.preventDefault()
+                event.stopPropagation()
+                buildPromise {
+                    target.dataset["uuid"]?.let { openJournal(it) }
+                }
+            }
+
+            "open-actor" -> {
+                event.preventDefault()
+                event.stopPropagation()
+                buildPromise {
+                    target.dataset["uuid"]?.let { openActor(it) }
+                }
+            }
         }
     }
 

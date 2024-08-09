@@ -496,6 +496,9 @@ ul.km-camping-actors {
 }
 
 .theme-light {
+    .application a[href] {
+        color: #ff6400;
+    }
 
     button.km-camping-action,
     .km-camping-activity-check,
