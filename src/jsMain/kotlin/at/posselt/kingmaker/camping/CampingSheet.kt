@@ -9,6 +9,7 @@ import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.pf2e.actor.*
 import js.core.Void
+import kotlinx.datetime.*
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
@@ -28,6 +29,18 @@ external interface CampingSheetActivity {
 }
 
 @JsPlainObject
+external interface NightModes {
+    val retract2: Boolean
+    val retract1: Boolean
+    val retractHex: Boolean
+    val time: Boolean
+    val advanceHex: Boolean
+    val advance1: Boolean
+    val advance2: Boolean
+    val rest: Boolean
+}
+
+@JsPlainObject
 external interface CampingSheetContext {
     val actors: Array<CampingSheetActor>
     val activities: Array<CampingSheetActivity>
@@ -36,11 +49,39 @@ external interface CampingSheetContext {
     val time: String
     val terrain: String
     val pxTimeOffset: Int
+    val night: NightModes
 }
 
 @JsPlainObject
 external interface CampingSheetFormData
 
+
+private fun isNightMode(
+    now: LocalTime,
+    visibleAfter: String,
+    visibleBefore: String,
+): Boolean {
+    val start = LocalTime.fromDateInputString(visibleAfter)
+    val end = LocalTime.fromDateInputString(visibleBefore)
+    return if (start > end) {
+        !((now < end) || (now > start))
+    } else {
+        !((start < now) && (now < end))
+    }
+}
+
+private fun calculateNightModes(time: LocalTime): NightModes {
+    return NightModes(
+        retract2 = isNightMode(time, "10:00", "23:00"),
+        retract1 = isNightMode(time, "09:00", "22:00"),
+        retractHex = isNightMode(time, "08:00", "21:00"),
+        time = isNightMode(time, "06:00", "19:00"),
+        advanceHex = isNightMode(time, "04:00", "17:00"),
+        advance1 = isNightMode(time, "03:00", "16:00"),
+        advance2 = isNightMode(time, "02:00", "15:00"),
+        rest = isNightMode(time, "20:00", "09:00"),
+    )
+}
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
@@ -95,6 +136,8 @@ class CampingSheet(
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
 
+        console.log(calculateNightModes(time))
+
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(
             camping.actorUuids,
@@ -128,7 +171,8 @@ class CampingSheet(
                         name = actor.name,
                     )
                 }
-            }.toTypedArray()
+            }.toTypedArray(),
+            night = calculateNightModes(time),
         )
     }
 

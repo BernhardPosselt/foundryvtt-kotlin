@@ -79,15 +79,25 @@
     button {
         color: var(--color-dark-1);
         background: none;
-        border: 0;
+        border: 1px solid transparent;
         border-radius: 5px;
         height: 40px;
         width: 40px;
         margin: auto 0;
+
+        &:hover {
+            border: 1px dotted black;
+            box-shadow: none;
+            transition: none;
+        }
     }
 
-    button.night-mode {
-        background-color: rgba(255, 255, 255, .5);
+    .night-mode {
+        color: white;
+    }
+
+    .night-mode:hover {
+        border-color: white;
     }
 
     button#km-camping-plus-hexploration,
@@ -99,11 +109,9 @@
         background-position: center;
     }
 
-    button:hover {
-        background-color: rgba(255, 255, 255, .9);
-        /*box-shadow: 1px 0 0 var(--color-dark-1);*/
-        box-shadow: none;
-        transition: none;
+    button#km-camping-plus-hexploration.night-mode,
+    button#km-camping-minus-hexploration.night-mode {
+        background-image: url("./hexagon-white.svg");
     }
 
     #km-camping-time {
@@ -111,10 +119,6 @@
 
         #km-camping-time-wrapper {
             height: 40px;
-        }
-
-        #km-camping-time-wrapper.night-mode {
-            background-color: rgba(255, 255, 255, .5);
         }
 
         i {

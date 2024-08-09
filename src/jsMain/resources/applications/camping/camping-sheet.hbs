@@ -1,17 +1,20 @@
 <div>
     <div id="km-camping-time-tracker" class="km-row" style="background-position: {{pxTimeOffset}}px">
-        <button class="km-camping-action" id="km-camping-minus-hour" type="button" data-hours="2"
+        <button class="km-camping-action {{#if night.retract2}}night-mode{{/if}}" id="km-camping-minus-hour"
+                type="button" data-hours="2"
                 title="Retract 2 Hours">
             -2h
         </button>
-        <button class="km-camping-action" id="km-camping-minus-hour" type="button" data-hours="1"
+        <button class="km-camping-action {{#if night.retract1}}night-mode{{/if}}" id="km-camping-minus-hour"
+                type="button" data-hours="1"
                 title="Retract 1 Hour">
             -1h
         </button>
-        <button class="km-camping-action" id="km-camping-minus-hexploration" type="button"
+        <button class="km-camping-action {{#if night.retractHex}}night-mode{{/if}}" id="km-camping-minus-hexploration"
+                type="button"
                 title="Retract 1 Hexploration Activity">-1
         </button>
-        <div id="km-camping-time">
+        <div id="km-camping-time" class="{{#if night.time}}night-mode{{/if}}">
             <div id="km-camping-time-wrapper">
                 {{# isDay}}
                     <i class="fa-regular fa-sun"></i>
@@ -21,17 +24,21 @@
                 <div>{{time}}</div>
             </div>
         </div>
-        <button class="km-camping-action" id="km-camping-plus-hexploration" type="button"
+        <button class="km-camping-action {{#if night.advanceHex}}night-mode{{/if}}" id="km-camping-plus-hexploration"
+                type="button"
                 title="Advance 1 Hexploration Activity">+1
         </button>
-        <button class="km-camping-action" id="km-camping-plus-hour" type="button" data-hours="1" title="Advance 1 Hour">
+        <button class="km-camping-action {{#if night.advance1}}night-mode{{/if}}" id="km-camping-plus-hour"
+                type="button" data-hours="1" title="Advance 1 Hour">
             +1h
         </button>
-        <button class="km-camping-action" id="km-camping-plus-hour" type="button" data-hours="2"
+        <button class="km-camping-action {{#if night.advance2}}night-mode{{/if}}" id="km-camping-plus-hour"
+                type="button" data-hours="2"
                 title="Advance 2 Hours">
             +2h
         </button>
-        <button class="km-camping-action night-mode" id="km-camping-rest" type="button" title="Begin Rest">
+        <button class="km-camping-action {{#if night.rest}}night-mode{{/if}}" id="km-camping-rest"
+                type="button" title="Begin Rest">
             <span>Rest (12:03h) </span><i class="fa-solid fa-bed"></i>
         </button>
     </div>
