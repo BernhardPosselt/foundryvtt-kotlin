@@ -20,6 +20,7 @@ import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.array.push
+import js.objects.Object
 import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
@@ -103,7 +104,14 @@ suspend fun campingActivityCheck(
         is String -> activityDc.toInt()
         else -> activityDc as Int
     }
-    val skills = activity.skills.filter {
+    val activitySkills = activity.skills
+    val availableSkills = if (activitySkills == "any") {
+        Object.keys(actor.skills)
+    } else {
+        @Suppress("UNCHECKED_CAST")
+        activitySkills as Array<String>
+    }
+    val skills = availableSkills.filter {
         if (disableSkillRequirements) {
             true
         } else {

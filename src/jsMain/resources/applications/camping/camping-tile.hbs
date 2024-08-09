@@ -1,27 +1,28 @@
 <div class="km-camping-activity">
-    <header><a href="#">Prepare Camp</a>
+    <header><a href="#">{{name}}</a>
     </header>
     <div class="km-camping-activity-portrait">
-        {{#if choose}}
+        {{#if actor}}
+            <button class="km-camping-action" action="clear" type="button" data-uuid="{{actor.uuid}}"
+                    data-location="activities"><i
+                    class="fa-regular fa-circle-xmark"></i></button>
+            <a href="#" data-uuid="{{actor.uuid}}" data-action="open-actor"><img src="{{actor.image}}"></a>
+        {{else}}
             <div class="empty-activity">
                 <header>Drop Actor from Above</header>
                 <i class="fa-solid fa-plus"></i>
             </div>
-        {{else}}
-            <button class="km-camping-action" action="clear" type="button"><i
-                    class="fa-regular fa-circle-xmark"></i></button>
-            <a href="#"><img src="{{image}}"></a>
         {{/if}}
     </div>
     <div class="km-camping-activity-check">
-        <select class="km-camping-degree-of-success" {{#if choose}}disabled{{/if}}>
+        <select class="km-camping-degree-of-success" {{#unless actor}}disabled{{/unless}}>
             <option value="" selected>-</option>
             <option value="criticalSuccess">Critical Success</option>
             <option value="success">Success</option>
             <option value="failure">Failure</option>
             <option value="criticalFailure">Critical Failure</option>
         </select>
-        <button class="km-camping-action" action="roll" type="button" {{#if choose}}disabled{{/if}}>
+        <button class="km-camping-action" action="roll" type="button" {{#unless actor}}disabled{{/unless}}>
             <i class="fa-solid fa-dice-d20"></i>
         </button>
     </div>

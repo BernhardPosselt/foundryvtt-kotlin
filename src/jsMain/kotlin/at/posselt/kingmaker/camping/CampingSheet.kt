@@ -3,8 +3,11 @@ package at.posselt.kingmaker.camping
 import at.posselt.kingmaker.app.ActorRef
 import at.posselt.kingmaker.app.FormApp
 import at.posselt.kingmaker.app.MenuControl
-import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.utils.*
+import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.onUpdateWorldTime
+import com.foundryvtt.pf2e.actor.*
 import js.core.Void
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -13,12 +16,25 @@ import kotlin.js.Promise
 external interface CampingSheetActor {
     val name: String
     val uuid: String
-    val image: String
+    val image: String?
+}
+
+@JsPlainObject
+external interface CampingSheetActivity {
+    val journalUuid: String?
+    val actor: CampingSheetActor?
+    val name: String
+    val degreeOfSuccess: String?
 }
 
 @JsPlainObject
 external interface CampingSheetContext {
     val actors: Array<CampingSheetActor>
+    val activities: Array<CampingSheetActivity>
+    val isDay: Boolean
+    val isGM: Boolean
+    val time: String
+    val terrain: String
 }
 
 @JsPlainObject
@@ -27,7 +43,10 @@ external interface CampingSheetFormData
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-class CampingSheet : FormApp<CampingSheetContext, CampingSheetFormData>(
+class CampingSheet(
+    private val actor: PF2ENpc,
+    private val game: Game,
+) : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
     width = 970,
@@ -45,19 +64,24 @@ class CampingSheet : FormApp<CampingSheetContext, CampingSheetFormData>(
 
 
     init {
+        actor.apps[id] = this
         onDocumentRefDragstart(".km-camping-actor")
-        onDocumentRefDrop(".km-camping-add-actor") { dragEvent, documentRef ->
+        onDocumentRefDrop(".km-camping-add-actor") { _, documentRef ->
             if (documentRef is ActorRef) {
                 console.log(documentRef)
             }
         }
         onDocumentRefDrop(
             ".km-camping-activity",
-            { it.dragstartSelector == ".km-camping-actor" || it.type == "Item" }) { dragEvent, documentRef ->
+            { it.dragstartSelector == ".km-camping-actor" || it.type == "Item" }
+        ) { _, documentRef ->
             console.log(documentRef)
             if (documentRef is ActorRef) {
                 console.log(documentRef)
             }
+        }
+        appHook.onUpdateWorldTime { _, _, _, _ ->
+            this.render()
         }
     }
 
@@ -66,89 +90,40 @@ class CampingSheet : FormApp<CampingSheetContext, CampingSheetFormData>(
         context: CampingSheetContext,
         options: HandlebarsRenderOptions
     ): Promise<CampingSheetContext> = buildPromise {
-        CampingSheetContext(
-            actors = arrayOf(
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/AmiriFull.webp",
-                    uuid = "uuid",
-                    name = "Amiri",
-                ),
-                CampingSheetActor(
-                    image = "/Portrait%20-%20Tar.webp",
-                    uuid = "uuid",
-                    name = "Tar"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/LiniFull.webp",
-                    name = "Lini",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/SeelahFull.webp",
-                    name = "Seelah",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/EzrenFull.webp",
-                    name = "Very Long Nameforezrenthatiswaytoolong",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/FumbusFull.webp",
-                    name = "john",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/LemFull.webp",
-                    name = "john",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/QuinnFull.webp",
-                    name = "john",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-                    name = "john",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-                    name = "john",
-                    uuid = "uuid"
-                ),
-                CampingSheetActor(
-                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-                    name = "john",
-                    uuid = "uuid"
-                ),
-//                CampingSheetActor(
-//                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-//                    name = "john",
-//                    uuid = "uuid"
-//                ),
-//                CampingSheetActor(
-//                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-//                    name = "john",
-//                    uuid = "uuid"
-//                ),
-//                CampingSheetActor(
-//                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-//                    name = "john",
-//                    uuid = "uuid"
-//                ),
-//                CampingSheetActor(
-//                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-//                    name = "john",
-//                    uuid = "uuid"
-//                ),
-//                CampingSheetActor(
-//                    image = "/systems/pf2e/icons/iconics/ValerosFull.webp",
-//                    name = "john",
-//                    uuid = "uuid"
-//                ),
+        val time = game.getPF2EWorldTime().time
+        val camping = actor.getCamping() ?: getDefaultCamping(game)
+        val actorsByUuid = fromUuidsOfTypes(
+            camping.actorUuids,
+            PF2ENpc::class,
+            PF2ECharacter::class,
+            PF2EVehicle::class,
+            PF2ELoot::class,
+        ).associateBy(PF2EActor::uuid)
+        val selectedActivitiesByName = camping.campingActivities.associateBy { it.activity }
+        val activities = camping.getAllActivities().map {
+            val selectedActivity = selectedActivitiesByName[it.name]
+            val actor = selectedActivity?.actorUuid?.let { actorsByUuid[it] }
+            CampingSheetActivity(
+                journalUuid = it.journalUuid,
+                name = it.name,
+                degreeOfSuccess = selectedActivity?.result,
             )
+        }.toTypedArray()
+        CampingSheetContext(
+            terrain = "mountain",
+            time = time.toDateInputString(),
+            isGM = game.user.isGM,
+            isDay = time.isDay(),
+            activities = activities,
+            actors = camping.actorUuids.mapNotNull { uuid ->
+                actorsByUuid[uuid]?.let { actor ->
+                    CampingSheetActor(
+                        image = actor.img,
+                        uuid = uuid,
+                        name = actor.name,
+                    )
+                }
+            }.toTypedArray()
         )
     }
 

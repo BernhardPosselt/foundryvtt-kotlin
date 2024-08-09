@@ -12,6 +12,7 @@ import js.reflect.Proxy
 import js.reflect.ProxyHandler
 import js.symbol.Symbol
 import kotlinx.coroutines.await
+import kotlin.reflect.KClass
 
 
 val isProxy = Symbol("isProxy")
@@ -95,6 +96,16 @@ fun <D : Document, T> D.getAppFlag(key: String) =
 suspend inline fun <reified T> fromUuidTypeSafe(uuid: String): T? =
     fromUuid(uuid).await()
         ?.takeIfInstance<T>()
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <T : Document> fromUuidsOfTypes(
+    uuids: Array<String>,
+    vararg types: KClass<out T>,
+): Array<T> =
+    uuids.map { fromUuid(it) }
+        .awaitAll()
+        .filter { document -> types.all { type -> type.isInstance(document) } }
+        .toTypedArray() as Array<T>
 
 suspend inline fun <reified T> fromUuidsTypeSafe(uuids: Array<String>): Array<T> =
     uuids.map { fromUuid(it) }

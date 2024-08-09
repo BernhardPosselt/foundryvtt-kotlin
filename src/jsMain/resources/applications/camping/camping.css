@@ -236,12 +236,64 @@ ul.km-camping-actors {
     }
 }
 
-#km-camping-content.km-camping-day {
-    background-image: url("../../../img/camping/backgrounds/day.jpg");
+
+#km-camping-content[data-terrain="aquatic"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/aquatic-day.webp");
+}
+
+#km-camping-content[data-terrain="aquatic"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/aquatic-night.webp");
+}
+
+#km-camping-content[data-terrain="desert"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/desert-day.webp");
+}
+
+#km-camping-content[data-terrain="desert"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/desert-night.webp");
+}
+
+#km-camping-content[data-terrain="plains"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/plains-day.webp");
+}
+
+#km-camping-content[data-terrain="plains"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/plains-night.webp");
+}
+
+#km-camping-content[data-terrain="hills"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/hills-day.webp");
+}
+
+#km-camping-content[data-terrain="hills"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/hills-night.webp");
+}
+
+#km-camping-content[data-terrain="mountain"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/mountain-day.webp");
+}
+
+#km-camping-content[data-terrain="mountain"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/mountain-night.webp");
+}
+
+#km-camping-content[data-terrain="swamp"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/swamp-day.webp");
+}
+
+#km-camping-content[data-terrain="swamp"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/swamp-night.webp");
+}
+
+#km-camping-content[data-terrain="forest"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/forest-day.webp");
+}
+
+#km-camping-content[data-terrain="forest"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/forest-night.webp");
 }
 
 #km-camping-content {
-    background-image: url("../../../img/camping/backgrounds/forest-day.webp");
     background-size: cover;
     display: flex;
     align-items: center;

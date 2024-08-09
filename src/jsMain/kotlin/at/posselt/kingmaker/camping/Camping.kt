@@ -14,6 +14,37 @@ import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.actor.PF2ENpc
 
 
+fun getDefaultCamping(game: Game): CampingData {
+    return CampingData(
+        currentRegion = "Rostland Hinterlands",
+        actorUuids = emptyArray(),
+        campingActivities = emptyArray(),
+        homebrewCampingActivities = emptyArray(),
+        lockedActivities = campingActivityData
+            .filter(CampingActivityData::isLocked)
+            .map(CampingActivityData::name)
+            .toTypedArray(),
+        cooking = Cooking(
+            chosenMeal = "Basic Meal",
+            actorMeals = emptyArray(),
+            magicalSubsistenceAmount = 0,
+            subsistenceAmount = 0,
+            knownRecipes = arrayOf("asic Meal", "Hearty Meal"),
+            homebrewMeals = emptyArray(),
+            cookingSkill = "survival",
+            degreeOfSuccess = null,
+        ),
+        watchSecondsRemaining = 0,
+        gunsToClean = 0,
+        dailyPrepsAtTime = game.time.worldTime,
+        encounterModifier = 0,
+        restRollMode = "one",
+        increaseWatchActorNumber = 0,
+        actorUuidsNotKeepingWatch = emptyArray(),
+        ignoreSkillRequirements = false,
+    )
+}
+
 fun PF2ENpc.getCamping(): CampingData? =
     getAppFlag<PF2ENpc, CampingData?>("camping-sheet")
         ?.let(::deepClone)
@@ -28,6 +59,9 @@ fun Game.getCurrentRegionName() =
         ?.getCamping()
         ?.currentRegion
 
+
+fun CampingData.getAllActivities(): Array<CampingActivityData> =
+    campingActivityData + homebrewCampingActivities
 
 suspend fun Game.findCurrentRegion(): RegionSetting? {
     val regionName = getCurrentRegionName()

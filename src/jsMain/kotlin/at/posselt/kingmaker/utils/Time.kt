@@ -44,3 +44,6 @@ fun LocalTime.toDateInputString(): String =
         char(':')
         minute(padding = Padding.ZERO)
     })
+
+fun LocalTime.isDay(): Boolean =
+    hour >= 6 && hour < 18
