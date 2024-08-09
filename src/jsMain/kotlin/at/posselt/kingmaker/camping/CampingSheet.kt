@@ -7,8 +7,12 @@ import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.documents.onCreateItem
+import com.foundryvtt.core.documents.onDeleteItem
+import com.foundryvtt.core.documents.onUpdateItem
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.pf2e.actor.*
+import js.array.push
 import js.core.Void
 import kotlinx.datetime.*
 import kotlinx.js.JsPlainObject
@@ -118,28 +122,35 @@ class CampingSheet(
     ),
     scrollable = arrayOf("#km-camping-content", ".km-camping-actors")
 ) {
-
+    private val allowedActorTypes = arrayOf(
+        PF2ENpc::class,
+        PF2ECharacter::class,
+        PF2EVehicle::class,
+        PF2ELoot::class,
+    )
 
     init {
         actor.apps[id] = this
         onDocumentRefDragstart(".km-camping-actor")
         onDocumentRefDrop(".km-camping-add-actor") { _, documentRef ->
             if (documentRef is ActorRef) {
-                console.log(documentRef)
+                buildPromise {
+                    addActor(documentRef.uuid)
+                }
             }
         }
         onDocumentRefDrop(
             ".km-camping-activity",
             { it.dragstartSelector == ".km-camping-actor" || it.type == "Item" }
         ) { _, documentRef ->
-            console.log(documentRef)
             if (documentRef is ActorRef) {
                 console.log(documentRef)
             }
         }
-        appHook.onUpdateWorldTime { _, _, _, _ ->
-            this.render()
-        }
+        appHook.onUpdateWorldTime { _, _, _, _ -> render() }
+        appHook.onCreateItem { _, _, _, _ -> render() }
+        appHook.onDeleteItem { _, _, _ -> render() }
+        appHook.onUpdateItem { _, _, _, _ -> render() }
     }
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
@@ -147,6 +158,18 @@ class CampingSheet(
             "advance-hour" -> advanceHours(target)
             "advance-hexploration" -> advanceHexplorationActivities(target)
             "rest" -> console.log("resting!!!")
+            "clear-actor" -> {
+                buildPromise {
+                    target.dataset["uuid"]?.let { clearActor(it) }
+                }
+            }
+
+            "clear-activity" -> {
+                buildPromise {
+                    target.dataset["name"]?.let { clearActivity(it) }
+                }
+            }
+
             "open-journal" -> {
                 event.preventDefault()
                 event.stopPropagation()
@@ -162,6 +185,43 @@ class CampingSheet(
                     target.dataset["uuid"]?.let { openActor(it) }
                 }
             }
+        }
+    }
+
+    private suspend fun addActor(uuid: String) {
+        actor.getCamping()?.let { camping ->
+            if (uuid !in camping.actorUuids) {
+                fromUuidOfTypes(uuid, *allowedActorTypes)
+                    ?.let {
+                        camping.actorUuids.push(uuid)
+                        camping.cooking.actorMeals.push(
+                            ActorMeal(
+                                actorUuid = uuid,
+                                favoriteMeal = null,
+                                chosenMeal = "meal",
+                            )
+                        )
+                        actor.setCamping(camping)
+                    }
+            }
+        }
+    }
+
+    private suspend fun clearActor(uuid: String) {
+        actor.getCamping()?.let {
+            it.actorUuids = it.actorUuids.filter { id -> id != uuid }.toTypedArray()
+            it.campingActivities = it.campingActivities.filter { a -> a.actorUuid != uuid }.toTypedArray()
+            it.cooking.actorMeals = it.cooking.actorMeals.filter { m -> m.actorUuid != uuid }.toTypedArray()
+            actor.setCamping(it)
+        }
+    }
+
+    private suspend fun clearActivity(name: String) {
+        actor.getCamping()?.let {
+            it.campingActivities
+                .find { activity -> activity.activity == name }
+                ?.actorUuid = null
+            actor.setCamping(it)
         }
     }
 
@@ -210,13 +270,7 @@ class CampingSheet(
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
 
         val camping = actor.getCamping() ?: getDefaultCamping(game)
-        val actorsByUuid = fromUuidsOfTypes(
-            camping.actorUuids,
-            PF2ENpc::class,
-            PF2ECharacter::class,
-            PF2EVehicle::class,
-            PF2ELoot::class,
-        ).associateBy(PF2EActor::uuid)
+        val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
         val selectedActivitiesByName = camping.campingActivities.associateBy { it.activity }
         val activities = camping.getAllActivities().map {
             val selectedActivity = selectedActivitiesByName[it.name]

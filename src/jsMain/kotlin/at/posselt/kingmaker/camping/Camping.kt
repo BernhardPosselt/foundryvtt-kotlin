@@ -46,6 +46,10 @@ fun PF2ENpc.getCamping(): CampingData? =
     getAppFlag<PF2ENpc, CampingData?>("camping-sheet")
         ?.let(::deepClone)
 
+suspend fun PF2ENpc.setCamping(data: CampingData) {
+    setAppFlag("camping-sheet", data)
+}
+
 fun Game.getCampingActor(): PF2ENpc? =
     actors.contents
         .filterIsInstance<PF2ENpc>()

@@ -107,6 +107,15 @@ suspend inline fun <T : Document> fromUuidsOfTypes(
         .filter { document -> types.any { type -> type.isInstance(document) } }
         .toTypedArray() as Array<T>
 
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <T : Document> fromUuidOfTypes(
+    uuid: String,
+    vararg types: KClass<out T>,
+): T? =
+    fromUuid(uuid)
+        .await()
+        ?.takeIf { document -> types.any { type -> type.isInstance(document) } } as T?
+
 suspend inline fun <reified T> fromUuidsTypeSafe(uuids: Array<String>): Array<T> =
     uuids.map { fromUuid(it) }
         .awaitAll()

@@ -1,4 +1,5 @@
 const foundry = {
+    abstract: {},
     utils: {
         expandObject: () => {
         }

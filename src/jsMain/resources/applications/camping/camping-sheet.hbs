@@ -96,9 +96,11 @@
                 <a href="#" data-uuid="{{uuid}}" data-action="open-actor"><img src="{{image}}" alt="{{name}}"></a>
                 {{#if choseActivity}}
                     <div class="taken-camping-activity"><i class="fa-solid fa-circle-check"></i></div>{{/if}}
-                <button class="km-camping-action" action="clear" type="button" data-uuid="{{uuid}}"
-                        data-location="camping-actors"><i
-                        class="fa-regular fa-circle-xmark"></i>
+                <button class="km-camping-action"
+                        data-action="clear-actor"
+                        type="button"
+                        data-uuid="{{uuid}}">
+                    <i class="fa-regular fa-circle-xmark"></i>
                 </button>
             </li>
         {{/each}}

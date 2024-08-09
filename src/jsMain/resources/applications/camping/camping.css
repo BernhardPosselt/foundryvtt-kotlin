@@ -23,7 +23,8 @@
         }
     }
 
-    button.km-camping-action[action="clear"] {
+    button.km-camping-action[data-action="clear-actor"],
+    button.km-camping-action[data-action="clear-activity"] {
         display: none;
         position: absolute;
         width: 1em;
@@ -239,7 +240,8 @@ ul.km-camping-actors {
 
 
     li:hover {
-        button.km-camping-action[action="clear"] {
+        button.km-camping-action[data-action="clear-activity"],
+        button.km-camping-action[data-action="clear-actor"] {
             display: flex;
         }
     }
@@ -361,16 +363,18 @@ ul.km-camping-actors {
         gap: 10px;
         padding-bottom: 15px;
 
-        .km-camping-activity:hover {
-            button.km-camping-action[action="clear"] {
-                display: flex;
-            }
-        }
-
         .km-camping-activity {
             font-size: var(--font-size-13);
             border: 1px solid;
             border-radius: 5px;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, .5);
+
+            &:hover {
+                button.km-camping-action[data-action="clear-actor"],
+                button.km-camping-action[data-action="clear-activity"] {
+                    display: flex;
+                }
+            }
 
             header {
                 background-color: rgba(11, 10, 19, 1);
@@ -430,6 +434,8 @@ ul.km-camping-actors {
 
             .km-camping-activity-check {
                 display: flex;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
 
                 select {
                     border-radius: 0;
@@ -442,7 +448,7 @@ ul.km-camping-actors {
                     border-style: none;
                 }
 
-                button[action="roll"] {
+                button[data-action="roll-camping-check"] {
                     border-radius: 0;
                     border-bottom-right-radius: 5px;
                     margin: 0;
@@ -489,9 +495,9 @@ ul.km-camping-actors {
         background: rgba(11, 10, 19, 1);
     }
 
-    .empty-activity {
+    .empty-activity,
+    .km-camping-activity-check {
         background: var(--background);
-
     }
 }
 
@@ -506,7 +512,7 @@ ul.km-camping-actors {
         background: url("/ui/parchment.jpg") repeat;
     }
 
-    button.km-camping-action[action="roll"] {
+    button.km-camping-action[data-action="roll-camping-check"] {
         &:hover {
             box-shadow: none;
             background: transparent;
