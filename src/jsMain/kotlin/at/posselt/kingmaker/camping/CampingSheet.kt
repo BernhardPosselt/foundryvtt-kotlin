@@ -35,6 +35,7 @@ external interface CampingSheetContext {
     val isGM: Boolean
     val time: String
     val terrain: String
+    val pxTimeOffset: Int
 }
 
 @JsPlainObject
@@ -91,6 +92,9 @@ class CampingSheet(
         options: HandlebarsRenderOptions
     ): Promise<CampingSheetContext> = buildPromise {
         val time = game.getPF2EWorldTime().time
+        val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
+        val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
+
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(
             camping.actorUuids,
@@ -111,6 +115,7 @@ class CampingSheet(
         }.toTypedArray()
         CampingSheetContext(
             terrain = "mountain",
+            pxTimeOffset = pxTimeOffset,
             time = time.toDateInputString(),
             isGM = game.user.isGM,
             isDay = time.isDay(),
