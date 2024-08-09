@@ -1,6 +1,7 @@
 package at.posselt.kingmaker
 
 import kotlin.enums.enumEntries
+import kotlin.math.ceil
 
 /**
  * Use this to deserialize foundry enum strings
@@ -45,3 +46,5 @@ fun String.toEnumConstant(): String =
 inline fun <reified T> Any.takeIfInstance(): T? =
     if (this is T) this else null
 
+fun Int.divideRoundingUp(divisor: Int): Int =
+    ceil(this.toDouble() / divisor).toInt()

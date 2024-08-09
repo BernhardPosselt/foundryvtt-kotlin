@@ -27,6 +27,7 @@ external interface SkillRequirement {
 external interface ActivityEffect {
     val uuid: String
     val target: String?
+    val doublesHealing: Boolean?
 }
 
 @JsPlainObject
@@ -35,7 +36,7 @@ external interface CampingActivityData {
     val journalUuid: String?
     val skillRequirements: Array<SkillRequirement>
     val dc: Any?  // zone, actorLevel or a number
-    val skills: Array<String>
+    val skills: Any // array of strings or any
     val modifyRandomEncounterDc: ModifyEncounterDc?
     val isSecret: Boolean
     val isLocked: Boolean
@@ -47,5 +48,5 @@ external interface CampingActivityData {
     val criticalFailure: ActivityOutcome?
 }
 
-@JsModule("./data/recipes.json")
+@JsModule("./data/camping-activities.json")
 external val campingActivityData: Array<CampingActivityData>

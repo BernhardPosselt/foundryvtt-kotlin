@@ -19,7 +19,7 @@ external interface Resources {
 }
 
 @JsPlainObject
-external interface Hp : IntValue {
+external interface Hp : MaxValue {
     var temp: Int
 }
 

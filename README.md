@@ -129,6 +129,10 @@ Schemas:
   * **Schema file or URL**: schemas/recipes.json
   * **Directory**: data/recipes
 * Structures:
-* **Name**: Structures
-* **Schema file or URL**: schemas/structures.json
-* **Directory**: data/structures
+  * **Name**: Structures
+  * **Schema file or URL**: schemas/structures.json
+  * **Directory**: data/structures
+* Camping Activities:
+  * **Name**: Camping Activities:
+  * **Schema file or URL**: schemas/camping-activities.json
+  * **Directory**: data/camping-activities

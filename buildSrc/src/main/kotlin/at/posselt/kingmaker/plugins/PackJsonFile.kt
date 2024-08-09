@@ -14,6 +14,7 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 import kotlin.io.path.readText
 
 
@@ -45,7 +46,7 @@ abstract class PackJsonFile : DefaultTask() {
                 val jsonFiles = Files.walk(directory)
                     .filter { Files.isRegularFile(it) }
                     .filter { it.toString().endsWith(".json") }
-                    .toList()
+                    .collect(Collectors.toList())
                 writeToFile(
                     target.resolve(Paths.get("$name.json")),
                     jsonFiles,

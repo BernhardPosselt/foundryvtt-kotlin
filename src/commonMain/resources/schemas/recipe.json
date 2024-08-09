@@ -95,7 +95,13 @@
         "uuid": {
           "type": "string"
         },
+        "changeRestDurationSeconds": {
+          "type": "number"
+        },
         "removeAfterRest": {
+          "type": "boolean"
+        },
+        "doublesHealing": {
           "type": "boolean"
         }
       },

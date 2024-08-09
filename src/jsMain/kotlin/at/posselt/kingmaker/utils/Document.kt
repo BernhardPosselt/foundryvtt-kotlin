@@ -96,3 +96,9 @@ suspend inline fun <reified T> fromUuidTypeSafe(uuid: String): T? =
     fromUuid(uuid).await()
         ?.takeIfInstance<T>()
 
+suspend inline fun <reified T> fromUuidsTypeSafe(uuids: Array<String>): Array<T> =
+    uuids.map { fromUuid(it) }
+        .awaitAll()
+        .filterIsInstance<T>()
+        .toTypedArray()
+

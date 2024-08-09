@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://posselt.at/pf2e-kingmaker-tools/schemas/camping-activity.json",
+  "title": "Camping Activity",
+  "description": "A camping activity",
+  "$ref": "#/$defs/CampingActivity",
+  "$defs": {
+    "CampingActivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "skillRequirements",
+        "skills",
+        "isSecret",
+        "isLocked"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "journalUuid": {
+          "type": "string"
+        },
+        "skillRequirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SkillRequirement"
+          }
+        },
+        "dc": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "zone",
+                "actorLevel"
+              ]
+            }
+          ]
+        },
+        "skills": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "enum": [
+                "any"
+              ]
+            }
+          ]
+        },
+        "modifyRandomEncounterDc": {
+          "$ref": "#/$defs/ModifyEncounterDc"
+        },
+        "isSecret": {
+          "type": "boolean"
+        },
+        "isLocked": {
+          "type": "boolean"
+        },
+        "effectUuids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ActivityEffect"
+          }
+        },
+        "isHomebrew": {
+          "type": "boolean"
+        },
+        "criticalSuccess": {
+          "$ref": "#/$defs/ActivityOutcome"
+        },
+        "success": {
+          "$ref": "#/$defs/ActivityOutcome"
+        },
+        "failure": {
+          "$ref": "#/$defs/ActivityOutcome"
+        },
+        "criticalFailure": {
+          "$ref": "#/$defs/ActivityOutcome"
+        }
+      }
+    },
+    "SkillRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill",
+        "proficiency"
+      ],
+      "properties": {
+        "skill": {
+          "type": "string"
+        },
+        "proficiency": {
+          "type": "string"
+        }
+      }
+    },
+    "ModifyEncounterDc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "day",
+        "night"
+      ],
+      "properties": {
+        "day": {
+          "type": "number"
+        },
+        "night": {
+          "type": "number"
+        }
+      }
+    },
+    "ActivityEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uuid"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string",
+          "enum": [
+            "all",
+            "self",
+            "allies"
+          ]
+        },
+        "doublesHealing": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ActivityOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "effectUuids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ActivityEffect"
+          }
+        },
+        "modifyRandomEncounterDc": {
+          "$ref": "#/$defs/ModifyEncounterDc"
+        },
+        "checkRandomEncounter": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -6,6 +6,8 @@ import kotlinx.js.JsPlainObject
 external interface MealEffect {
     val uuid: String
     val removeAfterRest: Boolean?
+    val changeRestDurationSeconds: Int?
+    val doublesHealing: Boolean?
 }
 
 

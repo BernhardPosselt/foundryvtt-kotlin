@@ -55,7 +55,6 @@ external interface SettingsMenuData<T : ApplicationV2> {
     val restricted: Boolean
 }
 
-
 external class Settings {
     fun <T> register(namespace: String, key: String, data: SettingsData<T>)
     fun <T : ApplicationV2> registerMenu(namespace: String, key: String, data: SettingsMenuData<T>)

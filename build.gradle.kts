@@ -104,6 +104,10 @@ tasks.register<JsonSchemaValidator>("validateJsonFiles") {
         layout.projectDirectory.file("src/commonMain/resources/schemas/structure.json"),
         layout.projectDirectory.dir("data/structures"),
     )
+    addSchema(
+        layout.projectDirectory.file("src/commonMain/resources/schemas/camping-activity.json"),
+        layout.projectDirectory.dir("data/camping-activities"),
+    )
 }
 
 /**
