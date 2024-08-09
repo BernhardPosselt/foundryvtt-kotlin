@@ -5,10 +5,7 @@ import at.posselt.kingmaker.data.regions.stolenLandsZones
 import at.posselt.kingmaker.settings.RegionSetting
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.toCamelCase
-import at.posselt.kingmaker.utils.findRollTableWithCompendiumFallback
-import at.posselt.kingmaker.utils.getAppFlag
-import at.posselt.kingmaker.utils.getCombatOverrideTrack
-import at.posselt.kingmaker.utils.getKingmakerCombatTrack
+import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.actor.PF2ENpc
@@ -66,31 +63,37 @@ fun CampingData.getAllActivities(): Array<CampingActivityData> =
 fun CampingData.getAllRecipes(): Array<RecipeData> =
     recipes + cooking.homebrewMeals
 
-suspend fun Game.findCurrentRegion(): RegionSetting? {
-    val regionName = getCurrentRegionName()
+suspend fun Game.getRegions(): List<RegionSetting> {
     val regionSettings = settings.kingmakerTools.getRegionSettings()
     return if (regionSettings.useStolenLands) {
         stolenLandsZones
-            .find { it.name == regionName }
-            ?.let {
-                val rolltableUuid = findRollTableWithCompendiumFallback(
-                    tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}",
-                    fallbackName = it.name,
-                )?.uuid
-                val combatTrack = (playlists.getCombatOverrideTrack(it.combatTrackName)
-                    ?: playlists.getKingmakerCombatTrack(it.combatTrackName))
-                RegionSetting(
-                    name = it.name,
-                    zoneDc = it.zoneDc,
-                    encounterDc = it.encounterDc,
-                    level = it.level,
-                    rollTableUuid = rolltableUuid,
-                    combatTrack = combatTrack,
-                    terrain = it.terrain.toCamelCase(),
-                )
+            .map {
+                buildPromise {
+                    val rolltableUuid = findRollTableWithCompendiumFallback(
+                        tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}",
+                        fallbackName = it.name,
+                    )?.uuid
+                    val combatTrack = (playlists.getCombatOverrideTrack(it.combatTrackName)
+                        ?: playlists.getKingmakerCombatTrack(it.combatTrackName))
+                    RegionSetting(
+                        name = it.name,
+                        zoneDc = it.zoneDc,
+                        encounterDc = it.encounterDc,
+                        level = it.level,
+                        rollTableUuid = rolltableUuid,
+                        combatTrack = combatTrack,
+                        terrain = it.terrain.toCamelCase(),
+                    )
+                }
             }
+            .awaitAll()
     } else {
-        regionSettings.regions
-            .find { it.name == regionName }
+        regionSettings.regions.toList()
     }
+}
+
+suspend fun Game.findCurrentRegion(): RegionSetting? {
+    val regionName = getCurrentRegionName()
+    return getRegions()
+        .find { it.name == regionName }
 }

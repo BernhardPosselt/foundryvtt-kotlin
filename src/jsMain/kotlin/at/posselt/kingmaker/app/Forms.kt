@@ -45,6 +45,7 @@ external interface FormElementContext {
     val overrideType: String?
     val isFormElement: Boolean
     val elementClasses: String
+    val disabled: Boolean
 }
 
 enum class OverrideType(val value: String) {
@@ -76,6 +77,7 @@ data class Select(
     override val help: String? = null,
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -90,6 +92,7 @@ data class Select(
         time = false,
         textArea = false,
         checkbox = false,
+        disabled = disabled,
         overrideType = overrideType?.value,
         options = options.map { opt ->
             Option(
@@ -195,6 +198,7 @@ data class TextInput(
     override val hideLabel: Boolean = false,
     val overrideType: OverrideType? = null,
     val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -209,6 +213,7 @@ data class TextInput(
         time = false,
         textArea = false,
         checkbox = false,
+        disabled = disabled,
         overrideType = overrideType?.value,
         options = emptyArray(),
         hideLabel = hideLabel,
@@ -224,6 +229,7 @@ data class CheckboxInput(
     override val help: String? = null,
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -238,6 +244,7 @@ data class CheckboxInput(
         text = false,
         textArea = false,
         checkbox = true,
+        disabled = disabled,
         options = emptyArray(),
         hideLabel = hideLabel,
         elementClasses = elementClasses.joinToString(" "),
@@ -253,6 +260,7 @@ data class TextArea(
     override val hideLabel: Boolean = false,
     val overrideType: OverrideType? = null,
     val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -263,6 +271,7 @@ data class TextArea(
         select = false,
         time = false,
         required = required,
+        disabled = disabled,
         number = false,
         text = false,
         textArea = true,
@@ -282,6 +291,7 @@ data class NumberInput(
     override val help: String? = null,
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -292,6 +302,7 @@ data class NumberInput(
         select = false,
         time = false,
         required = required,
+        disabled = disabled,
         number = true,
         text = false,
         textArea = false,
@@ -310,6 +321,7 @@ data class TimeInput(
     override val help: String? = null,
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -325,6 +337,7 @@ data class TimeInput(
         time = true,
         required = required,
         number = false,
+        disabled = disabled,
         text = false,
         textArea = false,
         checkbox = false,

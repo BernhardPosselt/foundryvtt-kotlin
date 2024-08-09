@@ -59,11 +59,13 @@
                     id="km-camping-rest"
                     type="button"
                     data-action="rest"
-                    title="Begin Rest">
+                    title="Rest for {{restDuration}}h and make daily preparations"
+            >
                 {{#if restDurationleft}}
                     <span>Continue ({{restDurationleft}}) </span><i class="fa-solid fa-bed"></i>
                 {{else}}
-                    <span>Rest ({{restDuration}}) </span><i class="fa-solid fa-bed"></i>
+                    <span>Rest</span><i
+                        class="fa-solid fa-bed"></i>
                 {{/if}}
             </button>
         {{/if}}
@@ -71,17 +73,20 @@
     <div id="km-camping-hexploration" class="km-row">
         <div><b>Adventuring For: </b> {{adventuringFor}}</div>
         <div><b>Hexploration Activities:</b> {{hexplorationActivitiesAvailable}}/{{hexplorationActivitiesMax}}</div>
-        <div><label>Region: <select {{#unless isGM}}disabled{{/unless}}>
-            <option>Rostland</option>
-        </select></label></div>
+        <div>{{> formElement region}}</div>
         {{#if isGM}}
             <div id="km-camping-encounter">
-                <button type="button"><i class="fa-solid fa-minus"></i></button>
-                <div><b>Encounter DC:</b> 12</div>
-                <button type="button"><i class="fa-solid fa-plus"></i></button>
-                <button type="button"><i class="fa-solid fa-rotate-left"></i></button>
-                <button type="button" data-action="roll-encounter"><i class="fa-solid fa-skull"></i></button>
-                <button type="button"><i class="fa-solid fa-dice-d20"></i><i class="fa-solid fa-skull"></i></button>
+                <button type="button" data-action="increase-encounter-dc" data-value="-1" title="Decrease Encounter DC">
+                    <i class="fa-solid fa-minus"></i></button>
+                <div><b>Encounter DC:</b> {{encounterDc}}</div>
+                <button type="button" data-action="increase-encounter-dc" data-value="1" title="Increase Encounter DC">
+                    <i class="fa-solid fa-plus"></i></button>
+                <button type="button" data-action="reset-encounter-dc" title="Reset Encounter DC"><i
+                        class="fa-solid fa-rotate-left"></i></button>
+                <button type="button" data-action="roll-encounter" title="Roll Random Encounter"><i
+                        class="fa-solid fa-skull"></i></button>
+                <button type="button" data-action="check-encounter" title="Check for Random Encounter"><i
+                        class="fa-solid fa-dice-d20"></i><i class="fa-solid fa-skull"></i></button>
             </div>
         {{/if}}
     </div>
@@ -89,6 +94,8 @@
         {{#each actors}}
             <li class="km-camping-actor" draggable="true" data-uuid="{{uuid}}" data-type="Actor">
                 <a href="#" data-uuid="{{uuid}}" data-action="open-actor"><img src="{{image}}" alt="{{name}}"></a>
+                {{#if choseActivity}}
+                    <div class="taken-camping-activity"><i class="fa-solid fa-circle-check"></i></div>{{/if}}
                 <button class="km-camping-action" action="clear" type="button" data-uuid="{{uuid}}"
                         data-location="camping-actors"><i
                         class="fa-regular fa-circle-xmark"></i>
@@ -104,7 +111,7 @@
     <div id="km-camping-content" data-terrain="{{terrain}}" data-day="{{isDay}}">
         <button class="km-camping-previous"><i class="fa-solid fa-chevron-left"></i></button>
         <div class="km-camping-activities-wrapper">
-            <h1>Prepare Camp</h1>
+            <h1>{{section}}</h1>
             <div class="km-camping-activities">
                 {{#each activities}}
                     {{> campingTile this}}

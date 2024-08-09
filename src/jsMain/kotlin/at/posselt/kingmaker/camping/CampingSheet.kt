@@ -1,9 +1,7 @@
 package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.actor.party
-import at.posselt.kingmaker.app.ActorRef
-import at.posselt.kingmaker.app.FormApp
-import at.posselt.kingmaker.app.MenuControl
+import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
@@ -23,6 +21,7 @@ external interface CampingSheetActor {
     val name: String
     val uuid: String
     val image: String?
+    val choseActivity: Boolean
 }
 
 @JsPlainObject
@@ -31,6 +30,7 @@ external interface CampingSheetActivity {
     val actor: CampingSheetActor?
     val name: String
     val degreeOfSuccess: String?
+    val locked: Boolean
 }
 
 @JsPlainObject
@@ -61,6 +61,9 @@ external interface CampingSheetContext {
     val adventuringFor: String
     val restDuration: String
     val restDurationLeft: String?
+    val encounterDc: Int
+    val region: FormElementContext
+    val section: String
 }
 
 @JsPlainObject
@@ -90,7 +93,7 @@ private fun calculateNightModes(time: LocalTime): NightModes {
         advanceHex = isNightMode(time, "04:00", "17:00"),
         advance1 = isNightMode(time, "03:00", "16:00"),
         advance2 = isNightMode(time, "02:00", "15:00"),
-        rest = isNightMode(time, "20:00", "09:00"),
+        rest = isNightMode(time, "19:00", "08:00"),
     )
 }
 
@@ -206,11 +209,13 @@ class CampingSheet(
                 journalUuid = it.journalUuid,
                 name = it.name,
                 degreeOfSuccess = selectedActivity?.result,
+                locked = camping.lockedActivities.contains(it.name),
                 actor = actor?.let { act ->
                     CampingSheetActor(
                         name = act.name,
                         uuid = act.uuid,
                         image = act.img,
+                        choseActivity = true,
                     )
                 },
             )
@@ -221,11 +226,26 @@ class CampingSheet(
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
         )
+        val currentRegionName = game.getCurrentRegionName()
+        val regions = game.getRegions()
+        val currentRegion = currentRegionName?.let { name -> regions.find { it.name == name } }
+        val isGM = game.user.isGM
+        val section = "Camping Activities"
         CampingSheetContext(
-            terrain = "mountain",
+            terrain = currentRegion?.terrain ?: "plains",
+            region = Select(
+                label = "Region",
+                value = currentRegionName,
+                options = regions.map {
+                    SelectOption(label = it.name, value = it.name)
+                },
+                required = true,
+                name = "region",
+                disabled = !isGM
+            ).toContext(),
             pxTimeOffset = pxTimeOffset,
             time = time.toDateInputString(),
-            isGM = game.user.isGM,
+            isGM = isGM,
             isDay = time.isDay(),
             activities = activities,
             actors = camping.actorUuids.mapNotNull { uuid ->
@@ -234,6 +254,9 @@ class CampingSheet(
                         image = actor.img,
                         uuid = uuid,
                         name = actor.name,
+                        choseActivity = section == "Camping Activities" && camping.campingActivities.any {
+                            it.actorUuid == uuid
+                        },
                     )
                 }
             }.toTypedArray(),
@@ -244,6 +267,8 @@ class CampingSheet(
             adventuringFor = getAdventuringFor(camping),
             restDuration = fullRestDuration,
             restDurationLeft = getRestDurationLeft(camping),
+            encounterDc = camping.encounterModifier + (currentRegion?.encounterDc ?: 0),
+            section = section,
         )
     }
 
