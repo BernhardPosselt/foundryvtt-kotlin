@@ -3,17 +3,17 @@ package at.posselt.kingmaker.camping
 import at.posselt.kingmaker.utils.awaitAll
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
-import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.item.PF2EEffect
 
 
-fun PF2ECharacter.getEffectNames() =
+fun PF2EActor.getEffectNames() =
     itemTypes.effect.mapNotNull { it.name }.toSet()
 
 /**
  * Given a list of meal effects, get those that are have been applied to a player
  */
-suspend fun PF2ECharacter.getAppliedMealEffects(mealEffects: List<MealEffect>): List<MealEffect> {
+suspend fun PF2EActor.getAppliedMealEffects(mealEffects: List<MealEffect>): List<MealEffect> {
     val effectNames = getEffectNames()
     return mealEffects
         .map { buildPromise { fromUuidTypeSafe<PF2EEffect>(it.uuid)?.name to it } }
@@ -22,7 +22,7 @@ suspend fun PF2ECharacter.getAppliedMealEffects(mealEffects: List<MealEffect>): 
         .map { it.second }
 }
 
-suspend fun PF2ECharacter.getAppliedCampingEffects(campingData: List<ActivityEffect>): List<ActivityEffect> {
+suspend fun PF2EActor.getAppliedCampingEffects(campingData: List<ActivityEffect>): List<ActivityEffect> {
     val effectNames = getEffectNames()
     return campingData
         .map { buildPromise { fromUuidTypeSafe<PF2EEffect>(it.uuid)?.name to it } }

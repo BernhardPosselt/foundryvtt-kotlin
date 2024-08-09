@@ -59,6 +59,8 @@ external interface CampingSheetContext {
     val hexplorationActivitiesAvailable: Int
     val hexplorationActivitiesMax: String
     val adventuringFor: String
+    val restDuration: String
+    val restDurationLeft: String?
 }
 
 @JsPlainObject
@@ -170,6 +172,10 @@ class CampingSheet(
         return formatSeconds(elapsedSeconds, isNegative)
     }
 
+    private fun getRestDurationLeft(camping: CampingData): String? {
+        // TODO
+        return null
+    }
 
     fun advanceHours(target: HTMLElement) {
         game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
@@ -183,8 +189,6 @@ class CampingSheet(
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
-
-        console.log(calculateNightModes(time))
 
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(
@@ -202,8 +206,21 @@ class CampingSheet(
                 journalUuid = it.journalUuid,
                 name = it.name,
                 degreeOfSuccess = selectedActivity?.result,
+                actor = actor?.let { act ->
+                    CampingSheetActor(
+                        name = act.name,
+                        uuid = act.uuid,
+                        image = act.img,
+                    )
+                },
             )
         }.toTypedArray()
+        val fullRestDuration = getFullRestDuration(
+            watchers = actorsByUuid.values.filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) },
+            recipes = camping.getAllRecipes().toList(),
+            gunsToClean = camping.gunsToClean,
+            increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
+        )
         CampingSheetContext(
             terrain = "mountain",
             pxTimeOffset = pxTimeOffset,
@@ -225,6 +242,8 @@ class CampingSheet(
             hexplorationActivitiesAvailable = getHexplorationActivitiesAvailable(camping),
             hexplorationActivitiesMax = "${getHexplorationActivities()}",
             adventuringFor = getAdventuringFor(camping),
+            restDuration = fullRestDuration,
+            restDurationLeft = getRestDurationLeft(camping),
         )
     }
 

@@ -104,7 +104,7 @@ suspend inline fun <T : Document> fromUuidsOfTypes(
 ): Array<T> =
     uuids.map { fromUuid(it) }
         .awaitAll()
-        .filter { document -> types.all { type -> type.isInstance(document) } }
+        .filter { document -> types.any { type -> type.isInstance(document) } }
         .toTypedArray() as Array<T>
 
 suspend inline fun <reified T> fromUuidsTypeSafe(uuids: Array<String>): Array<T> =

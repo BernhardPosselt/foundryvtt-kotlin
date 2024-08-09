@@ -15,7 +15,7 @@ fun calculateRestoredHp(
 }
 
 
-fun calculateRestDurationSeconds(restSecondsPerPc: Array<Int>): Int {
+fun calculateRestDurationSeconds(restSecondsPerPc: List<Int>): Int {
     val partySize = restSecondsPerPc.size
     val restDurationSeconds = restSecondsPerPc.average().toInt()
     return if (partySize < 2) {
@@ -26,4 +26,4 @@ fun calculateRestDurationSeconds(restSecondsPerPc: Array<Int>): Int {
 }
 
 fun calculateDailyPreparationSeconds(gunsToClean: Int): Int =
-    if (gunsToClean == 0) 30 * 60 else gunsToClean.divideRoundingUp(4) * 3600
+    if (gunsToClean == 0) 3600 else gunsToClean.divideRoundingUp(4) * 3600

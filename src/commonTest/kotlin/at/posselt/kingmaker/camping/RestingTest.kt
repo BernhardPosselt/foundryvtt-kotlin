@@ -32,8 +32,8 @@ class RestingTest {
     fun testAverageRestDuration() {
         val eightHours = 8 * 60 * 60
         val twelveHours = 12 * 60 * 60
-        assertEquals(eightHours, calculateRestDurationSeconds(arrayOf(eightHours)))
-        assertEquals(2 * eightHours, calculateRestDurationSeconds(arrayOf(eightHours, eightHours)))
-        assertEquals(twelveHours, calculateRestDurationSeconds(arrayOf(eightHours, eightHours, eightHours)))
+        assertEquals(eightHours, calculateRestDurationSeconds(listOf(eightHours)))
+        assertEquals(2 * eightHours, calculateRestDurationSeconds(listOf(eightHours, eightHours)))
+        assertEquals(twelveHours, calculateRestDurationSeconds(listOf(eightHours, eightHours, eightHours)))
     }
 }

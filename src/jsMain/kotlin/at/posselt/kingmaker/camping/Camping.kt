@@ -63,6 +63,9 @@ fun Game.getCurrentRegionName() =
 fun CampingData.getAllActivities(): Array<CampingActivityData> =
     campingActivityData + homebrewCampingActivities
 
+fun CampingData.getAllRecipes(): Array<RecipeData> =
+    recipes + cooking.homebrewMeals
+
 suspend fun Game.findCurrentRegion(): RegionSetting? {
     val regionName = getCurrentRegionName()
     val regionSettings = settings.kingmakerTools.getRegionSettings()

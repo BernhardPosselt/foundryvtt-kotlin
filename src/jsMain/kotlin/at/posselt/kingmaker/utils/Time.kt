@@ -48,7 +48,7 @@ fun LocalTime.toDateInputString(): String =
 fun LocalTime.isDay(): Boolean =
     hour >= 6 && hour < 18
 
-fun formatSeconds(seconds: Int, isNegative: Boolean): String {
+fun formatSeconds(seconds: Int, isNegative: Boolean = false): String {
     val hours = seconds / 3600
     val minutes = (seconds - hours * 3600) / 60
     val time = "${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}"
