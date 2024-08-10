@@ -254,6 +254,10 @@ class CampingSheet(
             "reset-encounter-dc" -> buildPromise {
                 changeEncounterDcModifier(null)
             }
+
+            "reset-adventuring-for" -> buildPromise {
+                resetAdventuringTimeTracker()
+            }
         }
     }
 
@@ -291,6 +295,13 @@ class CampingSheet(
             } else {
                 camping.encounterModifier += modifier
             }
+            actor.setCamping(camping)
+        }
+    }
+
+    private suspend fun resetAdventuringTimeTracker() {
+        actor.getCamping()?.let { camping ->
+            camping.dailyPrepsAtTime = game.time.worldTime
             actor.setCamping(camping)
         }
     }
