@@ -15,13 +15,13 @@ external interface PF2EFamiliarData
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Actor.documentClasses.familiar")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2EFamiliar : PF2EActor {
+external class PF2EFamiliar : PF2EActor, PF2ECreature {
     companion object : DocumentStatic<PF2EFamiliar>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2EFamiliar>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EFamiliar?>
 
-    val skills: Record<String, PF2EAttribute>
+    override val skills: Record<String, PF2EAttribute>
     val system: PF2EFamiliarData
 }
 

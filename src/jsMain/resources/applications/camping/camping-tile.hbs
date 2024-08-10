@@ -1,4 +1,8 @@
-<div class="km-camping-activity" {{#if locked}}hidden{{/if}}>
+<div class="km-camping-activity"
+    {{#if locked}}hidden{{/if}}
+    {{#if actor}}data-actor-uuid="{{actor.uuid}}"{{/if}}
+     data-activity-name="{{name}}"
+>
     <header><a href="#" data-uuid="{{journalUuid}}" data-action="open-journal">{{name}}</a>
     </header>
     <div class="km-camping-activity-portrait">

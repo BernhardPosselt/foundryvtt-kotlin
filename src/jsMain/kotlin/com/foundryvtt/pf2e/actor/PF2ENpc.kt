@@ -5,6 +5,7 @@ import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.RenderApplication
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import js.objects.Record
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -16,12 +17,13 @@ external interface PF2ENpcData
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Actor.documentClasses.npc")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2ENpc : PF2EActor {
+external class PF2ENpc : PF2EActor, PF2ECreature {
     companion object : DocumentStatic<PF2ENpc>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ENpc>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ENpc?>
 
+    override val skills: Record<String, PF2EAttribute>
     val system: PF2ENpcData
 }
 

@@ -9,8 +9,9 @@ import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import com.foundryvtt.core.Actor
 import com.foundryvtt.pf2e.actor.PF2EAttribute
 import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actor.PF2ECreature
 
-fun PF2ECharacter.resolveAttribute(attribute: Attribute): PF2EAttribute? = when (attribute) {
+fun PF2ECreature.resolveAttribute(attribute: Attribute): PF2EAttribute? = when (attribute) {
     is Perception -> perception
     is Skill -> skills[attribute.toCamelCase()]!!
     is Lore -> skills[attribute.value] ?: skills[attribute.lorePrefixValue]

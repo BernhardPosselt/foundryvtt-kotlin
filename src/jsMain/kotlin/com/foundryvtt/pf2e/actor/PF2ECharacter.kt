@@ -103,14 +103,14 @@ external interface PF2ECharacterSystem {
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Actor.documentClasses.character")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-external class PF2ECharacter : PF2EActor {
+external class PF2ECharacter : PF2EActor, PF2ECreature {
     companion object : DocumentStatic<PF2ECharacter>
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<PF2ECharacter>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECharacter?>
 
     val abilities: Abilities
-    val skills: Record<String, PF2EAttribute>
+    override val skills: Record<String, PF2EAttribute>
     val system: PF2ECharacterSystem
 }
 

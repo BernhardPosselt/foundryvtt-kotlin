@@ -22,7 +22,7 @@ external interface ApplicationWindow {
     val controls: HTMLButtonElement
     val controlsDropdown: HTMLDivElement
     val onDrag: Function<Unit>
-    val onResize: Function<Unit>
+    var onResize: Function<Unit>
     val pointerStartPosition: ApplicationPosition
     val pointerMoveThrottle: Boolean
 }

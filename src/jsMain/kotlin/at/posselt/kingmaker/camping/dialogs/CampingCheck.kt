@@ -18,7 +18,7 @@ import at.posselt.kingmaker.utils.postDegreeOfSuccess
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
-import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actor.PF2ECreature
 import js.array.push
 import js.objects.Object
 import js.objects.recordOf
@@ -69,13 +69,14 @@ private suspend fun askSkill(
     }
 }
 
-fun PF2ECharacter.satisfiesSkillRequirement(
-    skill: String,
-    skillRequirements: Array<SkillRequirement>
+private fun satisfiesSkillRequirement(
+    actor: PF2ECreature,
+    selectedSkill: String,
+    skillRequirements: Array<SkillRequirement>,
 ): Boolean {
-    val requirements = skillRequirements
-        .find { it.skill == skill }
-    val rank = skills[skill]?.rank ?: 0
+    val requirements = skillRequirements.find { it.skill == selectedSkill }
+    val attribute = Attribute.fromString(selectedSkill)
+    val rank = actor.resolveAttribute(attribute)?.rank ?: 0
     return if (requirements == null) {
         true
     } else {
@@ -85,12 +86,31 @@ fun PF2ECharacter.satisfiesSkillRequirement(
     }
 }
 
+fun PF2ECreature.findCampingActivitySkills(
+    activity: CampingActivityData,
+    disableSkillRequirements: Boolean,
+): List<String> {
+    val activitySkills = activity.skills
+    val availableSkills = if (activitySkills == "any") {
+        Object.keys(skills)
+    } else {
+        @Suppress("UNCHECKED_CAST")
+        activitySkills as Array<String>
+    }
+    return availableSkills.filter {
+        if (disableSkillRequirements) {
+            true
+        } else {
+            satisfiesSkillRequirement(this, it, activity.skillRequirements)
+        }
+    }
+}
+
 /**
  * @throws Error if a popup asking for a skill or dc is closed
  */
-suspend fun campingActivityCheck(
+suspend fun PF2ECreature.campingActivityCheck(
     game: Game,
-    actor: PF2ECharacter,
     zone: Zone,
     activity: CampingActivityData,
     disableSkillRequirements: Boolean,
@@ -99,34 +119,20 @@ suspend fun campingActivityCheck(
     val extraRollOptions = arrayOf("action:${activityName.slugify()}")
     val dc = when (val activityDc = activity.dc) {
         "zone" -> zone.zoneDc
-        "actorLevel" -> getLevelBasedDC(actor.level)
+        "actorLevel" -> getLevelBasedDC(level)
         null -> askDc(activityName)
         is String -> activityDc.toInt()
         else -> activityDc as Int
     }
-    val activitySkills = activity.skills
-    val availableSkills = if (activitySkills == "any") {
-        Object.keys(actor.skills)
+    val validSkills = findCampingActivitySkills(activity, disableSkillRequirements)
+    val skill = if (validSkills.size > 1) {
+        askSkill(activityName, validSkills)
     } else {
-        @Suppress("UNCHECKED_CAST")
-        activitySkills as Array<String>
-    }
-    val skills = availableSkills.filter {
-        if (disableSkillRequirements) {
-            true
-        } else {
-            actor.satisfiesSkillRequirement(it, activity.skillRequirements)
-        }
-    }
-    val skill = if (skills.size > 1) {
-        askSkill(activityName, skills)
-    } else {
-        skills.firstOrNull()
+        validSkills.firstOrNull()
     }
     return skill?.let {
         val result = performCampingCheck(
             game = game,
-            actor = actor,
             attribute = Attribute.fromString(it),
             isSecret = activity.isSecret,
             extraRollOptions = extraRollOptions,
@@ -149,9 +155,8 @@ suspend fun campingActivityCheck(
 }
 
 
-private suspend fun performCampingCheck(
+private suspend fun PF2ECreature.performCampingCheck(
     game: Game,
-    actor: PF2ECharacter,
     attribute: Attribute,
     isSecret: Boolean = false,
     isWatch: Boolean = false,
@@ -166,7 +171,7 @@ private suspend fun performCampingCheck(
     if (isWatch) {
         data.extraRollOptions?.push("watch")
     }
-    return actor.resolveAttribute(attribute)
+    return resolveAttribute(attribute)
         ?.roll(data)
         ?.await()
         ?.let { fromOrdinal<DegreeOfSuccess>(it.degreeOfSuccess) }

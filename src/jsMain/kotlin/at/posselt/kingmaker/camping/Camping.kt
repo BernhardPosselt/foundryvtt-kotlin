@@ -61,11 +61,19 @@ fun Game.getCurrentRegionName() =
         ?.currentRegion
 
 
-fun CampingData.getAllActivities(): Array<CampingActivityData> =
-    campingActivityData + homebrewCampingActivities
+fun CampingData.getAllActivities(): Array<CampingActivityData> {
+    val homebrewNames = homebrewCampingActivities.map { it.name }.toSet()
+    return campingActivityData
+        .filter { it.name !in homebrewNames }
+        .toTypedArray() + homebrewCampingActivities
+}
 
-fun CampingData.getAllRecipes(): Array<RecipeData> =
-    recipes + cooking.homebrewMeals
+fun CampingData.getAllRecipes(): Array<RecipeData> {
+    val homebrewNames = cooking.homebrewMeals.map { it.name }.toSet()
+    return recipes
+        .filter { it.name !in homebrewNames }
+        .toTypedArray() + cooking.homebrewMeals
+}
 
 suspend fun Game.getRegions(): List<RegionSetting> {
     val regionSettings = settings.kingmakerTools.getRegionSettings()

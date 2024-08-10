@@ -4,6 +4,7 @@ import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
+import at.posselt.kingmaker.camping.dialogs.findCampingActivitySkills
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
@@ -11,6 +12,7 @@ import com.foundryvtt.core.documents.onDeleteItem
 import com.foundryvtt.core.documents.onUpdateItem
 import com.foundryvtt.core.game
 import com.foundryvtt.core.onUpdateWorldTime
+import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actor.*
 import js.array.push
 import js.core.Void
@@ -21,6 +23,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
+import kotlin.reflect.KClass
 
 @JsPlainObject
 external interface CampingSheetActor {
@@ -111,7 +114,6 @@ class CampingSheet(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
     width = 970,
-    resizable = true,
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players"),
@@ -128,6 +130,10 @@ class CampingSheet(
         PF2EVehicle::class,
         PF2ELoot::class,
     )
+    private val allowedActivityActorTypes: Array<KClass<out PF2EActor>> = arrayOf(
+        PF2ENpc::class,
+        PF2ECharacter::class,
+    )
 
     init {
         actor.apps[id] = this
@@ -142,9 +148,20 @@ class CampingSheet(
         onDocumentRefDrop(
             ".km-camping-activity",
             { it.dragstartSelector == ".km-camping-actor" || it.type == "Item" }
-        ) { _, documentRef ->
-            if (documentRef is ActorRef) {
-                console.log(documentRef)
+        ) { event, documentRef ->
+            val target = event.target as HTMLElement
+            val tile = target.closest(".km-camping-activity") as HTMLElement?
+            val actorUuid = tile?.dataset?.get("actorUuid")
+            val activityName = tile?.dataset?.get("activityName")
+            buildPromise {
+                if (documentRef is ActorRef && activityName != null) {
+                    assignActivityTo(documentRef.uuid, activityName)
+                } else if (actorUuid != null && activityName != null) {
+                    if (documentRef is ConsumableItemRef) {
+                        val actor = tile
+                        // TODO
+                    }
+                }
             }
         }
         appHook.onUpdateWorldTime { _, _, _, _ -> render() }
@@ -200,21 +217,50 @@ class CampingSheet(
         }
     }
 
+
+    private suspend fun assignActivityTo(actorUuid: String, activityName: String) {
+        actor.getCamping()?.let { camping ->
+            val activity = camping.getAllActivities().find { it.name == activityName }
+
+            @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+            val activityActor = fromUuidOfTypes(actorUuid, *allowedActivityActorTypes) as PF2ECreature?
+            if (activityActor == null) {
+                ui.notifications.error("Only NPCs and Characters can perform camping activities")
+            } else if (activity == null) {
+                ui.notifications.error("Activity with name $activityName not found")
+            } else if (activityActor.findCampingActivitySkills(activity, camping.ignoreSkillRequirements).isEmpty()) {
+                ui.notifications.error("Actor does not satisfy skill requirements to perform $activityName")
+            } else {
+                camping.campingActivities =
+                    camping.campingActivities.filter { it.activity != activityName }.toTypedArray()
+                camping.campingActivities.push(
+                    CampingActivity(
+                        activity = activityName,
+                        actorUuid = actorUuid,
+                    )
+                )
+                actor.setCamping(camping)
+            }
+        }
+    }
+
     private suspend fun addActor(uuid: String) {
         actor.getCamping()?.let { camping ->
             if (uuid !in camping.actorUuids) {
-                fromUuidOfTypes(uuid, *allowedActorTypes)
-                    ?.let {
-                        camping.actorUuids.push(uuid)
-                        camping.cooking.actorMeals.push(
-                            ActorMeal(
-                                actorUuid = uuid,
-                                favoriteMeal = null,
-                                chosenMeal = "meal",
-                            )
+                val campingActor = fromUuidOfTypes(uuid, *allowedActorTypes)
+                if (campingActor == null) {
+                    ui.notifications.error("Only NPCs, Characters, Loot and Vehicles can be added to the camping sheet")
+                } else {
+                    camping.actorUuids.push(uuid)
+                    camping.cooking.actorMeals.push(
+                        ActorMeal(
+                            actorUuid = uuid,
+                            favoriteMeal = null,
+                            chosenMeal = "meal",
                         )
-                        actor.setCamping(camping)
-                    }
+                    )
+                    actor.setCamping(camping)
+                }
             }
         }
     }
@@ -277,6 +323,7 @@ class CampingSheet(
         context: CampingSheetContext,
         options: HandlebarsRenderOptions
     ): Promise<CampingSheetContext> = buildPromise {
+
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
