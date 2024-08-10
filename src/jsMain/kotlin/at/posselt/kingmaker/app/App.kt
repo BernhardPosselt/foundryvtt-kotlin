@@ -134,7 +134,13 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
                                     "consumable" -> ConsumableItemRef(it.uuid)
                                     "effect" -> EffectItemRef(it.uuid)
                                     "equipment" -> EquipmentItemRef(it.uuid)
-                                    else -> null
+                                    "affliction" -> AfflictionItemRef(it.uuid)
+                                    "weapon" -> WeaponItemRef(it.uuid)
+                                    "armor" -> ArmorItemRef(it.uuid)
+                                    "shield" -> ShieldItemRef(it.uuid)
+                                    "treasure" -> TreasureItemRef(it.uuid)
+                                    "backpack" -> BackpackItemRef(it.uuid)
+                                    else -> ItemRef(it.uuid)
                                 }
 
                                 "JournalEntry" -> JournalEntryRef(it.uuid)

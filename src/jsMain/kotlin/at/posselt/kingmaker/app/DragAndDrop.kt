@@ -4,8 +4,10 @@ import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.Document
 import com.foundryvtt.core.documents.JournalEntry
+import com.foundryvtt.core.fromUuid
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.item.*
+import kotlinx.coroutines.await
 
 
 sealed interface DocumentRef<T : Document> {
@@ -68,4 +70,32 @@ data class EffectItemRef(val uuid: String) : DocumentRef<PF2EEffect> {
 
 data class EquipmentItemRef(val uuid: String) : DocumentRef<PF2EEquipment> {
     override suspend fun getDocument() = fromUuidTypeSafe<PF2EEquipment>(uuid)!!
+}
+
+data class AfflictionItemRef(val uuid: String) : DocumentRef<PF2EAffliction> {
+    override suspend fun getDocument() = fromUuidTypeSafe<PF2EAffliction>(uuid)!!
+}
+
+data class WeaponItemRef(val uuid: String) : DocumentRef<PF2EWeapon> {
+    override suspend fun getDocument() = fromUuidTypeSafe<PF2EWeapon>(uuid)!!
+}
+
+data class ArmorItemRef(val uuid: String) : DocumentRef<PF2EArmor> {
+    override suspend fun getDocument() = fromUuidTypeSafe<PF2EArmor>(uuid)!!
+}
+
+data class ShieldItemRef(val uuid: String) : DocumentRef<PF2EShield> {
+    override suspend fun getDocument() = fromUuidTypeSafe<PF2EShield>(uuid)!!
+}
+
+data class TreasureItemRef(val uuid: String) : DocumentRef<PF2ETreasure> {
+    override suspend fun getDocument() = fromUuidTypeSafe<PF2ETreasure>(uuid)!!
+}
+
+data class BackpackItemRef(val uuid: String) : DocumentRef<PF2EBackpack> {
+    override suspend fun getDocument() = fromUuidTypeSafe<PF2EBackpack>(uuid)!!
+}
+
+data class ItemRef(val uuid: String) : DocumentRef<dynamic> {
+    override suspend fun getDocument() = fromUuid(uuid).await()
 }

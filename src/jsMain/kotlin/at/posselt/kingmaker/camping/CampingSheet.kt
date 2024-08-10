@@ -14,6 +14,7 @@ import com.foundryvtt.core.game
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actor.*
+import com.foundryvtt.pf2e.item.*
 import js.array.push
 import js.core.Void
 import js.objects.recordOf
@@ -134,6 +135,20 @@ class CampingSheet(
         PF2ENpc::class,
         PF2ECharacter::class,
     )
+    private val allowedDnDItems = arrayOf(
+        PF2EAction::class,
+        PF2ECampaignFeature::class,
+        PF2ECondition::class,
+        PF2EConsumable::class,
+        PF2EEffect::class,
+        PF2EEquipment::class,
+        PF2EAffliction::class,
+        PF2EWeapon::class,
+        PF2EArmor::class,
+        PF2EShield::class,
+        PF2ETreasure::class,
+        PF2EBackpack::class,
+    )
 
     init {
         actor.apps[id] = this
@@ -146,20 +161,37 @@ class CampingSheet(
             }
         }
         onDocumentRefDrop(
+            ".km-camping-actor",
+            { it.type == "Item" }
+        ) { event, documentRef ->
+            buildPromise {
+                val target = event.target as HTMLElement
+                val tile = target.closest(".km-camping-actor") as HTMLElement?
+                val actor = tile?.dataset?.get("uuid")
+                    ?.let { fromUuidTypeSafe<PF2EActor>(it) }
+                buildPromise {
+                    if (actor != null) {
+                        addItemToActor(documentRef, actor)
+                    }
+                }
+            }
+        }
+
+        onDocumentRefDrop(
             ".km-camping-activity",
             { it.dragstartSelector == ".km-camping-actor" || it.type == "Item" }
         ) { event, documentRef ->
-            val target = event.target as HTMLElement
-            val tile = target.closest(".km-camping-activity") as HTMLElement?
-            val actorUuid = tile?.dataset?.get("actorUuid")
-            val activityName = tile?.dataset?.get("activityName")
             buildPromise {
-                if (documentRef is ActorRef && activityName != null) {
-                    assignActivityTo(documentRef.uuid, activityName)
-                } else if (actorUuid != null && activityName != null) {
-                    if (documentRef is ConsumableItemRef) {
-                        val actor = tile
-                        // TODO
+                val target = event.target as HTMLElement
+                val tile = target.closest(".km-camping-activity") as HTMLElement?
+                val actor = tile?.dataset?.get("actorUuid")
+                    ?.let { fromUuidTypeSafe<PF2EActor>(it) }
+                val activityName = tile?.dataset?.get("activityName")
+                buildPromise {
+                    if (documentRef is ActorRef && activityName != null) {
+                        assignActivityTo(documentRef.uuid, activityName)
+                    } else if (actor != null && activityName != null) {
+                        addItemToActor(documentRef, actor)
                     }
                 }
             }
@@ -262,6 +294,15 @@ class CampingSheet(
                     actor.setCamping(camping)
                 }
             }
+        }
+    }
+
+    private suspend fun addItemToActor(documentRef: DocumentRef<*>, actor: PF2EActor) {
+        val document = documentRef.getDocument()
+        if (allowedDnDItems.any { it.isInstance(document) }) {
+            actor.addToInventory(document.toObject())
+        } else {
+            ui.notifications.error("Unsupported Item dragged onto camping actors")
         }
     }
 
