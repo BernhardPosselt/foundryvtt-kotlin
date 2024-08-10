@@ -246,6 +246,14 @@ class CampingSheet(
                     target.dataset["uuid"]?.let { openActor(it) }
                 }
             }
+
+            "increase-encounter-dc" -> buildPromise {
+                target.dataset["value"]?.toInt()?.let { changeEncounterDcModifier(it) }
+            }
+
+            "reset-encounter-dc" -> buildPromise {
+                changeEncounterDcModifier(null)
+            }
         }
     }
 
@@ -273,6 +281,17 @@ class CampingSheet(
                 )
                 actor.setCamping(camping)
             }
+        }
+    }
+
+    private suspend fun changeEncounterDcModifier(modifier: Int?) {
+        actor.getCamping()?.let { camping ->
+            if (modifier == null) {
+                camping.encounterModifier = 0
+            } else {
+                camping.encounterModifier += modifier
+            }
+            actor.setCamping(camping)
         }
     }
 
