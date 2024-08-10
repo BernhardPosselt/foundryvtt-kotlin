@@ -77,7 +77,9 @@ external interface CampingSheetContext {
 }
 
 @JsPlainObject
-external interface CampingSheetFormData
+external interface CampingSheetFormData {
+    val region: String
+}
 
 
 private fun isNightMode(
@@ -118,8 +120,8 @@ class CampingSheet(
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players"),
-        MenuControl(label = "Activities", action = "activities"),  // TODO
-        MenuControl(label = "Recipes", action = "recipes"),  // TODO
+        MenuControl(label = "Activities", action = "configure-activities"),  // TODO
+        MenuControl(label = "Recipes", action = "configure-recipes"),  // TODO
         MenuControl(label = "Settings", action = "settings"),  // TODO
         MenuControl(label = "Help", action = "help"),
     ),
@@ -204,9 +206,17 @@ class CampingSheet(
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
+            "configure-recipes" -> console.log("recipes")
+            "configure-activities" -> console.log("activities")
+            "settings" -> console.log("settings")
+            "rest" -> console.log("resting")
+            "roll-camping-check" -> console.log("rolling camping check")
+            "next-section" -> console.log("next section")
+            "previous-section" -> console.log("previous section")
+            "check-encounter" -> console.log("check encounter")
+            "roll-encounter" -> console.log("roll encounter")
             "advance-hour" -> advanceHours(target)
             "advance-hexploration" -> advanceHexplorationActivities(target)
-            "rest" -> console.log("resting!!!")
             "clear-actor" -> {
                 buildPromise {
                     target.dataset["uuid"]?.let { clearActor(it) }
@@ -363,9 +373,9 @@ class CampingSheet(
         ((8 * 3600).toDouble() / getHexplorationActivities()).toInt()
 
     private fun getHexplorationActivities(): Double {
-        // TODO: add a setting to override activities gained
-        val speed = game.party()?.system?.attributes?.speed?.total ?: 25
-        return calculateHexplorationActivities(speed)
+        val travelSpeed = game.party()?.system?.attributes?.speed?.total ?: 25
+        val override = actor.getCamping()?.increaseTravelSpeedByFeet ?: 0
+        return calculateHexplorationActivities(travelSpeed + override)
     }
 
     private fun getHexplorationActivitiesDuration(): String =
@@ -472,7 +482,12 @@ class CampingSheet(
         )
     }
 
-    override fun onParsedSubmit(value: CampingSheetFormData): Promise<Void> {
-        TODO("Not yet implemented")
+    override fun onParsedSubmit(value: CampingSheetFormData): Promise<Void> = buildPromise {
+        console.log(value)
+        actor.getCamping()?.let { camping ->
+            camping.currentRegion = value.region
+            actor.setCamping(camping)
+        }
+        undefined
     }
 }
