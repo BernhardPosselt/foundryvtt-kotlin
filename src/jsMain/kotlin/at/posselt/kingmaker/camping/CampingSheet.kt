@@ -5,15 +5,16 @@ import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.utils.*
-import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
 import com.foundryvtt.core.documents.onDeleteItem
 import com.foundryvtt.core.documents.onUpdateItem
+import com.foundryvtt.core.game
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.pf2e.actor.*
 import js.array.push
 import js.core.Void
+import js.objects.recordOf
 import kotlinx.datetime.*
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -106,7 +107,6 @@ private fun calculateNightModes(time: LocalTime): NightModes {
 @JsExport
 class CampingSheet(
     private val actor: PF2ENpc,
-    private val game: Game,
 ) : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
@@ -115,9 +115,9 @@ class CampingSheet(
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players"),
-        MenuControl(label = "Activities", action = "activities"),
-        MenuControl(label = "Recipes", action = "recipes"),
-        MenuControl(label = "Settings", action = "settings"),
+        MenuControl(label = "Activities", action = "activities"),  // TODO
+        MenuControl(label = "Recipes", action = "recipes"),  // TODO
+        MenuControl(label = "Settings", action = "settings"),  // TODO
         MenuControl(label = "Help", action = "help"),
     ),
     scrollable = arrayOf("#km-camping-content", ".km-camping-actors")
@@ -170,12 +170,24 @@ class CampingSheet(
                 }
             }
 
+            "show-players" -> buildPromise {
+                game.socket.emitKingmakerTools(
+                    recordOf(
+                        "action" to "openCampingSheet"
+                    )
+                )
+            }
+
             "open-journal" -> {
                 event.preventDefault()
                 event.stopPropagation()
                 buildPromise {
                     target.dataset["uuid"]?.let { openJournal(it) }
                 }
+            }
+
+            "help" -> buildPromise {
+                openJournal("Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.iAQCUYEAq4Dy8uCY.JournalEntryPage.7z4cDr3FMuSy22t1")
             }
 
             "open-actor" -> {

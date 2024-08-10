@@ -14,6 +14,8 @@ const foundry = {
                 }
             },
             ApplicationV2: class {
+            },
+            DocumentSheetV2: class {
             }
         }
     }

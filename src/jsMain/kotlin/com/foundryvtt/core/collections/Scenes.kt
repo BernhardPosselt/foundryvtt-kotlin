@@ -4,7 +4,7 @@ import com.foundryvtt.core.documents.Scene
 import kotlin.js.Promise
 
 external class Scenes : WorldCollection<Scene> {
-    companion object : WorldCollectionStatic
+    companion object : WorldCollectionStatic<Scene>
 
     val active: Scene?
     val current: Scene?

@@ -24,7 +24,7 @@ external interface HandlebarsFormApplicationOptions : ApplicationConfiguration {
 @JsName("HandlebarsFormApplication(foundry.applications.api.ApplicationV2)")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
 open external class HandlebarsFormApplication<T>(
-    options: HandlebarsFormApplicationOptions
+    options: HandlebarsFormApplicationOptions,
 ) : ApplicationV2 {
     protected open fun _preparePartContext(
         partId: String,

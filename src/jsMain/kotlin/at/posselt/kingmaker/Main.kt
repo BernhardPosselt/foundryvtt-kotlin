@@ -1,9 +1,7 @@
 package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
-import at.posselt.kingmaker.app.launch
 import at.posselt.kingmaker.camping.CampingSheet
-import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
@@ -12,8 +10,6 @@ import at.posselt.kingmaker.utils.*
 import at.posselt.kingmaker.weather.registerWeatherHooks
 import at.posselt.kingmaker.weather.rollWeather
 import com.foundryvtt.core.*
-import com.foundryvtt.pf2e.actor.onRenderPF2ENpcSheet
-import kotlinx.coroutines.await
 
 fun main() {
     Hooks.onInit {
@@ -30,12 +26,30 @@ fun main() {
         }
         registerWeatherHooks(game)
         registerCombatTrackHooks(game)
+//        Actors.registerSheet(
+//            Config.moduleId, CampingSheet::class.js, RegisterSheetConfig(
+//                label = "Camping Sheet",
+//                types = arrayOf("npc"),
+//            )
+//        )
 
-        Hooks.onRenderPF2ENpcSheet { application, html, data ->
+        // camping
+//        Hooks.onRenderPF2ENpcSheet { application, html, data ->
+//            buildPromise {
+//                if (data.document.getCamping() != null) {
+//                    CampingSheet(data.document, game).launch()
+//                    application.close().await()
+//                }
+//            }
+//        }
+        game.socket.onKingmakerTools { data ->
             buildPromise {
-                if (data.document.getCamping() != null) {
-                    CampingSheet(data.document, game).launch()
-                    application.close().await()
+                if (isJsObject(data)) {
+                    if (data["action"] == "openCampingSheet") {
+                        game.getCampingActor()
+                            ?.let { actor -> CampingSheet(actor) }
+                            ?.launch()
+                    }
                 }
             }
         }
@@ -79,7 +93,7 @@ fun main() {
     Hooks.onReady {
         buildPromise {
             game.getCampingActor()
-                ?.let { actor -> CampingSheet(actor, game) }
+                ?.let { actor -> CampingSheet(actor) }
                 ?.launch()
         }
     }

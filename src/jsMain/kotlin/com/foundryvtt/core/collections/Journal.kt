@@ -17,7 +17,7 @@ external interface ShowImageOptions {
 }
 
 external class Journal : WorldCollection<JournalEntry> {
-    companion object : WorldCollectionStatic {
+    companion object : WorldCollectionStatic<JournalEntry> {
         fun showDialog(document: JournalEntry): Promise<JournalEntry?>
         fun showDialog(document: JournalEntryPage): Promise<JournalEntryPage?>
         fun show(document: JournalEntry, options: JournalShowOptions = definedExternally): Promise<JournalEntry?>

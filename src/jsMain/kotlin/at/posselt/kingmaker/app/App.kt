@@ -5,7 +5,6 @@ import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.HooksEventListener
 import com.foundryvtt.core.applications.api.ApplicationRenderOptions
-import com.foundryvtt.core.applications.api.ApplicationV2
 import com.foundryvtt.pf2e.item.*
 import js.array.push
 import js.objects.recordOf
@@ -151,8 +150,4 @@ abstract class App<C>(config: HandlebarsFormApplicationOptions) : HandlebarsForm
             )
         )
     }
-}
-
-fun ApplicationV2.launch() {
-    render(ApplicationRenderOptions(force = true))
 }
