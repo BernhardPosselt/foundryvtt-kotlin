@@ -7,20 +7,17 @@
 
 ## Camping
 
-* Roll Random Encounter (random encounters have been moved into a different compendium)
-* Roll Random Encounter Flat Check
+* Roll random encounter button to chat on certain failed activities
 * Roll activity check
 * Sync camping effects
 * Prepare Camp
 * Implement navigation
 * Update docs
 * Remove JS
-* Implement changing regions
 * Homebrew: Activities & Recipes
 * Settings + Migration
 * Reset Button for activities & prepare camp
 * Design for eating
-* Figure out what to do when region name on camping data is not found
 * Design Skill dropdowns/degree of success
 * Add setting to increase Hexploration activities
 * Resting (playlist + check + removing fx + healing + macro)

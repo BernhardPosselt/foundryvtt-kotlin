@@ -23,10 +23,15 @@ suspend fun Game.rollWithCompendiumFallback(
         fallbackName = fallbackName,
         compendium = compendium,
     )
-    return table?.let {
-        val roll = it.draw(DrawOptions(rollMode = rollMode.toCamelCase(), displayChat = displayChat)).await()
-        TableAndDraw(it, roll)
-    }
+    return table?.rollWithDraw(rollMode = rollMode, displayChat = displayChat)
+}
+
+suspend fun RollTable.rollWithDraw(
+    rollMode: RollMode,
+    displayChat: Boolean? = true,
+): TableAndDraw {
+    val roll = draw(DrawOptions(rollMode = rollMode.toCamelCase(), displayChat = displayChat)).await()
+    return TableAndDraw(this, roll)
 }
 
 suspend fun Game.findRollTableWithCompendiumFallback(

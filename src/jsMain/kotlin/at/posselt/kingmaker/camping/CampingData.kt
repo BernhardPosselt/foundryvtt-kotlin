@@ -1,5 +1,7 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.data.checks.DegreeOfSuccess
+import at.posselt.kingmaker.fromCamelCase
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -50,3 +52,9 @@ external interface CampingData {
     var ignoreSkillRequirements: Boolean
     var increaseTravelSpeedByFeet: Int?
 }
+
+fun CampingActivity.parseResult() =
+    result?.let { fromCamelCase<DegreeOfSuccess>(it) }
+
+fun CampingActivity.checkPerformed() =
+    result != null && actorUuid != null

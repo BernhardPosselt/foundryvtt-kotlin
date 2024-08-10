@@ -81,8 +81,9 @@ suspend fun Game.getRegions(): List<RegionSetting> {
         stolenLandsZones
             .map {
                 buildPromise {
+                    val tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}"
                     val rolltableUuid = findRollTableWithCompendiumFallback(
-                        tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}",
+                        tableName = tableName,
                         fallbackName = it.name,
                     )?.uuid
                     val combatTrack = (playlists.getCombatOverrideTrack(it.combatTrackName)

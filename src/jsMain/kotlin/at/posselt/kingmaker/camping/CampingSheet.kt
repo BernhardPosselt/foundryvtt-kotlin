@@ -213,8 +213,8 @@ class CampingSheet(
             "roll-camping-check" -> console.log("rolling camping check")
             "next-section" -> console.log("next section")
             "previous-section" -> console.log("previous section")
-            "check-encounter" -> console.log("check encounter")
-            "roll-encounter" -> console.log("roll encounter")
+            "check-encounter" -> buildPromise { rollEncounter(includeFlatCheck = true) }
+            "roll-encounter" -> buildPromise { rollEncounter(includeFlatCheck = false) }
             "advance-hour" -> advanceHours(target)
             "advance-hexploration" -> advanceHexplorationActivities(target)
             "clear-actor" -> {
@@ -267,6 +267,21 @@ class CampingSheet(
 
             "reset-adventuring-for" -> buildPromise {
                 resetAdventuringTimeTracker()
+            }
+        }
+    }
+
+    private suspend fun rollEncounter(includeFlatCheck: Boolean) {
+        val currentRegion = game.findCurrentRegion() ?: game.getRegions().firstOrNull()
+        console.log(currentRegion)
+        currentRegion?.let { region ->
+            actor.getCamping()?.let { camping ->
+                rollRandomEncounter(
+                    camping = camping,
+                    includeFlatCheck = includeFlatCheck,
+                    region = region,
+                    isDay = game.getPF2EWorldTime().time.isDay(),
+                )
             }
         }
     }
@@ -411,25 +426,24 @@ class CampingSheet(
 
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
-        val selectedActivitiesByName = camping.campingActivities.associateBy { it.activity }
-        val activities = camping.getAllActivities().map {
-            val selectedActivity = selectedActivitiesByName[it.name]
-            val actor = selectedActivity?.actorUuid?.let { actorsByUuid[it] }
-            CampingSheetActivity(
-                journalUuid = it.journalUuid,
-                name = it.name,
-                degreeOfSuccess = selectedActivity?.result,
-                locked = camping.lockedActivities.contains(it.name),
-                actor = actor?.let { act ->
-                    CampingSheetActor(
-                        name = act.name,
-                        uuid = act.uuid,
-                        image = act.img,
-                        choseActivity = true,
-                    )
-                },
-            )
-        }.toTypedArray()
+        val activities = camping.groupActivities()
+            .map { (data, result) ->
+                val actor = result.actorUuid?.let { actorsByUuid[it] }
+                CampingSheetActivity(
+                    journalUuid = data.journalUuid,
+                    name = data.name,
+                    degreeOfSuccess = result.result,
+                    locked = camping.lockedActivities.contains(data.name),
+                    actor = actor?.let { act ->
+                        CampingSheetActor(
+                            name = act.name,
+                            uuid = act.uuid,
+                            image = act.img,
+                            choseActivity = true,
+                        )
+                    },
+                )
+            }.toTypedArray()
         val fullRestDuration = getFullRestDuration(
             watchers = actorsByUuid.values.filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) },
             recipes = camping.getAllRecipes().toList(),

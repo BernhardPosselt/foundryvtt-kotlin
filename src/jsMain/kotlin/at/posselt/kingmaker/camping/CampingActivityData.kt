@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import kotlinx.js.JsPlainObject
 
 
@@ -47,6 +48,41 @@ external interface CampingActivityData {
     val failure: ActivityOutcome?
     val criticalFailure: ActivityOutcome?
 }
+
+fun CampingActivityData.getOutcome(degreeOfSuccess: DegreeOfSuccess) =
+    when (degreeOfSuccess) {
+        DegreeOfSuccess.CRITICAL_FAILURE -> criticalFailure
+        DegreeOfSuccess.FAILURE -> failure
+        DegreeOfSuccess.SUCCESS -> success
+        DegreeOfSuccess.CRITICAL_SUCCESS -> criticalSuccess
+    }
+
+fun ModifyEncounterDc.atTime(isDay: Boolean) =
+    if (isDay) {
+        day
+    } else {
+        night
+    }
+
+data class ActivityAndData(
+    val data: CampingActivityData,
+    val result: CampingActivity,
+)
+
+fun CampingData.groupActivities(): List<ActivityAndData> {
+    val activitiesByName = getAllActivities().associateBy { it.name }
+    return campingActivities.mapNotNull { activity ->
+        val data = activitiesByName[activity.activity]
+        if (data == null) {
+            null
+        } else {
+            ActivityAndData(data = data, result = activity)
+        }
+    }
+}
+
+fun CampingActivityData.doesNotRequireACheck(): Boolean =
+    !(skills == "any" || (skills as Array<*>).isNotEmpty())
 
 @JsModule("./data/camping-activities.json")
 external val campingActivityData: Array<CampingActivityData>
