@@ -1,6 +1,8 @@
 package com.foundryvtt.pf2e.actor
 
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.Hooks
+import com.foundryvtt.core.RenderApplication
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import js.objects.jso
@@ -26,3 +28,11 @@ external class PF2ENpc : PF2EActor {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun PF2ENpc.update(data: PF2ENpc, operation: DatabaseUpdateOperation = jso()): Promise<PF2ENpc?> =
     update(data as AnyObject, operation)
+
+@JsPlainObject
+external interface PF2ENpcSheetData {
+    val document: PF2ENpc
+}
+
+fun <O> Hooks.onRenderPF2ENpcSheet(callback: RenderApplication<PF2ENpcSheetData, O>) =
+    on("renderNPCSheetPF2e", callback)

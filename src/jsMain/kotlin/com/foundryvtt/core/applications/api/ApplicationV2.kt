@@ -46,6 +46,7 @@ open external class ApplicationV2(
     protected open fun _initializeApplicationOptions(options: AnyObject): ApplicationConfiguration
     protected fun _getHeaderControls(): Array<ApplicationHeaderControlsEntry>
     fun render(options: ApplicationRenderOptions = definedExternally): Promise<ApplicationV2>
+    fun render(force: Boolean, options: ApplicationRenderOptions = definedExternally): Promise<ApplicationV2>
     protected open fun _configureRenderOptions(options: ApplicationRenderOptions)
     protected open fun _prepareContext(options: ApplicationRenderOptions): Promise<AnyObject>
     protected open fun _renderHtml(context: AnyObject, options: ApplicationRenderOptions): Promise<Any?>

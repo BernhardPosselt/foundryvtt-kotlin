@@ -1,6 +1,5 @@
 package at.posselt.kingmaker.actor
 
-import at.posselt.kingmaker.app.launch
 import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.actor.Lore
 import at.posselt.kingmaker.data.actor.Perception
@@ -23,5 +22,5 @@ fun PF2ECharacter.runsExplorationActivity(name: String) =
 suspend fun openActor(uuid: String) {
     fromUuidTypeSafe<Actor>(uuid)
         ?.sheet
-        ?.launch()
+        ?.render(true)
 }

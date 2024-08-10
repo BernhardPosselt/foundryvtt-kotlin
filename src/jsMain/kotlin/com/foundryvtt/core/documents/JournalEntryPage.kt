@@ -72,6 +72,7 @@ external class JournalEntryPage(
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<JournalEntryPage?>
 
     val toc: Record<String, JournalEntryPageHeading>
+    override val parent: JournalEntry?
 
     var _id: String
     var name: String

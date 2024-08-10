@@ -6,6 +6,7 @@ import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.applications.api.ApplicationV2
 import com.foundryvtt.core.applications.api.ContextMenuEntry
 import com.foundryvtt.core.documents.TokenDocument
+import io.kvision.jquery.JQuery
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -60,17 +61,16 @@ typealias DeleteDocumentCallback<T, O> = (
     userId: String
 ) -> O
 
-typealias RenderApplication<O> = (
+typealias RenderApplication<D, O> = (
     application: ApplicationV2,
-    html: Any, // jQuery
-    data: AnyObject,
+    html: JQuery,
+    data: D,
 ) -> O
 
 typealias ApplicationEntryContext<O> = (
     application: ApplicationV2,
     entryOptions: Array<ContextMenuEntry>
 ) -> O
-
 
 fun <O> HooksEventListener.onReady(callback: (Any) -> O) =
     on("ready", callback)
@@ -84,7 +84,7 @@ fun <O> HooksEventListener.onUpdateWorldTime(callback: (worldTime: Int, deltaInS
 fun <O> HooksEventListener.onCanvasReady(callback: (Canvas) -> O) =
     on("canvasReady", callback)
 
-fun <O> HooksEventListener.onRenderChatLog(callback: RenderApplication<O>) =
+fun <O> HooksEventListener.onRenderChatLog(callback: RenderApplication<O, AnyObject>) =
     on("renderChatLog", callback)
 
 fun <O> HooksEventListener.onGetChatLogEntryContext(callback: ApplicationEntryContext<O>) =

@@ -12,6 +12,6 @@ abstract external class DataModel(
     open fun toObject(source: Boolean = definedExternally): AnyObject
     open fun toJSON(): AnyObject
     open fun reset()
-    val parent: DataModel?
+    open val parent: DataModel?
     val _source: AnyObject
 }

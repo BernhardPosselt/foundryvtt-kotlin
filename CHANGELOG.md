@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+
+
 ### Changed
 
 * Migrations are not run anymore on fresh worlds. This causes versions prior to 0.2.23 (released in July 2023) not run important migrations anymore. If you've upgraded from such a version, run: 
