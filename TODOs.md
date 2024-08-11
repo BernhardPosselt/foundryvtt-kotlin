@@ -1,5 +1,8 @@
 # TODO
 
+* Enable and test migration 10
+* Migrate structure image conversion macro
+
 ## Influence System
 * Check what can be shipped under the OGL
 * Ship Influence Statblocks

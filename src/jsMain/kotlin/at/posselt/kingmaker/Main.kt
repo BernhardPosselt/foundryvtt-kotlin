@@ -12,6 +12,7 @@ import at.posselt.kingmaker.utils.*
 import at.posselt.kingmaker.weather.registerWeatherHooks
 import at.posselt.kingmaker.weather.rollWeather
 import com.foundryvtt.core.*
+import js.objects.recordOf
 
 fun main() {
     Hooks.onInit {
@@ -25,17 +26,30 @@ fun main() {
                 )
             )
             game.settings.kingmakerTools.register()
-        }
-        registerWeatherHooks(game)
-        registerCombatTrackHooks(game)
 
-        game.socket.onKingmakerTools { data ->
-            buildPromise {
-                if (isJsObject(data)) {
-                    if (data["action"] == "openCampingSheet") {
-                        game.getCampingActor()
-                            ?.let { actor -> CampingSheet(actor) }
-                            ?.launch()
+            // load custom token mappings if kingmaker module isn't installed
+            if (game.modules.get("pf2e-kingmaker")?.active != true) {
+                val data = recordOf(
+                    "flags" to recordOf(
+                        "pf2e-kingmaker-tools" to recordOf(
+                            "pf2e-art" to "modules/pf2e-kingmaker-tools/token-map.json"
+                        )
+                    )
+                )
+                game.modules.get("pf2e-kingmaker-tools")
+                    ?.updateSource(data)
+            }
+            registerWeatherHooks(game)
+            registerCombatTrackHooks(game)
+
+            game.socket.onKingmakerTools { data ->
+                buildPromise {
+                    if (isJsObject(data)) {
+                        if (data["action"] == "openCampingSheet") {
+                            game.getCampingActor()
+                                ?.let { actor -> CampingSheet(actor) }
+                                ?.launch()
+                        }
                     }
                 }
             }

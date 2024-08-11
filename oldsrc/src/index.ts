@@ -205,6 +205,7 @@ Hooks.on('ready', async () => {
 
 Hooks.on('init', async () => {
     await loadTemplates([
+        "modules/pf2e-kingmaker-tools/templates/common/skills.partial.hbs",
         'modules/pf2e-kingmaker-tools/templates/kingdom/structure-browser-item.hbs',
         'modules/pf2e-kingmaker-tools/templates/kingdom/sidebar.hbs',
         'modules/pf2e-kingmaker-tools/templates/kingdom/status.hbs',
@@ -217,13 +218,6 @@ Hooks.on('init', async () => {
         'modules/pf2e-kingmaker-tools/templates/kingdom/settlement.hbs',
         'modules/pf2e-kingmaker-tools/templates/kingdom/effects.hbs',
     ]);
-    // load custom token mappings if kingmaker module isn't installed
-    if (game instanceof Game) {
-        if (!game.modules.get('pf2e-kingmaker')?.active) {
-            game.modules.get('pf2e-kingmaker-tools')
-                ?.updateSource({flags: {'pf2e-kingmaker-tools': {'pf2e-art': 'modules/pf2e-kingmaker-tools/token-map.json'}}});
-        }
-    }
 });
 
 Hooks.on('renderChatLog', () => {

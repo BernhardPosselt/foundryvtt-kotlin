@@ -3,14 +3,6 @@ import {decode, encode} from 'js-base64';
 import {RollMode} from './settings';
 import {isArmyTactic} from './armies/utils';
 
-export function addOf(name: string): string {
-    if (name.endsWith('s')) {
-        return name + '\'';
-    } else {
-        return name + '\'s';
-    }
-}
-
 export function escapeHtml(html: string): string {
     const text = document.createTextNode(html);
     const p = document.createElement('p');
@@ -115,10 +107,6 @@ export function capitalize(word: string): string {
     return word[0].toUpperCase() + word.substring(1);
 }
 
-export function uncapitalize(word: string): string {
-    return word[0].toLowerCase() + word.substring(1);
-}
-
 export function unpackFormArray<T>(obj: Record<string, T> | undefined | null): T[] {
     if (obj) {
         return Object.keys(obj)
@@ -139,9 +127,6 @@ export async function postChatMessage(message: string, rollMode?: RollMode): Pro
     await ChatMessage.create(msgData);
 }
 
-export function isSlug(word: string): boolean {
-    return /^([a-zA-Z0-9]+)(-[a-zA-Z0-9]+)*$/.test(word);
-}
 
 export function slugify(word: string): string {
     return word
@@ -220,13 +205,6 @@ export function groupBy<T, R>(array: T[], criterion: (value: T) => R): Map<R, T[
     return result;
 }
 
-export function groupBySingle<T, R>(array: T[], criterion: (value: T) => R): Map<R, T> {
-    return new Map(
-        array.map(elem => [criterion(elem), elem]),
-    );
-}
-
-
 export function distinctBy<T, R>(array: T[], criterion: (value: T) => R): T[] {
     const existing = new Set();
     const result = [];
@@ -274,21 +252,6 @@ export function parseTextInput($html: HTMLElement, name: string): string {
     return input.value?.trim();
 }
 
-export function parseTextArea($html: HTMLElement, name: string): string {
-    const input = $html.querySelector(`textarea[name="${name}"]`) as HTMLTextAreaElement;
-    return input.value?.trim();
-}
-
-export function parseNumberSelect($html: HTMLElement, name: string): number {
-    const input = $html.querySelector(`select[name="${name}"]`) as HTMLSelectElement;
-    return parseInt(input.value, 10);
-}
-
-export function parseNullableSelect($html: HTMLElement, name: string): string | undefined {
-    const value = parseSelect($html, name);
-    return value === '-' ? undefined : value;
-}
-
 export function parseSelect($html: HTMLElement, name: string): string {
     const input = $html.querySelector(`select[name="${name}"]`) as HTMLSelectElement;
     return input.value;
@@ -306,12 +269,6 @@ export function parseCheckbox($html: HTMLElement, name: string): boolean {
 
 export function clamped(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
-}
-
-export function camelCase(value: string): string {
-    return uncapitalize(value.trim().split(' ')
-        .map(s => capitalize(s))
-        .join(''));
 }
 
 export function deCamelCase(value: string): string {
@@ -356,14 +313,6 @@ export function sum(values: number[]): number {
 
 export function isNonNullable<T>(value: T | undefined | null): value is T {
     return value !== undefined && value !== null;
-}
-
-export function isNullable<T>(value: T | undefined | null): boolean {
-    return !isNonNullable(value);
-}
-
-export function splitByWhitespace(text: string): string[] {
-    return text.split(/\s+/);
 }
 
 export function encodeJson(object: object): string {

@@ -29,10 +29,6 @@ declare global {
         };
     }
 
-    interface PartyActor {
-        members: Actor[];
-    }
-
     interface PF2EAction {
         use(options: { actors: Actor[] }): Promise<unknown>;
     }
@@ -47,12 +43,6 @@ declare global {
     }
 
     export type RollMode = 'publicroll' | 'gmroll' | 'blindroll' | 'selfroll';
-
-    interface RollOptions {
-        dc?: { value: number };
-        extraRollOptions?: string[];
-        rollMode?: RollMode;
-    }
 
     interface ActorSkill {
         rank: number;
@@ -169,17 +159,6 @@ declare global {
         };
     }
 
-    interface ConsumableItem {
-        system: {
-            uses: {
-                value: number;
-                max: number;
-            }
-            quantity: number;
-        };
-        quantity: number;
-    }
-
     interface Playlist {
         _source: {
             _id: string;
@@ -196,19 +175,11 @@ declare global {
         };
     }
 
-    interface Tile {
-        document: TileDocument;
-    }
-
     interface TileDocument {
         width: number;
         height: number;
         x: number;
         y: number;
-    }
-
-    interface Drawing {
-        document: DrawingDocument;
     }
 
     interface DrawingDocument {
@@ -224,13 +195,6 @@ declare global {
         weather: WeatherEffectName;
     }
 
-    namespace Game {
-        class ModuleData {
-            active: boolean;
-
-            async updateSource(data: object): Promise<void>;
-        }
-    }
     const kingmaker: Kingmaker;
 
     interface HexFeature {
@@ -254,12 +218,6 @@ declare global {
 
     interface Kingmaker extends ModuleData {
         state: KingmakerState;
-    }
-
-    interface Canvas {
-        tiles?: {
-            controlled: Tile[]
-        };
     }
 
     interface CampaignSystem {
