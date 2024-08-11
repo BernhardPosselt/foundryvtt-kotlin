@@ -11,7 +11,6 @@ import {getDiffListeners} from './camping/effect-syncing';
 import {getCamping, getCampingActor} from './camping/storage';
 import {addDiscoverSpecialMealResult, addHuntAndGatherResult} from './camping/eating';
 import {getActorByUuid} from './camping/actor';
-import {migrate} from './migrations';
 import {updateKingdomArmyConsumption} from './armies/utils';
 import {openJournal} from './foundry-utils';
 import {structureTokenMappingDialog} from './kingdom/dialogs/structure-token-mapping-dialog';
@@ -184,23 +183,6 @@ Hooks.on('ready', async () => {
             requiresReload: true,
             type: Boolean,
         } as any);
-        gameInstance.settings.register<string, string, number>('pf2e-kingmaker-tools', 'schemaVersion', {
-            name: 'Schema Version',
-            default: 1,
-            config: false,
-            type: Number,
-            scope: 'world',
-        });
-        gameInstance.settings.register<string, string, string>('pf2e-kingmaker-tools', 'latestMigrationBackup', {
-            name: 'Schema Version',
-            default: '',
-            config: false,
-            type: String,
-            scope: 'world',
-        });
-
-        // migrations
-        await migrate(game, getKingdomSheetActor(game), getCampingActor(game));
 
         // hooks
         // army consumption

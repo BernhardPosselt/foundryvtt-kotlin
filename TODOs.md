@@ -1,9 +1,26 @@
 # TODO
 
-* create migration that changes playlist names on scenes to playlist ids
+## Migrations
+* All enemies and scenes with combat tracks:
+  * read "name" property of actor and replace it with "playlistUuid"
+* All actors that reference the following need to have their img and token img changed:
+  * "Bridge, Stone"
+  * "Bridge"
+  * "Gladiatorial Arena"
+  * "Magical Streetlamps"
+  * "Paved Streets"
+  * "Printing House"
+  * "Sewer System"
+  * "Wall, Stone"
+  * "Wall, Wooden"
+* CampingData needs to move the following settings off to the following properties:
+  * proxyEncounterTable (a name) -> proxyRandomEncounterTableUuid (a uuid) 
+  * randomEncounterRollMode -> randomEncounterRollMode
 * set minimum migration level on first launch and warn when no migration is present
-* migrate buildings with extra images from static to img directory
+## Influence System
+* Check what can be shipped under the OGL
 * Ship Influence Statblocks
+* Link statblocks to journal entries and if they don't exist, ask to import it
 
 ## Camping
 

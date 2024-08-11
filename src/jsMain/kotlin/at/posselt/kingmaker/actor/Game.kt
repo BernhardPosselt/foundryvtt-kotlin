@@ -1,10 +1,7 @@
 package at.posselt.kingmaker.actor
 
 import com.foundryvtt.core.Game
-import com.foundryvtt.pf2e.actor.PF2EArmy
-import com.foundryvtt.pf2e.actor.PF2ECharacter
-import com.foundryvtt.pf2e.actor.PF2EFamiliar
-import com.foundryvtt.pf2e.actor.PF2EParty
+import com.foundryvtt.pf2e.actor.*
 import js.array.toTypedArray
 
 val Game.isKingmakerInstalled: Boolean
@@ -36,6 +33,12 @@ fun Game.playerCharacters(): Array<PF2ECharacter> =
         .asSequence()
         .filterIsInstance<PF2ECharacter>()
         .filter { it.hasPlayerOwner }
+        .toTypedArray()
+
+fun Game.npcs(): Array<PF2ENpc> =
+    actors.contents
+        .asSequence()
+        .filterIsInstance<PF2ENpc>()
         .toTypedArray()
 
 fun Game.playerFamiliars(): Array<PF2EFamiliar> =

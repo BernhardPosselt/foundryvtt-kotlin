@@ -3,6 +3,15 @@ package at.posselt.kingmaker.kingdom
 import kotlinx.js.JsPlainObject
 import kotlinx.serialization.json.JsonElement
 
+val recoverArmyIds = arrayOf(
+    "recover-army-damaged",
+    "recover-army-defeated",
+    "recover-army-lost",
+    "recover-army-mired-pinned",
+    "recover-army-shaken",
+    "recover-army-weary",
+)
+
 @JsPlainObject
 external interface RuinAmount {
     val value: Int

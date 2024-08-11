@@ -4,6 +4,7 @@ import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.deCamelCase
 import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.migrations.latestMigrationVersion
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.toMutableRecord
 import com.foundryvtt.core.*
@@ -140,6 +141,18 @@ val Settings.kingmakerTools: KingmakerToolsSettings
     get() = KingmakerToolsSettings
 
 object KingmakerToolsSettings {
+    suspend fun setLatestMigrationBackup(value: String) =
+        game.settings.setString("latestMigrationBackup", value)
+
+    fun getLatestMigrationBackup(): String =
+        game.settings.getString("latestMigrationBackup")
+
+    suspend fun setSchemaVersion(value: Int) =
+        game.settings.setInt("schemaVersion", value)
+
+    fun getSchemaVersion(): Int =
+        game.settings.getInt("schemaVersion")
+
     suspend fun setKingdomEventsTable(value: String) =
         game.settings.setString("kingdomEventsTable", value)
 
@@ -228,6 +241,7 @@ object KingmakerToolsSettings {
             "currentWeatherFx" to "none",
             "kingdomEventsTable" to "Random Kingdom Events",
             "kingdomCultTable" to "Random Cult Events",
+            "latestMigrationBackup" to "{}"
         )
     }
 
@@ -235,6 +249,12 @@ object KingmakerToolsSettings {
     fun register() {
         registerSimple(game.settings, nonUserVisibleSettings.strings, hidden = true)
         registerSimple(game.settings, nonUserVisibleSettings.booleans, hidden = true)
+        game.settings.registerInt(
+            key = "schemaVersion",
+            name = "Schema Version",
+            default = latestMigrationVersion,
+            hidden = true,
+        )
         game.settings.registerField(
             key = "regionSettings",
             name = "Region Settings",

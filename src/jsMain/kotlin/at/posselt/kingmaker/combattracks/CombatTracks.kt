@@ -10,24 +10,18 @@ import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.documents.*
 import com.foundryvtt.pf2e.actor.PF2EActor
 import kotlinx.coroutines.await
-import kotlinx.js.JsPlainObject
 
-@JsPlainObject
-external interface CombatTrackPlaylist {
-    val id: String
-}
-
-fun PF2EActor.getCombatTrack(): CombatTrackPlaylist? =
+fun PF2EActor.getCombatTrack(): CombatTrack? =
     getAppFlag("combat-track")
 
-suspend fun PF2EActor.setCombatTrack(track: CombatTrackPlaylist?) {
+suspend fun PF2EActor.setCombatTrack(track: CombatTrack?) {
     setAppFlag("combat-track", track)
 }
 
-fun Scene.getCombatTrack(): CombatTrackPlaylist? =
+fun Scene.getCombatTrack(): CombatTrack? =
     getAppFlag("combat-track")
 
-suspend fun Scene.setCombatTrack(track: CombatTrackPlaylist?) {
+suspend fun Scene.setCombatTrack(track: CombatTrack?) {
     setAppFlag("combat-track", track)
 }
 
@@ -50,12 +44,8 @@ suspend fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): C
         .mapNotNull(Combatant::actor)
         .filterIsInstance<PF2EActor>()
         .mapNotNull(PF2EActor::getCombatTrack)
-        .mapNotNull { playlists.get(it.id) }
-        .mapNotNull { CombatTrack(playlistUuid = it.uuid) }
         .firstOrNull()
         ?: active.getCombatTrack()  // or scene overrides
-            ?.let { playlists.get(it.id) }
-            ?.let { CombatTrack(playlistUuid = it.uuid) }
         ?: findCurrentRegion()?.combatTrack // otherwise fall back to region
 
 suspend fun Game.startCombatTrack(combatants: Array<Combatant>, active: Scene) {

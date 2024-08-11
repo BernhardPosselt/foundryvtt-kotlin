@@ -5,6 +5,7 @@ import at.posselt.kingmaker.camping.CampingSheet
 import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
+import at.posselt.kingmaker.migrations.migrateKingmakerTools
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.*
 import at.posselt.kingmaker.weather.registerWeatherHooks
@@ -26,22 +27,7 @@ fun main() {
         }
         registerWeatherHooks(game)
         registerCombatTrackHooks(game)
-//        Actors.registerSheet(
-//            Config.moduleId, CampingSheet::class.js, RegisterSheetConfig(
-//                label = "Camping Sheet",
-//                types = arrayOf("npc"),
-//            )
-//        )
 
-        // camping
-//        Hooks.onRenderPF2ENpcSheet { application, html, data ->
-//            buildPromise {
-//                if (data.document.getCamping() != null) {
-//                    CampingSheet(data.document, game).launch()
-//                    application.close().await()
-//                }
-//            }
-//        }
         game.socket.onKingmakerTools { data ->
             buildPromise {
                 if (isJsObject(data)) {
@@ -92,6 +78,8 @@ fun main() {
 
     Hooks.onReady {
         buildPromise {
+            game.migrateKingmakerTools()
+
             game.getCampingActor()
                 ?.let { actor -> CampingSheet(actor) }
                 ?.launch()
