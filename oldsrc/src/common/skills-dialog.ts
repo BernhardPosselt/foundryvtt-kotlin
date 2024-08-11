@@ -1,4 +1,3 @@
-import {Proficiency} from '../camping/data';
 import {
     distinctBy,
     isBlank,
@@ -10,6 +9,7 @@ import {
     unslugify,
 } from '../utils';
 import {allTrainedSkillRanks} from '../kingdom/data/skills';
+import {Proficiency} from "../kingdom/modifiers";
 
 
 interface Skill {

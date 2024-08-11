@@ -1,22 +1,5 @@
 # TODO
 
-## Migrations
-* All enemies and scenes with combat tracks:
-  * read "name" property of actor and replace it with "playlistUuid"
-* All actors that reference the following need to have their img and token img changed:
-  * "Bridge, Stone"
-  * "Bridge"
-  * "Gladiatorial Arena"
-  * "Magical Streetlamps"
-  * "Paved Streets"
-  * "Printing House"
-  * "Sewer System"
-  * "Wall, Stone"
-  * "Wall, Wooden"
-* CampingData needs to move the following settings off to the following properties:
-  * proxyEncounterTable (a name) -> proxyRandomEncounterTableUuid (a uuid) 
-  * randomEncounterRollMode -> randomEncounterRollMode
-* set minimum migration level on first launch and warn when no migration is present
 ## Influence System
 * Check what can be shipped under the OGL
 * Ship Influence Statblocks
@@ -30,9 +13,8 @@
 * Prepare Camp
 * Implement navigation
 * Update docs
-* Remove JS
 * Homebrew: Activities & Recipes
-* Settings + Migration
+* Settings
 * Reset Button for activities & prepare camp
 * Design for eating
 * Design Skill dropdowns/degree of success

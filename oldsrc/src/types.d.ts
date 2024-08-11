@@ -12,12 +12,8 @@ declare global {
     interface Game {
         pf2eKingmakerTools: {
             macros: {
-                realmTileDialogMacro: () => void,
                 structureTokenMappingMacro: () => void,
                 viewKingdomMacro: () => void,
-                openCampingSheet: () => void,
-                /* eslint-disable @typescript-eslint/no-explicit-any */
-                editStructureMacro: (actor: any) => Promise<void>,
             };
         };
         pf2e: {

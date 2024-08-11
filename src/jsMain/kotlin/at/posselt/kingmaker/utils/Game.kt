@@ -23,8 +23,8 @@ external interface ToolsMacros {
     val toggleCombatTracksMacro: () -> Unit
     val realmTileDialogMacro: () -> Unit
     val editStructureMacro: (Actor?) -> Unit
+    val openCampingSheet: () -> Unit
 //    val structureTokenMappingMacro: () -> Unit
-//    val openCampingSheet: () -> Unit
 //    val viewKingdomMacro: () -> Unit
 }
 

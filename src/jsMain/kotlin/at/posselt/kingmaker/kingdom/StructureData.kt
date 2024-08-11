@@ -83,9 +83,16 @@ external interface Construction {
     val dc: Int
 }
 
+sealed external interface Structure
 
 @JsPlainObject
-external interface StructureData {
+external interface StructureRef : Structure {
+    val ref: String
+}
+
+
+@JsPlainObject
+external interface StructureData : Structure {
     val name: String
     val stacksWith: String?
     val construction: Construction?

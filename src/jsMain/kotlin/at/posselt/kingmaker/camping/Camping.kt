@@ -110,3 +110,10 @@ suspend fun Game.findCurrentRegion(): RegionSetting? {
     return getRegions()
         .find { it.name == regionName }
 }
+
+suspend fun openCampingSheet(game: Game) {
+    // TODO: create camping actor if not present
+    game.getCampingActor()
+        ?.let { actor -> CampingSheet(actor) }
+        ?.launch()
+}

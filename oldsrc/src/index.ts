@@ -5,12 +5,6 @@ import {getKingdom} from './kingdom/storage';
 import {addOngoingEvent, changeDegree, parseUpgradeMeta, reRoll} from './kingdom/rolls';
 import {kingdomChatButtons} from './kingdom/chat-buttons';
 import {StringDegreeOfSuccess} from './degree-of-success';
-import {openCampingSheet} from './camping/sheet';
-import {bindCampingChatEventListeners} from './camping/chat';
-import {getDiffListeners} from './camping/effect-syncing';
-import {getCamping, getCampingActor} from './camping/storage';
-import {addDiscoverSpecialMealResult, addHuntAndGatherResult} from './camping/eating';
-import {getActorByUuid} from './camping/actor';
 import {updateKingdomArmyConsumption} from './armies/utils';
 import {openJournal} from './foundry-utils';
 import {structureTokenMappingDialog} from './kingdom/dialogs/structure-token-mapping-dialog';
@@ -22,8 +16,6 @@ Hooks.on('ready', async () => {
         const gameInstance = game;
         gameInstance.pf2eKingmakerTools.macros.structureTokenMappingMacro = structureTokenMappingDialog.bind(null, game);
         gameInstance.pf2eKingmakerTools.macros.viewKingdomMacro = showKingdom.bind(null, game);
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        gameInstance.pf2eKingmakerTools.macros.openCampingSheet = (): void => openCampingSheet(gameInstance);
         gameInstance.settings.register('pf2e-kingmaker-tools', 'showManual', {
             name: 'Show Manual',
             scope: 'world',
@@ -67,22 +59,6 @@ Hooks.on('ready', async () => {
             config: false,
             type: Boolean,
             scope: 'world',
-        });
-        gameInstance.settings.register('pf2e-kingmaker-tools', 'proxyEncounterTable', {
-            name: 'Proxy Random Encounter Table',
-            hint: 'Name of the in world roll table that is rolled first to check what kind of encounter is rolled. Use the string "Creature" to roll on the region roll table in the proxy roll table or link another roll table of your choice. Leave blank to always roll on the region random encounter tables.',
-            scope: 'world',
-            config: false,
-            default: '',
-            type: String,
-        });
-        gameInstance.settings.register<string, string, string>('pf2e-kingmaker-tools', 'randomEncounterRollMode', {
-            name: 'Random Encounter Roll Mode',
-            scope: 'world',
-            config: false,
-            default: 'gmroll',
-            type: String,
-            choices: rollModeChoices,
         });
         gameInstance.settings.register<string, string, string>('pf2e-kingmaker-tools', 'kingdomEventRollMode', {
             name: 'Kingdom Events Roll Mode',
@@ -212,45 +188,11 @@ Hooks.on('ready', async () => {
         Hooks.on('deleteItem', (item: StoredDocument<Item>) => updateConsumption(item.actor));
         Hooks.on('deleteScene', () => forceUpdateConsumption());
         checkKingdomErrors(gameInstance);
-        checkCampingErrors(gameInstance);
 
         // listen for camping sheet open
-        const listeners = getDiffListeners(gameInstance);
         gameInstance.socket!.on('module.pf2e-kingmaker-tools', async (data: { action: string, data: any }) => {
-            if (data.action === 'openCampingSheet') {
-                openCampingSheet(gameInstance);
-            } else if (data.action === 'openKingdomSheet') {
+            if (data.action === 'openKingdomSheet') {
                 await showKingdom(gameInstance);
-            } else if (data.action === 'addDiscoverSpecialMealResult' && isFirstGm(gameInstance)) {
-                const recipe = data.data.recipe as string | null;
-                const criticalFailUuids = data.data.critFailUuids as string[];
-                const actor = await getActorByUuid(data.data.actorUuid);
-                const {specialIngredients, basicIngredients} = data.data;
-                if (actor) {
-                    const actorAndIngredients = {actor, specialIngredients, basicIngredients};
-                    await addDiscoverSpecialMealResult(gameInstance, actorAndIngredients, recipe, criticalFailUuids);
-                }
-            } else if (data.action === 'addHuntAndGatherResult' && isFirstGm(gameInstance)) {
-                const actor = await getActorByUuid(data.data.actorUuid);
-                const {specialIngredients, basicIngredients} = data.data;
-                if (actor) {
-                    await addHuntAndGatherResult(gameInstance, {
-                        actor,
-                        basicIngredients,
-                        specialIngredients,
-                    });
-                }
-            } else {
-                // players changed data and GM needs to sync effects
-                const sheetActor = getCampingActor(gameInstance);
-                if (sheetActor && isFirstGm(gameInstance)) {
-                    const camping = getCamping(sheetActor);
-                    for (const listener of listeners) {
-                        if (listener.canHandle(data.action)) {
-                            listener.onReceive(camping);
-                        }
-                    }
-                }
             }
         });
 
@@ -263,9 +205,6 @@ Hooks.on('ready', async () => {
 
 Hooks.on('init', async () => {
     await loadTemplates([
-        'modules/pf2e-kingmaker-tools/templates/common/skills.partial.hbs',
-        'modules/pf2e-kingmaker-tools/templates/camping/activity.partial.hbs',
-        'modules/pf2e-kingmaker-tools/templates/camping/eating.partial.hbs',
         'modules/pf2e-kingmaker-tools/templates/kingdom/structure-browser-item.hbs',
         'modules/pf2e-kingmaker-tools/templates/kingdom/sidebar.hbs',
         'modules/pf2e-kingmaker-tools/templates/kingdom/status.hbs',
@@ -299,7 +238,6 @@ Hooks.on('renderChatLog', () => {
                 }
             });
         }
-        bindCampingChatEventListeners(gameInstance);
     }
 });
 
@@ -409,12 +347,5 @@ function checkKingdomErrors(game: Game): void {
     const actor = getKingdomSheetActor(game);
     if (actor && !actor.getFlag('pf2e-kingmaker-tools', 'kingdom-sheet')) {
         ui.notifications?.error('Found an Actor with name "Kingdom Sheet" that has not been imported using the "View Kingdom" Macro! Please delete the actor and re-import it.');
-    }
-}
-
-function checkCampingErrors(game: Game): void {
-    const actor = getCampingActor(game);
-    if (actor && !actor.getFlag('pf2e-kingmaker-tools', 'camping-sheet')) {
-        ui.notifications?.error('Found an Actor with name "Camping Sheet" that has not been imported using the "Camping" Macro! Please delete the actor and re-import it.');
     }
 }

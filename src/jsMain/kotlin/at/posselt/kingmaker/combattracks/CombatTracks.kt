@@ -4,6 +4,7 @@ import at.posselt.kingmaker.camping.findCurrentRegion
 import at.posselt.kingmaker.settings.CombatTrack
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.*
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.Game.settings
 import com.foundryvtt.core.Hooks
@@ -11,10 +12,10 @@ import com.foundryvtt.core.documents.*
 import com.foundryvtt.pf2e.actor.PF2EActor
 import kotlinx.coroutines.await
 
-fun PF2EActor.getCombatTrack(): CombatTrack? =
+fun Actor.getCombatTrack(): CombatTrack? =
     getAppFlag("combat-track")
 
-suspend fun PF2EActor.setCombatTrack(track: CombatTrack?) {
+suspend fun Actor.setCombatTrack(track: CombatTrack?) {
     setAppFlag("combat-track", track)
 }
 

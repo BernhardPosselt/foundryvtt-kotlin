@@ -3,7 +3,10 @@ import {saveKingdom} from '../kingdom/storage';
 import {getBooleanSetting} from '../settings';
 import {distinctBy, sum} from '../utils';
 import {Modifier} from '../kingdom/modifiers';
-import {isEffectItem} from '../camping/actor';
+
+export function isEffectItem(item: Item<unknown>): item is Item<ItemSystem> & EffectItem {
+    return item.type === 'effect';
+}
 
 function isArmyActor(actor: Actor | null | undefined): boolean {
     return actor?.type === 'army';

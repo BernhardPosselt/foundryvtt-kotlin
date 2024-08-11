@@ -1,14 +1,9 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.actor.getStructureData
-import at.posselt.kingmaker.actor.setStructureData
-import at.posselt.kingmaker.actor.unsetStructureData
 import at.posselt.kingmaker.app.TextArea
 import at.posselt.kingmaker.app.formContext
 import at.posselt.kingmaker.app.prompt
-import at.posselt.kingmaker.kingdom.StructureData
-import at.posselt.kingmaker.kingdom.structureRefSchema
-import at.posselt.kingmaker.kingdom.structureSchema
+import at.posselt.kingmaker.kingdom.*
 import at.posselt.kingmaker.takeIfInstance
 import com.foundryvtt.core.Actor
 import com.foundryvtt.core.ui

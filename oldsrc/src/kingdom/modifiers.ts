@@ -12,7 +12,8 @@ import {ActivityBonuses, SkillItemBonus} from './data/structures';
 import {ActiveSettlementStructureResult} from './scene';
 import {getBooleanSetting} from '../settings';
 import {KingdomActivityById} from './data/activityData';
-import {Proficiency} from '../camping/data';
+
+export type Proficiency = 'trained' | 'expert' | 'master' | 'legendary';
 
 export type UntrainedProficiencyMode = 'half' | 'full' | 'none';
 

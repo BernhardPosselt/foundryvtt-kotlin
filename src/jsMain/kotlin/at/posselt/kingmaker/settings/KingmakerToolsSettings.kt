@@ -15,7 +15,7 @@ import js.core.JsNumber
 import js.objects.Record
 import kotlinx.coroutines.await
 
-private fun <T : DataField> Settings.registerField(
+fun <T : DataField> Settings.registerField(
     key: String,
     name: String,
     hint: String? = undefined,
@@ -61,7 +61,7 @@ fun Settings.registerInt(
     )
 }
 
-private inline fun <reified T : Any> Settings.registerScalar(
+inline fun <reified T : Any> Settings.registerScalar(
     key: String,
     name: String,
     hint: String? = undefined,
@@ -86,7 +86,7 @@ private inline fun <reified T : Any> Settings.registerScalar(
     )
 }
 
-private fun Settings.createMenu(
+fun Settings.createMenu(
     key: String,
     name: String,
     label: String,
@@ -109,31 +109,31 @@ private fun Settings.createMenu(
     )
 }
 
-private fun Settings.getInt(key: String): Int =
+fun Settings.getInt(key: String): Int =
     get(Config.moduleId, key)
 
 suspend fun Settings.setInt(key: String, value: Int) {
     set(Config.moduleId, key, value).await()
 }
 
-private fun Settings.getString(key: String): String =
+fun Settings.getString(key: String): String =
     get(Config.moduleId, key)
 
 suspend fun Settings.setString(key: String, value: String) {
     set(Config.moduleId, key, value).await()
 }
 
-private fun Settings.getBoolean(key: String): Boolean =
+fun Settings.getBoolean(key: String): Boolean =
     get(Config.moduleId, key)
 
-private suspend fun Settings.setBoolean(key: String, value: Boolean) {
+suspend fun Settings.setBoolean(key: String, value: Boolean) {
     set(Config.moduleId, key, value).await()
 }
 
-private fun <T : Any> Settings.getObject(key: String): T =
+fun <T : Any> Settings.getObject(key: String): T =
     get(Config.moduleId, key)
 
-private suspend fun Settings.setObject(key: String, value: Any) {
+suspend fun Settings.setObject(key: String, value: Any) {
     set(Config.moduleId, key, value).await()
 }
 

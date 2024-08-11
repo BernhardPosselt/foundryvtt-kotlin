@@ -3,6 +3,7 @@ package at.posselt.kingmaker
 import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.camping.CampingSheet
 import at.posselt.kingmaker.camping.getCampingActor
+import at.posselt.kingmaker.camping.openCampingSheet
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
 import at.posselt.kingmaker.migrations.migrateKingmakerTools
@@ -72,6 +73,7 @@ fun main() {
                 toggleCombatTracksMacro = { buildPromise { toggleCombatTracksMacro(game) } },
                 realmTileDialogMacro = { buildPromise { editRealmTileMacro(game) } },
                 editStructureMacro = { actor -> buildPromise { editStructureMacro(actor) } },
+                openCampingSheet = { buildPromise { openCampingSheet(game) } }
             )
         )
     }
