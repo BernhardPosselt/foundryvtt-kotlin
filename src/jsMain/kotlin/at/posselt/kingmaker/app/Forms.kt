@@ -175,6 +175,7 @@ data class Select(
             required: Boolean = true,
             help: String? = null,
             hideLabel: Boolean = false,
+            labelFunction: (T) -> String = { it.toLabel() },
         ) = Select(
             name = name,
             label = label,
@@ -183,7 +184,10 @@ data class Select(
             help = help,
             hideLabel = hideLabel,
             options = enumEntries<T>().map {
-                SelectOption(label = it.toLabel(), value = it.toCamelCase())
+                SelectOption(
+                    label = labelFunction(it),
+                    value = it.toCamelCase()
+                )
             }
         )
     }

@@ -50,7 +50,7 @@ external interface CampingData {
     var proxyRandomEncounterTableUuid: String?
     var randomEncounterRollMode: String?
     var ignoreSkillRequirements: Boolean
-    var increaseTravelSpeedByFeet: Int?
+    var minimumTravelSpeed: Int?
 }
 
 fun CampingActivity.parseResult() =

@@ -7,18 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Regions and Climate can now be configured to use your own settings. This allows you to have custom regions with custom weather, combat tracks and random encounter tables 
+
+
 ### Removed
 
 
 
 ### Changed
 
-* Migrations are not run anymore on fresh worlds. This causes versions prior to 0.2.23 (released in July 2023) not run important migrations anymore. If you've upgraded from such a version, run: 
-    ```js
-    game.settings.set('pf2e-kingmaker-tools', 'schemaVersion', 1)
-    ```
-  as a script macro or in your console and reload Foundry
-* The **Edit Structure Rules** broken in V12 and needs to be re-imported from the compendium
+* Migrations are not run anymore if you've updated from a version prior to 0.12.2 (released in October 2023). If you've upgraded from such a version, download to the latest version for your release that still ships these (1.1.1 for V12 or 0.46.2 for V11), then upgrade to this release
+* If you have multiple kingdom sheets, migrations will be run for all of them; you can still only have 1 camping sheet
+* Combat Tracks can now select a track on a playlist in addition to selecting a playlist
+* TODO: detail new camping sheet
+* 
 
 ## [1.1.1] - 2024-07-17
 

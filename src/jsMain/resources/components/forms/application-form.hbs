@@ -1,0 +1,8 @@
+<div>
+    {{#each formRows}}
+        <div class="row">
+            {{> formElement this }}
+        </div>
+    {{/each}}
+    <button class="full-width" data-action="save">Save</button>
+</div>

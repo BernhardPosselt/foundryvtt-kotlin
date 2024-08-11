@@ -24,6 +24,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
+import kotlin.math.min
 import kotlin.reflect.KClass
 
 @JsPlainObject
@@ -389,8 +390,8 @@ class CampingSheet(
 
     private fun getHexplorationActivities(): Double {
         val travelSpeed = game.party()?.system?.attributes?.speed?.total ?: 25
-        val override = actor.getCamping()?.increaseTravelSpeedByFeet ?: 0
-        return calculateHexplorationActivities(travelSpeed + override)
+        val override = min(actor.getCamping()?.minimumTravelSpeed ?: 0, travelSpeed)
+        return calculateHexplorationActivities(override)
     }
 
     private fun getHexplorationActivitiesDuration(): String =
