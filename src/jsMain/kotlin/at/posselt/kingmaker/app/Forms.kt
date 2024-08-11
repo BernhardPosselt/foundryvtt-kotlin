@@ -6,6 +6,7 @@ import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.isJsObject
 import at.posselt.kingmaker.utils.toMutableRecord
 import at.posselt.kingmaker.utils.toRecord
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.documents.Playlist
 import com.foundryvtt.core.documents.PlaylistSound
@@ -433,6 +434,15 @@ fun Playlist.toOption(useUuid: Boolean = false) =
     }
 
 fun PlaylistSound.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        SelectOption(label = name, value = uuid)
+    } else {
+        id?.let {
+            SelectOption(label = name, value = it)
+        }
+    }
+
+fun Actor.toOption(useUuid: Boolean = false) =
     if (useUuid) {
         SelectOption(label = name, value = uuid)
     } else {

@@ -4,6 +4,7 @@ import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
+import at.posselt.kingmaker.camping.dialogs.CampingSettingsApplication
 import at.posselt.kingmaker.camping.dialogs.findCampingActivitySkills
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
@@ -209,7 +210,7 @@ class CampingSheet(
         when (target.dataset["action"]) {
             "configure-recipes" -> console.log("recipes")
             "configure-activities" -> console.log("activities")
-            "settings" -> console.log("settings")
+            "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
             "roll-camping-check" -> console.log("rolling camping check")
             "next-section" -> console.log("next section")

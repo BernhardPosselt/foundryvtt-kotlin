@@ -22,7 +22,7 @@ import kotlin.js.Promise
 
 
 @JsPlainObject
-private external interface CampingSettings {
+external interface CampingSettings {
     val gunsToClean: Int
     val restRollMode: String
     val increaseWatchActorNumber: Int
@@ -35,11 +35,11 @@ private external interface CampingSettings {
 }
 
 @JsPlainObject
-private external interface CampingSettingsContext {
+external interface CampingSettingsContext {
     val formRows: Array<FormElementContext>
 }
 
-private class CampingSettingsApplication(
+class CampingSettingsApplication(
     private val game: Game,
     private val campingActor: PF2ENpc,
 ) : FormApp<CampingSettingsContext, CampingSettings>(
@@ -68,21 +68,17 @@ private class CampingSettingsApplication(
         context: CampingSettingsContext,
         options: HandlebarsRenderOptions
     ): Promise<CampingSettingsContext> = buildPromise {
-        val campingActorsUuids = campingActor.getCamping()
-            ?.actorUuids
-            ?: emptyArray()
+        val camping = campingActor.getCamping()!!
         val actors = fromUuidsOfTypes(
-            campingActorsUuids,
+            camping.actorUuids,
             PF2ENpc::class,
             PF2ECharacter::class,
             PF2EVehicle::class,
             PF2ELoot::class,
-        ).map { SelectOption(label = it.name, value = it.uuid) }
-        val partyActor = game.party()
-            ?.let { listOf(SelectOption(label = it.name, it.uuid)) }
-            ?: emptyList()
-        val huntAndGatherUuids = actors + partyActor
-        // TODO: actorUuidsNotKeepingWatch
+        )
+        val huntAndGatherUuids = (actors + listOfNotNull(game.party()))
+            .mapNotNull { it.toOption(useUuid = true) }
+        val uuidsNotKeepingWatch = setOf(*camping.actorUuidsNotKeepingWatch)
         CampingSettingsContext(
             formRows = formContext(
                 NumberInput(
@@ -138,8 +134,19 @@ private class CampingSettingsApplication(
                     options = game.tables.contents.mapNotNull { it.toOption(useUuid = true) },
                     help = "Custom Roll Table; use 'Creature' text result to roll on the default random encounter table",
                 ),
+                *actors.mapIndexed { index, actor ->
+                    CheckboxInput(
+                        name = "actorUuidsNotKeepingWatch.$index",
+                        label = "Skip Watch: ${actor.name}",
+                        value = uuidsNotKeepingWatch.contains(actor.uuid),
+                    )
+                }.toTypedArray()
             )
         )
+    }
+
+    override fun fixObject(value: dynamic) {
+        value["actorUuidsNotKeepingWatch"] = value["actorUuidsNotKeepingWatch"] ?: emptyArray<String>()
     }
 
     override fun onParsedSubmit(value: CampingSettings): Promise<Void> = buildPromise {
