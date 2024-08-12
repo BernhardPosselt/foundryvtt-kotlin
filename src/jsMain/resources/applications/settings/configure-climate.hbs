@@ -1,13 +1,9 @@
 <div>
-    <fieldset>
-        <legend>Use Stolen Lands Climate</legend>
-        <div class="row">
-            {{> formElement useStolenLands}}
-        </div>
-    </fieldset>
+    <div class="row">
+        {{> formElement useStolenLands}}
+    </div>
     {{#unless useStolenLands.value}}
-        <fieldset>
-            <legend>Climate Overrides</legend>
+        <div class="row">
             <table>
                 <thead>
                 <tr>
@@ -30,7 +26,7 @@
                 {{/each}}
                 </tbody>
             </table>
-        </fieldset>
+        </div>
     {{/unless}}
     <button data-action="save" {{#unless isValid}}disabled{{/unless}}>Save</button>
 </div>

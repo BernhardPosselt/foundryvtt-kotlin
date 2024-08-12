@@ -20,7 +20,7 @@ data class MenuControl(
     val action: String
 )
 
-abstract class FormApp<T, O>(
+abstract class FormApp<T : HandlebarsRenderContext, O>(
     title: String,
     template: String,
     isDialogForm: Boolean = true,

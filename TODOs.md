@@ -4,6 +4,7 @@
 * Migrate structure image conversion macro
 * Backup world & enable migration 10
 * Test camping settings
+* fieldset stylen
 
 ## Influence System
 * Check what can be shipped under the OGL

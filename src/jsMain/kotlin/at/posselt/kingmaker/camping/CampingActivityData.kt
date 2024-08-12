@@ -67,7 +67,11 @@ fun ModifyEncounterDc.atTime(isDay: Boolean) =
 data class ActivityAndData(
     val data: CampingActivityData,
     val result: CampingActivity,
-)
+) {
+    fun done(): Boolean {
+        return (data.doesNotRequireACheck() && result.actorUuid != null) || result.checkPerformed()
+    }
+}
 
 fun CampingData.groupActivities(): List<ActivityAndData> {
     val activitiesByName = getAllActivities().associateBy { it.name }

@@ -20,15 +20,20 @@ external interface HandlebarsFormApplicationOptions : ApplicationConfiguration {
     val scrollable: Array<String>
 }
 
+@JsPlainObject
+external interface HandlebarsRenderContext {
+    val partId: String
+}
+
 
 @JsName("HandlebarsFormApplication(foundry.applications.api.ApplicationV2)")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-open external class HandlebarsFormApplication<T>(
+open external class HandlebarsFormApplication<T : HandlebarsRenderContext>(
     options: HandlebarsFormApplicationOptions,
 ) : ApplicationV2 {
     protected open fun _preparePartContext(
         partId: String,
-        context: T,
+        context: HandlebarsRenderContext,
         options: HandlebarsRenderOptions
     ): Promise<T>
 

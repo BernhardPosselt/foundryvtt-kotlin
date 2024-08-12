@@ -3,8 +3,6 @@
  */
 function HandlebarsFormApplication(clazz) {
     return class Hack extends foundry.applications.api.HandlebarsApplicationMixin(clazz) {
-        static PARTS = {}
-
         constructor(config) {
             super(
                 {
@@ -14,7 +12,7 @@ function HandlebarsFormApplication(clazz) {
                         : undefined,
                 });
             if (config.form) {
-                Hack.PARTS = {
+                this.constructor.PARTS = {
                     form: {
                         template: config.templatePath,
                         scrollable: config.scrollable,

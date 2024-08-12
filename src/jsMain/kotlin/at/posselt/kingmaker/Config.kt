@@ -3,14 +3,14 @@ package at.posselt.kingmaker
 object Config {
     const val moduleId = "pf2e-kingmaker-tools"
 
-    object camping {
-        const val actorName = "Camping Sheet"
-    }
-
     object rollTables {
         const val compendium = "$moduleId.kingmaker-tools-rolltables"
         const val weather = "Weather Events"
         const val randomEncounters = "Random Encounters"
+    }
+
+    object regions {
+        const val defaultRegion = "Rostland Hinterlands"
     }
 
     object kingmakerModule {

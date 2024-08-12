@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.Config
-import at.posselt.kingmaker.settings.CombatTrack
+import at.posselt.kingmaker.camping.dialogs.CombatTrack
 import com.foundryvtt.core.collections.Playlists
 
 fun Playlists.getCombatOverrideTrack(combatTrackName: String): CombatTrack? =

@@ -14,6 +14,7 @@ import com.foundryvtt.pf2e.actor.PF2ELoot
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.actor.PF2EVehicle
 import js.core.Void
+import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
@@ -35,10 +36,13 @@ external interface CampingSettings {
 }
 
 @JsPlainObject
-external interface CampingSettingsContext {
-    val formRows: Array<FormElementContext>
+external interface CampingSettingsContext : HandlebarsRenderContext {
+    val sections: Array<SectionContext>
 }
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+@JsName("CampingSettings")
 class CampingSettingsApplication(
     private val game: Game,
     private val campingActor: PF2ENpc,
@@ -65,9 +69,10 @@ class CampingSettingsApplication(
 
     override fun _preparePartContext(
         partId: String,
-        context: CampingSettingsContext,
+        context: HandlebarsRenderContext,
         options: HandlebarsRenderOptions
     ): Promise<CampingSettingsContext> = buildPromise {
+        val parent = super._preparePartContext(partId, context, options).await()
         val camping = campingActor.getCamping()!!
         val actors = fromUuidsOfTypes(
             camping.actorUuids,
@@ -80,67 +85,90 @@ class CampingSettingsApplication(
             .mapNotNull { it.toOption(useUuid = true) }
         val uuidsNotKeepingWatch = setOf(*camping.actorUuidsNotKeepingWatch)
         CampingSettingsContext(
-            formRows = formContext(
-                NumberInput(
-                    name = "minimumTravelSpeed",
-                    label = "Minimum Travel Speed",
-                    value = settings.minimumTravelSpeed ?: 0,
-                    help = "If PCs use horses, use 40"
-                ),
-                NumberInput(
-                    name = "increaseWatchActorNumber",
-                    label = "Increase Actors Keeping Watch",
-                    value = settings.increaseWatchActorNumber,
-                ),
-                NumberInput(
-                    name = "gunsToClean",
-                    label = "Guns To Clean",
-                    value = settings.gunsToClean,
-                ),
-                CheckboxInput(
-                    name = "ignoreSkillRequirements",
-                    label = "Do not validate activity skill proficiency",
-                    value = settings.ignoreSkillRequirements,
-                ),
-                Select(
-                    name = "restRollMode",
-                    label = "Rest Roll Mode",
-                    value = settings.restRollMode,
-                    options = listOf(
-                        SelectOption(label = "None During Rest", value = "none"),
-                        SelectOption(label = "1 Check During Rest", value = "one"),
-                        SelectOption(label = "1 Check Every 4 Hours During Rest", value = "one-every-4-hours"),
+            partId = parent.partId,
+            sections = formContext(
+                Section(
+                    legend = "Exploration",
+                    formRows = listOf(
+                        NumberInput(
+                            name = "minimumTravelSpeed",
+                            label = "Minimum Travel Speed",
+                            value = settings.minimumTravelSpeed ?: 0,
+                            help = "If PCs use horses, use 40",
+                            stacked = false,
+                        ),
+                        Select.fromEnum<RollMode>(
+                            name = "randomEncounterRollMode",
+                            label = "Random Encounter Roll Mode",
+                            value = settings.randomEncounterRollMode?.let { fromCamelCase<RollMode>(it) },
+                            labelFunction = { it.label },
+                            stacked = false,
+                        ),
+                        Select(
+                            name = "proxyRandomEncounterTableUuid",
+                            value = settings.proxyRandomEncounterTableUuid,
+                            label = "Proxy Random Encounter Table",
+                            required = false,
+                            options = game.tables.contents.mapNotNull { it.toOption(useUuid = true) },
+                            help = "Custom Roll Table; use 'Creature' text result to roll on the default random encounter table",
+                            stacked = false,
+                        ),
                     )
                 ),
-                Select.fromEnum<RollMode>(
-                    name = "randomEncounterRollMode",
-                    label = "Random Encounter Roll Mode",
-                    value = settings.randomEncounterRollMode?.let { fromCamelCase<RollMode>(it) },
-                    labelFunction = { it.label }
-                ),
-                Select(
-                    name = "huntAndGatherTargetActorUuid",
-                    value = settings.huntAndGatherTargetActorUuid,
-                    label = "Add Ingredients from Hunt and Gather to",
-                    required = false,
-                    options = huntAndGatherUuids,
-                    help = "Default is the actor performing the activity",
-                ),
-                Select(
-                    name = "proxyRandomEncounterTableUuid",
-                    value = settings.proxyRandomEncounterTableUuid,
-                    label = "Proxy Random Encounter Table",
-                    required = false,
-                    options = game.tables.contents.mapNotNull { it.toOption(useUuid = true) },
-                    help = "Custom Roll Table; use 'Creature' text result to roll on the default random encounter table",
-                ),
-                *actors.mapIndexed { index, actor ->
-                    CheckboxInput(
-                        name = "actorUuidsNotKeepingWatch.$index",
-                        label = "Skip Watch: ${actor.name}",
-                        value = uuidsNotKeepingWatch.contains(actor.uuid),
+                Section(
+                    legend = "Activities",
+                    formRows = listOf(
+                        CheckboxInput(
+                            name = "ignoreSkillRequirements",
+                            label = "Do not validate activity skill proficiency",
+                            value = settings.ignoreSkillRequirements,
+                        ),
+                        Select(
+                            name = "huntAndGatherTargetActorUuid",
+                            value = settings.huntAndGatherTargetActorUuid,
+                            label = "Add Ingredients from Hunt and Gather to",
+                            required = false,
+                            options = huntAndGatherUuids,
+                            help = "Default is the actor performing the activity",
+                            stacked = false,
+                        ),
                     )
-                }.toTypedArray()
+                ),
+                Section(
+                    legend = "Resting",
+                    formRows = listOf(
+                        NumberInput(
+                            name = "gunsToClean",
+                            label = "Guns To Clean",
+                            value = settings.gunsToClean,
+                            stacked = false,
+                        ),
+                        NumberInput(
+                            name = "increaseWatchActorNumber",
+                            label = "Increase Actors Keeping Watch",
+                            value = settings.increaseWatchActorNumber,
+                            stacked = false,
+                        ),
+                        Select(
+                            name = "restRollMode",
+                            label = "Encounters During Rest",
+                            value = settings.restRollMode,
+                            options = listOf(
+                                SelectOption(label = "None", value = "none"),
+                                SelectOption(label = "1 Check", value = "one"),
+                                SelectOption(label = "1 Check Every 4 Hours", value = "one-every-4-hours"),
+                            ),
+                            stacked = false,
+                        ),
+                        *actors.mapIndexed { index, actor ->
+                            CheckboxInput(
+                                name = "actorUuidsNotKeepingWatch.$index",
+                                label = "Skip Watch: ${actor.name}",
+                                value = uuidsNotKeepingWatch.contains(actor.uuid),
+                            )
+                        }.toTypedArray()
+                    )
+                ),
             )
         )
     }

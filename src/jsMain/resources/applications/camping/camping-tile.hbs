@@ -23,16 +23,15 @@
         {{/if}}
     </div>
     <div class="km-camping-activity-check">
-        <select class="km-camping-degree-of-success" {{#unless actor}}disabled{{/unless}}>
-            <option value="" selected>-</option>
-            <option value="criticalSuccess">Critical Success</option>
-            <option value="success">Success</option>
-            <option value="failure">Failure</option>
-            <option value="criticalFailure">Critical Failure</option>
-        </select>
-        <button class="km-camping-action" data-action="roll-camping-check" type="button"
-                {{#unless actor}}disabled{{/unless}}>
-            <i class="fa-solid fa-dice-d20"></i>
-        </button>
+        <!-- todo think about what to render when not filled by actor -->
+        {{#if actor}}
+            {{#if requiresCheck}}
+                {{> formElement actor.degreeOfSuccess }}
+                <button class="km-camping-action" data-action="roll-camping-check" type="button"
+                        {{#unless actor}}disabled{{/unless}}>
+                    <i class="fa-solid fa-dice-d20"></i>
+                </button>
+            {{/if}}
+        {{/if}}
     </div>
 </div>

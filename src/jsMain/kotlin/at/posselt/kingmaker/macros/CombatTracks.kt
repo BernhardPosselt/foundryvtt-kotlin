@@ -1,9 +1,9 @@
 package at.posselt.kingmaker.macros
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.camping.dialogs.CombatTrack
 import at.posselt.kingmaker.combattracks.getCombatTrack
 import at.posselt.kingmaker.combattracks.setCombatTrack
-import at.posselt.kingmaker.settings.CombatTrack
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import at.posselt.kingmaker.utils.launch
@@ -15,6 +15,7 @@ import com.foundryvtt.core.documents.PlaylistSound
 import com.foundryvtt.core.documents.Scene
 import com.foundryvtt.pf2e.actor.PF2EActor
 import js.core.Void
+import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
@@ -28,7 +29,7 @@ private external interface CombatTrackData {
 }
 
 @JsPlainObject
-private external interface CombatTrackContext {
+private external interface CombatTrackContext : HandlebarsRenderContext {
     val formRows: Array<FormElementContext>
 }
 
@@ -48,12 +49,14 @@ private class CombatTrackApplication(
 
     override fun _preparePartContext(
         partId: String,
-        context: CombatTrackContext,
+        context: HandlebarsRenderContext,
         options: HandlebarsRenderOptions
     ): Promise<CombatTrackContext> = buildPromise {
+        val parent = super._preparePartContext(partId, context, options).await()
         val playlist = combatTrack?.let { fromUuidTypeSafe<Playlist>(it.playlistUuid) }
         val playlistSound = combatTrack?.trackUuid?.let { fromUuidTypeSafe<PlaylistSound>(it) }
         CombatTrackContext(
+            partId = parent.partId,
             formRows = formContext(
                 Select(
                     required = false,

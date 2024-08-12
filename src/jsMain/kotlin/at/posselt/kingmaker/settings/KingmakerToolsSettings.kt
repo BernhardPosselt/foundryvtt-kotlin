@@ -215,12 +215,6 @@ object KingmakerToolsSettings {
     fun getEnableWeather(): Boolean =
         game.settings.getBoolean("enableWeather")
 
-    suspend fun setRegionSettings(settings: RegionSettings) =
-        game.settings.setObject("regionSettings", settings)
-
-    fun getRegionSettings(): RegionSettings =
-        game.settings.getObject("regionSettings")
-
     suspend fun setClimateSettings(settings: ClimateSettings) =
         game.settings.setObject("climateSettings", settings)
 
@@ -254,24 +248,6 @@ object KingmakerToolsSettings {
             name = "Schema Version",
             default = latestMigrationVersion,
             hidden = true,
-        )
-        game.settings.registerField(
-            key = "regionSettings",
-            name = "Region Settings",
-            type = ObjectField(
-                DataFieldOptions(
-                    initial = RegionSettings(
-                        useStolenLands = true,
-                        regions = emptyArray<RegionSetting>()
-                    )
-                )
-            ),
-        )
-        game.settings.createMenu(
-            key = "regionsMenu",
-            label = "Customize Regions",
-            name = "Regions",
-            app = RegionConfiguration::class.js,
         )
         game.settings.registerField(
             key = "climateSettings",

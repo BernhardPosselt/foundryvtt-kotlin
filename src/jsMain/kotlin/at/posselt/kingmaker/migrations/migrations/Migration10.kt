@@ -2,6 +2,9 @@ package at.posselt.kingmaker.migrations.migrations
 
 import at.posselt.kingmaker.actor.npcs
 import at.posselt.kingmaker.camping.CampingData
+import at.posselt.kingmaker.camping.dialogs.CombatTrack
+import at.posselt.kingmaker.camping.dialogs.RegionSetting
+import at.posselt.kingmaker.camping.dialogs.RegionSettings
 import at.posselt.kingmaker.combattracks.getCombatTrack
 import at.posselt.kingmaker.combattracks.setCombatTrack
 import at.posselt.kingmaker.kingdom.getParsedStructureData
@@ -45,6 +48,10 @@ class Migration10 : Migration(10) {
         camping.randomEncounterRollMode = game.settings.getString("randomEncounterRollMode").ifBlank { "gmroll" }
         val proxyTableName = game.settings.getString("proxyEncounterTable")
         camping.proxyRandomEncounterTableUuid = game.tables.getName(proxyTableName)?.uuid
+        camping.regionSettings = RegionSettings(
+            useStolenLands = true,
+            regions = emptyArray<RegionSetting>(),
+        )
     }
 
     override suspend fun migrateOther(game: Game) {

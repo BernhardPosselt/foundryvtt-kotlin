@@ -1,7 +1,9 @@
 package at.posselt.kingmaker.combattracks
 
+import at.posselt.kingmaker.camping.dialogs.CombatTrack
 import at.posselt.kingmaker.camping.findCurrentRegion
-import at.posselt.kingmaker.settings.CombatTrack
+import at.posselt.kingmaker.camping.getCamping
+import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Actor
@@ -47,7 +49,7 @@ suspend fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): C
         .mapNotNull(PF2EActor::getCombatTrack)
         .firstOrNull()
         ?: active.getCombatTrack()  // or scene overrides
-        ?: findCurrentRegion()?.combatTrack // otherwise fall back to region
+        ?: getCampingActor()?.getCamping()?.findCurrentRegion(this)?.combatTrack // otherwise fall back to region
 
 suspend fun Game.startCombatTrack(combatants: Array<Combatant>, active: Scene) {
     findCombatTrack(combatants, active)?.let {

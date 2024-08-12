@@ -1,13 +1,18 @@
-package at.posselt.kingmaker.settings
+package at.posselt.kingmaker.camping.dialogs
 
+import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.camping.getCamping
+import at.posselt.kingmaker.camping.setCamping
 import at.posselt.kingmaker.data.regions.Terrain
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.*
+import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.array.push
+import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
@@ -44,7 +49,7 @@ external interface TableHead {
 }
 
 @JsPlainObject
-external interface RegionSettingsContext {
+external interface RegionSettingsContext : HandlebarsRenderContext {
     var useStolenLands: FormElementContext
     var heading: Array<TableHead>
     var formRows: Array<Array<FormElementContext>>
@@ -54,18 +59,29 @@ external interface RegionSettingsContext {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
+@JsName("RegionConfig")
+class RegionConfig(
+    private val actor: PF2ENpc,
+) : FormApp<RegionSettingsContext, RegionSettings>(
     title = "Regions",
     width = 1200,
     template = "applications/settings/configure-regions.hbs",
 ) {
-    private var currentSettings = game.settings.kingmakerTools.getRegionSettings()
+    private var currentSettings = actor.getCamping()!!.regionSettings
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (val action = target.dataset["action"]) {
             "save" -> {
                 buildPromise {
-                    game.settings.kingmakerTools.setRegionSettings(currentSettings)
+                    actor.getCamping()?.let { camping ->
+                        camping.regionSettings = currentSettings
+                        if (currentSettings.useStolenLands) {
+                            camping.currentRegion = Config.regions.defaultRegion
+                        } else {
+                            camping.currentRegion = currentSettings.regions.first().name
+                        }
+                        actor.setCamping(camping)
+                    }
                     close()
                 }
             }
@@ -90,9 +106,10 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
 
     override fun _preparePartContext(
         partId: String,
-        context: RegionSettingsContext,
+        context: HandlebarsRenderContext,
         options: HandlebarsRenderOptions
     ): Promise<RegionSettingsContext> = buildPromise {
+        val parent = super._preparePartContext(partId, context, options).await()
         val playlistOptions = game.playlists.contents
             .mapNotNull { it.toOption(useUuid = true) }
             .sortedBy { it.label }
@@ -100,6 +117,7 @@ class RegionConfiguration : FormApp<RegionSettingsContext, RegionSettings>(
             .mapNotNull { it.toOption(useUuid = true) }
             .sortedBy { it.label }
         RegionSettingsContext(
+            partId = parent.partId,
             isValid = isFormValid,
             useStolenLands = CheckboxInput(
                 value = currentSettings.useStolenLands,

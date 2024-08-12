@@ -47,6 +47,8 @@ external interface FormElementContext {
     val isFormElement: Boolean
     val elementClasses: String
     val disabled: Boolean
+    val stacked: Boolean
+    val menu: Boolean
 }
 
 enum class OverrideType(val value: String) {
@@ -79,6 +81,7 @@ data class Select(
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
+    val stacked: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -94,6 +97,7 @@ data class Select(
         textArea = false,
         checkbox = false,
         disabled = disabled,
+        stacked = stacked,
         overrideType = overrideType?.value,
         options = options.map { opt ->
             Option(
@@ -103,6 +107,7 @@ data class Select(
         }.toTypedArray(),
         hideLabel = hideLabel,
         elementClasses = elementClasses.joinToString(" "),
+        menu = false,
     )
 
     companion object {
@@ -113,18 +118,24 @@ data class Select(
             required: Boolean = true,
             help: String? = null,
             hideLabel: Boolean = false,
+            disabled: Boolean = false,
+            stacked: Boolean = true,
+            elementClasses: List<String> = emptyList(),
         ) = Select(
             label = label,
             name = name,
             value = value.toString(),
             required = required,
             help = help,
+            elementClasses = elementClasses,
             hideLabel = hideLabel,
             overrideType = OverrideType.NUMBER,
             options = generateSequence(1) { it + 1 }
                 .take(20)
                 .map { SelectOption(it.toString(), it.toString()) }
-                .toList()
+                .toList(),
+            disabled = disabled,
+            stacked = stacked,
         )
 
         fun dc(
@@ -134,6 +145,9 @@ data class Select(
             required: Boolean = true,
             help: String? = null,
             hideLabel: Boolean = false,
+            disabled: Boolean = false,
+            stacked: Boolean = true,
+            elementClasses: List<String> = emptyList(),
         ) = Select(
             label = label,
             name = name,
@@ -145,7 +159,10 @@ data class Select(
             options = generateSequence(0) { it + 1 }
                 .take(61)
                 .map { SelectOption(it.toString(), it.toString()) }
-                .toList()
+                .toList(),
+            disabled = disabled,
+            stacked = stacked,
+            elementClasses = elementClasses,
         )
 
         fun level(
@@ -155,6 +172,9 @@ data class Select(
             required: Boolean = true,
             help: String? = null,
             hideLabel: Boolean = false,
+            disabled: Boolean = false,
+            stacked: Boolean = true,
+            elementClasses: List<String> = emptyList(),
         ) = Select(
             label = label,
             name = name,
@@ -166,7 +186,10 @@ data class Select(
             options = generateSequence(-1) { it + 1 }
                 .take(27)
                 .map { SelectOption(it.toString(), it.toString()) }
-                .toList()
+                .toList(),
+            disabled = disabled,
+            stacked = stacked,
+            elementClasses = elementClasses,
         )
 
         inline fun <reified T : Enum<T>> fromEnum(
@@ -177,6 +200,9 @@ data class Select(
             help: String? = null,
             hideLabel: Boolean = false,
             labelFunction: (T) -> String = { it.toLabel() },
+            disabled: Boolean = false,
+            stacked: Boolean = true,
+            elementClasses: List<String> = emptyList(),
         ) = Select(
             name = name,
             label = label,
@@ -189,7 +215,10 @@ data class Select(
                     label = labelFunction(it),
                     value = it.toCamelCase()
                 )
-            }
+            },
+            disabled = disabled,
+            stacked = stacked,
+            elementClasses = elementClasses,
         )
     }
 }
@@ -204,6 +233,7 @@ data class TextInput(
     val overrideType: OverrideType? = null,
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
+    val stacked: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -222,7 +252,9 @@ data class TextInput(
         overrideType = overrideType?.value,
         options = emptyArray(),
         hideLabel = hideLabel,
+        stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
+        menu = false,
     )
 }
 
@@ -235,6 +267,7 @@ data class CheckboxInput(
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
+    val stacked: Boolean = false,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -252,7 +285,9 @@ data class CheckboxInput(
         disabled = disabled,
         options = emptyArray(),
         hideLabel = hideLabel,
+        stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
+        menu = false,
     )
 }
 
@@ -266,6 +301,7 @@ data class TextArea(
     val overrideType: OverrideType? = null,
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
+    val stacked: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -284,7 +320,9 @@ data class TextArea(
         options = emptyArray(),
         overrideType = overrideType?.value,
         hideLabel = hideLabel,
+        stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
+        menu = false,
     )
 }
 
@@ -297,6 +335,7 @@ data class NumberInput(
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
+    val stacked: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -314,7 +353,9 @@ data class NumberInput(
         checkbox = false,
         options = emptyArray(),
         hideLabel = hideLabel,
+        stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
+        menu = false,
     )
 }
 
@@ -327,6 +368,7 @@ data class TimeInput(
     override val hideLabel: Boolean = false,
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
+    val stacked: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -348,7 +390,57 @@ data class TimeInput(
         checkbox = false,
         options = emptyArray(),
         hideLabel = hideLabel,
+        stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
+        menu = false,
+    )
+}
+
+data class Menu(
+    override val label: String,
+    override val name: String,
+    val value: String,
+    override val help: String? = null,
+    override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
+    val stacked: Boolean = true,
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
+        isFormElement = true,
+        label = label,
+        name = name,
+        help = help,
+        value = value,
+        select = false,
+        time = false,
+        required = false,
+        number = false,
+        disabled = disabled,
+        text = false,
+        textArea = false,
+        checkbox = false,
+        options = emptyArray(),
+        hideLabel = hideLabel,
+        stacked = stacked,
+        elementClasses = elementClasses.joinToString(" "),
+        menu = true,
+    )
+}
+
+@JsPlainObject
+external interface SectionContext {
+    val legend: String
+    val formRows: Array<FormElementContext>
+}
+
+data class Section(
+    val legend: String,
+    val formRows: List<IntoFormElementContext>
+) {
+    fun toContext(): SectionContext = SectionContext(
+        legend = legend,
+        formRows = formRows.map(IntoFormElementContext::toContext).toTypedArray()
     )
 }
 
@@ -359,6 +451,9 @@ data class TimeInput(
 fun formContext(vararg rows: IntoFormElementContext): Array<FormElementContext> =
     rows.map { it.toContext() }.toTypedArray()
 
+
+fun formContext(vararg rows: Section): Array<SectionContext> =
+    rows.map { it.toContext() }.toTypedArray()
 
 /**
  * Wrapper around expandObject that allows additional

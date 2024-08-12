@@ -1,16 +1,15 @@
-.theme-dark .km-dialog-form .help {
-    color: var(--color-text-light-3);
-}
-
-.theme-light .km-dialog-form .help {
-    color: var(--color-text-dark-3);
-}
-
 .km-dialog-form {
     fieldset {
         margin-bottom: 15px;
         padding: 15px;
         border: 1px solid;
+        border-color: var(--color-fieldset-border);
+        border-radius: 8px;
+
+        legend {
+            font-size: var(--font-size-15);
+            font-weight: bold;
+        }
     }
 
     input:invalid, textarea:invalid, select:invalid {
@@ -46,23 +45,30 @@
         border-spacing: 10px;
     }
 
-    .form-element-checkbox-label {
-        line-height: 26px;
-
-        input[type="checkbox"] {
-            margin-right: 0;
-            float: right;
-        }
-    }
-
-
     .help {
+        color: var(--color-form-hint);
         font-size: var(--font-size-12);
         line-height: var(--line-height-16);
+        margin-top: 5px;
     }
 
-    .row {
-        padding: 10px 0;
+    .row:not(:first-of-type) {
+        margin-top: 1rem;
+    }
+
+    .form-element-inline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        input[type="text"],
+        input[type="time"],
+        input[type="number"],
+        select,
+        textarea {
+            margin-left: 0.5em;
+            width: 180px;
+        }
     }
 
     button:not(.full-width) {

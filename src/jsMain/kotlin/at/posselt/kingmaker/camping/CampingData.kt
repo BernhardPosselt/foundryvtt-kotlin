@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.camping.dialogs.RegionSettings
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
 import kotlinx.js.JsPlainObject
@@ -51,6 +52,7 @@ external interface CampingData {
     var randomEncounterRollMode: String?
     var ignoreSkillRequirements: Boolean
     var minimumTravelSpeed: Int?
+    var regionSettings: RegionSettings
 }
 
 fun CampingActivity.parseResult() =

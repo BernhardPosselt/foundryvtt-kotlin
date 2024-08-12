@@ -1,13 +1,9 @@
 <div>
-    <fieldset>
-        <legend>Use Stolen Lands Regions</legend>
-        <div class="row">
-            {{> formElement useStolenLands}}
-        </div>
-    </fieldset>
+    <div class="row">
+        {{> formElement useStolenLands}}
+    </div>
     {{#unless useStolenLands.value}}
-        <fieldset>
-            <legend>Region Overrides</legend>
+        <div class="row">
             <table>
                 <thead>
                 <tr>
@@ -49,7 +45,7 @@
                 </tbody>
             </table>
             <button type="button" data-action="add" class="full-width">Add Region</button>
-        </fieldset>
+        </div>
     {{/unless}}
     <button data-action="save" {{#unless isValid}}disabled{{/unless}}>Save</button>
 </div>

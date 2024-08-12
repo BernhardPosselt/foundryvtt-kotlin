@@ -5,7 +5,10 @@ import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.camping.dialogs.CampingSettingsApplication
+import at.posselt.kingmaker.camping.dialogs.RegionConfig
 import at.posselt.kingmaker.camping.dialogs.findCampingActivitySkills
+import at.posselt.kingmaker.data.checks.DegreeOfSuccess
+import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
@@ -19,13 +22,14 @@ import com.foundryvtt.pf2e.item.*
 import js.array.push
 import js.core.Void
 import js.objects.recordOf
+import kotlinx.coroutines.await
 import kotlinx.datetime.*
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
-import kotlin.math.min
+import kotlin.math.max
 import kotlin.reflect.KClass
 
 @JsPlainObject
@@ -34,6 +38,7 @@ external interface CampingSheetActor {
     val uuid: String
     val image: String?
     val choseActivity: Boolean
+    val degreeOfSuccess: FormElementContext?
 }
 
 @JsPlainObject
@@ -41,8 +46,8 @@ external interface CampingSheetActivity {
     val journalUuid: String?
     val actor: CampingSheetActor?
     val name: String
-    val degreeOfSuccess: String?
     val locked: Boolean
+    val requiresCheck: Boolean
 }
 
 @JsPlainObject
@@ -58,24 +63,24 @@ external interface NightModes {
 }
 
 @JsPlainObject
-external interface CampingSheetContext {
-    val actors: Array<CampingSheetActor>
-    val activities: Array<CampingSheetActivity>
-    val isDay: Boolean
-    val isGM: Boolean
-    val time: String
-    val terrain: String
-    val pxTimeOffset: Int
-    val night: NightModes
-    val hexplorationActivityDuration: String
-    val hexplorationActivitiesAvailable: Int
-    val hexplorationActivitiesMax: String
-    val adventuringFor: String
-    val restDuration: String
-    val restDurationLeft: String?
-    val encounterDc: Int
-    val region: FormElementContext
-    val section: String
+external interface CampingSheetContext : HandlebarsRenderContext {
+    var actors: Array<CampingSheetActor>
+    var activities: Array<CampingSheetActivity>
+    var isDay: Boolean
+    var isGM: Boolean
+    var time: String
+    var terrain: String
+    var pxTimeOffset: Int
+    var night: NightModes
+    var hexplorationActivityDuration: String
+    var hexplorationActivitiesAvailable: Int
+    var hexplorationActivitiesMax: String
+    var adventuringFor: String
+    var restDuration: String
+    var restDurationLeft: String?
+    var encounterDc: Int
+    var region: FormElementContext
+    var section: String
 }
 
 @JsPlainObject
@@ -113,6 +118,7 @@ private fun calculateNightModes(time: LocalTime): NightModes {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
+@JsName("CampingSheet")
 class CampingSheet(
     private val actor: PF2ENpc,
 ) : FormApp<CampingSheetContext, CampingSheetFormData>(
@@ -124,6 +130,7 @@ class CampingSheet(
         MenuControl(label = "Show Players", action = "show-players"),
         MenuControl(label = "Activities", action = "configure-activities"),  // TODO
         MenuControl(label = "Recipes", action = "configure-recipes"),  // TODO
+        MenuControl(label = "Regions", action = "configure-regions"),
         MenuControl(label = "Settings", action = "settings"),  // TODO
         MenuControl(label = "Help", action = "help"),
     ),
@@ -208,6 +215,7 @@ class CampingSheet(
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
+            "configure-regions" -> RegionConfig(actor).launch()
             "configure-recipes" -> console.log("recipes")
             "configure-activities" -> console.log("activities")
             "settings" -> CampingSettingsApplication(game, actor).launch()
@@ -274,10 +282,9 @@ class CampingSheet(
     }
 
     private suspend fun rollEncounter(includeFlatCheck: Boolean) {
-        val currentRegion = game.findCurrentRegion() ?: game.getRegions().firstOrNull()
-        console.log(currentRegion)
-        currentRegion?.let { region ->
-            actor.getCamping()?.let { camping ->
+        actor.getCamping()?.let { camping ->
+            val currentRegion = camping.findCurrentRegion(game) ?: camping.getRegions(game).firstOrNull()
+            currentRegion?.let { region ->
                 rollRandomEncounter(
                     camping = camping,
                     includeFlatCheck = includeFlatCheck,
@@ -391,7 +398,7 @@ class CampingSheet(
 
     private fun getHexplorationActivities(): Double {
         val travelSpeed = game.party()?.system?.attributes?.speed?.total ?: 25
-        val override = min(actor.getCamping()?.minimumTravelSpeed ?: 0, travelSpeed)
+        val override = max(actor.getCamping()?.minimumTravelSpeed ?: 0, travelSpeed)
         return calculateHexplorationActivities(override)
     }
 
@@ -418,56 +425,65 @@ class CampingSheet(
 
     override fun _preparePartContext(
         partId: String,
-        context: CampingSheetContext,
+        context: HandlebarsRenderContext,
         options: HandlebarsRenderOptions
     ): Promise<CampingSheetContext> = buildPromise {
-
+        val parent = super._preparePartContext(partId, context, options).await()
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
 
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
-        val activities = camping.groupActivities()
-            .map { (data, result) ->
-                val actor = result.actorUuid?.let { actorsByUuid[it] }
-                CampingSheetActivity(
-                    journalUuid = data.journalUuid,
-                    name = data.name,
-                    degreeOfSuccess = result.result,
-                    locked = camping.lockedActivities.contains(data.name),
-                    actor = actor?.let { act ->
-                        CampingSheetActor(
-                            name = act.name,
-                            uuid = act.uuid,
-                            image = act.img,
-                            choseActivity = true,
-                        )
-                    },
-                )
-            }.toTypedArray()
+        val groupActivities = camping.groupActivities().sortedBy { it.data.name }
+        val activities = groupActivities.mapIndexed { index, (data, result) ->
+            val actor = result.actorUuid?.let { actorsByUuid[it] }
+            CampingSheetActivity(
+                journalUuid = data.journalUuid,
+                name = data.name,
+                locked = camping.lockedActivities.contains(data.name),
+                requiresCheck = !data.doesNotRequireACheck(),
+                actor = actor?.let { act ->
+                    CampingSheetActor(
+                        name = act.name,
+                        uuid = act.uuid,
+                        image = act.img,
+                        choseActivity = true,
+                        degreeOfSuccess = Select.fromEnum<DegreeOfSuccess>(
+                            label = "Degree of Success",
+                            hideLabel = true,
+                            required = false,
+                            name = "activities.degreeOfSuccess.$index",
+                            value = result.result?.let { fromCamelCase<DegreeOfSuccess>(it) },
+                            elementClasses = listOf("km-camping-degree-of-success"),
+                        ).toContext()
+                    )
+                },
+            )
+        }.toTypedArray()
         val fullRestDuration = getFullRestDuration(
             watchers = actorsByUuid.values.filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) },
             recipes = camping.getAllRecipes().toList(),
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
         )
-        val currentRegionName = game.getCurrentRegionName()
-        val regions = game.getRegions()
-        val currentRegion = currentRegionName?.let { name -> regions.find { it.name == name } }
+        val currentRegion = camping.findCurrentRegion(game)
+        val regions = camping.getRegions(game)
         val isGM = game.user.isGM
         val section = "Camping Activities"
         CampingSheetContext(
+            partId = parent.partId,
             terrain = currentRegion?.terrain ?: "plains",
             region = Select(
                 label = "Region",
-                value = currentRegionName,
+                value = currentRegion?.name,
                 options = regions.map {
                     SelectOption(label = it.name, value = it.name)
                 },
                 required = true,
                 name = "region",
-                disabled = !isGM
+                disabled = !isGM,
+                stacked = false,
             ).toContext(),
             pxTimeOffset = pxTimeOffset,
             time = time.toDateInputString(),
@@ -480,9 +496,8 @@ class CampingSheet(
                         image = actor.img,
                         uuid = uuid,
                         name = actor.name,
-                        choseActivity = section == "Camping Activities" && camping.campingActivities.any {
-                            it.actorUuid == uuid
-                        },
+                        choseActivity = section == "Camping Activities"
+                                && groupActivities.any { it.result.actorUuid == uuid && it.done() }
                     )
                 }
             }.toTypedArray(),

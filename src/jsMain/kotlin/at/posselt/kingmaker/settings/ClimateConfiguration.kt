@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.settings
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.camping.dialogs.TableHead
 import at.posselt.kingmaker.data.regions.Month
 import at.posselt.kingmaker.data.regions.Season
 import at.posselt.kingmaker.toCamelCase
@@ -8,6 +9,7 @@ import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.*
+import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
@@ -44,7 +46,7 @@ external interface ClimateSettings {
 }
 
 @JsPlainObject
-external interface ClimateSettingsContext {
+external interface ClimateSettingsContext : HandlebarsRenderContext {
     var useStolenLands: FormElementContext
     var heading: Array<TableHead>
     var formRows: Array<Array<Any>>
@@ -76,10 +78,12 @@ class ClimateConfiguration : FormApp<ClimateSettingsContext, ClimateSettings>(
 
     override fun _preparePartContext(
         partId: String,
-        context: ClimateSettingsContext,
+        context: HandlebarsRenderContext,
         options: HandlebarsRenderOptions
     ): Promise<ClimateSettingsContext> = buildPromise {
+        val parent = super._preparePartContext(partId, context, options).await()
         ClimateSettingsContext(
+            partId = parent.partId,
             isValid = isFormValid,
             useStolenLands = CheckboxInput(
                 value = currentSettings.useStolenLands,

@@ -1,9 +1,9 @@
 package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.Config
+import at.posselt.kingmaker.camping.dialogs.RegionSetting
+import at.posselt.kingmaker.camping.dialogs.RegionSettings
 import at.posselt.kingmaker.data.regions.stolenLandsZones
-import at.posselt.kingmaker.settings.RegionSetting
-import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
@@ -13,7 +13,7 @@ import com.foundryvtt.pf2e.actor.PF2ENpc
 
 fun getDefaultCamping(game: Game): CampingData {
     return CampingData(
-        currentRegion = "Rostland Hinterlands",
+        currentRegion = Config.regions.defaultRegion,
         actorUuids = emptyArray(),
         campingActivities = emptyArray(),
         homebrewCampingActivities = emptyArray(),
@@ -39,6 +39,10 @@ fun getDefaultCamping(game: Game): CampingData {
         increaseWatchActorNumber = 0,
         actorUuidsNotKeepingWatch = emptyArray(),
         ignoreSkillRequirements = false,
+        regionSettings = RegionSettings(
+            useStolenLands = true,
+            regions = emptyArray()
+        )
     )
 }
 
@@ -53,13 +57,7 @@ suspend fun PF2ENpc.setCamping(data: CampingData) {
 fun Game.getCampingActor(): PF2ENpc? =
     actors.contents
         .filterIsInstance<PF2ENpc>()
-        .find { it.name == Config.camping.actorName }
-
-fun Game.getCurrentRegionName() =
-    getCampingActor()
-        ?.getCamping()
-        ?.currentRegion
-
+        .find { it.getCamping() != null }
 
 fun CampingData.getAllActivities(): Array<CampingActivityData> {
     val homebrewNames = homebrewCampingActivities.map { it.name }.toSet()
@@ -75,19 +73,18 @@ fun CampingData.getAllRecipes(): Array<RecipeData> {
         .toTypedArray() + cooking.homebrewMeals
 }
 
-suspend fun Game.getRegions(): List<RegionSetting> {
-    val regionSettings = settings.kingmakerTools.getRegionSettings()
+suspend fun CampingData.getRegions(game: Game): List<RegionSetting> {
     return if (regionSettings.useStolenLands) {
         stolenLandsZones
             .map {
                 buildPromise {
                     val tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}"
-                    val rolltableUuid = findRollTableWithCompendiumFallback(
+                    val rolltableUuid = game.findRollTableWithCompendiumFallback(
                         tableName = tableName,
                         fallbackName = it.name,
                     )?.uuid
-                    val combatTrack = (playlists.getCombatOverrideTrack(it.combatTrackName)
-                        ?: playlists.getKingmakerCombatTrack(it.combatTrackName))
+                    val combatTrack = (game.playlists.getCombatOverrideTrack(it.combatTrackName)
+                        ?: game.playlists.getKingmakerCombatTrack(it.combatTrackName))
                     RegionSetting(
                         name = it.name,
                         zoneDc = it.zoneDc,
@@ -105,11 +102,8 @@ suspend fun Game.getRegions(): List<RegionSetting> {
     }
 }
 
-suspend fun Game.findCurrentRegion(): RegionSetting? {
-    val regionName = getCurrentRegionName()
-    return getRegions()
-        .find { it.name == regionName }
-}
+suspend fun CampingData.findCurrentRegion(game: Game): RegionSetting? =
+    getRegions(game).find { it.name == currentRegion }
 
 suspend fun openCampingSheet(game: Game) {
     // TODO: create camping actor if not present

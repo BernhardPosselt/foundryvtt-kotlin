@@ -1,9 +1,9 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.camping.dialogs.RegionSetting
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.fromCamelCase
-import at.posselt.kingmaker.settings.RegionSetting
 import at.posselt.kingmaker.utils.d20Check
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import at.posselt.kingmaker.utils.rollWithDraw
@@ -50,7 +50,7 @@ suspend fun rollRandomEncounter(
 
 private fun calculateModifierIncrease(camping: CampingData, isDay: Boolean): Int =
     camping.groupActivities().asSequence()
-        .filter { (data, activity) -> (data.doesNotRequireACheck() && activity.actorUuid != null) || activity.checkPerformed() }
+        .filter(ActivityAndData::done)
         .map { (data, activity) -> calculateModifierIncrease(data, isDay, activity.parseResult()) }
         .sum()
 
