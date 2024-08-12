@@ -134,7 +134,8 @@ class CampingSheet(
         MenuControl(label = "Settings", action = "settings"),  // TODO
         MenuControl(label = "Help", action = "help"),
     ),
-    scrollable = arrayOf("#km-camping-content", ".km-camping-actors")
+    scrollable = arrayOf("#km-camping-content", ".km-camping-actors"),
+    renderOnSubmit = false,
 ) {
     private val allowedActorTypes = arrayOf(
         PF2ENpc::class,
@@ -429,6 +430,7 @@ class CampingSheet(
         options: HandlebarsRenderOptions
     ): Promise<CampingSheetContext> = buildPromise {
         val parent = super._preparePartContext(partId, context, options).await()
+        console.log("rendering $partId")
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)

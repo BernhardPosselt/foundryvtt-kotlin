@@ -3,7 +3,7 @@
   "description": "A collection of utilities to run Kingmaker",
   "version": "2.0.0",
   "scripts": [
-    "dist/api/HandlebarsFormApplication.js",
+    "dist/api/SaneHandlebarsApplicationV2.js",
     "dist/main.js",
     "dist/oldmain.js"
   ],

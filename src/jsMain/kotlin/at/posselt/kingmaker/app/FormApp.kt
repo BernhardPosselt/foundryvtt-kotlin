@@ -4,11 +4,9 @@ import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.resolveTemplatePath
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
-import com.foundryvtt.core.applications.api.ApplicationFormConfiguration
-import com.foundryvtt.core.applications.api.ApplicationHeaderControlsEntry
-import com.foundryvtt.core.applications.api.ApplicationPosition
-import com.foundryvtt.core.applications.api.Window
+import com.foundryvtt.core.applications.api.*
 import js.core.Void
+import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.HTMLFormElement
@@ -32,6 +30,7 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
     width: Int? = undefined,
     resizable: Boolean? = undefined,
     val debug: Boolean = false,
+    val renderOnSubmit: Boolean = true,
 ) : App<T>(
     HandlebarsFormApplicationOptions(
         window = Window(
@@ -48,13 +47,17 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
         position = ApplicationPosition(
             width = width,
         ),
-        templatePath = resolveTemplatePath(template),
-        scrollable = scrollable,
         classes = if (isDialogForm) arrayOf("km-dialog-form").plus(classes) else classes,
         tag = "form",
         form = ApplicationFormConfiguration(
             submitOnChange = submitOnChange,
             closeOnSubmit = closeOnSubmit,
+        ),
+        parts = recordOf(
+            "form" to HandlebarsTemplatePart(
+                template = resolveTemplatePath(template),
+                scrollable = scrollable,
+            )
         )
     )
 ) {
@@ -73,7 +76,9 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
                 console.log("Parsed object ${JSON.stringify(parsedData)}")
             }
             onParsedSubmit(parsedData).await()
-            render()
+            if (renderOnSubmit) {
+                render()
+            }
             null
         }
 

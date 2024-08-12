@@ -5,15 +5,20 @@ import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.camping.*
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidsOfTypes
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.utils.flattenObject
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2ELoot
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.actor.PF2EVehicle
+import js.array.toTypedArray
 import js.core.Void
+import js.objects.Record
+import js.objects.jso
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -49,6 +54,7 @@ class CampingSettingsApplication(
 ) : FormApp<CampingSettingsContext, CampingSettings>(
     title = "Camping Settings",
     template = "components/forms/application-form.hbs",
+    debug = true,
 ) {
     var settings: CampingSettings
 
@@ -83,7 +89,7 @@ class CampingSettingsApplication(
         )
         val huntAndGatherUuids = (actors + listOfNotNull(game.party()))
             .mapNotNull { it.toOption(useUuid = true) }
-        val uuidsNotKeepingWatch = setOf(*camping.actorUuidsNotKeepingWatch)
+        val uuidsNotKeepingWatch = setOf(*settings.actorUuidsNotKeepingWatch)
         CampingSettingsContext(
             partId = parent.partId,
             sections = formContext(
@@ -162,7 +168,7 @@ class CampingSettingsApplication(
                         ),
                         *actors.mapIndexed { index, actor ->
                             CheckboxInput(
-                                name = "actorUuidsNotKeepingWatch.$index",
+                                name = "actorUuidsNotKeepingWatch.${actor.uuid}",
                                 label = "Skip Watch: ${actor.name}",
                                 value = uuidsNotKeepingWatch.contains(actor.uuid),
                             )
@@ -174,7 +180,12 @@ class CampingSettingsApplication(
     }
 
     override fun fixObject(value: dynamic) {
-        value["actorUuidsNotKeepingWatch"] = value["actorUuidsNotKeepingWatch"] ?: emptyArray<String>()
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+        val actors = (value["actorUuidsNotKeepingWatch"] ?: jso()) as Record<String, Boolean>
+        value["actorUuidsNotKeepingWatch"] = flattenObject(actors).asSequence()
+            .filter { it.component2() == true }
+            .map { it.component1() }
+            .toTypedArray()
     }
 
     override fun onParsedSubmit(value: CampingSettings): Promise<Void> = buildPromise {

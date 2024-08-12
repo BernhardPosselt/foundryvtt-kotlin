@@ -2,10 +2,7 @@ package at.posselt.kingmaker.app
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
-import com.foundryvtt.core.applications.api.ApplicationConfiguration
-import com.foundryvtt.core.applications.api.ApplicationRenderOptions
-import com.foundryvtt.core.applications.api.ApplicationV2
-import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.applications.api.*
 import js.core.Void
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
@@ -16,8 +13,7 @@ import kotlin.js.Promise
 
 @JsPlainObject
 external interface HandlebarsFormApplicationOptions : ApplicationConfiguration {
-    val templatePath: String
-    val scrollable: Array<String>
+    val parts: Record<String, HandlebarsTemplatePart>?
 }
 
 @JsPlainObject
@@ -26,9 +22,9 @@ external interface HandlebarsRenderContext {
 }
 
 
-@JsName("HandlebarsFormApplication(foundry.applications.api.ApplicationV2)")
+@JsName("SaneHandlebarsApplicationV2(foundry.applications.api.ApplicationV2)")
 @Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
-open external class HandlebarsFormApplication<T : HandlebarsRenderContext>(
+open external class HandlebarsApp<T : HandlebarsRenderContext>(
     options: HandlebarsFormApplicationOptions,
 ) : ApplicationV2 {
     protected open fun _preparePartContext(
@@ -51,7 +47,11 @@ open external class HandlebarsFormApplication<T : HandlebarsRenderContext>(
         state: Record<String, Any>
     )
 
-    protected open fun _attachPartListeners(partId: String, htmlElement: HTMLElement, options: ApplicationRenderOptions)
+    protected open fun _attachPartListeners(
+        partId: String,
+        htmlElement: HTMLElement,
+        options: ApplicationRenderOptions
+    )
 
     protected open fun onSubmit(
         event: Event,

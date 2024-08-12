@@ -31,7 +31,7 @@ data class AppEventListener<Event>(
  */
 abstract class App<C : HandlebarsRenderContext>(
     config: HandlebarsFormApplicationOptions
-) : HandlebarsFormApplication<C>(config) {
+) : HandlebarsApp<C>(config) {
     private val appHooks = arrayOf<AppHook<*>>()
     private val appEventListeners = arrayOf<AppEventListener<Event>>()
     protected val appHook = object : HooksEventListener {
