@@ -9,7 +9,9 @@ import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidsOfTypes
 import com.foundryvtt.core.Game
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.data.dsl.buildSchema
 import com.foundryvtt.core.utils.flattenObject
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2ELoot
@@ -40,6 +42,56 @@ external interface CampingSettings {
     val minimumTravelSpeed: Int?
 }
 
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+@JsName("CampingSettingsDataModel")
+class CampingSettingsDataModel : DataModel() {
+    companion object {
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun defineSchema() = buildSchema {
+            number("gunsToClean") {
+                required = true
+                integer = true
+                positive = true
+            }
+            string("restRollMode") {
+                required = true
+                choices = arrayOf("none", "one", "one-every-4-hours")
+            }
+            number("increaseWatchActorNumber") {
+                required = true
+                integer = true
+                positive = true
+            }
+            stringArray("actorUuidsNotKeepingWatch") {
+                options {
+                    required = true
+                }
+                field {
+                }
+            }
+            string("huntAndGatherTargetActorUuid") {
+                blank = false
+            }
+            string("proxyRandomEncounterTableUuid") {
+                blank = false
+            }
+            string("randomEncounterRollMode") {
+                blank = false
+            }
+            boolean("ignoreSkillRequirements") {
+                required = true
+            }
+            number("minimumTravelSpeed") {
+                required = true
+                integer = true
+                positive = true
+            }
+        }
+    }
+}
+
 @JsPlainObject
 external interface CampingSettingsContext : HandlebarsRenderContext {
     val sections: Array<SectionContext>
@@ -59,6 +111,7 @@ class CampingSettingsApplication(
     var settings: CampingSettings
 
     init {
+        console.log(CampingSettingsDataModel::class.js)
         val camping = campingActor.getCamping()!!
         settings = CampingSettings(
             gunsToClean = camping.gunsToClean,

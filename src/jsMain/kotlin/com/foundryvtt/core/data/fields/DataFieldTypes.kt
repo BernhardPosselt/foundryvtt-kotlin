@@ -6,10 +6,11 @@ import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLDivElement
 
 @JsPlainObject
-external interface DataFieldOptions<T> {
+external interface DataFieldOptions/*<T>*/ {
     var required: Boolean?
     var nullable: Boolean?
-    var initial: T?
+
+    var initial: Any?
     var readonly: Boolean?
     var gmOnly: Boolean?
     var label: String?

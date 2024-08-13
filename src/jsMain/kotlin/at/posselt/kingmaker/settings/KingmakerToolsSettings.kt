@@ -252,7 +252,7 @@ object KingmakerToolsSettings {
         game.settings.registerField(
             key = "climateSettings",
             name = "Climate Settings",
-            type = ObjectField(
+            type = ObjectField<ClimateSettings>(
                 DataFieldOptions(
                     initial = ClimateSettings(
                         useStolenLands = true,
