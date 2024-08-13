@@ -1,11 +1,11 @@
+@file:JsQualifier("foundry.data.fields")
+
 package com.foundryvtt.core.data.fields
 
 import com.foundryvtt.core.AnyObject
 import js.array.JsTuple2
 import js.iterable.JsIterable
 import js.objects.Record
-
-typealias DataSchema<T> = Record<String, DataField<T>>
 
 external class SchemaField(
     fields: DataSchema<*>,
