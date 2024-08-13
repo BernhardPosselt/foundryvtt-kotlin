@@ -12,7 +12,6 @@ import at.posselt.kingmaker.utils.*
 import at.posselt.kingmaker.weather.registerWeatherHooks
 import at.posselt.kingmaker.weather.rollWeather
 import com.foundryvtt.core.*
-import com.foundryvtt.core.data.dsl.blubb
 import js.objects.recordOf
 
 fun main() {
@@ -101,6 +100,5 @@ fun main() {
                 ?.let { actor -> CampingSheet(actor) }
                 ?.launch()
         }
-        console.log(blubb())
     }
 }

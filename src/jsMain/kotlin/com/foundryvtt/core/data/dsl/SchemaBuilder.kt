@@ -107,19 +107,3 @@ fun buildSchema(block: Schema.() -> Unit): DataSchema<out Any> {
     schema.block()
     return schema.build()
 }
-
-fun blubb() {
-    val s = buildSchema {
-        string("value") {
-            required = true
-            blank = false
-        }
-        schema("field") {
-            string("name") {
-                required = true
-                string("test")
-            }
-        }
-    }
-    console.log(s)
-}
