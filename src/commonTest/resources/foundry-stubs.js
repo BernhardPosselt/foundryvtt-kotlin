@@ -1,5 +1,9 @@
 const foundry = {
-    abstract: {},
+    abstract: {
+        DataModel: class {
+
+        }
+    },
     utils: {
         expandObject: () => {
         }
