@@ -2,7 +2,7 @@
 
 package com.foundryvtt.core.data.fields
 
-external class NumberField(
+external class NumberField<T : Number>(
     options: NumberFieldOptions? = definedExternally,
-    context: DataFieldContext<Double>? = definedExternally,
-) : DataField<Double>
+    context: DataFieldContext<T>? = definedExternally,
+) : DataField<T>

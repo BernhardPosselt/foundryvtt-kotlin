@@ -4,9 +4,9 @@ import kotlinx.js.JsPlainObject
 
 @JsPlainObject
 external interface NumberFieldOptions : DataFieldOptions/*<Double>*/ {
-    var min: Double?
-    var max: Double?
-    var step: Double?
+    var min: Number?
+    var max: Number?
+    var step: Number?
     var integer: Boolean?
     var positive: Boolean?
     var choices: Any?

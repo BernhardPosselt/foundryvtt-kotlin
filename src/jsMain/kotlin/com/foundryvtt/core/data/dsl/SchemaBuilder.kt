@@ -4,6 +4,51 @@ import at.posselt.kingmaker.utils.toRecord
 import com.foundryvtt.core.data.fields.*
 import js.objects.Record
 
+open class BaseArrayConfiguration<T> {
+    open var arrayOptions: ArrayFieldOptions<T>? = undefined
+
+    open fun options(block: ArrayFieldOptions<T>.() -> Unit) {
+        val opts = ArrayFieldOptions<T>()
+        opts.block()
+        arrayOptions = opts
+    }
+}
+
+class StringArrayConfiguration : BaseArrayConfiguration<String>() {
+    var stringOptions: StringFieldOptions? = undefined
+
+    fun string(block: StringFieldOptions.() -> Unit) {
+        val opts = StringFieldOptions()
+        opts.block()
+        stringOptions = opts
+    }
+}
+
+class NumberArrayConfiguration<T : Number> : BaseArrayConfiguration<T>() {
+    var numberOptions: NumberFieldOptions? = undefined
+
+    fun int(block: NumberFieldOptions.() -> Unit) {
+        val opts = NumberFieldOptions(integer = true)
+        opts.block()
+        numberOptions = opts
+    }
+
+    fun double(block: NumberFieldOptions.() -> Unit) {
+        val opts = NumberFieldOptions()
+        opts.block()
+        numberOptions = opts
+    }
+}
+
+class BooleanArrayConfiguration : BaseArrayConfiguration<Boolean>() {
+    var booleanOptions: DataFieldOptions/*<Boolean>*/? = undefined
+
+    fun boolean(block: DataFieldOptions/*<Boolean>*/.() -> Unit) {
+        val opts = DataFieldOptions/*<Boolean>*/()
+        opts.block()
+        booleanOptions = opts
+    }
+}
 
 class Schema {
     val fields = mutableMapOf<String, DataField<out Any>>()
@@ -18,7 +63,17 @@ class Schema {
         fields[name] = StringField(options = options, context = context)
     }
 
-    fun number(
+    fun int(
+        name: String,
+        context: DataFieldContext<Double>? = undefined,
+        block: (NumberFieldOptions.() -> Unit)? = null,
+    ) {
+        val options = NumberFieldOptions(integer = true)
+        block?.invoke(options)
+        fields[name] = NumberField(options = options, context = context)
+    }
+
+    fun double(
         name: String,
         context: DataFieldContext<Double>? = undefined,
         block: (NumberFieldOptions.() -> Unit)? = null,
@@ -50,33 +105,39 @@ class Schema {
         fields[name] = ArrayField(element = element, options = options, context = context)
     }
 
-
-    class ArrayConfiguration<T> {
-        var arrayOptions: ArrayFieldOptions<T>? = undefined
-        var fieldOptions: StringFieldOptions? = undefined
-
-        fun field(block: StringFieldOptions.() -> Unit) {
-            val opts = StringFieldOptions()
-            opts.block()
-            fieldOptions = opts
-        }
-
-        fun options(block: ArrayFieldOptions<T>.() -> Unit) {
-            val opts = ArrayFieldOptions<T>()
-            opts.block()
-            arrayOptions = opts
-        }
-    }
-
     fun stringArray(
         name: String,
         context: DataFieldContext<Array<String>>? = undefined,
         fieldContext: DataFieldContext<String>? = undefined,
-        block: ArrayConfiguration<String>.() -> Unit,
+        block: StringArrayConfiguration.() -> Unit,
     ) {
-        val opts = ArrayConfiguration<String>()
+        val opts = StringArrayConfiguration()
         opts.block()
-        val element = StringField(options = opts.fieldOptions, context = fieldContext)
+        val element = StringField(options = opts.stringOptions, context = fieldContext)
+        fields[name] = ArrayField(element = element, options = opts.arrayOptions, context = context)
+    }
+
+    fun <T : Number> numberArray(
+        name: String,
+        context: DataFieldContext<Array<T>>? = undefined,
+        fieldContext: DataFieldContext<T>? = undefined,
+        block: NumberArrayConfiguration<T>.() -> Unit,
+    ) {
+        val opts = NumberArrayConfiguration<T>()
+        opts.block()
+        val element = NumberField(options = opts.numberOptions, context = fieldContext)
+        fields[name] = ArrayField(element = element, options = opts.arrayOptions, context = context)
+    }
+
+    fun booleanArray(
+        name: String,
+        context: DataFieldContext<Array<Boolean>>? = undefined,
+        fieldContext: DataFieldContext<Boolean>? = undefined,
+        block: BooleanArrayConfiguration.() -> Unit,
+    ) {
+        val opts = BooleanArrayConfiguration()
+        opts.block()
+        val element = BooleanField(options = opts.booleanOptions, context = fieldContext)
         fields[name] = ArrayField(element = element, options = opts.arrayOptions, context = context)
     }
 

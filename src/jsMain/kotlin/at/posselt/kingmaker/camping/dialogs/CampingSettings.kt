@@ -8,6 +8,7 @@ import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidsOfTypes
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
@@ -42,33 +43,29 @@ external interface CampingSettings {
     val minimumTravelSpeed: Int?
 }
 
+fun CampingSettings.toRecord() = unsafeCast<AnyObject>()
+
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 @JsName("CampingSettingsDataModel")
-class CampingSettingsDataModel : DataModel() {
+class CampingSettingsDataModel(value: CampingSettings) : DataModel(value.toRecord()) {
     companion object {
         @OptIn(ExperimentalJsStatic::class)
         @JsStatic
         fun defineSchema() = buildSchema {
-            number("gunsToClean") {
+            int("gunsToClean") {
                 required = true
-                integer = true
-                positive = true
             }
             string("restRollMode") {
                 required = true
                 choices = arrayOf("none", "one", "one-every-4-hours")
             }
-            number("increaseWatchActorNumber") {
+            int("increaseWatchActorNumber") {
                 required = true
-                integer = true
-                positive = true
             }
             stringArray("actorUuidsNotKeepingWatch") {
                 options {
                     required = true
-                }
-                field {
                 }
             }
             string("huntAndGatherTargetActorUuid") {
@@ -83,10 +80,8 @@ class CampingSettingsDataModel : DataModel() {
             boolean("ignoreSkillRequirements") {
                 required = true
             }
-            number("minimumTravelSpeed") {
+            int("minimumTravelSpeed") {
                 required = true
-                integer = true
-                positive = true
             }
         }
     }
@@ -239,6 +234,7 @@ class CampingSettingsApplication(
             .filter { it.component2() == true }
             .map { it.component1() }
             .toTypedArray()
+        console.log(CampingSettingsDataModel(value).toObject())
     }
 
     override fun onParsedSubmit(value: CampingSettings): Promise<Void> = buildPromise {
