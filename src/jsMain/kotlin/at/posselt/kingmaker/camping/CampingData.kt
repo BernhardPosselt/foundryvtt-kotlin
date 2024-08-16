@@ -49,7 +49,7 @@ external interface CampingData {
     var actorUuidsNotKeepingWatch: Array<String>
     var huntAndGatherTargetActorUuid: String?
     var proxyRandomEncounterTableUuid: String?
-    var randomEncounterRollMode: String?
+    var randomEncounterRollMode: String
     var ignoreSkillRequirements: Boolean
     var minimumTravelSpeed: Int?
     var regionSettings: RegionSettings

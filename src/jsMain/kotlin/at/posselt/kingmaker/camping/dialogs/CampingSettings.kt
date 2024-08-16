@@ -38,7 +38,7 @@ external interface CampingSettings {
     val actorUuidsNotKeepingWatch: Array<String>
     val huntAndGatherTargetActorUuid: String?
     val proxyRandomEncounterTableUuid: String?
-    val randomEncounterRollMode: String?
+    val randomEncounterRollMode: String
     val ignoreSkillRequirements: Boolean
     val minimumTravelSpeed: Int?
 }
@@ -47,42 +47,23 @@ fun CampingSettings.toRecord() = unsafeCast<AnyObject>()
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-@JsName("CampingSettingsDataModel")
-class CampingSettingsDataModel(value: CampingSettings) : DataModel(value.toRecord()) {
+class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
     companion object {
+        @Suppress("unused")
         @OptIn(ExperimentalJsStatic::class)
         @JsStatic
         fun defineSchema() = buildSchema {
-            int("gunsToClean") {
-                required = true
-            }
+            int("gunsToClean")
             string("restRollMode") {
-                required = true
                 choices = arrayOf("none", "one", "one-every-4-hours")
             }
-            int("increaseWatchActorNumber") {
-                required = true
-            }
-            stringArray("actorUuidsNotKeepingWatch") {
-                options {
-                    required = true
-                }
-            }
-            string("huntAndGatherTargetActorUuid") {
-                blank = false
-            }
-            string("proxyRandomEncounterTableUuid") {
-                blank = false
-            }
-            string("randomEncounterRollMode") {
-                blank = false
-            }
-            boolean("ignoreSkillRequirements") {
-                required = true
-            }
-            int("minimumTravelSpeed") {
-                required = true
-            }
+            int("increaseWatchActorNumber")
+            stringArray("actorUuidsNotKeepingWatch")
+            string("huntAndGatherTargetActorUuid", nullable = true)
+            string("proxyRandomEncounterTableUuid", nullable = true)
+            string("randomEncounterRollMode")
+            boolean("ignoreSkillRequirements")
+            int("minimumTravelSpeed")
         }
     }
 }
@@ -94,7 +75,6 @@ external interface CampingSettingsContext : HandlebarsRenderContext {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
-@JsName("CampingSettings")
 class CampingSettingsApplication(
     private val game: Game,
     private val campingActor: PF2ENpc,
@@ -106,7 +86,6 @@ class CampingSettingsApplication(
     var settings: CampingSettings
 
     init {
-        console.log(CampingSettingsDataModel::class.js)
         val camping = campingActor.getCamping()!!
         settings = CampingSettings(
             gunsToClean = camping.gunsToClean,
@@ -154,7 +133,7 @@ class CampingSettingsApplication(
                         Select.fromEnum<RollMode>(
                             name = "randomEncounterRollMode",
                             label = "Random Encounter Roll Mode",
-                            value = settings.randomEncounterRollMode?.let { fromCamelCase<RollMode>(it) },
+                            value = settings.randomEncounterRollMode.let { fromCamelCase<RollMode>(it) },
                             labelFunction = { it.label },
                             stacked = false,
                         ),
@@ -234,11 +213,12 @@ class CampingSettingsApplication(
             .filter { it.component2() == true }
             .map { it.component1() }
             .toTypedArray()
-        console.log(CampingSettingsDataModel(value).toObject())
     }
 
     override fun onParsedSubmit(value: CampingSettings): Promise<Void> = buildPromise {
-        settings = value
+        val obj = CampingSettingsDataModel(value.toRecord()).toObject().unsafeCast<CampingSettings>()
+        console.log(obj)
+        settings = obj
         undefined
     }
 
