@@ -8,7 +8,10 @@ import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
+import com.foundryvtt.core.abstract.DataModel
+import com.foundryvtt.core.abstract.DocumentConstructionContext
 import com.foundryvtt.core.applications.api.*
+import com.foundryvtt.core.data.dsl.buildSchema
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -55,11 +58,41 @@ external interface ClimateSettingsContext : HandlebarsRenderContext {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
+class ClimateConfigurationDataModel(
+    value: AnyObject? = undefined,
+    context: DocumentConstructionContext? = undefined,
+) : DataModel(value, context) {
+    companion object {
+        @Suppress("unused")
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun defineSchema() = buildSchema {
+            boolean("useStolenLands") {
+                initial = true
+            }
+            array<ClimateSetting>("months") {
+                options {
+                    initial = getDefaultMonths()
+                }
+                schema {
+                    int("coldDc", nullable = true)
+                    int("precipitationDc", nullable = true)
+                    int("weatherEventDc", nullable = true)
+                    string("season")
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class ClimateConfiguration : FormApp<ClimateSettingsContext, ClimateSettings>(
     title = "Climate",
     width = 1024,
     template = "applications/settings/configure-climate.hbs",
     debug = true,
+    dataModel = ClimateConfigurationDataModel::class.js,
 ) {
     private var currentSettings = game.settings.kingmakerTools.getClimateSettings()
 

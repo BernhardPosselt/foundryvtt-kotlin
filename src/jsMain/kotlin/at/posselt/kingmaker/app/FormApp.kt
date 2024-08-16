@@ -1,9 +1,11 @@
 package at.posselt.kingmaker.app
 
 import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.utils.newInstance
 import at.posselt.kingmaker.utils.resolveTemplatePath
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.*
 import js.core.Void
 import js.objects.recordOf
@@ -29,8 +31,9 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
     scrollable: Array<String> = emptyArray(),
     width: Int? = undefined,
     resizable: Boolean? = undefined,
-    val debug: Boolean = false,
-    val renderOnSubmit: Boolean = true,
+    protected val debug: Boolean = false,
+    protected val renderOnSubmit: Boolean = true,
+    protected val dataModel: JsClass<out DataModel>? = null,
 ) : App<T>(
     HandlebarsFormApplicationOptions(
         window = Window(
@@ -75,7 +78,15 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
             if (debug) {
                 console.log("Parsed object ${JSON.stringify(parsedData)}")
             }
-            onParsedSubmit(parsedData).await()
+            val dataModelData = dataModel
+                ?.newInstance(arrayOf(parsedData))
+                ?.toObject()
+                ?.unsafeCast<O>()
+                ?: parsedData
+            if (debug) {
+                console.log("Datamodel object ${JSON.stringify(dataModelData)}")
+            }
+            onParsedSubmit(dataModelData).await()
             if (renderOnSubmit) {
                 render()
             }

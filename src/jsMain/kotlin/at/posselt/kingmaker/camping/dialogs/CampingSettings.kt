@@ -82,6 +82,7 @@ class CampingSettingsApplication(
     title = "Camping Settings",
     template = "components/forms/application-form.hbs",
     debug = true,
+    dataModel = CampingSettingsDataModel::class.js,
 ) {
     var settings: CampingSettings
 
@@ -216,9 +217,7 @@ class CampingSettingsApplication(
     }
 
     override fun onParsedSubmit(value: CampingSettings): Promise<Void> = buildPromise {
-        val obj = CampingSettingsDataModel(value.toRecord()).toObject().unsafeCast<CampingSettings>()
-        console.log(obj)
-        settings = obj
+        settings = value
         undefined
     }
 

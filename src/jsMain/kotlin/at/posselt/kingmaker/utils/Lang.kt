@@ -1,12 +1,14 @@
 package at.posselt.kingmaker.utils
 
 import js.array.JsTuple2
+import js.array.ReadonlyArray
 import js.array.toTypedArray
 import js.array.tupleOf
 import js.objects.Object
 import js.objects.ReadonlyRecord
 import js.objects.Record
 import js.objects.recordOf
+import js.reflect.Reflect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.awaitAll
@@ -82,4 +84,5 @@ fun <T> Sequence<JsTuple2<String, T>>.toMutableRecord(): Record<String, T> =
 fun <T> Sequence<Pair<String, T>>.toMutableRecord(): Record<String, T> =
     Object.fromEntries(map { tupleOf(it.first, it.second) }.toTypedArray()) as Record<String, T>
 
-
+fun <T : Any> JsClass<T>.newInstance(parameters: ReadonlyArray<Any?>) =
+    Reflect.construct(this, parameters)

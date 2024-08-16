@@ -9,7 +9,9 @@ import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.buildPromise
 import com.foundryvtt.core.*
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.*
+import com.foundryvtt.core.data.dsl.buildSchema
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.array.push
 import kotlinx.coroutines.await
@@ -57,6 +59,32 @@ external interface RegionSettingsContext : HandlebarsRenderContext {
     var allowDelete: Boolean
 }
 
+
+@OptIn(ExperimentalJsStatic::class)
+@JsExport
+class RegionSettingsDataModel(val value: AnyObject) : DataModel(value) {
+    companion object {
+        @Suppress("unused")
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun defineSchema() = buildSchema {
+            boolean("useStolenLands")
+            array<RegionSetting>("regions") {
+                schema {
+                    string("name")
+                    int("zoneDc")
+                    int("encounterDc")
+                    int("level")
+                    string("rollTableUuid", nullable = true)
+                    string("combatTrack", nullable = true)
+                    string("terrain")
+                }
+            }
+        }
+    }
+}
+
+
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 @JsName("RegionConfig")
@@ -66,6 +94,8 @@ class RegionConfig(
     title = "Regions",
     width = 1200,
     template = "applications/settings/configure-regions.hbs",
+    dataModel = RegionSettingsDataModel::class.js,
+    debug = true,
 ) {
     private var currentSettings = actor.getCamping()!!.regionSettings
 
@@ -207,10 +237,6 @@ class RegionConfig(
             addDefaultRegion()
         }
         null
-    }
-
-    override fun fixObject(value: dynamic) {
-        value["regions"] = (value["regions"] as Array<RegionSetting>?) ?: emptyArray<RegionSetting>()
     }
 
     private fun addDefaultRegion() {

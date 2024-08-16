@@ -8,29 +8,29 @@ import at.posselt.kingmaker.migrations.latestMigrationVersion
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.toMutableRecord
 import com.foundryvtt.core.*
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.ApplicationV2
-import com.foundryvtt.core.data.fields.DataFieldOptions
-import com.foundryvtt.core.data.fields.ObjectField
 import js.core.JsNumber
 import js.objects.ReadonlyRecord
+import js.reflect.newInstance
 import kotlinx.coroutines.await
 
-fun <T : DataField> Settings.registerField(
+inline fun <reified T : DataModel> Settings.registerDataModel(
     key: String,
     name: String,
     hint: String? = undefined,
     requiresReload: Boolean = false,
-    type: T,
 ) {
-    register<T>(
+    register<AnyObject>(
         Config.moduleId,
         key,
-        SettingsData<T>(
+        SettingsData<AnyObject>(
             name = name,
             hint = hint,
             config = false,
             requiresReload = requiresReload,
-            type = type,
+            default = T::class.js.newInstance().toObject(),
+            type = T::class.js,
             scope = "world"
         )
     )
@@ -216,10 +216,10 @@ object KingmakerToolsSettings {
         game.settings.getBoolean("enableWeather")
 
     suspend fun setClimateSettings(settings: ClimateSettings) =
-        game.settings.setObject("climateSettings", settings)
+        game.settings.setObject("climate", settings)
 
     fun getClimateSettings(): ClimateSettings =
-        game.settings.getObject("climateSettings")
+        game.settings.getObject("climate")
 
     suspend fun setCurrentWeatherFx(value: String) =
         game.settings.setString("currentWeatherFx", value)
@@ -241,6 +241,7 @@ object KingmakerToolsSettings {
 
 
     fun register() {
+        console.log(ClimateConfigurationDataModel.defineSchema())
         registerSimple(game.settings, nonUserVisibleSettings.strings, hidden = true)
         registerSimple(game.settings, nonUserVisibleSettings.booleans, hidden = true)
         game.settings.registerInt(
@@ -249,17 +250,9 @@ object KingmakerToolsSettings {
             default = latestMigrationVersion,
             hidden = true,
         )
-        game.settings.registerField(
-            key = "climateSettings",
+        game.settings.registerDataModel<ClimateConfigurationDataModel>(
+            key = "climate",
             name = "Climate Settings",
-            type = ObjectField<ClimateSettings>(
-                DataFieldOptions(
-                    initial = ClimateSettings(
-                        useStolenLands = true,
-                        months = getDefaultMonths(),
-                    )
-                )
-            )
         )
         game.settings.createMenu(
             key = "climateMenu",

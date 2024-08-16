@@ -1,14 +1,13 @@
 package com.foundryvtt.core
 
 import com.foundryvtt.core.applications.api.ApplicationV2
+import com.foundryvtt.core.data.fields.DataField
 import js.objects.ReadonlyRecord
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import kotlin.js.Promise
 
-typealias DataField = Any // TODO
-
-typealias CustomFormInput<T> = (field: DataField, config: FormInputConfig<T>) -> HTMLElement
+typealias CustomFormInput<T> = (field: DataField<T>, config: FormInputConfig<T>) -> HTMLElement
 
 @JsPlainObject
 external interface SettingsRange {

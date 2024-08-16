@@ -3,6 +3,7 @@ package com.foundryvtt.core.data.dsl
 import at.posselt.kingmaker.utils.toRecord
 import com.foundryvtt.core.data.fields.*
 import js.objects.Record
+import js.objects.recordOf
 
 /**
  * DSL that abstracts Foundry's Schema settings. Each type allows you to configure
@@ -46,6 +47,11 @@ import js.objects.Record
  *             stringArray("actorUuidsNotKeepingWatch")
  *             string("proxyRandomEncounterTableUuid", nullable = true)
  *             boolean("ignoreSkillRequirements")
+ *             array("objects") {
+ *                 schema {
+ *                     double("weirdNumber")
+ *                 }
+ *             }
  *         }
  *     }
  * }
@@ -95,6 +101,23 @@ class BooleanArrayConfiguration : BaseArrayConfiguration<Boolean>() {
         val opts = DataFieldOptions/*<Boolean>*/(required = true)
         opts.block()
         booleanOptions = opts
+    }
+}
+
+class SchemaArrayConfiguration<T> : BaseArrayConfiguration<Schema>() {
+    var schemaOptions: DataFieldOptions? = undefined
+    var schema: DataSchema<T>? = null
+
+    fun schemaOptions(block: DataFieldOptions.() -> Unit) {
+        val opts = DataFieldOptions(required = true)
+        opts.block()
+        schemaOptions = opts
+    }
+
+    fun schema(block: Schema.() -> Unit) {
+        val s = Schema()
+        s.block()
+        schema = s.build()
     }
 }
 
@@ -160,12 +183,13 @@ class Schema {
         name: String,
         options: ArrayFieldOptions<T>? = undefined,
         context: DataFieldContext<Array<T>>? = undefined,
-        block: (Schema.() -> Unit),
+        fieldContext: DataFieldContext<Record<String, Any>>? = undefined,
+        block: SchemaArrayConfiguration<Any>.() -> Unit,
     ) {
-        // TODO: move to 2 step config like other arrays
-        val s = Schema()
-        s.block()
-        val element = SchemaField(s.build())
+        val opts = SchemaArrayConfiguration<Any>()
+        opts.block()
+        val element =
+            SchemaField(fields = opts.schema ?: recordOf(), options = opts.schemaOptions, context = fieldContext)
         fields[name] = ArrayField(element = element, options = options, context = context)
     }
 
