@@ -4,7 +4,7 @@ import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.tpl
 import com.foundryvtt.core.*
 import com.foundryvtt.core.applications.api.*
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.coroutines.await
 
@@ -27,7 +27,7 @@ suspend fun <I, O> awaitablePrompt(
     title: String,
     buttonLabel: String? = null,
     templatePath: String,
-    templateContext: Record<String, Any?> = jso(),
+    templateContext: ReadonlyRecord<String, Any?> = jso(),
     promptType: PromptType = PromptType.OK,
     width: Int? = undefined,
     submit: suspend (I) -> O,
@@ -61,7 +61,7 @@ suspend fun <I, O> prompt(
     title: String,
     buttonLabel: String? = null,
     templatePath: String,
-    templateContext: Record<String, Any?> = jso(),
+    templateContext: ReadonlyRecord<String, Any?> = jso(),
     promptType: PromptType = PromptType.OK,
     width: Int? = undefined,
     submit: suspend (I) -> O,
@@ -100,7 +100,7 @@ data class WaitButton<T, R>(
 suspend fun <I, O> wait(
     title: String,
     templatePath: String,
-    templateContext: Record<String, Any?> = jso(),
+    templateContext: ReadonlyRecord<String, Any?> = jso(),
     buttons: List<WaitButton<I, O>>,
 ) {
     val content = tpl(templatePath, templateContext)

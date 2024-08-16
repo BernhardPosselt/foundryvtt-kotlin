@@ -3,7 +3,7 @@
 package com.foundryvtt.core.applications.api
 
 import com.foundryvtt.core.AnyObject
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.AddEventListenerOptions
 import org.w3c.dom.DOMTokenList
@@ -40,7 +40,7 @@ open external class ApplicationV2(
     val position: ApplicationPosition
     val rendered: Boolean
     val hasFrame: Boolean
-    val tabGroups: Record<String, String>
+    val tabGroups: ReadonlyRecord<String, String>
     val state: Int
 
     protected open fun _initializeApplicationOptions(options: AnyObject): ApplicationConfiguration

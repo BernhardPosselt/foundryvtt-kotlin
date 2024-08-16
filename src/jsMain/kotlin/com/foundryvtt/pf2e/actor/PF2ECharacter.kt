@@ -7,7 +7,7 @@ import com.foundryvtt.pf2e.system.IntValue
 import com.foundryvtt.pf2e.system.MaxValue
 import com.foundryvtt.pf2e.system.MinMaxValue
 import com.foundryvtt.pf2e.system.StringValue
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -110,7 +110,7 @@ external class PF2ECharacter : PF2EActor, PF2ECreature {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECharacter?>
 
     val abilities: Abilities
-    override val skills: Record<String, PF2EAttribute>
+    override val skills: ReadonlyRecord<String, PF2EAttribute>
     val system: PF2ECharacterSystem
 }
 

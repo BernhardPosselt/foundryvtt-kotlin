@@ -1,7 +1,7 @@
 package com.foundryvtt.core.abstract
 
 import com.foundryvtt.core.AnyObject
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -13,7 +13,7 @@ sealed external interface DatabaseOperation
 
 @JsPlainObject
 external interface DatabaseGetOperation : DatabaseOperation {
-    val query: Record<String, Any>?
+    val query: ReadonlyRecord<String, Any>?
     val broadcast: Boolean?
     val index: Boolean?
     val indexFields: Array<String>?

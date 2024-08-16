@@ -4,6 +4,7 @@ import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
 import com.foundryvtt.core.applications.api.*
 import js.core.Void
+import js.objects.ReadonlyRecord
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
@@ -13,7 +14,7 @@ import kotlin.js.Promise
 
 @JsPlainObject
 external interface HandlebarsFormApplicationOptions : ApplicationConfiguration {
-    val parts: Record<String, HandlebarsTemplatePart>?
+    val parts: ReadonlyRecord<String, HandlebarsTemplatePart>?
 }
 
 @JsPlainObject

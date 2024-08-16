@@ -3,7 +3,7 @@ package com.foundryvtt.core.applications.api
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import kotlinx.html.org.w3c.dom.events.Event
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.*
@@ -55,7 +55,7 @@ external interface ApplicationConfiguration {
     val classes: Array<String>?
     val tag: String?
     val window: Window?
-    val actions: Record<String, ApplicationClickAction>?
+    val actions: ReadonlyRecord<String, ApplicationClickAction>?
     val form: ApplicationFormConfiguration?
     val position: ApplicationPosition?
 }

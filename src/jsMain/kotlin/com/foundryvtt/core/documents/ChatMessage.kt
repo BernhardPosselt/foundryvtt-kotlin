@@ -3,7 +3,7 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
@@ -60,7 +60,7 @@ external class ChatMessage : ClientDocument {
 
     fun prepareDerivedData()
     fun applyRollMode(rollMode: String)
-    fun getRollData(): Record<String, Any>
+    fun getRollData(): ReadonlyRecord<String, Any>
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

@@ -4,7 +4,7 @@ import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.toCamelCase
 import com.foundryvtt.core.documents.ChatMessage
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import js.objects.recordOf
 import kotlinx.coroutines.await
@@ -32,7 +32,7 @@ suspend fun postDegreeOfSuccess(
 
 suspend fun postChatTemplate(
     templatePath: String,
-    templateContext: Record<String, Any?> = jso(),
+    templateContext: ReadonlyRecord<String, Any?> = jso(),
     rollMode: RollMode? = null
 ) {
     val message = tpl(templatePath, templateContext)

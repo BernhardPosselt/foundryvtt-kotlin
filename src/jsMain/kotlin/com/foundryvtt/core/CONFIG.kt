@@ -1,9 +1,9 @@
 package com.foundryvtt.core
 
-import js.objects.Record
+import js.objects.ReadonlyRecord
 
 external interface PF2EActorConfig {
-    val documentClasses: Record<String, JsClass<Actor>>
+    val documentClasses: ReadonlyRecord<String, JsClass<Actor>>
 }
 
 external interface Config

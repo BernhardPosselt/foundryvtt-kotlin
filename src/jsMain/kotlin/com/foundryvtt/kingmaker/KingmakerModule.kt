@@ -1,7 +1,7 @@
 package com.foundryvtt.kingmaker
 
 import com.foundryvtt.core.Module
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -15,7 +15,7 @@ external interface HexState {
 
 @JsPlainObject
 external interface KingmakerState {
-    val hexes: Record<Int, HexState>
+    val hexes: ReadonlyRecord<Int, HexState>
 }
 
 external class KingmakerModule : Module {

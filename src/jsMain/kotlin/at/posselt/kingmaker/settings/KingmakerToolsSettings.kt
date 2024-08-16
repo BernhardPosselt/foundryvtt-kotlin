@@ -12,7 +12,7 @@ import com.foundryvtt.core.applications.api.ApplicationV2
 import com.foundryvtt.core.data.fields.DataFieldOptions
 import com.foundryvtt.core.data.fields.ObjectField
 import js.core.JsNumber
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import kotlinx.coroutines.await
 
 fun <T : DataField> Settings.registerField(
@@ -43,7 +43,7 @@ fun Settings.registerInt(
     default: Int = 0,
     hidden: Boolean = false,
     requiresReload: Boolean = false,
-    choices: Record<String, Int>? = undefined,
+    choices: ReadonlyRecord<String, Int>? = undefined,
 ) {
     register<Int>(
         Config.moduleId,
@@ -68,7 +68,7 @@ inline fun <reified T : Any> Settings.registerScalar(
     default: T? = undefined,
     hidden: Boolean = false,
     requiresReload: Boolean = false,
-    choices: Record<String, T>? = undefined,
+    choices: ReadonlyRecord<String, T>? = undefined,
 ) {
     register<T>(
         Config.moduleId,

@@ -23,14 +23,14 @@ external interface HooksEventListener {
 
 typealias PreCreateDocumentCallback<T, O> = (
     document: T,
-    data: AnyObject,
+    data: AnyMutableObject,
     options: DatabaseCreateOperation,
     userId: String
 ) -> O
 
 typealias PreUpdateDocumentCallback<T, O> = (
     document: T,
-    changed: AnyObject,
+    changed: AnyMutableObject,
     options: DatabaseUpdateOperation,
     userId: String
 ) -> O
@@ -43,14 +43,14 @@ typealias PreDeleteDocumentCallback<T, O> = (
 
 typealias CreateDocumentCallback<T, O> = (
     document: T,
-    data: AnyObject,
+    data: AnyMutableObject,
     options: DatabaseCreateOperation,
     userId: String
 ) -> O
 
 typealias UpdateDocumentCallback<T, O> = (
     document: T,
-    changed: AnyObject,
+    changed: AnyMutableObject,
     options: DatabaseUpdateOperation,
     userId: String
 ) -> O

@@ -3,7 +3,7 @@ package at.posselt.kingmaker.utils
 import at.posselt.kingmaker.Config
 import com.foundryvtt.core.loadTemplates
 import com.foundryvtt.core.renderTemplate
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.coroutines.await
 
@@ -18,6 +18,6 @@ suspend fun loadTpls(paths: Array<Pair<String, String>>) {
     loadTemplates(resolvedPaths).await()
 }
 
-suspend fun tpl(path: String, ctx: Record<String, Any?> = jso()): String {
+suspend fun tpl(path: String, ctx: ReadonlyRecord<String, Any?> = jso()): String {
     return renderTemplate("$DIST_PATH/$path", ctx).await()
 }

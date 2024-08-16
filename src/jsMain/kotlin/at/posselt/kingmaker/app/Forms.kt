@@ -14,7 +14,7 @@ import com.foundryvtt.core.documents.RollTable
 import com.foundryvtt.core.utils.expandObject
 import js.array.toTypedArray
 import js.objects.Object
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import kotlinx.datetime.*
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
@@ -482,7 +482,7 @@ fun <T> parseFormData(value: AnyObject, and: (dynamic) -> Unit): T {
  * @return either a Record or an array if the top level object was an array
  */
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-fun <T> normalizeArrays(obj: Record<String, T>): Any {
+fun <T> normalizeArrays(obj: ReadonlyRecord<String, T>): Any {
     if (Object.hasOwn(obj, 0)) {
         return obj.asSequence()
             .sortedBy { it.component1().toInt() }

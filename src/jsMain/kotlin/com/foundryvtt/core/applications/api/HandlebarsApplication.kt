@@ -1,5 +1,6 @@
 package com.foundryvtt.core.applications.api
 
+import js.objects.ReadonlyRecord
 import js.objects.Record
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -12,7 +13,7 @@ external interface HandlebarsTemplatePart {
     val classes: Array<String>?
     val templates: Array<String>?
     val scrollable: Array<String>?
-    val forms: Record<String, ApplicationFormConfiguration>?
+    val forms: ReadonlyRecord<String, ApplicationFormConfiguration>?
 }
 
 @JsPlainObject
@@ -30,12 +31,12 @@ open external class HandlebarsApplication<T>(
     @OptIn(ExperimentalStdlibApi::class)
     @JsExternalInheritorsOnly
     open class HandlebarsApplicationStatic : ApplicationV2Static {
-        open var PARTS: Record<String, HandlebarsTemplatePart>
+        open var PARTS: ReadonlyRecord<String, HandlebarsTemplatePart>
     }
 
     companion object : HandlebarsApplicationStatic
 
-    open val parts: Record<String, HandlebarsTemplatePart>
+    open val parts: ReadonlyRecord<String, HandlebarsTemplatePart>
 
     protected open fun _preparePartContext(
         partId: String,

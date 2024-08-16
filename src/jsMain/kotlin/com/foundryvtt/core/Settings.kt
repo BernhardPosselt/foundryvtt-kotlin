@@ -1,7 +1,7 @@
 package com.foundryvtt.core
 
 import com.foundryvtt.core.applications.api.ApplicationV2
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import kotlin.js.Promise
@@ -25,7 +25,7 @@ external interface FormInputConfig<T> {
     val disabled: Boolean?
     val readonly: Boolean?
     val localize: Boolean?
-    val dataset: Record<String, String>?
+    val dataset: ReadonlyRecord<String, String>?
     val placeholder: String?
     val input: CustomFormInput<T>?
 }
@@ -39,7 +39,7 @@ external interface SettingsData<T> {
     val default: T?
     val requiresReload: Boolean?
     val type: Any  // Number, Object, Array, Boolean class or data field or data model
-    val choices: Record<String, T>?
+    val choices: ReadonlyRecord<String, T>?
     val onChange: ((value: T) -> Unit)?
     val range: SettingsRange?
     val input: CustomFormInput<T>?

@@ -4,7 +4,7 @@ import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.abstract.DocumentConstructionContext
-import js.objects.Record
+import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -65,13 +65,13 @@ external class JournalEntryPage(
         fun buildTOC(
             html: Array<HTMLElement>,
             options: BuildTOCOptions = definedExternally
-        ): Record<String, JournalEntryPageHeading>
+        ): ReadonlyRecord<String, JournalEntryPageHeading>
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<JournalEntryPage>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<JournalEntryPage?>
 
-    val toc: Record<String, JournalEntryPageHeading>
+    val toc: ReadonlyRecord<String, JournalEntryPageHeading>
     override val parent: JournalEntry?
 
     var _id: String

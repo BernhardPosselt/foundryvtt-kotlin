@@ -39,16 +39,16 @@ suspend fun <T> List<Promise<T>>.awaitAll(): List<T> =
 suspend fun <T> Array<Promise<T>>.awaitAll(): Array<T> =
     map { it.asDeferred() }.awaitAll().toTypedArray()
 
-fun <F : Any, S> MutableList<Pair<F, S>>.toRecord(): Record<F, S> =
+fun <F : Any, S> MutableList<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
     recordOf(*toTypedArray())
 
-fun <F : Any, S> List<Pair<F, S>>.toRecord(): Record<F, S> =
+fun <F : Any, S> List<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
     recordOf(*toTypedArray())
 
-fun <F : Any, S> Map<F, S>.toRecord(): Record<F, S> =
+fun <F : Any, S> Map<F, S>.toRecord(): ReadonlyRecord<F, S> =
     recordOf(*map { it.key to it.value }.toTypedArray())
 
-fun <F : Any, S> Array<Pair<F, S>>.toRecord(): Record<F, S> =
+fun <F : Any, S> Array<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
     recordOf(*this)
 
 @Suppress(
@@ -65,7 +65,7 @@ inline fun isJsObject(x: Any?): Boolean {
     return jsTypeOf(x) == "object" && x !is Array<*> && x != null
 }
 
-fun <T> Record<String, T>.asSequence(): Sequence<JsTuple2<String, T>> =
+fun <T> ReadonlyRecord<String, T>.asSequence(): Sequence<JsTuple2<String, T>> =
     Object.entries(this).asSequence()
 
 fun <T> Sequence<Pair<String, T>>.toRecord(): ReadonlyRecord<String, T> =
