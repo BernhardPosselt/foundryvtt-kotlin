@@ -5,6 +5,7 @@ import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.camping.dialogs.CampingSettingsApplication
+import at.posselt.kingmaker.camping.dialogs.ManageRecipesApplication
 import at.posselt.kingmaker.camping.dialogs.RegionConfig
 import at.posselt.kingmaker.camping.dialogs.findCampingActivitySkills
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
@@ -127,11 +128,11 @@ class CampingSheet(
     width = 970,
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
-        MenuControl(label = "Show Players", action = "show-players"),
-        MenuControl(label = "Activities", action = "configure-activities"),  // TODO
-        MenuControl(label = "Recipes", action = "configure-recipes"),  // TODO
-        MenuControl(label = "Regions", action = "configure-regions"),
-        MenuControl(label = "Settings", action = "settings"),  // TODO
+        MenuControl(label = "Show Players", action = "show-players", gmOnly = true),
+        MenuControl(label = "Activities", action = "configure-activities", gmOnly = true),
+        MenuControl(label = "Recipes", action = "configure-recipes", gmOnly = true),
+        MenuControl(label = "Regions", action = "configure-regions", gmOnly = true),
+        MenuControl(label = "Settings", action = "settings", gmOnly = true),
         MenuControl(label = "Help", action = "help"),
     ),
     scrollable = arrayOf("#km-camping-content", ".km-camping-actors"),
@@ -217,7 +218,7 @@ class CampingSheet(
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
             "configure-regions" -> RegionConfig(actor).launch()
-            "configure-recipes" -> console.log("recipes")
+            "configure-recipes" -> ManageRecipesApplication(actor).launch()
             "configure-activities" -> console.log("activities")
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")

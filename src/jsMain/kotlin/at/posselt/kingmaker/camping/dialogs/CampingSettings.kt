@@ -118,6 +118,7 @@ class CampingSettingsApplication(
         val huntAndGatherUuids = (actors + listOfNotNull(game.party()))
             .mapNotNull { it.toOption(useUuid = true) }
         val uuidsNotKeepingWatch = setOf(*settings.actorUuidsNotKeepingWatch)
+        console.log(camping)
         CampingSettingsContext(
             partId = parent.partId,
             sections = formContext(

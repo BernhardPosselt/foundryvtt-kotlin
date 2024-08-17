@@ -241,7 +241,6 @@ object KingmakerToolsSettings {
 
 
     fun register() {
-        console.log(ClimateConfigurationDataModel.defineSchema())
         registerSimple(game.settings, nonUserVisibleSettings.strings, hidden = true)
         registerSimple(game.settings, nonUserVisibleSettings.booleans, hidden = true)
         game.settings.registerInt(

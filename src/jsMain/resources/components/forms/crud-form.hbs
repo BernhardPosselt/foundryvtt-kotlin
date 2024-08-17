@@ -15,7 +15,7 @@
             <tbody>
             {{#each items}}
                 <tr>
-                    <td>{{name}}</td>
+                    <td>{{{name}}}</td>
                     {{#each additionalColumns}}
                         <td>{{this}}</td>
                     {{/each}}
@@ -42,6 +42,7 @@
             {{/each}}
             </tbody>
         </table>
+        <button type="button" data-action="add" class="full-width">Add</button>
     </div>
-    <button type="submit" class="full-width" data-action="save">Save</button>
+    <button type="submit" data-action="save">Save</button>
 </div>

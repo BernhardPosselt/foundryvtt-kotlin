@@ -1,19 +1,9 @@
 package at.posselt.kingmaker.app
 
-import at.posselt.kingmaker.app.CheckboxInput
-import at.posselt.kingmaker.app.FormApp
-import at.posselt.kingmaker.app.FormElementContext
-import at.posselt.kingmaker.app.HandlebarsRenderContext
-import at.posselt.kingmaker.camping.getAllRecipes
-import at.posselt.kingmaker.camping.getCamping
-import at.posselt.kingmaker.camping.setCamping
 import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.buildPromise
-import at.posselt.kingmaker.utils.buildUuid
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
-import com.foundryvtt.core.ui.TextEditor
 import com.foundryvtt.core.utils.flattenObject
-import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.array.toTypedArray
 import js.core.Void
 import js.objects.Record
@@ -50,11 +40,15 @@ external interface CrudData {
 abstract class CrudApplication(
     title: String,
     width: Int? = undefined,
+    debug: Boolean = false,
 ) : FormApp<CrudTemplateContext, CrudData>(
     title = title,
     template = "components/forms/crud-form.hbs",
     width = width,
     submitOnChange = false,
+    closeOnSubmit = true,
+    scrollable = arrayOf(".window-content"),
+    debug = debug,
 ) {
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
@@ -65,16 +59,25 @@ abstract class CrudApplication(
                     deleteEntry(id)
                 }
             }
+
+            "add" -> {
+                buildPromise {
+                    addEntry()
+                }
+            }
+
             "edit" -> {
                 val id = target.dataset["id"]
                 checkNotNull(id)
                 buildPromise {
                     editEntry(id)
                 }
+
             }
         }
     }
 
+    protected abstract fun addEntry(): Promise<Void>
     protected abstract fun deleteEntry(id: String): Promise<Void>
     protected abstract fun editEntry(id: String): Promise<Void>
 
@@ -92,10 +95,12 @@ abstract class CrudApplication(
         options: HandlebarsRenderOptions
     ): Promise<CrudTemplateContext> = buildPromise {
         val parent = super._preparePartContext(partId, context, options).await()
+        val headings = getHeadings().await()
+        val items = getItems().await()
         CrudTemplateContext(
             partId = parent.partId,
-            additionalColumnHeadings = getHeadings().await(),
-            items = getItems().await()
+            additionalColumnHeadings = headings,
+            items = items
         )
     }
 

@@ -22,7 +22,7 @@ external interface CookingOutcome {
 external interface RecipeData {
     val name: String
     val basicIngredients: Int
-    val specialIngredients: Int
+    val specialIngredients: Int?
     val cookingLoreDC: Int
     val survivalDC: Int
     val uuid: String

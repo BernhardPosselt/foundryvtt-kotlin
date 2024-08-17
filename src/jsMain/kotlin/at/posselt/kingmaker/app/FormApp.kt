@@ -7,6 +7,7 @@ import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.*
+import com.foundryvtt.core.game
 import js.core.Void
 import js.objects.recordOf
 import kotlinx.coroutines.await
@@ -17,7 +18,8 @@ import kotlin.js.Promise
 data class MenuControl(
     val label: String,
     val icon: String? = null,
-    val action: String
+    val action: String,
+    val gmOnly: Boolean = false,
 )
 
 abstract class FormApp<T : HandlebarsRenderContext, O>(
@@ -30,6 +32,7 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
     classes: Array<String> = emptyArray(),
     scrollable: Array<String> = emptyArray(),
     width: Int? = undefined,
+    height: Int? = null,
     resizable: Boolean? = undefined,
     protected val debug: Boolean = false,
     protected val renderOnSubmit: Boolean = true,
@@ -43,13 +46,21 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
                 ApplicationHeaderControlsEntry(
                     label = it.label,
                     icon = it.icon,
-                    action = it.action
+                    action = it.action,
+                    visible = !it.gmOnly || game.user.isGM,
                 )
             }.toTypedArray()
         ),
-        position = ApplicationPosition(
-            width = width,
-        ),
+        position = if (height == null) {
+            ApplicationPosition(
+                width = width,
+            )
+        } else {
+            ApplicationPosition(
+                width = width,
+                height = height,
+            )
+        },
         classes = if (isDialogForm) arrayOf("km-dialog-form").plus(classes) else classes,
         tag = "form",
         form = ApplicationFormConfiguration(
