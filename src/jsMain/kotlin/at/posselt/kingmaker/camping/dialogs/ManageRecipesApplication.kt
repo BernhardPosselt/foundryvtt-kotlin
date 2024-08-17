@@ -20,6 +20,10 @@ class ManageRecipesApplication(
     title = "Manage Recipes",
     debug = true,
 ) {
+    init {
+        actor.apps[id] = this
+    }
+
     override fun deleteEntry(id: String) = buildPromise {
         actor.getCamping()?.let { camping ->
             camping.cooking.knownRecipes = camping.cooking.knownRecipes.filter { it != id }.toTypedArray()

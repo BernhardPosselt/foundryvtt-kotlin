@@ -4,10 +4,7 @@ import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
-import at.posselt.kingmaker.camping.dialogs.CampingSettingsApplication
-import at.posselt.kingmaker.camping.dialogs.ManageRecipesApplication
-import at.posselt.kingmaker.camping.dialogs.RegionConfig
-import at.posselt.kingmaker.camping.dialogs.findCampingActivitySkills
+import at.posselt.kingmaker.camping.dialogs.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.utils.*
@@ -219,7 +216,7 @@ class CampingSheet(
         when (target.dataset["action"]) {
             "configure-regions" -> RegionConfig(actor).launch()
             "configure-recipes" -> ManageRecipesApplication(actor).launch()
-            "configure-activities" -> console.log("activities")
+            "configure-activities" -> ManageActivitiesApplication(actor).launch()
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
             "roll-camping-check" -> console.log("rolling camping check")
