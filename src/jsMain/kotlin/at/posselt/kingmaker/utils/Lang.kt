@@ -35,23 +35,20 @@ fun <T> buildPromise(
 /**
  * Make awaitAll also work on a list of Promises instead in addition to Deferred
  */
-suspend fun <T> List<Promise<T>>.awaitAll(): List<T> =
+suspend fun <T> Iterable<Promise<T>>.awaitAll(): List<T> =
     map { it.asDeferred() }.awaitAll()
 
 suspend fun <T> Array<Promise<T>>.awaitAll(): Array<T> =
     map { it.asDeferred() }.awaitAll().toTypedArray()
 
-fun <F : Any, S> MutableList<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
-    recordOf(*toTypedArray())
+fun <F : Any, S> Array<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
+    recordOf(*this)
 
-fun <F : Any, S> List<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
-    recordOf(*toTypedArray())
+fun <F : Any, S> Iterable<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
+    recordOf(*toList().toTypedArray())
 
 fun <F : Any, S> Map<F, S>.toRecord(): ReadonlyRecord<F, S> =
     recordOf(*map { it.key to it.value }.toTypedArray())
-
-fun <F : Any, S> Array<Pair<F, S>>.toRecord(): ReadonlyRecord<F, S> =
-    recordOf(*this)
 
 @Suppress(
     "NOTHING_TO_INLINE",

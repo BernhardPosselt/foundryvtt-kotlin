@@ -57,6 +57,9 @@ import js.objects.recordOf
  * }
  *
  */
+@DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
+annotation class SchemaDsl
 
 open class BaseArrayConfiguration<T> {
     open var arrayOptions: ArrayFieldOptions<T>? = undefined
@@ -68,6 +71,7 @@ open class BaseArrayConfiguration<T> {
     }
 }
 
+@SchemaDsl
 class StringArrayConfiguration : BaseArrayConfiguration<String>() {
     var stringOptions: StringFieldOptions? = undefined
 
@@ -78,6 +82,7 @@ class StringArrayConfiguration : BaseArrayConfiguration<String>() {
     }
 }
 
+@SchemaDsl
 class NumberArrayConfiguration<T : Number> : BaseArrayConfiguration<T>() {
     var numberOptions: NumberFieldOptions? = undefined
 
@@ -94,6 +99,7 @@ class NumberArrayConfiguration<T : Number> : BaseArrayConfiguration<T>() {
     }
 }
 
+@SchemaDsl
 class BooleanArrayConfiguration : BaseArrayConfiguration<Boolean>() {
     var booleanOptions: DataFieldOptions/*<Boolean>*/? = undefined
 
@@ -104,6 +110,7 @@ class BooleanArrayConfiguration : BaseArrayConfiguration<Boolean>() {
     }
 }
 
+@SchemaDsl
 class SchemaArrayConfiguration<T> : BaseArrayConfiguration<Schema>() {
     var schemaOptions: DataFieldOptions? = undefined
     var schema: DataSchema<T>? = null
@@ -121,6 +128,7 @@ class SchemaArrayConfiguration<T> : BaseArrayConfiguration<Schema>() {
     }
 }
 
+@SchemaDsl
 class Schema {
     val fields = mutableMapOf<String, DataField<out Any>>()
 

@@ -122,3 +122,9 @@ suspend inline fun <reified T> fromUuidsTypeSafe(uuids: Array<String>): Array<T>
         .filterIsInstance<T>()
         .toTypedArray()
 
+fun buildUuid(uuid: String, label: String? = null) =
+    if (label == null) {
+        "@UUID[$uuid]"
+    } else {
+        "@UUID[$uuid]{$label}"
+    }
