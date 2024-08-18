@@ -30,6 +30,7 @@ private external interface CombatTrackData {
 
 @JsPlainObject
 private external interface CombatTrackContext : HandlebarsRenderContext {
+    val isFormValid: Boolean
     val formRows: Array<FormElementContext>
 }
 
@@ -56,6 +57,7 @@ private class CombatTrackApplication(
         val playlist = combatTrack?.let { fromUuidTypeSafe<Playlist>(it.playlistUuid) }
         val playlistSound = combatTrack?.trackUuid?.let { fromUuidTypeSafe<PlaylistSound>(it) }
         CombatTrackContext(
+            isFormValid = isFormValid,
             partId = parent.partId,
             formRows = formContext(
                 Select(

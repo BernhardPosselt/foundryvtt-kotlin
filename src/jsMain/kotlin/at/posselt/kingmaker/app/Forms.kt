@@ -8,9 +8,7 @@ import at.posselt.kingmaker.utils.toMutableRecord
 import at.posselt.kingmaker.utils.toRecord
 import com.foundryvtt.core.Actor
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.core.documents.Playlist
-import com.foundryvtt.core.documents.PlaylistSound
-import com.foundryvtt.core.documents.RollTable
+import com.foundryvtt.core.documents.*
 import com.foundryvtt.core.utils.expandObject
 import js.array.toTypedArray
 import js.objects.Object
@@ -27,6 +25,22 @@ external interface Option {
     val value: String
 }
 
+@JsPlainObject
+external interface SectionsContext {
+    val sections: Array<SectionContext>
+}
+
+@JsPlainObject
+external interface SectionContext {
+    val legend: String
+    val formRows: Array<FormElementContext>
+}
+
+@JsPlainObject
+external interface DocumentLinkContext {
+    val uuid: String
+    val img: String?
+}
 
 @JsPlainObject
 external interface FormElementContext {
@@ -49,6 +63,8 @@ external interface FormElementContext {
     val disabled: Boolean
     val stacked: Boolean
     val menu: Boolean
+    val hidden: Boolean
+    val link: DocumentLinkContext?
 }
 
 enum class OverrideType(val value: String) {
@@ -82,6 +98,8 @@ data class Select(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = true,
+    val actor: Actor? = null,
+    val item: Item? = null,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -108,6 +126,14 @@ data class Select(
         hideLabel = hideLabel,
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
+        hidden = false,
+        link = if (actor != null) {
+            DocumentLinkContext(uuid = actor.uuid, img = actor.img)
+        } else if (item != null) {
+            DocumentLinkContext(uuid = item.uuid, img = item.img)
+        } else {
+            null
+        }
     )
 
     companion object {
@@ -166,8 +192,8 @@ data class Select(
         )
 
         fun level(
-            label: String,
-            name: String,
+            label: String = "Level",
+            name: String = "level",
             value: Int? = null,
             required: Boolean = true,
             help: String? = null,
@@ -255,8 +281,41 @@ data class TextInput(
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
+        hidden = false,
     )
 }
+
+data class HiddenInput(
+    override val label: String = "",
+    override val name: String,
+    val value: String,
+    override val help: String? = null,
+    override val hideLabel: Boolean = true,
+    val overrideType: OverrideType? = null,
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
+        isFormElement = true,
+        label = label,
+        name = name,
+        help = help,
+        value = value,
+        select = false,
+        time = false,
+        required = false,
+        hidden = true,
+        number = false,
+        text = false,
+        textArea = false,
+        checkbox = true,
+        disabled = false,
+        options = emptyArray(),
+        hideLabel = hideLabel,
+        stacked = true,
+        elementClasses = "",
+        menu = false,
+    )
+}
+
 
 data class CheckboxInput(
     override val label: String,
@@ -288,6 +347,7 @@ data class CheckboxInput(
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
+        hidden = false,
     )
 }
 
@@ -323,6 +383,7 @@ data class TextArea(
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
+        hidden = false,
     )
 }
 
@@ -356,6 +417,7 @@ data class NumberInput(
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
+        hidden = false,
     )
 }
 
@@ -393,6 +455,7 @@ data class TimeInput(
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
+        hidden = false,
     )
 }
 
@@ -425,13 +488,8 @@ data class Menu(
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = true,
+        hidden = false,
     )
-}
-
-@JsPlainObject
-external interface SectionContext {
-    val legend: String
-    val formRows: Array<FormElementContext>
 }
 
 data class Section(
@@ -545,3 +603,17 @@ fun Actor.toOption(useUuid: Boolean = false) =
             SelectOption(label = name, value = it)
         }
     }
+
+fun Item.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        name?.let {
+            SelectOption(label = it, value = uuid)
+        }
+    } else {
+        id?.let { id ->
+            name?.let { name ->
+                SelectOption(label = name, value = id)
+            }
+        }
+    }
+

@@ -17,10 +17,6 @@ class ManageActivitiesApplication(
     title = "Manage Activities",
     debug = true,
 ) {
-    init {
-        actor.apps[id] = this
-    }
-
     override fun deleteEntry(id: String) = buildPromise {
         actor.getCamping()?.let { camping ->
             camping.homebrewCampingActivities =
@@ -45,6 +41,7 @@ class ManageActivitiesApplication(
         actor.getCamping()?.let { camping ->
             val locked = camping.lockedActivities.toSet()
             camping.getAllActivities()
+                .filter { !it.isPrepareCamp() }
                 .sortedWith(compareBy(CampingActivityData::name))
                 .map { activity ->
                     val name = activity.name

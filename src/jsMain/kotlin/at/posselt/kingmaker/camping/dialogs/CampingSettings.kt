@@ -43,8 +43,6 @@ external interface CampingSettings {
     val minimumTravelSpeed: Int?
 }
 
-fun CampingSettings.toRecord() = unsafeCast<AnyObject>()
-
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
@@ -69,8 +67,8 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
 }
 
 @JsPlainObject
-external interface CampingSettingsContext : HandlebarsRenderContext {
-    val sections: Array<SectionContext>
+external interface CampingSettingsContext : HandlebarsRenderContext, SectionsContext {
+    val isFormValid: Boolean
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -121,6 +119,7 @@ class CampingSettingsApplication(
         console.log(camping)
         CampingSettingsContext(
             partId = parent.partId,
+            isFormValid = isFormValid,
             sections = formContext(
                 Section(
                     legend = "Exploration",

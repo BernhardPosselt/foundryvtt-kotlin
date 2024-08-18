@@ -1,5 +1,7 @@
 {{#unless hideLabel}}<label class="{{#unless stacked}}form-element-inline{{/unless}}">{{label}}{{/unless}}
 {{#if select}}
+    {{#if link}}
+        <div class="km-select-with-link">{{/if}}
         <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}} {{#if
                 elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}}>
@@ -26,6 +28,8 @@
         <input type="time" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if elementClasses}}class="{{elementClasses}}"{{/if}} {{#if
                 disabled}}disabled{{/if}}>
+{{else if hidden}}
+        <input type="hidden" name="{{name}}" value="{{value}}" {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}}>
 {{else if textArea}}
         <textarea name="{{name}}"  {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}} {{#if
@@ -33,6 +37,15 @@
 {{else if menu}}
         <button type="button" data-action="{{value}}"  {{#if
                 elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}}>{{name}}</button>
+{{/if}}
+{{#if link}}
+        <!-- This does not work for stacked=true yet -->
+        <div class="km-form-document-link">
+            <a href="#" data-action="openDocumentLink" data-uuid="{{link.uuid}}" title="Open">
+                <img src="{{link.img}}" alt="Open Document">
+            </a>
+        </div>
+    </div>
 {{/if}}
 {{#unless hideLabel}}</label>{{/unless}}
 

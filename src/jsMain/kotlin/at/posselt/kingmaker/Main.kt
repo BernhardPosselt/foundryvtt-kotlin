@@ -47,7 +47,7 @@ fun main() {
                     if (isJsObject(data)) {
                         if (data["action"] == "openCampingSheet") {
                             game.getCampingActor()
-                                ?.let { actor -> CampingSheet(actor) }
+                                ?.let { actor -> CampingSheet(game, actor) }
                                 ?.launch()
                         }
                     }
@@ -97,7 +97,7 @@ fun main() {
             game.migrateKingmakerTools()
 
             game.getCampingActor()
-                ?.let { actor -> CampingSheet(actor) }
+                ?.let { actor -> CampingSheet(game, actor) }
                 ?.launch()
         }
     }

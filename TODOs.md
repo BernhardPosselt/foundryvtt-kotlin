@@ -1,9 +1,10 @@
 # TODO
 
 * Migrate structure image conversion macro
-* Test camping settings
+* Test camping
 
 ## Influence System
+
 * Check what can be shipped under the OGL
 * Ship Influence Statblocks
 * Link statblocks to journal entries and if they don't exist, ask to import it
@@ -14,14 +15,14 @@
 * Roll activity check
 * Sync camping effects
 * Prepare Camp
-* Implement navigation
+* Implement camping sheet navigation
 * Update docs
-* Homebrew: Activities & Recipes
-* Settings
+* Add/Edit Activities
+* Add checkboxes to auto enable camping activities without checks for companions
 * Reset Button for activities & prepare camp
+* Add Perception to dropdown of selectable skills
 * Design for eating
 * Design Skill dropdowns/degree of success
-* Add setting to increase Hexploration activities
 * Resting (playlist + check + removing fx + healing + macro)
 * Put combat efects to chat after rolling perception check
 * Apply meal effects should ask if it should consume rations and ingredients instead of clicking on separate buttons

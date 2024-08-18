@@ -9,6 +9,10 @@
         padding: 0;
     }
 
+    .controls-dropdown {
+        z-index: 2;
+    }
+
 
     button.km-camping-action {
         border: 0;
@@ -40,30 +44,6 @@
                 border-radius: 100%;
             }
         }
-    }
-
-    .km-camping-degree-of-success option[value="criticalSuccess"],
-    select.km-camping-degree-of-success:has(option[value="criticalSuccess"]:checked) {
-        color: white;
-        background-color: var(--critical-success);
-    }
-
-    .km-camping-degree-of-success option[value="success"],
-    select.km-camping-degree-of-success:has(option[value="success"]:checked) {
-        color: white;
-        background-color: var(--success);
-    }
-
-    .km-camping-degree-of-success option[value="failure"],
-    select.km-camping-degree-of-success:has(option[value="failure"]:checked) {
-        color: white;
-        background-color: var(--failure);
-    }
-
-    .km-camping-degree-of-success option[value="criticalFailure"],
-    select.km-camping-degree-of-success:has(option[value="criticalFailure"]:checked) {
-        color: white;
-        background-color: var(--critical-failure);
     }
 }
 

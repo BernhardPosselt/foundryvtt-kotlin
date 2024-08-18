@@ -49,6 +49,9 @@ external interface CampingActivityData {
     val criticalFailure: ActivityOutcome?
 }
 
+fun CampingActivityData.isPrepareCamp() =
+    name == "Prepare Camp"
+
 fun CampingActivityData.getOutcome(degreeOfSuccess: DegreeOfSuccess) =
     when (degreeOfSuccess) {
         DegreeOfSuccess.CRITICAL_FAILURE -> criticalFailure

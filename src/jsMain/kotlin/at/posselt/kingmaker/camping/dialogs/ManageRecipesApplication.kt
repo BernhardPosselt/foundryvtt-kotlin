@@ -7,6 +7,8 @@ import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.setCamping
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.buildUuid
+import at.posselt.kingmaker.utils.launch
+import com.foundryvtt.core.Game
 import com.foundryvtt.core.ui.TextEditor
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.core.Void
@@ -15,15 +17,12 @@ import kotlin.js.Promise
 
 @JsExport
 class ManageRecipesApplication(
+    private val game: Game,
     private val actor: PF2ENpc,
 ) : CrudApplication(
     title = "Manage Recipes",
     debug = true,
 ) {
-    init {
-        actor.apps[id] = this
-    }
-
     override fun deleteEntry(id: String) = buildPromise {
         actor.getCamping()?.let { camping ->
             camping.cooking.knownRecipes = camping.cooking.knownRecipes.filter { it != id }.toTypedArray()
@@ -33,13 +32,22 @@ class ManageRecipesApplication(
         undefined
     }
 
-    override fun addEntry(): Promise<Void> {
-        TODO("Not yet implemented")
+    override fun addEntry(): Promise<Void> = buildPromise {
+        RecipeApplication(
+            game,
+            actor,
+            afterSubmit = { render() },
+        ).launch()
         undefined
     }
 
     override fun editEntry(id: String) = buildPromise {
-        TODO("Not yet implemented")
+        RecipeApplication(
+            game,
+            actor,
+            actor.getCamping()?.cooking?.homebrewMeals?.find { it.name == id },
+            afterSubmit = { render() },
+        ).launch()
         undefined
     }
 

@@ -15,5 +15,61 @@
     --failure: #c52424;
     --critical-failure: #871b1b;
     --sidebar-size: 301px;
+    --rarity-common: #323232;
+    --rarity-uncommon: #98513d;
+    --rarity-rare: #002664;
+    --rarity-unique: #54166e;
+}
+
+.km-degree-of-success {
+    option[value="criticalSuccess"],
+    &:has(option[value="criticalSuccess"]:checked) {
+        color: white;
+        background-color: var(--critical-success);
+    }
+
+    option[value="success"],
+    &:has(option[value="success"]:checked) {
+        color: white;
+        background-color: var(--success);
+    }
+
+    option[value="failure"],
+    &:has(option[value="failure"]:checked) {
+        color: white;
+        background-color: var(--failure);
+    }
+
+    option[value="criticalFailure"],
+    &:has(option[value="criticalFailure"]:checked) {
+        color: white;
+        background-color: var(--critical-failure);
+    }
+}
+
+.km-rarity {
+    option[value="common"],
+    &:has(option[value="common"]:checked) {
+        color: white;
+        background-color: var(--rarity-common);
+    }
+
+    option[value="uncommon"],
+    &:has(option[value="uncommon"]:checked) {
+        color: white;
+        background-color: var(--rarity-uncommon);
+    }
+
+    option[value="rare"],
+    &:has(option[value="rare"]:checked) {
+        color: white;
+        background-color: var(--rarity-rare);
+    }
+
+    option[value="unique"],
+    &:has(option[value="unique"]:checked) {
+        color: white;
+        background-color: var(--rarity-unique);
+    }
 }
 

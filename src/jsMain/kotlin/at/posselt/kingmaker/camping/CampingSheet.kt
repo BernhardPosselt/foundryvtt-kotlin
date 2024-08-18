@@ -8,11 +8,11 @@ import at.posselt.kingmaker.camping.dialogs.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.utils.*
+import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
 import com.foundryvtt.core.documents.onDeleteItem
 import com.foundryvtt.core.documents.onUpdateItem
-import com.foundryvtt.core.game
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actor.*
@@ -118,6 +118,7 @@ private fun calculateNightModes(time: LocalTime): NightModes {
 @JsExport
 @JsName("CampingSheet")
 class CampingSheet(
+    private val game: Game,
     private val actor: PF2ENpc,
 ) : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
@@ -215,7 +216,7 @@ class CampingSheet(
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
             "configure-regions" -> RegionConfig(actor).launch()
-            "configure-recipes" -> ManageRecipesApplication(actor).launch()
+            "configure-recipes" -> ManageRecipesApplication(game, actor).launch()
             "configure-activities" -> ManageActivitiesApplication(actor).launch()
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
@@ -455,7 +456,7 @@ class CampingSheet(
                             required = false,
                             name = "activities.degreeOfSuccess.$index",
                             value = result.result?.let { fromCamelCase<DegreeOfSuccess>(it) },
-                            elementClasses = listOf("km-camping-degree-of-success"),
+                            elementClasses = listOf("km-degree-of-success"),
                         ).toContext()
                     )
                 },

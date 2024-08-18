@@ -27,5 +27,6 @@ external object Game {
     val time: GameTime
     val socket: Socket
     val canvas: Canvas
+    val items: Items
 }
 
