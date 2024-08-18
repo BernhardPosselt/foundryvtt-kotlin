@@ -438,6 +438,9 @@ ul.km-camping-actors {
                     height: 2em;
                     padding: 0 .3em;
                     border-style: none;
+                    width: calc(9em + 2px);
+                    text-overflow: ellipsis;
+                    overflow: hidden;
                 }
 
                 button[data-action="roll-camping-check"] {

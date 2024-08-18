@@ -560,6 +560,7 @@ fun getActivitySkills(
                     classes = listOf("km-proficiency-${it.proficiency.toCamelCase()}")
                 )
             }
+            .sortedBy { it.label }
         Select(
             label = "Selected Skill",
             name = "activities.selectedSkill.${groupedActivity.data.name}",
