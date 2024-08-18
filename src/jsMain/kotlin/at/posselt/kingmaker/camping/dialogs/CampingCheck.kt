@@ -85,6 +85,14 @@ fun PF2ECreature.satisfiesSkillRequirement(
     }
 }
 
+fun PF2ECreature.hasAnyActivitySkill(
+    activity: CampingActivityData,
+): Boolean {
+    val possibleSkills = findCampingActivitySkills(activity, true)
+    return possibleSkills.contains("perception") ||
+            possibleSkills.any { skill -> skill in Object.keys(skills) }
+}
+
 fun PF2ECreature.findCampingActivitySkills(
     activity: CampingActivityData,
     disableSkillRequirements: Boolean,

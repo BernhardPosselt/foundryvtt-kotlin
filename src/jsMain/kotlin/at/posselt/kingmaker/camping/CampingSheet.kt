@@ -313,6 +313,8 @@ class CampingSheet(
                 && activityActor.findCampingActivitySkills(activity, camping.ignoreSkillRequirements).isEmpty()
             ) {
                 ui.notifications.error("Actor does not satisfy skill requirements to perform $activityName")
+            } else if (activity.requiresACheck() && !activityActor.hasAnyActivitySkill(activity)) {
+                ui.notifications.error("Actor does not have the required skills to perform $activityName")
             } else {
                 camping.campingActivities =
                     camping.campingActivities.filter { it.activity != activityName }.toTypedArray()
@@ -466,7 +468,7 @@ class CampingSheet(
                             label = "Degree of Success",
                             hideLabel = true,
                             required = false,
-                            name = "activities.degreeOfSuccess.$index",
+                            name = "activities.degreeOfSuccess.${data.name}",
                             value = result.result?.let { fromCamelCase<DegreeOfSuccess>(it) },
                             elementClasses = listOf("km-degree-of-success"),
                         ).toContext()
@@ -559,8 +561,8 @@ fun getActivitySkills(
                 )
             }
         Select(
-            label = "Skills",
-            name = "activities.degreeOfSuccess.${groupedActivity.data.name}",
+            label = "Selected Skill",
+            name = "activities.selectedSkill.${groupedActivity.data.name}",
             hideLabel = true,
             options = options,
             elementClasses = listOf("km-proficiency"),

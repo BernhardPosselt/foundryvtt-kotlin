@@ -91,8 +91,9 @@ data class ActivityAndData(
         val skillAndProficiency = data.skillRequirements.associate {
             it.skill to fromCamelCase<Proficiency>(it.proficiency)
         }
-        val actorLores: List<Attribute> = actor?.getLoreAttributes() ?: emptyList()
-        val allSkills = (Skill.entries + actorLores + Perception).map {
+        val lores: List<Attribute> = actor?.getLoreAttributes()
+            ?: data.getLoreSkills().map { Attribute.fromString(it) }
+        val allSkills = (Skill.entries + lores + Perception).map {
             ProficiencyRequirement(
                 attribute = it,
                 proficiency = skillAndProficiency[it.value] ?: Proficiency.UNTRAINED
@@ -120,6 +121,15 @@ fun CampingData.groupActivities(): List<ActivityAndData> {
         } else {
             ActivityAndData(data = data, result = activity)
         }
+    }
+}
+
+fun CampingActivityData.getLoreSkills(): List<String> {
+    if (skills == "any") {
+        return emptyList()
+    } else {
+        val commonSkills = (Skill.entries + Perception).map { it.value }.toSet()
+        return skills.unsafeCast<Array<String>>().filter { !commonSkills.contains(it) }
     }
 }
 
