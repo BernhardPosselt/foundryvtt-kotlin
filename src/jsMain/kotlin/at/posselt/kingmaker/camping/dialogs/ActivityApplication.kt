@@ -5,8 +5,11 @@ import at.posselt.kingmaker.camping.*
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import at.posselt.kingmaker.utils.launch
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.data.dsl.buildSchema
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.array.push
@@ -53,6 +56,25 @@ external interface ActivitySubmitData {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
+class ActivityDataModel(value: AnyObject) : DataModel(value) {
+    companion object {
+        @Suppress("unused")
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun defineSchema() = buildSchema {
+            string("dc", nullable = true)
+            boolean("isSecret")
+            schema("modifyRandomEncounterDc") {
+                int("day")
+                int("night")
+            }
+            stringArray("hi") // FIXME
+        }
+    }
+}
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class ActivityApplication(
     private val game: Game,
     private val actor: PF2ENpc,
@@ -62,6 +84,7 @@ class ActivityApplication(
     title = if (data == null) "Add Activity" else "Edit Activity: ${data.name}",
     template = "components/forms/application-form.hbs",
     debug = true,
+    dataModel = ActivityDataModel::class.js,
 ) {
     private val editActivityName = data?.name
     private val editActivityLocked = data?.isLocked

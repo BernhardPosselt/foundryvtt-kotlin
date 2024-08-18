@@ -1,7 +1,8 @@
 {{#unless hideLabel}}<label class="{{#unless stacked}}form-element-inline{{/unless}}">{{label}}{{/unless}}
 {{#if select}}
     {{#if link}}
-        <div class="km-select-with-link">{{/if}}
+        <div class="km-select-with-link">
+    {{/if}}
         <select name="{{name}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}} {{#if
                 elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}}>
@@ -10,7 +11,7 @@
                     <option class="{{classes}}" value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
                 {{/each}}
             {{else}}
-                <option>-</option>
+                <option value="">-</option>
                 {{#each options}}
                     <option class="{{classes}}" value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
                 {{/each}}
