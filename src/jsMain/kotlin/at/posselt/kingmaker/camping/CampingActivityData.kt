@@ -1,10 +1,7 @@
 package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.actor.getLoreAttributes
-import at.posselt.kingmaker.data.actor.Attribute
-import at.posselt.kingmaker.data.actor.Perception
-import at.posselt.kingmaker.data.actor.Proficiency
-import at.posselt.kingmaker.data.actor.Skill
+import at.posselt.kingmaker.data.actor.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
 import com.foundryvtt.pf2e.actor.PF2ECreature
@@ -92,7 +89,7 @@ data class ActivityAndData(
             it.skill to fromCamelCase<Proficiency>(it.proficiency)
         }
         val lores: List<Attribute> = actor?.getLoreAttributes()
-            ?: data.getLoreSkills().map { Attribute.fromString(it) }
+            ?: data.getLoreSkills()
         val allSkills = (Skill.entries + lores + Perception).map {
             ProficiencyRequirement(
                 attribute = it,
@@ -124,12 +121,13 @@ fun CampingData.groupActivities(): List<ActivityAndData> {
     }
 }
 
-fun CampingActivityData.getLoreSkills(): List<String> {
+fun CampingActivityData.getLoreSkills(): List<Lore> {
     if (skills == "any") {
         return emptyList()
     } else {
-        val commonSkills = (Skill.entries + Perception).map { it.value }.toSet()
-        return skills.unsafeCast<Array<String>>().filter { !commonSkills.contains(it) }
+        return skills.unsafeCast<Array<String>>()
+            .map { Attribute.fromString(it) }
+            .filterIsInstance<Lore>()
     }
 }
 

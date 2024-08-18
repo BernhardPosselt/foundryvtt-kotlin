@@ -15,7 +15,7 @@ import com.foundryvtt.pf2e.actor.PF2ECreature
 fun PF2ECreature.resolveAttribute(attribute: Attribute): PF2EAttribute? = when (attribute) {
     is Perception -> perception
     is Skill -> skills[attribute.toCamelCase()]!!
-    is Lore -> skills[attribute.value]
+    is Lore -> skills[attribute.value] ?: skills[attribute.lorePostfixValue]
 }
 
 fun PF2ECreature.getLoreAttributes(): List<Lore> {

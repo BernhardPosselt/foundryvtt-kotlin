@@ -74,11 +74,11 @@ fun PF2ECreature.satisfiesSkillRequirement(
     skillRequirements: Array<SkillRequirement>,
 ): Boolean {
     val requirements = skillRequirements.find { it.skill == selectedSkill }
-    val attribute = Attribute.fromString(selectedSkill)
-    val rank = resolveAttribute(attribute)?.rank ?: 0
     return if (requirements == null) {
         true
     } else {
+        val attribute = Attribute.fromString(selectedSkill)
+        val rank = resolveAttribute(attribute)?.rank ?: 0
         fromCamelCase<Proficiency>(requirements.proficiency)
             ?.let { rank >= it.ordinal }
             ?: false
@@ -87,11 +87,10 @@ fun PF2ECreature.satisfiesSkillRequirement(
 
 fun PF2ECreature.hasAnyActivitySkill(
     activity: CampingActivityData,
-): Boolean {
-    val possibleSkills = findCampingActivitySkills(activity, true)
-    return possibleSkills.contains("perception") ||
-            possibleSkills.any { skill -> skill in Object.keys(skills) }
-}
+): Boolean =
+    findCampingActivitySkills(activity, true)
+        .map { Attribute.fromString(it) }
+        .any { resolveAttribute(it) != null }
 
 fun PF2ECreature.findCampingActivitySkills(
     activity: CampingActivityData,
