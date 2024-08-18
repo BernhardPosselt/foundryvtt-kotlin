@@ -217,7 +217,7 @@ class CampingSheet(
         when (target.dataset["action"]) {
             "configure-regions" -> RegionConfig(actor).launch()
             "configure-recipes" -> ManageRecipesApplication(game, actor).launch()
-            "configure-activities" -> ManageActivitiesApplication(actor).launch()
+            "configure-activities" -> ManageActivitiesApplication(game, actor).launch()
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
             "roll-camping-check" -> console.log("rolling camping check")

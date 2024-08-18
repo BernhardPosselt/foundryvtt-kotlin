@@ -21,11 +21,6 @@ import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface RecipeFormData {
-
-}
-
-@JsPlainObject
 external interface RecipeContext : SectionsContext, HandlebarsRenderContext {
     val isFormValid: Boolean
 }
@@ -125,7 +120,7 @@ class RecipeApplication(
                             disabled = editRecipeName != null,
                             value = currentRecipe?.name ?: "",
                             required = true,
-                            help = "To override an existing recipe, use the name",
+                            help = "To override an existing recipe, use the same name",
                         ),
                         Select(
                             label = "Recipe Item",
@@ -206,15 +201,17 @@ class RecipeApplication(
 
 
     fun save(): Promise<Void> = buildPromise {
-        actor.getCamping()?.let { camping ->
-            currentRecipe?.let { data ->
-                camping.cooking.homebrewMeals = camping.cooking.homebrewMeals
-                    .filter { it.name != data.name }
-                    .toTypedArray()
-                camping.cooking.homebrewMeals.push(data)
-                actor.setCamping(camping)
-                close().await()
-                afterSubmit()
+        if (isValid()) {
+            actor.getCamping()?.let { camping ->
+                currentRecipe?.let { data ->
+                    camping.cooking.homebrewMeals = camping.cooking.homebrewMeals
+                        .filter { it.name != data.name }
+                        .toTypedArray()
+                    camping.cooking.homebrewMeals.push(data)
+                    actor.setCamping(camping)
+                    close().await()
+                    afterSubmit()
+                }
             }
         }
         undefined

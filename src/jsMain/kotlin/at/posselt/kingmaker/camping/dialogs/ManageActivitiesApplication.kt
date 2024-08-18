@@ -6,12 +6,15 @@ import at.posselt.kingmaker.app.CrudData
 import at.posselt.kingmaker.app.CrudItem
 import at.posselt.kingmaker.camping.*
 import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.utils.launch
+import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.core.Void
 import kotlin.js.Promise
 
 @JsExport
 class ManageActivitiesApplication(
+    private val game: Game,
     private val actor: PF2ENpc,
 ) : CrudApplication(
     title = "Manage Activities",
@@ -27,13 +30,22 @@ class ManageActivitiesApplication(
         undefined
     }
 
-    override fun addEntry(): Promise<Void> {
-        TODO("Not yet implemented")
+    override fun addEntry(): Promise<Void> = buildPromise {
+        ActivityApplication(
+            game,
+            actor,
+            afterSubmit = { render() },
+        ).launch()
         undefined
     }
 
     override fun editEntry(id: String) = buildPromise {
-        TODO("Not yet implemented")
+        ActivityApplication(
+            game,
+            actor,
+            actor.getCamping()?.homebrewCampingActivities?.find { it.name == id },
+            afterSubmit = { render() },
+        ).launch()
         undefined
     }
 
