@@ -29,7 +29,7 @@ external interface SkillPickerContext : HandlebarsRenderContext {
     val allowLores: Boolean
     val skills: Array<Skill>
     val allSkill: Skill?
-    val proficiencies: Array<Option>
+    val proficiencies: Array<SelectOption>
 }
 
 @JsPlainObject
@@ -70,13 +70,14 @@ class SkillPickerApplication(
             allSkill = currentSkills.find { it.name == "all" },
             pickProficiency = pickProficiency,
             proficiencies = Proficiency.values()
-                .map { Option(label = it.toLabel(), value = it.toCamelCase()) }
+                .map { SelectOption(label = it.toLabel(), value = it.toCamelCase()) }
                 .toTypedArray(),
             allowLores = allowLores,
         )
     }
 
     override fun onParsedSubmit(value: SkillPickerSubmitData): Promise<Void> = buildPromise {
+        // TODO: validate that at least one skill was chosen
         currentSkills = arrayOf()
         undefined
     }

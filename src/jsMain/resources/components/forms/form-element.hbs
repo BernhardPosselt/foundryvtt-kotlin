@@ -6,10 +6,14 @@
                 required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}} {{#if
                 elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}}>
             {{#if required}}
-                {{selectOptions options selected=value}}
+                {{#each options}}
+                    <option class="{{classes}}" value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
             {{else}}
-                {{selectOptions options selected=value blank="-"}}
-
+                <options>-</options>
+                {{#each options}}
+                    <option class="{{classes}}" value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
             {{/if}}
         </select>
 {{else if number}}

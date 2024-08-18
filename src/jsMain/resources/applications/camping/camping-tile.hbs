@@ -5,7 +5,7 @@
 >
     <header><a href="#" data-uuid="{{journalUuid}}" data-action="open-journal">{{name}}</a>
     </header>
-    <div class="km-camping-activity-portrait">
+    <div class="km-camping-activity-portrait {{#unless requiresCheck}}km-no-skill-check{{/unless}}">
         {{#if actor}}
             <button class="km-camping-action"
                     data-action="clear-activity"
@@ -22,16 +22,22 @@
             </div>
         {{/if}}
     </div>
-    <div class="km-camping-activity-check">
-        <!-- todo think about what to render when not filled by actor -->
-        {{#if actor}}
-            {{#if requiresCheck}}
+    {{#if requiresCheck}}
+        <div class="km-camping-activity-check">
+            {{> formElement skills }}
+            <button class="km-camping-action" data-action="roll-camping-check" type="button"
+                    {{#unless actor}}disabled{{/unless}}>
+                <i class="fa-solid fa-dice-d20"></i>
+            </button>
+        </div>
+        <div class="km-camping-activity-result">
+            {{#if actor}}
                 {{> formElement actor.degreeOfSuccess }}
-                <button class="km-camping-action" data-action="roll-camping-check" type="button"
-                        {{#unless actor}}disabled{{/unless}}>
-                    <i class="fa-solid fa-dice-d20"></i>
-                </button>
+            {{else}}
+                <select disabled>
+                    <option>-</option>
+                </select>
             {{/if}}
-        {{/if}}
-    </div>
+        </div>
+    {{/if}}
 </div>

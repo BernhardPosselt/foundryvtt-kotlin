@@ -1,5 +1,7 @@
 package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.data.actor.Perception
+import at.posselt.kingmaker.deCamelCase
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.asSequence
@@ -23,6 +25,8 @@ import kotlin.enums.enumEntries
 external interface Option {
     val label: String
     val value: String
+    val selected: Boolean
+    val classes: String
 }
 
 @JsPlainObject
@@ -74,7 +78,8 @@ enum class OverrideType(val value: String) {
 
 data class SelectOption(
     val label: String,
-    val value: String
+    val value: String,
+    val classes: List<String> = emptyList(),
 )
 
 sealed interface IntoFormElementContext {
@@ -120,7 +125,9 @@ data class Select(
         options = options.map { opt ->
             Option(
                 label = opt.label,
-                value = opt.value
+                value = opt.value,
+                selected = opt.value == value,
+                classes = opt.classes.joinToString(" "),
             )
         }.toTypedArray(),
         hideLabel = hideLabel,
@@ -236,12 +243,7 @@ data class Select(
             required = required,
             help = help,
             hideLabel = hideLabel,
-            options = enumEntries<T>().map {
-                SelectOption(
-                    label = labelFunction(it),
-                    value = it.toCamelCase()
-                )
-            },
+            options = enumToOptions<T>(labelFunction),
             disabled = disabled,
             stacked = stacked,
             elementClasses = elementClasses,
@@ -617,3 +619,16 @@ fun Item.toOption(useUuid: Boolean = false) =
         }
     }
 
+inline fun <reified T : Enum<T>> enumToOptions(labelFunction: (T) -> String = { it.toLabel() }) =
+    enumEntries<T>().map {
+        SelectOption(
+            label = labelFunction(it),
+            value = it.toCamelCase()
+        )
+    }
+
+fun Perception.toOption() =
+    SelectOption(
+        label = value.deCamelCase(),
+        value = value,
+    )

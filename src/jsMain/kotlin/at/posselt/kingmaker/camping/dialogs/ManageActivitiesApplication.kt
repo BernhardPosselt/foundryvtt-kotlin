@@ -53,7 +53,6 @@ class ManageActivitiesApplication(
         actor.getCamping()?.let { camping ->
             val locked = camping.lockedActivities.toSet()
             camping.getAllActivities()
-                .filter { !it.isPrepareCamp() }
                 .sortedWith(compareBy(CampingActivityData::name))
                 .map { activity ->
                     val name = activity.name
@@ -62,6 +61,7 @@ class ManageActivitiesApplication(
                     CrudItem(
                         id = name,
                         name = name,
+                        nameIsHtml = false,
                         additionalColumns = emptyArray(),
                         enable = CheckboxInput(
                             value = enabled,

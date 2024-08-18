@@ -1,6 +1,13 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.actor.getLoreAttributes
+import at.posselt.kingmaker.data.actor.Attribute
+import at.posselt.kingmaker.data.actor.Perception
+import at.posselt.kingmaker.data.actor.Proficiency
+import at.posselt.kingmaker.data.actor.Skill
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
+import at.posselt.kingmaker.fromCamelCase
+import com.foundryvtt.pf2e.actor.PF2ECreature
 import kotlinx.js.JsPlainObject
 
 
@@ -67,12 +74,40 @@ fun ModifyEncounterDc.atTime(isDay: Boolean) =
         night
     }
 
+data class ProficiencyRequirement(
+    val attribute: Attribute,
+    val proficiency: Proficiency,
+)
+
 data class ActivityAndData(
     val data: CampingActivityData,
     val result: CampingActivity,
 ) {
     fun done(): Boolean {
         return (data.doesNotRequireACheck() && result.actorUuid != null) || result.checkPerformed()
+    }
+
+    fun getSkills(actor: PF2ECreature?): List<ProficiencyRequirement>? {
+        val skillAndProficiency = data.skillRequirements.associate {
+            it.skill to fromCamelCase<Proficiency>(it.proficiency)
+        }
+        val actorLores: List<Attribute> = actor?.getLoreAttributes() ?: emptyList()
+        val allSkills = (Skill.entries + actorLores + Perception).map {
+            ProficiencyRequirement(
+                attribute = it,
+                proficiency = skillAndProficiency[it.value] ?: Proficiency.UNTRAINED
+            )
+        }
+        return if (data.skills == "any") {
+            allSkills
+        } else {
+            val sk = data.skills.unsafeCast<Array<String>>().toSet()
+            if (sk.isEmpty()) {
+                null
+            } else {
+                allSkills.filter { sk.contains(it.attribute.value) }
+            }
+        }
     }
 }
 
@@ -89,7 +124,10 @@ fun CampingData.groupActivities(): List<ActivityAndData> {
 }
 
 fun CampingActivityData.doesNotRequireACheck(): Boolean =
-    !(skills == "any" || (skills as Array<*>).isNotEmpty())
+    !requiresACheck()
+
+fun CampingActivityData.requiresACheck(): Boolean =
+    skills == "any" || (skills as Array<*>).isNotEmpty()
 
 @JsModule("./data/camping-activities.json")
 external val campingActivityData: Array<CampingActivityData>

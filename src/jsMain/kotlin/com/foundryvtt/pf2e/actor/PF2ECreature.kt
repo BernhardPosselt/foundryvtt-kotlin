@@ -11,6 +11,9 @@ external interface PF2ECreature {
     val level: Int
     val itemTypes: ItemTypes
     val perception: PF2EAttribute
+    val name: String
+    val uuid: String
+    val img: String?
 
     fun addToInventory(value: AnyObject, container: PF2EEquipment?, stack: Boolean): Promise<PF2EItem?>
 }

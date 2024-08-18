@@ -15,7 +15,7 @@
             <tbody>
             {{#each items}}
                 <tr>
-                    <td>{{{name}}}</td>
+                    <td>{{#if nameIsHtml}}{{{name}}}{{else}}{{name}}{{/if}}</td>
                     {{#each additionalColumns}}
                         <td>{{this}}</td>
                     {{/each}}

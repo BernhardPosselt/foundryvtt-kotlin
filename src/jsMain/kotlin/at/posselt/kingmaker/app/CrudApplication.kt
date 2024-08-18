@@ -20,6 +20,7 @@ import kotlin.js.Promise
 external interface CrudItem {
     val id: String
     val name: String
+    val nameIsHtml: Boolean
     val additionalColumns: Array<String>
     val enable: FormElementContext
     val canBeEdited: Boolean

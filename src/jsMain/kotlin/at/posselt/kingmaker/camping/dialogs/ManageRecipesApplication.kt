@@ -62,6 +62,7 @@ class ManageRecipesApplication(
                     val isHomebrew = recipe.isHomebrew ?: false
                     val enabled = learnedRecipes.contains(recipeName)
                     CrudItem(
+                        nameIsHtml = true,
                         id = recipeName,
                         name = link,
                         additionalColumns = arrayOf(

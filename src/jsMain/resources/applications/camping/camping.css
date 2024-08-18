@@ -342,7 +342,6 @@ ul.km-camping-actors {
         height: 100%;
         width: 100%;
         display: flex;
-        align-items: center;
         justify-content: center;
         flex-wrap: wrap;
         gap: 10px;
@@ -376,6 +375,17 @@ ul.km-camping-actors {
                 border-bottom: 1px solid;
                 height: 11.5em;
                 width: 11.5em;
+
+                &.km-no-skill-check {
+                    height: calc(15.5em);
+                    border-bottom: 0;
+
+                    .empty-activity,
+                    img {
+                        border-bottom-left-radius: 5px;
+                        border-bottom-right-radius: 5px;
+                    }
+                }
 
                 .empty-activity {
                     position: relative;
@@ -419,12 +429,9 @@ ul.km-camping-actors {
 
             .km-camping-activity-check {
                 display: flex;
-                border-bottom-left-radius: 5px;
-                border-bottom-right-radius: 5px;
 
                 select {
                     border-radius: 0;
-                    border-bottom-left-radius: 5px;
                     outline: none;
                     box-shadow: none;
                     font-size: 1em;
@@ -435,7 +442,6 @@ ul.km-camping-actors {
 
                 button[data-action="roll-camping-check"] {
                     border-radius: 0;
-                    border-bottom-right-radius: 5px;
                     margin: 0;
                     border: 0;
                     border-left: 1px solid;
@@ -444,6 +450,18 @@ ul.km-camping-actors {
                         box-shadow: none;
                         background-color: var(--primary-km);
                     }
+                }
+            }
+
+            .km-camping-activity-result {
+                select {
+                    border-radius: 0 0 5px 5px;
+                    border-top: 1px solid;
+                    outline: none;
+                    box-shadow: none;
+                    font-size: 1em;
+                    height: 2em;
+                    padding: 0 .3em;
                 }
             }
         }

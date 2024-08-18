@@ -7,6 +7,7 @@ import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.camping.dialogs.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
@@ -46,6 +47,7 @@ external interface CampingSheetActivity {
     val name: String
     val locked: Boolean
     val requiresCheck: Boolean
+    val skills: FormElementContext?
 }
 
 @JsPlainObject
@@ -306,7 +308,10 @@ class CampingSheet(
                 ui.notifications.error("Only NPCs and Characters can perform camping activities")
             } else if (activity == null) {
                 ui.notifications.error("Activity with name $activityName not found")
-            } else if (activityActor.findCampingActivitySkills(activity, camping.ignoreSkillRequirements).isEmpty()) {
+            } else if (
+                activity.requiresACheck()
+                && activityActor.findCampingActivitySkills(activity, camping.ignoreSkillRequirements).isEmpty()
+            ) {
                 ui.notifications.error("Actor does not satisfy skill requirements to perform $activityName")
             } else {
                 camping.campingActivities =
@@ -429,7 +434,6 @@ class CampingSheet(
         options: HandlebarsRenderOptions
     ): Promise<CampingSheetContext> = buildPromise {
         val parent = super._preparePartContext(partId, context, options).await()
-        console.log("rendering $partId")
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
@@ -437,13 +441,21 @@ class CampingSheet(
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }
-        val activities = groupActivities.mapIndexed { index, (data, result) ->
-            val actor = result.actorUuid?.let { actorsByUuid[it] }
+        val activities = groupActivities.mapIndexed { index, groupedActivity ->
+            val (data, result) = groupedActivity
+            val actor = result.actorUuid?.let { actorsByUuid[it] }?.unsafeCast<PF2ECreature>()
+            val requiresCheck = !data.doesNotRequireACheck()
+            val skills = getActivitySkills(
+                actor = actor,
+                groupedActivity = groupedActivity,
+                ignoreSkillRequirements = camping.ignoreSkillRequirements,
+            )
             CampingSheetActivity(
                 journalUuid = data.journalUuid,
                 name = data.name,
                 locked = camping.lockedActivities.contains(data.name),
-                requiresCheck = !data.doesNotRequireACheck(),
+                requiresCheck = requiresCheck,
+                skills = skills,
                 actor = actor?.let { act ->
                     CampingSheetActor(
                         name = act.name,
@@ -521,5 +533,38 @@ class CampingSheet(
             actor.setCamping(camping)
         }
         undefined
+    }
+}
+
+
+fun getActivitySkills(
+    actor: PF2ECreature?,
+    groupedActivity: ActivityAndData,
+    ignoreSkillRequirements: Boolean,
+): FormElementContext? {
+    return groupedActivity.getSkills(actor)?.let { skillsAndProficiencies ->
+        val options = skillsAndProficiencies
+            .filter {
+                if (ignoreSkillRequirements || actor == null) {
+                    true
+                } else {
+                    actor.satisfiesSkillRequirement(it.attribute.value, groupedActivity.data.skillRequirements)
+                }
+            }
+            .map {
+                SelectOption(
+                    label = it.attribute.label,
+                    value = it.attribute.value,
+                    classes = listOf("km-proficiency-${it.proficiency.toCamelCase()}")
+                )
+            }
+        Select(
+            label = "Skills",
+            name = "activities.degreeOfSuccess.${groupedActivity.data.name}",
+            hideLabel = true,
+            options = options,
+            elementClasses = listOf("km-proficiency"),
+            value = groupedActivity.result.selectedSkill,
+        ).toContext()
     }
 }

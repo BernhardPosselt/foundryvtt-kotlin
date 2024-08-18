@@ -9,8 +9,6 @@ sealed interface Attribute {
     val value: String
     val label: String
         get() = value.unslugify()
-    val lorePrefixValue: String
-        get() = "$value-lore"
 
     companion object {
         fun fromString(value: String): Attribute {

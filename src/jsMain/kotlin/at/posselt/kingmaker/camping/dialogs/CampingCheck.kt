@@ -69,14 +69,13 @@ private suspend fun askSkill(
     }
 }
 
-private fun satisfiesSkillRequirement(
-    actor: PF2ECreature,
+fun PF2ECreature.satisfiesSkillRequirement(
     selectedSkill: String,
     skillRequirements: Array<SkillRequirement>,
 ): Boolean {
     val requirements = skillRequirements.find { it.skill == selectedSkill }
     val attribute = Attribute.fromString(selectedSkill)
-    val rank = actor.resolveAttribute(attribute)?.rank ?: 0
+    val rank = resolveAttribute(attribute)?.rank ?: 0
     return if (requirements == null) {
         true
     } else {
@@ -101,7 +100,7 @@ fun PF2ECreature.findCampingActivitySkills(
         if (disableSkillRequirements) {
             true
         } else {
-            satisfiesSkillRequirement(this, it, activity.skillRequirements)
+            satisfiesSkillRequirement(it, activity.skillRequirements)
         }
     }
 }
