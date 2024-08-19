@@ -10,6 +10,9 @@ Kingmaker
 
 # TODO
 
+* Update manual
+* Add upgrading notice
+* Always display manual in chat unless specifically disabled
 * Remove page numbers from random encounter tables
 * Remove any mentions of Kingmaker compatibility
 * Migrate structure image conversion macro
