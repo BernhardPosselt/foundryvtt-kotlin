@@ -47,13 +47,13 @@ suspend fun Game.migrateKingmakerTools() {
     val currentVersion = settings.kingmakerTools.getSchemaVersion()
     if (currentVersion < 6) {
         ui.notifications.error(
-            "Kingmaker Tools: Upgrades from versions prior to 0.12.2 are not supported anymore. " +
+            "Kingdom Building, Camping & Weather: Upgrades from versions prior to 0.12.2 are not supported anymore. " +
                     "Please upgrade to 1.1.1 first"
         )
         return
     }
     if (isFirstGM() && currentVersion < latestMigrationVersion) {
-        ui.notifications.info("Kingmaker Tools: Running migrations, please do not close the window")
+        ui.notifications.info("Kingdom Building, Camping & Weather: Running migrations, please do not close the window")
 
         // create backups
         val kingdomActors = npcs().filter { it.getKingdom() != null }
@@ -80,6 +80,6 @@ suspend fun Game.migrateKingmakerTools() {
             }
 
         settings.kingmakerTools.setSchemaVersion(latestMigrationVersion)
-        ui.notifications.info("Kingmaker Tools: Migration successful")
+        ui.notifications.info("Kingdom Building, Camping & Weather: Migration successful")
     }
 }
