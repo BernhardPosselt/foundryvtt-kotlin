@@ -110,14 +110,15 @@ data class ActivityAndData(
 }
 
 fun CampingData.groupActivities(): List<ActivityAndData> {
-    val activitiesByName = getAllActivities().associateBy { it.name }
-    return campingActivities.mapNotNull { activity ->
-        val data = activitiesByName[activity.activity]
-        if (data == null) {
-            null
-        } else {
-            ActivityAndData(data = data, result = activity)
-        }
+    val activitiesByName = campingActivities.associateBy { it.activity }
+    return getAllActivities().map { data ->
+        val activity = activitiesByName[data.name] ?: CampingActivity(
+            activity = data.name,
+            actorUuid = null,
+            result = null,
+            selectedSkill = null,
+        )
+        ActivityAndData(data = data, result = activity)
     }
 }
 

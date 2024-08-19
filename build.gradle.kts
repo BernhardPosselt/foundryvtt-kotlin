@@ -125,7 +125,7 @@ tasks.register<Copy>("copyOldJs") {
  * Updates the version attribute in module.json when packaging the zip
  */
 tasks.register<ChangeModuleVersion>("changeModuleVersion") {
-    moduleVersion = project.property("moduleVersion") as String
+    moduleVersion = providers.gradleProperty("moduleVersion")
 }
 
 /**

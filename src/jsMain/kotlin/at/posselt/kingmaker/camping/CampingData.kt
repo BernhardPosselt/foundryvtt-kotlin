@@ -60,3 +60,6 @@ fun CampingActivity.parseResult() =
 
 fun CampingActivity.checkPerformed() =
     result != null && actorUuid != null
+
+fun CampingActivity.isPrepareCamp() =
+    activity == "Prepare Camp"

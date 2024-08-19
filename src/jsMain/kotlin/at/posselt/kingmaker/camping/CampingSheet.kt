@@ -129,6 +129,7 @@ class CampingSheet(
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players", gmOnly = true),
+        MenuControl(label = "Reset Activities", action = "reset-activities", gmOnly = true),
         MenuControl(label = "Activities", action = "configure-activities", gmOnly = true),
         MenuControl(label = "Recipes", action = "configure-recipes", gmOnly = true),
         MenuControl(label = "Regions", action = "configure-regions", gmOnly = true),
@@ -220,6 +221,7 @@ class CampingSheet(
             "configure-regions" -> RegionConfig(actor).launch()
             "configure-recipes" -> ManageRecipesApplication(game, actor).launch()
             "configure-activities" -> ManageActivitiesApplication(game, actor).launch()
+            "reset-activities" -> buildPromise { resetActivities() }
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
             "roll-camping-check" -> console.log("rolling camping check")
@@ -283,6 +285,13 @@ class CampingSheet(
         }
     }
 
+    private suspend fun resetActivities() {
+        actor.getCamping()?.let { camping ->
+            camping.campingActivities = camping.campingActivities.filter { it.isPrepareCamp() }.toTypedArray()
+            actor.setCamping(camping)
+        }
+    }
+
     private suspend fun rollEncounter(includeFlatCheck: Boolean) {
         actor.getCamping()?.let { camping ->
             val currentRegion = camping.findCurrentRegion(game) ?: camping.getRegions(game).firstOrNull()
@@ -296,7 +305,6 @@ class CampingSheet(
             }
         }
     }
-
 
     private suspend fun assignActivityTo(actorUuid: String, activityName: String) {
         actor.getCamping()?.let { camping ->
