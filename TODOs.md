@@ -1,6 +1,7 @@
 # TODO
 
 * Migrate structure image conversion macro
+* Rename module to "Kingdom Building, Camping & Weather"
 * Test camping & rolling random encounters
 
 ## Non OGLisms

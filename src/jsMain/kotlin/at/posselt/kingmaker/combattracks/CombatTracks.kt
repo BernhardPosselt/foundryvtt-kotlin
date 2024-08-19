@@ -41,7 +41,7 @@ suspend fun Scene.startMusic() {
         ?: playlist?.playAll()?.await()
 }
 
-suspend fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): CombatTrack? =
+fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): CombatTrack? =
     // check for actor overrides
     combatants.asSequence()
         .mapNotNull(Combatant::actor)

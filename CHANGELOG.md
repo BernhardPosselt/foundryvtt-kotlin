@@ -14,14 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-* This release marks a departure from Paizo IP to OGL only content. This primarily means that a lot of names and setting
-  information had to be removed or changed
-* Removed Companion Actors: these used Paizo IP and with the advent of the Remaster got too difficult to maintain
+* This release marks a departure from Paizo IP to OGL only content due to the removal of the CUP and to simplify
+  licensing compatibility. This primarily means that some names and setting information had to be removed or changed (
+  e.g. the First World has been replaced with "A Supernatural Place" or "Galt Ragout" is now just "Ragout")
+* Removed additional Companion actors: ultimately too difficult to maintain due to Remaster changes and new content
+  releases in addition to Paizo IP
 * Removed various journal entries which are all covered on existing sheets
-* Remove Companion Influence and Discover camping activities. You have to add them on your own now
+* Removed Companion Influence and Discover camping activities. You have to add them on your own now
+* Removed the ability to override combat tracks by region, e.g. by creating a playlist called **Kingmaker.Greenbelt**.
+  Instead, simply configure these on the camping sheet
 
 ### Changed
 
+* If you don't use the official module, you will need to:
+    * Set your combat tracks and random encounters manually in camping sheet
 * All companion names have been removed from camping activities, kingdom events, kingdom activities
 * The following camping activities have been renamed:
     * Dawnflower's Blessing -> Healer's Blessing
