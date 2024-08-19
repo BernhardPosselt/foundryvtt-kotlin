@@ -79,10 +79,10 @@ suspend fun CampingData.getRegions(game: Game): List<RegionSetting> {
         stolenLandsZones
             .map {
                 buildPromise {
-                    val tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}"
+                    val zone = "Zone ${it.level.toString().padStart(2, '0')}"
                     val rolltableUuid = game.findRollTableWithCompendiumFallback(
-                        tableName = tableName,
-                        fallbackName = it.name,
+                        tableName = "Zone ${it.level.toString().padStart(2, '0')}: ${it.name}",
+                        fallbackName = zone,
                     )?.uuid
                     val combatTrack = (game.playlists.getCombatOverrideTrack(it.combatTrackName)
                         ?: game.playlists.getKingmakerCombatTrack(it.combatTrackName))

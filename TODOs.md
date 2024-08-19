@@ -1,16 +1,19 @@
 # TODO
 
+* Migrate recipes
 * Migrate structure image conversion macro
 * Test camping & rolling random encounters
 
-## Influence System
+## Non OGLisms
 
-* Check what can be shipped under the OGL
-* Ship Influence Statblocks
-* Link statblocks to journal entries and if they don't exist, ask to import it
+Clean the followings things off OGLism:
+
+* Companion Leadership & Region Activities
+* Companion Names
 
 ## Camping
 
+* Don't consider locked activities for effect syncing unless companion checkboxes are clicked
 * Roll activity check
 * Sync camping effects
 * Prepare Camp
