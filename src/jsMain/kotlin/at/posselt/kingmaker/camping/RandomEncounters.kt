@@ -4,10 +4,28 @@ import at.posselt.kingmaker.camping.dialogs.RegionSetting
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.fromCamelCase
-import at.posselt.kingmaker.utils.d20Check
-import at.posselt.kingmaker.utils.fromUuidTypeSafe
-import at.posselt.kingmaker.utils.rollWithDraw
+import at.posselt.kingmaker.utils.*
+import com.foundryvtt.core.Game
 import com.foundryvtt.core.documents.RollTable
+import com.foundryvtt.pf2e.actor.PF2ENpc
+
+suspend fun rollRandomEncounter(
+    game: Game,
+    actor: PF2ENpc,
+    includeFlatCheck: Boolean
+) {
+    actor.getCamping()?.let { camping ->
+        val currentRegion = camping.findCurrentRegion(game) ?: camping.getRegions(game).firstOrNull()
+        currentRegion?.let { region ->
+            rollRandomEncounter(
+                camping = camping,
+                includeFlatCheck = includeFlatCheck,
+                region = region,
+                isDay = game.getPF2EWorldTime().time.isDay(),
+            )
+        }
+    }
+}
 
 suspend fun rollRandomEncounter(
     camping: CampingData,

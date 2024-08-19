@@ -84,7 +84,7 @@ fun <O> HooksEventListener.onUpdateWorldTime(callback: (worldTime: Int, deltaInS
 fun <O> HooksEventListener.onCanvasReady(callback: (Canvas) -> O) =
     on("canvasReady", callback)
 
-fun <O> HooksEventListener.onRenderChatLog(callback: RenderApplication<O, AnyObject>) =
+fun <O> HooksEventListener.onRenderChatLog(callback: RenderApplication<AnyObject, O>) =
     on("renderChatLog", callback)
 
 fun <O> HooksEventListener.onGetChatLogEntryContext(callback: ApplicationEntryContext<O>) =

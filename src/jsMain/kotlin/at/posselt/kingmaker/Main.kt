@@ -2,6 +2,7 @@ package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.camping.CampingSheet
+import at.posselt.kingmaker.camping.bindCampingChatEventListeners
 import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.camping.openCampingSheet
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
@@ -100,5 +101,9 @@ fun main() {
                 ?.let { actor -> CampingSheet(game, actor) }
                 ?.launch()
         }
+    }
+
+    Hooks.onRenderChatLog { _, _, _ ->
+        bindCampingChatEventListeners(game)
     }
 }

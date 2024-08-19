@@ -293,17 +293,7 @@ class CampingSheet(
     }
 
     private suspend fun rollEncounter(includeFlatCheck: Boolean) {
-        actor.getCamping()?.let { camping ->
-            val currentRegion = camping.findCurrentRegion(game) ?: camping.getRegions(game).firstOrNull()
-            currentRegion?.let { region ->
-                rollRandomEncounter(
-                    camping = camping,
-                    includeFlatCheck = includeFlatCheck,
-                    region = region,
-                    isDay = game.getPF2EWorldTime().time.isDay(),
-                )
-            }
-        }
+        rollRandomEncounter(game, actor, includeFlatCheck)
     }
 
     private suspend fun assignActivityTo(actorUuid: String, activityName: String) {

@@ -8,12 +8,15 @@ import at.posselt.kingmaker.camping.CampingActivityData
 import at.posselt.kingmaker.camping.SkillRequirement
 import at.posselt.kingmaker.data.actor.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
+import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.data.checks.getLevelBasedDC
 import at.posselt.kingmaker.data.regions.Zone
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.fromOrdinal
 import at.posselt.kingmaker.slugify
 import at.posselt.kingmaker.unslugify
+import at.posselt.kingmaker.utils.postChatMessage
+import at.posselt.kingmaker.utils.postChatTemplate
 import at.posselt.kingmaker.utils.postDegreeOfSuccess
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.Dc
@@ -45,28 +48,6 @@ private suspend fun askDc(activity: String): Int {
 @JsPlainObject
 private external interface AskSkillData {
     val skill: String
-}
-
-private suspend fun askSkill(
-    activity: String,
-    skills: List<String>,
-): String {
-    return awaitablePrompt<AskSkillData, String>(
-        title = "$activity: Select Skill",
-        templatePath = "components/forms/form.hbs",
-        templateContext = recordOf(
-            "formRows" to Select(
-                label = "Skill",
-                name = "skill",
-                required = true,
-                options = skills.map {
-                    SelectOption(label = it.unslugify(), value = it)
-                },
-            ).toContext()
-        ),
-    ) {
-        it.skill
-    }
 }
 
 fun PF2ECreature.satisfiesSkillRequirement(
@@ -116,10 +97,9 @@ fun PF2ECreature.findCampingActivitySkills(
  * @throws Error if a popup asking for a skill or dc is closed
  */
 suspend fun PF2ECreature.campingActivityCheck(
-    game: Game,
     zone: Zone,
     activity: CampingActivityData,
-    disableSkillRequirements: Boolean,
+    skill: Attribute,
 ): DegreeOfSuccess? {
     val activityName = activity.name
     val extraRollOptions = arrayOf("action:${activityName.slugify()}")
@@ -130,39 +110,32 @@ suspend fun PF2ECreature.campingActivityCheck(
         is String -> activityDc.toInt()
         else -> activityDc as Int
     }
-    val validSkills = findCampingActivitySkills(activity, disableSkillRequirements)
-    val skill = if (validSkills.size > 1) {
-        askSkill(activityName, validSkills)
-    } else {
-        validSkills.firstOrNull()
-    }
-    return skill?.let {
-        val result = performCampingCheck(
-            game = game,
-            attribute = Attribute.fromString(it),
-            isSecret = activity.isSecret,
-            extraRollOptions = extraRollOptions,
-            dc = dc,
-        )
-        if (result != null) {
-            val config = when (result) {
-                DegreeOfSuccess.CRITICAL_FAILURE -> activity.criticalFailure
-                DegreeOfSuccess.FAILURE -> activity.failure
-                DegreeOfSuccess.SUCCESS -> activity.success
-                DegreeOfSuccess.CRITICAL_SUCCESS -> activity.criticalSuccess
-            }
-            postDegreeOfSuccess(degreeOfSuccess = result, message = config?.message)
-            if (config?.checkRandomEncounter == true) {
-                // TODO: post random encounter check
-            }
+    val result = performCampingCheck(
+        attribute = skill,
+        isSecret = activity.isSecret,
+        extraRollOptions = extraRollOptions,
+        dc = dc,
+    )
+    if (result != null) {
+        val config = when (result) {
+            DegreeOfSuccess.CRITICAL_FAILURE -> activity.criticalFailure
+            DegreeOfSuccess.FAILURE -> activity.failure
+            DegreeOfSuccess.SUCCESS -> activity.success
+            DegreeOfSuccess.CRITICAL_SUCCESS -> activity.criticalSuccess
         }
-        result
+        postDegreeOfSuccess(degreeOfSuccess = result, message = config?.message)
+        if (config?.checkRandomEncounter == true) {
+            postChatTemplate(
+                "chatmessages/random-camping-encounter.hbs",
+                rollMode = RollMode.BLINDROLL
+            );
+        }
     }
+    return result
 }
 
 
 private suspend fun PF2ECreature.performCampingCheck(
-    game: Game,
     attribute: Attribute,
     isSecret: Boolean = false,
     isWatch: Boolean = false,

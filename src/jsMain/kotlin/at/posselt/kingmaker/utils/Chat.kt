@@ -2,12 +2,16 @@ package at.posselt.kingmaker.utils
 
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
+import at.posselt.kingmaker.takeIfInstance
 import at.posselt.kingmaker.toCamelCase
 import com.foundryvtt.core.documents.ChatMessage
 import js.objects.ReadonlyRecord
 import js.objects.jso
 import js.objects.recordOf
+import kotlinx.browser.document
 import kotlinx.coroutines.await
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.Event
 
 suspend fun postDegreeOfSuccess(
     degreeOfSuccess: DegreeOfSuccess,
@@ -43,4 +47,15 @@ suspend fun postChatMessage(message: String, rollMode: RollMode? = null) {
     val data = recordOf("content" to message)
     rollMode?.let { ChatMessage.applyRollMode(data, it.toCamelCase()) }
     ChatMessage.create(data).await()
+}
+
+fun bindChatClick(selector: String, callback: (Event, HTMLElement) -> Unit) {
+    document.getElementById("chat-log")
+        ?.addEventListener("click", { event ->
+            event.target
+                ?.takeIfInstance<HTMLElement>()
+                ?.closest(selector)
+                ?.takeIfInstance<HTMLElement>()
+                ?.let { callback(event, it) }
+        })
 }
