@@ -1,5 +1,17 @@
+# OGL questions
+
+Kingmaker
+
+* Allowed to use random encounter roll tables?
+* Allowed to use random kingdom events or are these considered storylines?
+* Proper module name: is Kingmaker Tools (Unofficial) ok or do I need to rename it as "Kingdom Building, Camping &
+  Weather" - "No!!!"
+* Am I allowed to reference ip purely in code? e.g. name a piece of code kingmakerSomething()
+
 # TODO
 
+* Remove page numbers from random encounter tables
+* Remove any mentions of Kingmaker compatibility
 * Migrate structure image conversion macro
 * Rename module to "Kingdom Building, Camping & Weather"
 * Test camping & rolling random encounters
