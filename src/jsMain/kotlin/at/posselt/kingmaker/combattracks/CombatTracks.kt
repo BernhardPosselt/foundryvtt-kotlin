@@ -49,7 +49,7 @@ suspend fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): C
         .mapNotNull(PF2EActor::getCombatTrack)
         .firstOrNull()
         ?: active.getCombatTrack()  // or scene overrides
-        ?: getCampingActor()?.getCamping()?.findCurrentRegion(this)?.combatTrack // otherwise fall back to region
+        ?: getCampingActor()?.getCamping()?.findCurrentRegion()?.combatTrack // otherwise fall back to region
 
 suspend fun Game.startCombatTrack(combatants: Array<Combatant>, active: Scene) {
     findCombatTrack(combatants, active)?.let {

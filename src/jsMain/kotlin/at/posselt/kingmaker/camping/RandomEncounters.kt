@@ -15,7 +15,7 @@ suspend fun rollRandomEncounter(
     includeFlatCheck: Boolean
 ) {
     actor.getCamping()?.let { camping ->
-        val currentRegion = camping.findCurrentRegion(game) ?: camping.getRegions(game).firstOrNull()
+        val currentRegion = camping.findCurrentRegion() ?: camping.regionSettings.regions.firstOrNull()
         currentRegion?.let { region ->
             rollRandomEncounter(
                 camping = camping,
@@ -37,13 +37,13 @@ suspend fun rollRandomEncounter(
     if (table == null) {
         return false
     }
-    val rollMode = camping.randomEncounterRollMode?.let { fromCamelCase<RollMode>(it) } ?: RollMode.GMROLL
+    val rollMode = fromCamelCase<RollMode>(camping.randomEncounterRollMode) ?: RollMode.GMROLL
     val proxyTable = camping.proxyRandomEncounterTableUuid?.let { fromUuidTypeSafe<RollTable>(it) }
     val dc = region.encounterDc + calculateModifierIncrease(camping, isDay) + camping.encounterModifier
     val rollCheck = if (includeFlatCheck) {
         d20Check(
             dc = dc,
-            flavor = "Rolling Random Encounter for terrain ${region.name} with Flat DC ${dc}",
+            flavor = "Rolling Random Encounter for terrain ${region.name} with Flat DC $dc",
             rollMode = rollMode,
         ).degreeOfSuccess.succeeded()
     } else {

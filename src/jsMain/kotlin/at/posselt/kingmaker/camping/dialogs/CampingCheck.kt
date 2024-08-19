@@ -2,7 +2,6 @@ package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.actor.resolveAttribute
 import at.posselt.kingmaker.app.Select
-import at.posselt.kingmaker.app.SelectOption
 import at.posselt.kingmaker.app.awaitablePrompt
 import at.posselt.kingmaker.camping.CampingActivityData
 import at.posselt.kingmaker.camping.SkillRequirement
@@ -10,15 +9,11 @@ import at.posselt.kingmaker.data.actor.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.data.checks.getLevelBasedDC
-import at.posselt.kingmaker.data.regions.Zone
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.fromOrdinal
 import at.posselt.kingmaker.slugify
-import at.posselt.kingmaker.unslugify
-import at.posselt.kingmaker.utils.postChatMessage
 import at.posselt.kingmaker.utils.postChatTemplate
 import at.posselt.kingmaker.utils.postDegreeOfSuccess
-import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
 import com.foundryvtt.pf2e.actor.PF2ECreature
@@ -97,7 +92,7 @@ fun PF2ECreature.findCampingActivitySkills(
  * @throws Error if a popup asking for a skill or dc is closed
  */
 suspend fun PF2ECreature.campingActivityCheck(
-    zone: Zone,
+    zone: RegionSetting,
     activity: CampingActivityData,
     skill: Attribute,
 ): DegreeOfSuccess? {

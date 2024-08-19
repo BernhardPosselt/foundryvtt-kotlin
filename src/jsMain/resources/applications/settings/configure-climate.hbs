@@ -1,32 +1,27 @@
 <div>
     <div class="row">
-        {{> formElement useStolenLands}}
-    </div>
-    {{#unless useStolenLands.value}}
-        <div class="row">
-            <table>
-                <thead>
+        <table>
+            <thead>
+            <tr>
+                {{#each heading}}
+                    <th class="{{#each classes}}{{this}}{{/each}}">{{label}}</th>
+                {{/each}}
+            </tr>
+            </thead>
+            <tbody>
+            {{#each formRows}}
                 <tr>
-                    {{#each heading}}
-                        <th class="{{#each classes}}{{this}}{{/each}}">{{label}}</th>
+                    {{#each this}}
+                        {{#if isFormElement}}
+                            <td>{{> formElement this}}</td>
+                        {{else}}
+                            <td>{{this}}</td>
+                        {{/if}}
                     {{/each}}
                 </tr>
-                </thead>
-                <tbody>
-                {{#each formRows}}
-                    <tr>
-                        {{#each this}}
-                            {{#if isFormElement}}
-                                <td>{{> formElement this}}</td>
-                            {{else}}
-                                <td>{{this}}</td>
-                            {{/if}}
-                        {{/each}}
-                    </tr>
-                {{/each}}
-                </tbody>
-            </table>
-        </div>
-    {{/unless}}
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
     <button data-action="save" {{#unless isValid}}disabled{{/unless}}>Save</button>
 </div>

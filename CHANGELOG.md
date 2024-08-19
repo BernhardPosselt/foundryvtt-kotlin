@@ -14,14 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-* Remove Companion Actors
-* Remove Companion Influence and Discover camping activities
+* This release marks a departure from Paizo IP to OGL only content. This primarily means that a lot of names and setting
+  information had to be removed or changed
+* Removed Companion Actors: these used Paizo IP and with the advent of the Remaster got too difficult to maintain
+* Removed various journal entries which are all covered on existing sheets
+* Remove Companion Influence and Discover camping activities. You have to add them on your own now
 
 ### Changed
 
-* All companion names have been removed from camping activities
-* The following things have been renamed:
+* All companion names have been removed from camping activities, kingdom events, kingdom activities
+* The following camping activities have been renamed:
     * Dawnflower's Blessing -> Healer's Blessing
+* The following recipes have been renamed
     * Broiled Tuskwater Oysters -> Broiled Oysters
     * First World Mince Pie -> Supernatural Mince Pie
     * Galt Ragout -> Ragout
@@ -35,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * If you have multiple kingdom sheets, migrations will be run for all of them; you can still only have 1 camping sheet
 * Combat Tracks can now select a track on a playlist in addition to selecting a playlist
 * TODO: detail new camping sheet
-*
 
 ## [1.1.1] - 2024-07-17
 

@@ -146,19 +146,15 @@ private suspend fun rollWeather(
 suspend fun rollWeather(game: Game) {
     val settings = game.settings.kingmakerTools
     val climateSettings = settings.getClimateSettings()
-    val climate = if (climateSettings.useStolenLands) {
-        stolenLandsWeather
-    } else {
-        climateSettings.months.mapIndexed { index, climateSetting ->
-            Climate(
-                month = getMonth(index),
-                season = fromCamelCase<Season>(climateSetting.season)!!,
-                coldDc = climateSetting.coldDc,
-                precipitationDc = climateSetting.precipitationDc,
-                weatherEventDc = climateSetting.weatherEventDc,
-            )
-        }.toTypedArray()
-    }
+    val climate = climateSettings.months.mapIndexed { index, climateSetting ->
+        Climate(
+            month = getMonth(index),
+            season = fromCamelCase<Season>(climateSetting.season)!!,
+            coldDc = climateSetting.coldDc,
+            precipitationDc = climateSetting.precipitationDc,
+            weatherEventDc = climateSetting.weatherEventDc,
+        )
+    }.toTypedArray()
     rollWeather(
         game = game,
         month = game.getCurrentMonth(),

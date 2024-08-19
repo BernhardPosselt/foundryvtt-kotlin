@@ -1,6 +1,5 @@
 # TODO
 
-* Migrate recipes
 * Migrate structure image conversion macro
 * Test camping & rolling random encounters
 

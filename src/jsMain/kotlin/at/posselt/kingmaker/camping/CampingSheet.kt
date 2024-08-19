@@ -480,8 +480,8 @@ class CampingSheet(
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
         )
-        val currentRegion = camping.findCurrentRegion(game)
-        val regions = camping.getRegions(game)
+        val currentRegion = camping.findCurrentRegion()
+        val regions = camping.regionSettings.regions
         val isGM = game.user.isGM
         val section = "Camping Activities"
         CampingSheetContext(

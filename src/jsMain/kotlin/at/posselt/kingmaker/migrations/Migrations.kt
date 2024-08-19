@@ -6,10 +6,7 @@ import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.camping.setCamping
 import at.posselt.kingmaker.kingdom.getKingdom
 import at.posselt.kingmaker.kingdom.setKingdom
-import at.posselt.kingmaker.migrations.migrations.Migration10
-import at.posselt.kingmaker.migrations.migrations.Migration6
-import at.posselt.kingmaker.migrations.migrations.Migration7
-import at.posselt.kingmaker.migrations.migrations.Migration9
+import at.posselt.kingmaker.migrations.migrations.*
 import at.posselt.kingmaker.settings.kingmakerTools
 import at.posselt.kingmaker.utils.isFirstGM
 import at.posselt.kingmaker.utils.toRecord
@@ -41,6 +38,7 @@ private val migrations = listOf(
     Migration7(),
     Migration9(),
     Migration10(),
+    Migration11(),
 )
 
 val latestMigrationVersion = migrations.maxOfOrNull { it.version }!!

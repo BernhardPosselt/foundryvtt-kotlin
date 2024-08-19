@@ -20,18 +20,18 @@ import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 fun getDefaultMonths(): Array<ClimateSetting> = arrayOf(
-    ClimateSetting(season = Season.WINTER.toCamelCase()),
-    ClimateSetting(season = Season.WINTER.toCamelCase()),
-    ClimateSetting(season = Season.SPRING.toCamelCase()),
-    ClimateSetting(season = Season.SPRING.toCamelCase()),
-    ClimateSetting(season = Season.SPRING.toCamelCase()),
-    ClimateSetting(season = Season.SUMMER.toCamelCase()),
-    ClimateSetting(season = Season.SUMMER.toCamelCase()),
-    ClimateSetting(season = Season.SUMMER.toCamelCase()),
-    ClimateSetting(season = Season.FALL.toCamelCase()),
-    ClimateSetting(season = Season.FALL.toCamelCase()),
-    ClimateSetting(season = Season.FALL.toCamelCase()),
-    ClimateSetting(season = Season.WINTER.toCamelCase()),
+    ClimateSetting(season = Season.WINTER.toCamelCase(), precipitationDc = 8, coldDc = 16, weatherEventDc = 18),
+    ClimateSetting(season = Season.WINTER.toCamelCase(), precipitationDc = 8, coldDc = 18, weatherEventDc = 18),
+    ClimateSetting(season = Season.SPRING.toCamelCase(), precipitationDc = 15, weatherEventDc = 18),
+    ClimateSetting(season = Season.SPRING.toCamelCase(), precipitationDc = 15, weatherEventDc = 18),
+    ClimateSetting(season = Season.SPRING.toCamelCase(), precipitationDc = 15, weatherEventDc = 18),
+    ClimateSetting(season = Season.SUMMER.toCamelCase(), precipitationDc = 20, weatherEventDc = 18),
+    ClimateSetting(season = Season.SUMMER.toCamelCase(), precipitationDc = 20, weatherEventDc = 18),
+    ClimateSetting(season = Season.SUMMER.toCamelCase(), precipitationDc = 20, weatherEventDc = 18),
+    ClimateSetting(season = Season.FALL.toCamelCase(), precipitationDc = 15, weatherEventDc = 18),
+    ClimateSetting(season = Season.FALL.toCamelCase(), precipitationDc = 15, weatherEventDc = 18),
+    ClimateSetting(season = Season.FALL.toCamelCase(), precipitationDc = 15, weatherEventDc = 18),
+    ClimateSetting(season = Season.WINTER.toCamelCase(), precipitationDc = 8, coldDc = 18, weatherEventDc = 18),
 )
 
 @JsPlainObject
@@ -44,13 +44,11 @@ external interface ClimateSetting {
 
 @JsPlainObject
 external interface ClimateSettings {
-    var useStolenLands: Boolean
     var months: Array<ClimateSetting>
 }
 
 @JsPlainObject
 external interface ClimateSettingsContext : HandlebarsRenderContext {
-    var useStolenLands: FormElementContext
     var heading: Array<TableHead>
     var formRows: Array<Array<Any>>
     var isValid: Boolean
@@ -67,10 +65,7 @@ class ClimateConfigurationDataModel(
         @OptIn(ExperimentalJsStatic::class)
         @JsStatic
         fun defineSchema() = buildSchema {
-            boolean("useStolenLands") {
-                initial = true
-            }
-            array<ClimateSetting>("months") {
+            array("months") {
                 options {
                     initial = getDefaultMonths()
                 }
@@ -118,11 +113,6 @@ class ClimateConfiguration : FormApp<ClimateSettingsContext, ClimateSettings>(
         ClimateSettingsContext(
             partId = parent.partId,
             isValid = isFormValid,
-            useStolenLands = CheckboxInput(
-                value = currentSettings.useStolenLands,
-                name = "useStolenLands",
-                label = "Use Stolen Lands",
-            ).toContext(),
             heading = arrayOf(
                 TableHead("Month"),
                 TableHead("Season"),

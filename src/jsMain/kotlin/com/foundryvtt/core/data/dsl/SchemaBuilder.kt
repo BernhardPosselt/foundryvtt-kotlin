@@ -111,7 +111,7 @@ class BooleanArrayConfiguration : BaseArrayConfiguration<Boolean>() {
 }
 
 @SchemaDsl
-class SchemaArrayConfiguration<T> : BaseArrayConfiguration<Schema>() {
+class SchemaArrayConfiguration<T> : BaseArrayConfiguration<T>() {
     var schemaOptions: DataFieldOptions? = undefined
     var schema: DataSchema<T>? = null
 
@@ -187,10 +187,9 @@ class Schema {
         fields[name] = BooleanField(options = options, context = context)
     }
 
-    fun <T> array(
+    fun array(
         name: String,
-        options: ArrayFieldOptions<T>? = undefined,
-        context: DataFieldContext<Array<T>>? = undefined,
+        context: DataFieldContext<Array<Any>>? = undefined,
         fieldContext: DataFieldContext<Record<String, Any>>? = undefined,
         block: SchemaArrayConfiguration<Any>.() -> Unit,
     ) {
@@ -198,7 +197,8 @@ class Schema {
         opts.block()
         val element =
             SchemaField(fields = opts.schema ?: recordOf(), options = opts.schemaOptions, context = fieldContext)
-        fields[name] = ArrayField(element = element, options = options, context = context)
+        fields[name] =
+            ArrayField(element = element, options = opts.arrayOptions, context = context)
     }
 
     fun stringArray(

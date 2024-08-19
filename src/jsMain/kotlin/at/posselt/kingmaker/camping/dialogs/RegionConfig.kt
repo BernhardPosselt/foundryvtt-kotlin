@@ -1,6 +1,5 @@
 package at.posselt.kingmaker.camping.dialogs
 
-import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.setCamping
@@ -40,7 +39,6 @@ external interface RegionSetting {
 
 @JsPlainObject
 external interface RegionSettings {
-    var useStolenLands: Boolean
     var regions: Array<RegionSetting>
 }
 
@@ -52,7 +50,6 @@ external interface TableHead {
 
 @JsPlainObject
 external interface RegionSettingsContext : HandlebarsRenderContext {
-    var useStolenLands: FormElementContext
     var heading: Array<TableHead>
     var formRows: Array<Array<FormElementContext>>
     var isValid: Boolean
@@ -68,8 +65,7 @@ class RegionSettingsDataModel(val value: AnyObject) : DataModel(value) {
         @OptIn(ExperimentalJsStatic::class)
         @JsStatic
         fun defineSchema() = buildSchema {
-            boolean("useStolenLands")
-            array<RegionSetting>("regions") {
+            array("regions") {
                 schema {
                     string("name")
                     int("zoneDc")
@@ -105,11 +101,7 @@ class RegionConfig(
                 buildPromise {
                     actor.getCamping()?.let { camping ->
                         camping.regionSettings = currentSettings
-                        if (currentSettings.useStolenLands) {
-                            camping.currentRegion = Config.regions.defaultRegion
-                        } else {
-                            camping.currentRegion = currentSettings.regions.first().name
-                        }
+                        camping.currentRegion = currentSettings.regions.first().name
                         actor.setCamping(camping)
                     }
                     close()
@@ -149,11 +141,6 @@ class RegionConfig(
         RegionSettingsContext(
             partId = parent.partId,
             isValid = isFormValid,
-            useStolenLands = CheckboxInput(
-                value = currentSettings.useStolenLands,
-                name = "useStolenLands",
-                label = "Use Stolen Lands",
-            ).toContext(),
             heading = arrayOf(
                 TableHead("Name"),
                 TableHead("Level", arrayOf("number-select-heading")),
@@ -233,7 +220,7 @@ class RegionConfig(
 
     override fun onParsedSubmit(value: RegionSettings) = buildPromise {
         currentSettings = value
-        if (!currentSettings.useStolenLands && currentSettings.regions.isEmpty()) {
+        if (currentSettings.regions.isEmpty()) {
             addDefaultRegion()
         }
         null
