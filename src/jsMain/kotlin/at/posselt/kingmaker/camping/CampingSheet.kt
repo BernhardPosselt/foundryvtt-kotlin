@@ -253,8 +253,8 @@ class CampingSheet(
                     }
             }
 
-            "next-section" -> console.log("next section")
-            "previous-section" -> console.log("previous section")
+            "next-section" -> buildPromise { nextSection() }
+            "previous-section" -> buildPromise { previousSection() }
             "check-encounter" -> buildPromise { rollEncounter(includeFlatCheck = true) }
             "roll-encounter" -> buildPromise { rollEncounter(includeFlatCheck = false) }
             "advance-hour" -> advanceHours(target)
@@ -339,6 +339,36 @@ class CampingSheet(
     private suspend fun resetActivities() {
         actor.getCamping()?.let { camping ->
             camping.campingActivities = camping.campingActivities.filter { it.isPrepareCamp() }.toTypedArray()
+            actor.setCamping(camping)
+        }
+    }
+
+    private suspend fun previousSection() {
+        actor.getCamping()?.let { camping ->
+            camping.section = when (fromCamelCase<CampingSheetSection>(camping.section)) {
+                CampingSheetSection.EATING -> if (camping.canPerformActivities()) {
+                    CampingSheetSection.CAMPING_ACTIVITIES
+                } else {
+                    CampingSheetSection.PREPARE_CAMP
+                }
+
+                else -> CampingSheetSection.PREPARE_CAMP
+            }.toCamelCase()
+            actor.setCamping(camping)
+        }
+    }
+
+    private suspend fun nextSection() {
+        actor.getCamping()?.let { camping ->
+            camping.section = when (fromCamelCase<CampingSheetSection>(camping.section)) {
+                CampingSheetSection.PREPARE_CAMP -> if (camping.canPerformActivities()) {
+                    CampingSheetSection.CAMPING_ACTIVITIES
+                } else {
+                    CampingSheetSection.EATING
+                }
+
+                else -> CampingSheetSection.EATING
+            }.toCamelCase()
             actor.setCamping(camping)
         }
     }
@@ -493,7 +523,6 @@ class CampingSheet(
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
-
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }

@@ -2,6 +2,7 @@ package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.camping.dialogs.*
+import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.regions.Terrain
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.*
@@ -281,6 +282,9 @@ fun CampingData.getAllRecipes(): Array<RecipeData> {
         .filter { it.name !in homebrewNames }
         .toTypedArray() + cooking.homebrewMeals
 }
+
+fun CampingData.canPerformActivities() =
+    campingActivities.find { it.isPrepareCamp() }?.result != DegreeOfSuccess.CRITICAL_FAILURE.toCamelCase()
 
 fun CampingData.findCurrentRegion(): RegionSetting? =
     regionSettings.regions.find { it.name == currentRegion }

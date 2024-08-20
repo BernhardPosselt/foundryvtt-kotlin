@@ -330,6 +330,11 @@ ul.km-camping-actors {
         text-shadow: 0 0 5px black;
     }
 
+    .km-camping-spacer {
+        height: 15px;
+        width: 100%;
+    }
+
     .km-camping-activities-wrapper {
         flex: 1;
         height: 100%;
