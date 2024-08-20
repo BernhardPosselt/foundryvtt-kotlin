@@ -53,6 +53,7 @@ external interface CampingData {
     var ignoreSkillRequirements: Boolean
     var minimumTravelSpeed: Int?
     var regionSettings: RegionSettings
+    var section: String
 }
 
 fun CampingActivity.parseResult() =
@@ -62,4 +63,4 @@ fun CampingActivity.checkPerformed() =
     result != null && actorUuid != null
 
 fun CampingActivity.isPrepareCamp() =
-    activity == "Prepare Camp"
+    activity == "Prepare Campsite"

@@ -54,7 +54,7 @@ external interface CampingActivityData {
 }
 
 fun CampingActivityData.isPrepareCamp() =
-    name == "Prepare Camp"
+    name == "Prepare Campsite"
 
 fun CampingActivityData.getOutcome(degreeOfSuccess: DegreeOfSuccess) =
     when (degreeOfSuccess) {
@@ -83,6 +83,10 @@ data class ActivityAndData(
     fun done(): Boolean {
         return (data.doesNotRequireACheck() && result.actorUuid != null) || result.checkPerformed()
     }
+
+    fun isPrepareCamp() = data.isPrepareCamp()
+
+    fun isNotPrepareCamp() = !isPrepareCamp()
 
     fun getSkills(actor: PF2ECreature?): List<ProficiencyRequirement>? {
         val skillAndProficiency = data.skillRequirements.associate {

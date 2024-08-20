@@ -68,6 +68,7 @@ fun getDefaultCamping(game: Game): CampingData {
         actorUuidsNotKeepingWatch = emptyArray(),
         ignoreSkillRequirements = false,
         randomEncounterRollMode = "gmroll",
+        section = "prepareCamp",
         regionSettings = RegionSettings(
             regions = arrayOf(
                 RegionSetting(

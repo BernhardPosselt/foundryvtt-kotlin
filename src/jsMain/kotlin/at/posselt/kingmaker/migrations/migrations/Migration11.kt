@@ -24,5 +24,6 @@ class Migration11 : Migration(11) {
                 it
             }
         }.toTypedArray()
+        camping.section = "prepareCamp"
     }
 }

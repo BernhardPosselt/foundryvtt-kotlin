@@ -1,15 +1,12 @@
 package at.posselt.kingmaker.camping
 
+import at.posselt.kingmaker.*
 import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
-import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.camping.dialogs.*
 import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
-import at.posselt.kingmaker.fromCamelCase
-import at.posselt.kingmaker.takeIfInstance
-import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
@@ -48,7 +45,7 @@ external interface CampingSheetActivity {
     val journalUuid: String?
     val actor: CampingSheetActor?
     val name: String
-    val locked: Boolean
+    val hidden: Boolean
     val requiresCheck: Boolean
     val skills: FormElementContext?
 }
@@ -68,6 +65,7 @@ external interface NightModes {
 @JsPlainObject
 external interface CampingSheetContext : HandlebarsRenderContext {
     var actors: Array<CampingSheetActor>
+    var prepareCamp: CampingSheetActivity?
     var activities: Array<CampingSheetActivity>
     var isDay: Boolean
     var isGM: Boolean
@@ -84,6 +82,9 @@ external interface CampingSheetContext : HandlebarsRenderContext {
     var encounterDc: Int
     var region: FormElementContext
     var section: String
+    var prepareCampSection: Boolean
+    var campingActivitiesSection: Boolean
+    var eatingSection: Boolean
 }
 
 @JsPlainObject
@@ -124,6 +125,12 @@ private fun calculateNightModes(time: LocalTime): NightModes {
         advance2 = isNightMode(time, "02:00", "15:00"),
         rest = isNightMode(time, "19:00", "08:00"),
     )
+}
+
+private enum class CampingSheetSection {
+    PREPARE_CAMP,
+    CAMPING_ACTIVITIES,
+    EATING,
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -490,6 +497,10 @@ class CampingSheet(
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }
+        val section = fromCamelCase<CampingSheetSection>(camping.section) ?: CampingSheetSection.PREPARE_CAMP
+        val prepareCampSection = section == CampingSheetSection.PREPARE_CAMP
+        val campingActivitiesSection = section == CampingSheetSection.CAMPING_ACTIVITIES
+        val eatingSection = section == CampingSheetSection.EATING
         val activities = groupActivities.mapIndexed { index, groupedActivity ->
             val (data, result) = groupedActivity
             val actor = result.actorUuid?.let { actorsByUuid[it] }?.unsafeCast<PF2ECreature>()
@@ -499,10 +510,14 @@ class CampingSheet(
                 groupedActivity = groupedActivity,
                 ignoreSkillRequirements = camping.ignoreSkillRequirements,
             )
+            val hidden = camping.lockedActivities.contains(data.name)
+                    || (prepareCampSection && !groupedActivity.isPrepareCamp())
+                    || (campingActivitiesSection && groupedActivity.isPrepareCamp())
+                    || eatingSection
             CampingSheetActivity(
                 journalUuid = data.journalUuid,
                 name = data.name,
-                locked = camping.lockedActivities.contains(data.name),
+                hidden = hidden,
                 requiresCheck = requiresCheck,
                 skills = skills,
                 actor = actor?.let { act ->
@@ -532,7 +547,6 @@ class CampingSheet(
         val currentRegion = camping.findCurrentRegion()
         val regions = camping.regionSettings.regions
         val isGM = game.user.isGM
-        val section = "Camping Activities"
         CampingSheetContext(
             partId = parent.partId,
             terrain = currentRegion?.terrain ?: "plains",
@@ -551,14 +565,15 @@ class CampingSheet(
             time = time.toDateInputString(),
             isGM = isGM,
             isDay = time.isDay(),
-            activities = activities,
+            prepareCamp = activities.find { it.name == "Prepare Campsite" },
+            activities = activities.filter { it.name != "Prepare Campsite" }.toTypedArray(),
             actors = camping.actorUuids.mapNotNull { uuid ->
                 actorsByUuid[uuid]?.let { actor ->
                     CampingSheetActor(
                         image = actor.img,
                         uuid = uuid,
                         name = actor.name,
-                        choseActivity = section == "Camping Activities"
+                        choseActivity = campingActivitiesSection
                                 && groupActivities.any { it.result.actorUuid == uuid && it.done() }
                     )
                 }
@@ -571,7 +586,10 @@ class CampingSheet(
             restDuration = fullRestDuration,
             restDurationLeft = getRestDurationLeft(camping),
             encounterDc = camping.encounterModifier + (currentRegion?.encounterDc ?: 0),
-            section = section,
+            section = section.toLabel(),
+            prepareCampSection = prepareCampSection,
+            campingActivitiesSection = campingActivitiesSection,
+            eatingSection = eatingSection,
         )
     }
 
