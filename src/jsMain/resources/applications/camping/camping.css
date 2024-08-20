@@ -314,12 +314,16 @@ ul.km-camping-actors {
 
 #km-camping-content {
     background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     height: calc(100vh - 310px);
     overflow-y: auto;
-    padding: 0 60px;
+
+    #km-camping-content-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        min-height: 100%;
+    }
 
     h1 {
         text-align: center;
@@ -330,28 +334,26 @@ ul.km-camping-actors {
         text-shadow: 0 0 5px black;
     }
 
-    .km-camping-spacer {
-        height: 15px;
-        width: 100%;
-    }
-
     .km-camping-activities-wrapper {
         flex: 1;
         height: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 60px;
+        right: 60px;
     }
 
     .km-camping-activities {
-        height: 100%;
-        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
-        padding-bottom: 15px;
+        padding: 20px;
+        flex: 1;
 
         .km-camping-activity {
             font-size: var(--font-size-13);
@@ -493,6 +495,7 @@ ul.km-camping-actors {
         -webkit-text-stroke-color: #000;
         -webkit-text-stroke-width: 1px;
         position: fixed;
+        top: 50%;
 
         &:hover {
             box-shadow: none;

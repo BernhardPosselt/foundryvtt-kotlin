@@ -28,11 +28,9 @@ Clean the followings things off OGLism:
 
 ## Camping
 
+* Changing the degree of success value of an activity should post random encounters or other values to chat if required
 * Don't consider locked activities for effect syncing unless companion checkboxes are clicked
-* Roll activity check
 * Sync camping effects
-* Prepare Camp
-* Implement camping sheet navigation
 * Update docs
 * Add/Edit Activities
 * Add checkboxes to auto enable camping activities without checks for companions
