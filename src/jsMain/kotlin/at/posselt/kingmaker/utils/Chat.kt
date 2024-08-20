@@ -4,6 +4,7 @@ import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.takeIfInstance
 import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.toLabel
 import com.foundryvtt.core.documents.ChatMessage
 import js.objects.ReadonlyRecord
 import js.objects.jso
@@ -19,18 +20,20 @@ suspend fun postDegreeOfSuccess(
     rollMode: RollMode? = null,
     metaHtml: String = "",
 ) {
-    val message = tpl(
-        "chatmessages/degree-of-success.hbs", recordOf(
-            "isCriticalFailure" to (DegreeOfSuccess.CRITICAL_FAILURE == degreeOfSuccess),
-            "isFailure" to (DegreeOfSuccess.FAILURE == degreeOfSuccess),
-            "isSuccess" to (DegreeOfSuccess.SUCCESS == degreeOfSuccess),
-            "isCriticalSuccess" to (DegreeOfSuccess.CRITICAL_SUCCESS == degreeOfSuccess),
-            "degreeLabel" to degreeOfSuccess.toCamelCase(),
-            "meta" to metaHtml,
-            "message" to message,
-        )
+    postChatMessage(
+        message = tpl(
+            "chatmessages/degree-of-success.hbs", recordOf(
+                "isCriticalFailure" to (DegreeOfSuccess.CRITICAL_FAILURE == degreeOfSuccess),
+                "isFailure" to (DegreeOfSuccess.FAILURE == degreeOfSuccess),
+                "isSuccess" to (DegreeOfSuccess.SUCCESS == degreeOfSuccess),
+                "isCriticalSuccess" to (DegreeOfSuccess.CRITICAL_SUCCESS == degreeOfSuccess),
+                "degreeLabel" to degreeOfSuccess.toLabel(),
+                "meta" to metaHtml,
+                "message" to message,
+            )
+        ),
+        rollMode = rollMode,
     )
-    postChatMessage(message, rollMode)
 }
 
 

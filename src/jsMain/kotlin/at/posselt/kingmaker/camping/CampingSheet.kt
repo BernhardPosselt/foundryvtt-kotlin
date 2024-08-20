@@ -5,8 +5,10 @@ import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.calculateHexplorationActivities
 import at.posselt.kingmaker.camping.dialogs.*
+import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.takeIfInstance
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
@@ -20,6 +22,7 @@ import com.foundryvtt.pf2e.actor.*
 import com.foundryvtt.pf2e.item.*
 import js.array.push
 import js.core.Void
+import js.objects.ReadonlyRecord
 import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.datetime.*
@@ -84,8 +87,15 @@ external interface CampingSheetContext : HandlebarsRenderContext {
 }
 
 @JsPlainObject
+external interface CampingSheetActivitiesFormData {
+    val degreeOfSuccess: ReadonlyRecord<String, String>
+    val selectedSkill: ReadonlyRecord<String, String>
+}
+
+@JsPlainObject
 external interface CampingSheetFormData {
     val region: String
+    val activities: CampingSheetActivitiesFormData
 }
 
 
@@ -224,7 +234,18 @@ class CampingSheet(
             "reset-activities" -> buildPromise { resetActivities() }
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
-            "roll-camping-check" -> console.log("rolling camping check")
+            "roll-camping-check" -> buildPromise {
+                target.closest(".km-camping-activity")
+                    ?.takeIfInstance<HTMLElement>()
+                    ?.let { tile ->
+                        tile.dataset["activityName"]?.let { activity ->
+                            tile.dataset["actorUuid"]?.let { actorUuid ->
+                                rollCheck(activity, actorUuid)
+                            }
+                        }
+                    }
+            }
+
             "next-section" -> console.log("next section")
             "previous-section" -> console.log("previous section")
             "check-encounter" -> buildPromise { rollEncounter(includeFlatCheck = true) }
@@ -285,6 +306,29 @@ class CampingSheet(
         }
     }
 
+    private suspend fun rollCheck(activityName: String, actorUuid: String) {
+        getCreatureByUuid(actorUuid)?.let { campingActor ->
+            actor.getCamping()?.let { camping ->
+                val region = camping.findCurrentRegion()
+                val data = camping.getAllActivities().find { it.name == activityName }
+                val activity = camping.campingActivities
+                    .find { it.activity == activityName && it.actorUuid == actorUuid }
+                val skill = activity
+                    ?.selectedSkill
+                    ?.let { Attribute.fromString(it) }
+                if (region != null && data != null && skill != null)
+                    campingActor.campingActivityCheck(
+                        region = region,
+                        activity = data,
+                        skill = skill,
+                    )?.let { result ->
+                        activity.result = result.toCamelCase()
+                        actor.setCamping(camping)
+                    }
+            }
+        }
+    }
+
     private suspend fun resetActivities() {
         actor.getCamping()?.let { camping ->
             camping.campingActivities = camping.campingActivities.filter { it.isPrepareCamp() }.toTypedArray()
@@ -299,9 +343,7 @@ class CampingSheet(
     private suspend fun assignActivityTo(actorUuid: String, activityName: String) {
         actor.getCamping()?.let { camping ->
             val activity = camping.getAllActivities().find { it.name == activityName }
-
-            @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
-            val activityActor = fromUuidOfTypes(actorUuid, *allowedActivityActorTypes) as PF2ECreature?
+            val activityActor = getCreatureByUuid(actorUuid)
             if (activityActor == null) {
                 ui.notifications.error("Only NPCs and Characters can perform camping activities")
             } else if (activity == null) {
@@ -316,16 +358,23 @@ class CampingSheet(
             } else {
                 camping.campingActivities =
                     camping.campingActivities.filter { it.activity != activityName }.toTypedArray()
+                val skill = activityActor
+                    .findCampingActivitySkills(activity, camping.ignoreSkillRequirements)
+                    .firstOrNull()
                 camping.campingActivities.push(
                     CampingActivity(
                         activity = activityName,
                         actorUuid = actorUuid,
+                        selectedSkill = skill,
                     )
                 )
                 actor.setCamping(camping)
             }
         }
     }
+
+    private suspend fun getCreatureByUuid(actorUuid: String) =
+        fromUuidOfTypes(actorUuid, *allowedActivityActorTypes).unsafeCast<PF2ECreature?>()
 
     private suspend fun changeEncounterDcModifier(modifier: Int?) {
         actor.getCamping()?.let { camping ->
@@ -424,7 +473,7 @@ class CampingSheet(
         return null
     }
 
-    fun advanceHours(target: HTMLElement) {
+    private fun advanceHours(target: HTMLElement) {
         game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
     }
 
@@ -530,6 +579,14 @@ class CampingSheet(
         console.log(value)
         actor.getCamping()?.let { camping ->
             camping.currentRegion = value.region
+            camping.campingActivities = camping.campingActivities.map {
+                CampingActivity(
+                    activity = it.activity,
+                    actorUuid = it.actorUuid,
+                    result = value.activities.degreeOfSuccess[it.activity],
+                    selectedSkill = value.activities.selectedSkill[it.activity],
+                )
+            }.toTypedArray()
             actor.setCamping(camping)
         }
         undefined

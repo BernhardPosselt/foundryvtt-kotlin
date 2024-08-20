@@ -92,14 +92,14 @@ fun PF2ECreature.findCampingActivitySkills(
  * @throws Error if a popup asking for a skill or dc is closed
  */
 suspend fun PF2ECreature.campingActivityCheck(
-    zone: RegionSetting,
+    region: RegionSetting,
     activity: CampingActivityData,
     skill: Attribute,
 ): DegreeOfSuccess? {
     val activityName = activity.name
     val extraRollOptions = arrayOf("action:${activityName.slugify()}")
     val dc = when (val activityDc = activity.dc) {
-        "zone" -> zone.zoneDc
+        "zone" -> region.zoneDc
         "actorLevel" -> getLevelBasedDC(level)
         null -> askDc(activityName)
         is String -> activityDc.toInt()

@@ -449,7 +449,9 @@ ul.km-camping-actors {
                     border: 0;
                     border-left: 1px solid;
 
-                    &:hover {
+                    &:hover,
+                    &:focus {
+                        outline: none;
                         box-shadow: none;
                         background-color: var(--primary-km);
                     }
