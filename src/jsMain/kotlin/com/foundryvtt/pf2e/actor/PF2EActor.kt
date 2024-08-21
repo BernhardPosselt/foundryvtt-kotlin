@@ -49,7 +49,7 @@ open external class PF2EActor : Actor {
     fun addToInventory(
         value: AnyObject,
         container: PF2EEquipment? = definedExternally,
-        stack: Boolean = definedExternally
+        doNotStack: Boolean = definedExternally
     ): Promise<PF2EItem?>
 }
 

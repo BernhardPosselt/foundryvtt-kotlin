@@ -1,4 +1,4 @@
-<p><b>{{actorName}}</b>: Add:</p>
+<p><b>{{actorName}}</b> gathered:</p>
 <ul>
     {{#if basicIngredients}}
         <li><b>Basic Ingredients</b>: {{basicIngredients}}</li>
@@ -10,7 +10,8 @@
 <button
         type="button"
         class="km-add-food"
+        data-actor-uuid="{{actorUuid}}"
         data-basic-ingredients="{{basicIngredients}}"
         data-special-ingredients="{{specialIngredients}}"
->Apply
+>Add
 </button>

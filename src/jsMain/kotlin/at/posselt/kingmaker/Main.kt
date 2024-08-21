@@ -55,7 +55,6 @@ fun main() {
                                 ?.let { actor -> CampingSheet(game, actor) }
                                 ?.launch()
                         } else if (game.isFirstGM() && action == "addHuntAndGatherResult") {
-                            console.log(action)
                             HuntAndGatherMessage.parse(data["data"])?.let { result ->
                                 game.getCampingActor()?.getCamping()?.let { camping ->
                                     addHuntAndGather(game, camping, result)

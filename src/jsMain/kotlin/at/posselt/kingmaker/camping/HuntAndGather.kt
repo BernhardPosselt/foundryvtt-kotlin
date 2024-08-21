@@ -18,6 +18,7 @@ import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.actor.PF2ECreature
 import com.foundryvtt.pf2e.item.PF2EConsumable
+import com.foundryvtt.pf2e.item.PF2EConsumableData
 import org.w3c.dom.get
 import js.objects.recordOf
 import kotlinx.coroutines.async
@@ -85,10 +86,16 @@ const val rationUuid = "Compendium.pf2e.equipment-srd.Item.L9ZV076913otGtiB";
 suspend fun PF2EActor.addConsumableToInventory(uuid: String, quantity: Int) {
     if (quantity > 0) {
         fromUuidTypeSafe<PF2EConsumable>(uuid)?.let { item ->
-            val max = item.system.uses.max
-            item.system.quantity = quantity.divideRoundingUp(max)
-            item.system.uses.value = quantity % max
-            addToInventory(item.toObject(), undefined, true)
+            val obj = item.toObject().unsafeCast<dynamic>()
+            val system = obj.system.unsafeCast<PF2EConsumableData>()
+            if (system.uses.max > 1) {
+                val max = system.uses.max
+                system.quantity = quantity.divideRoundingUp(max)
+                system.uses.value = quantity % max
+            } else {
+                system.quantity = quantity
+            }
+            addToInventory(obj, undefined, false)
         }
     }
 }
@@ -116,6 +123,7 @@ suspend fun postHuntAndGather(
         templatePath = "chatmessages/hunt-and-gather.hbs",
         templateContext = recordOf(
             "actorName" to actor.name,
+            "actorUuid" to actor.uuid,
             "basicIngredients" to amount.basicIngredients,
             "specialIngredients" to amount.specialIngredients,
         )
@@ -123,6 +131,7 @@ suspend fun postHuntAndGather(
 }
 
 class HuntAndGatherMessage(
+    val actorUuid: String,
     val basicIngredients: Int,
     val specialIngredients: Int,
 ) {
@@ -130,6 +139,7 @@ class HuntAndGatherMessage(
         return recordOf(
             "action" to "addHuntAndGatherResult",
             "data" to recordOf(
+                "actorUuid" to actorUuid,
                 "basicIngredients" to basicIngredients,
                 "specialIngredients" to specialIngredients,
             )
@@ -139,10 +149,12 @@ class HuntAndGatherMessage(
     companion object {
         fun parse(data: Any?): HuntAndGatherMessage? {
             if (isJsObject(data)) {
+                val actorUuid = data["actorUuid"]
                 val basicIngredients = data["basicIngredients"]
                 val specialIngredients = data["specialIngredients"]
-                if (isInt(basicIngredients) && isInt(specialIngredients)) {
+                if (actorUuid is String && isInt(basicIngredients) && isInt(specialIngredients)) {
                     return HuntAndGatherMessage(
+                        actorUuid = actorUuid,
                         basicIngredients = basicIngredients,
                         specialIngredients = specialIngredients,
                     )
@@ -154,8 +166,13 @@ class HuntAndGatherMessage(
 }
 
 
-suspend fun findHuntAndGatherTargetActor(game: Game, data: CampingData): PF2EActor? {
+suspend fun findHuntAndGatherTargetActor(
+    game: Game,
+    defaultActorUuid: String,
+    data: CampingData,
+): PF2EActor? {
     val party = game.party()
+    console.log("yoooooooo")
     return data.huntAndGatherTargetActorUuid?.let {
         if (party != null && party.uuid == it) {
             party
@@ -164,15 +181,16 @@ suspend fun findHuntAndGatherTargetActor(game: Game, data: CampingData): PF2EAct
         } else {
             null
         }
-    }
+    } ?: getCampingActorByUuid(defaultActorUuid)
 }
 
 suspend fun addHuntAndGather(
     game: Game,
     camping: CampingData,
     result: HuntAndGatherMessage
-) = findHuntAndGatherTargetActor(game, camping)
+) = findHuntAndGatherTargetActor(game, result.actorUuid, camping)
     ?.let {
+        console.log(it.name, result.toMessage())
         it.addFoodToInventory(
             FoodAmount(
                 basicIngredients = result.basicIngredients,
