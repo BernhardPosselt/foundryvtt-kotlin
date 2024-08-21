@@ -41,3 +41,19 @@ suspend fun d20Check(
         dieValue = DieValue(dieValue),
     )
 }
+
+suspend fun roll(
+    formula: String,
+    flavor: String? = undefined,
+    rollMode: RollMode = RollMode.PUBLICROLL,
+    toChat: Boolean = true,
+): Int {
+    val roll = Roll(formula).evaluate().await()
+    if (toChat) {
+        roll.toMessage(
+            recordOf("flavor" to flavor),
+            RollMessageOptions(rollMode = rollMode.toCamelCase())
+        ).await()
+    }
+    return roll.total
+}

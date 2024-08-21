@@ -1,10 +1,9 @@
-package at.posselt.kingmaker.camping.dialogs
+package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.actor.resolveAttribute
 import at.posselt.kingmaker.app.Select
 import at.posselt.kingmaker.app.awaitablePrompt
-import at.posselt.kingmaker.camping.CampingActivityData
-import at.posselt.kingmaker.camping.SkillRequirement
+import at.posselt.kingmaker.camping.dialogs.RegionSetting
 import at.posselt.kingmaker.data.actor.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode

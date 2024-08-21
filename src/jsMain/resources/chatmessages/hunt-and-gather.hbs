@@ -1,0 +1,16 @@
+<p><b>{{actorName}}</b>: Add:</p>
+<ul>
+    {{#if basicIngredients}}
+        <li><b>Basic Ingredients</b>: {{basicIngredients}}</li>
+    {{/if}}
+    {{#if specialIngredients}}
+        <li><b>Special Ingredients</b>: {{specialIngredients}}</li>
+    {{/if}}
+</ul>
+<button
+        type="button"
+        class="km-add-food"
+        data-basic-ingredients="{{basicIngredients}}"
+        data-special-ingredients="{{specialIngredients}}"
+>Apply
+</button>

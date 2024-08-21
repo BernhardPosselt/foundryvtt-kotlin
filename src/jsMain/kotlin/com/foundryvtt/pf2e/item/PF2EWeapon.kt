@@ -9,7 +9,7 @@ import kotlin.js.Promise
 
 
 @JsPlainObject
-external interface PF2EWeaponData {
+external interface PF2EWeaponData : PhysicalItemData {
     var traits: ItemTraits
 }
 

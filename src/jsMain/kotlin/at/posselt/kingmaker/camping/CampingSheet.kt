@@ -29,7 +29,6 @@ import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 import kotlin.math.max
-import kotlin.reflect.KClass
 
 @JsPlainObject
 external interface CampingSheetActor {
@@ -156,31 +155,6 @@ class CampingSheet(
     scrollable = arrayOf("#km-camping-content", ".km-camping-actors"),
     renderOnSubmit = false,
 ) {
-    private val allowedActorTypes = arrayOf(
-        PF2ENpc::class,
-        PF2ECharacter::class,
-        PF2EVehicle::class,
-        PF2ELoot::class,
-    )
-    private val allowedActivityActorTypes: Array<KClass<out PF2EActor>> = arrayOf(
-        PF2ENpc::class,
-        PF2ECharacter::class,
-    )
-    private val allowedDnDItems = arrayOf(
-        PF2EAction::class,
-        PF2ECampaignFeature::class,
-        PF2ECondition::class,
-        PF2EConsumable::class,
-        PF2EEffect::class,
-        PF2EEquipment::class,
-        PF2EAffliction::class,
-        PF2EWeapon::class,
-        PF2EArmor::class,
-        PF2EShield::class,
-        PF2ETreasure::class,
-        PF2EBackpack::class,
-    )
-
     init {
         actor.apps[id] = this
         onDocumentRefDragstart(".km-camping-actor")
@@ -314,7 +288,7 @@ class CampingSheet(
     }
 
     private suspend fun rollCheck(activityName: String, actorUuid: String) {
-        getCreatureByUuid(actorUuid)?.let { campingActor ->
+        getCampingActivityCreatureByUuid(actorUuid)?.let { campingActor ->
             actor.getCamping()?.let { camping ->
                 val region = camping.findCurrentRegion()
                 val data = camping.getAllActivities().find { it.name == activityName }
@@ -331,6 +305,16 @@ class CampingSheet(
                     )?.let { result ->
                         activity.result = result.toCamelCase()
                         actor.setCamping(camping)
+                        if (data.isHuntAndGather()) {
+                            camping.findCurrentRegion()?.let { region ->
+                                postHuntAndGather(
+                                    actor = campingActor,
+                                    degreeOfSuccess = result,
+                                    zoneDc = region.zoneDc,
+                                    regionLevel = region.level,
+                                )
+                            }
+                        }
                     }
             }
         }
@@ -380,7 +364,7 @@ class CampingSheet(
     private suspend fun assignActivityTo(actorUuid: String, activityName: String) {
         actor.getCamping()?.let { camping ->
             val activity = camping.getAllActivities().find { it.name == activityName }
-            val activityActor = getCreatureByUuid(actorUuid)
+            val activityActor = getCampingActivityCreatureByUuid(actorUuid)
             if (activityActor == null) {
                 ui.notifications.error("Only NPCs and Characters can perform camping activities")
             } else if (activity == null) {
@@ -410,9 +394,6 @@ class CampingSheet(
         }
     }
 
-    private suspend fun getCreatureByUuid(actorUuid: String) =
-        fromUuidOfTypes(actorUuid, *allowedActivityActorTypes).unsafeCast<PF2ECreature?>()
-
     private suspend fun changeEncounterDcModifier(modifier: Int?) {
         actor.getCamping()?.let { camping ->
             if (modifier == null) {
@@ -434,7 +415,7 @@ class CampingSheet(
     private suspend fun addActor(uuid: String) {
         actor.getCamping()?.let { camping ->
             if (uuid !in camping.actorUuids) {
-                val campingActor = fromUuidOfTypes(uuid, *allowedActorTypes)
+                val campingActor = getCampingActorByUuid(uuid)
                 if (campingActor == null) {
                     ui.notifications.error("Only NPCs, Characters, Loot and Vehicles can be added to the camping sheet")
                 } else {
@@ -524,7 +505,7 @@ class CampingSheet(
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
         val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
         val camping = actor.getCamping() ?: getDefaultCamping(game)
-        val actorsByUuid = fromUuidsOfTypes(camping.actorUuids, *allowedActorTypes).associateBy(PF2EActor::uuid)
+        val actorsByUuid = getCampingActorsByUuid(camping.actorUuids).associateBy(PF2EActor::uuid)
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }
         val section = fromCamelCase<CampingSheetSection>(camping.section) ?: CampingSheetSection.PREPARE_CAMP
         val prepareCampSection = section == CampingSheetSection.PREPARE_CAMP

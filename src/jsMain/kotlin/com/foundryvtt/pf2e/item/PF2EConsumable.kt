@@ -10,10 +10,9 @@ import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface PF2EConsumableData {
+external interface PF2EConsumableData : PhysicalItemData {
     var traits: ItemTraits
     var uses: MaxValue
-    var quantity: Int
 }
 
 // required to make instance of work, but since the classes are not registered here
@@ -27,7 +26,6 @@ external class PF2EConsumable : PF2EItem {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EConsumable?>
 
     val system: PF2EConsumableData
-    val quantity: Int
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

@@ -2,7 +2,10 @@ package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
 import at.posselt.kingmaker.camping.CampingSheet
+import at.posselt.kingmaker.camping.HuntAndGatherMessage
+import at.posselt.kingmaker.camping.addHuntAndGather
 import at.posselt.kingmaker.camping.bindCampingChatEventListeners
+import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.camping.openCampingSheet
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
@@ -46,10 +49,18 @@ fun main() {
             game.socket.onKingmakerTools { data ->
                 buildPromise {
                     if (isJsObject(data)) {
-                        if (data["action"] == "openCampingSheet") {
+                        val action = data["action"]
+                        if (action == "openCampingSheet") {
                             game.getCampingActor()
                                 ?.let { actor -> CampingSheet(game, actor) }
                                 ?.launch()
+                        } else if (game.isFirstGM() && action == "addHuntAndGatherResult") {
+                            console.log(action)
+                            HuntAndGatherMessage.parse(data["data"])?.let { result ->
+                                game.getCampingActor()?.getCamping()?.let { camping ->
+                                    addHuntAndGather(game, camping, result)
+                                }
+                            }
                         }
                     }
                 }

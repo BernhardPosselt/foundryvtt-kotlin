@@ -4,6 +4,7 @@ import js.array.JsTuple2
 import js.array.ReadonlyArray
 import js.array.toTypedArray
 import js.array.tupleOf
+import js.core.JsNumber
 import js.objects.Object
 import js.objects.ReadonlyRecord
 import js.objects.Record
@@ -62,6 +63,20 @@ inline fun isJsObject(x: Any?): Boolean {
         returns(true) implies (x is Record<String, Any?>)
     }
     return jsTypeOf(x) == "object" && x !is Array<*> && x != null
+}
+
+@Suppress(
+    "NOTHING_TO_INLINE",
+    "CANNOT_CHECK_FOR_EXTERNAL_INTERFACE",
+    "CANNOT_CHECK_FOR_ERASED",
+    "ERROR_IN_CONTRACT_DESCRIPTION"
+)
+@OptIn(ExperimentalContracts::class)
+inline fun isInt(x: Any?): Boolean {
+    contract {
+        returns(true) implies (x is Int)
+    }
+    return jsTypeOf(x) == "Number" && JsNumber.isInteger(x)
 }
 
 fun <T> ReadonlyRecord<String, T>.asSequence(): Sequence<JsTuple2<String, T>> =

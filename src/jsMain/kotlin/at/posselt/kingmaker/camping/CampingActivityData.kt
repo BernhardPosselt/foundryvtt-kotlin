@@ -56,6 +56,12 @@ external interface CampingActivityData {
 fun CampingActivityData.isPrepareCamp() =
     name == "Prepare Campsite"
 
+fun CampingActivityData.isHuntAndGather() =
+    name == "Hunt and Gather"
+
+fun CampingActivityData.isDiscoverSpecialMeal() =
+    name == "Discover Special Meal"
+
 fun CampingActivityData.getOutcome(degreeOfSuccess: DegreeOfSuccess) =
     when (degreeOfSuccess) {
         DegreeOfSuccess.CRITICAL_FAILURE -> criticalFailure
