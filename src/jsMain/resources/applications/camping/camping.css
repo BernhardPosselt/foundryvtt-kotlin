@@ -384,6 +384,10 @@ ul.km-camping-actors {
                 height: 11.5em;
                 width: 11.5em;
 
+                button[data-action="clear-activity"] {
+                    font-size: 1.7em;
+                }
+
                 &.km-no-skill-check {
                     height: calc(15.5em);
                     border-bottom: 0;

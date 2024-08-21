@@ -603,7 +603,11 @@ class CampingSheet(
                         uuid = uuid,
                         name = actor.name,
                         choseActivity = campingActivitiesSection
-                                && groupActivities.any { it.result.actorUuid == uuid && it.done() }
+                                && groupActivities.any {
+                            it.isNotPrepareCamp()
+                                    && it.result.actorUuid == uuid
+                                    && it.done()
+                        }
                     )
                 }
             }.toTypedArray(),
