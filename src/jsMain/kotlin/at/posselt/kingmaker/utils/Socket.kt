@@ -4,6 +4,7 @@ import at.posselt.kingmaker.Config
 import com.foundryvtt.core.AnyObject
 import io.socket.Socket
 
+
 fun Socket.emitKingmakerTools(data: AnyObject) =
     emit("module.${Config.moduleId}", data)
 

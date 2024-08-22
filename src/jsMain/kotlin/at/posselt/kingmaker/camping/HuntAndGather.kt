@@ -172,7 +172,6 @@ suspend fun findHuntAndGatherTargetActor(
     data: CampingData,
 ): PF2EActor? {
     val party = game.party()
-    console.log("yoooooooo")
     return data.huntAndGatherTargetActorUuid?.let {
         if (party != null && party.uuid == it) {
             party

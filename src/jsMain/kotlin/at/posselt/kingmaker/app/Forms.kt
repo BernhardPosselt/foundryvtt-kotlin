@@ -68,7 +68,9 @@ external interface FormElementContext {
     val stacked: Boolean
     val menu: Boolean
     val hidden: Boolean
+    val radio: Boolean
     val link: DocumentLinkContext?
+    val escapeLabel: Boolean
 }
 
 enum class OverrideType(val value: String) {
@@ -105,6 +107,7 @@ data class Select(
     val stacked: Boolean = true,
     val actor: Actor? = null,
     val item: Item? = null,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -119,6 +122,7 @@ data class Select(
         time = false,
         textArea = false,
         checkbox = false,
+        radio = false,
         disabled = disabled,
         stacked = stacked,
         overrideType = overrideType?.value,
@@ -140,7 +144,8 @@ data class Select(
             DocumentLinkContext(uuid = item.uuid, img = item.img)
         } else {
             null
-        }
+        },
+        escapeLabel = escapeLabel,
     )
 
     companion object {
@@ -262,6 +267,7 @@ data class TextInput(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = true,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -284,6 +290,8 @@ data class TextInput(
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
         hidden = false,
+        radio = false,
+        escapeLabel = escapeLabel,
     )
 }
 
@@ -294,6 +302,7 @@ data class HiddenInput(
     override val help: String? = null,
     override val hideLabel: Boolean = true,
     val overrideType: OverrideType? = null,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -309,12 +318,14 @@ data class HiddenInput(
         text = false,
         textArea = false,
         checkbox = true,
+        radio = false,
         disabled = false,
         options = emptyArray(),
         hideLabel = hideLabel,
         stacked = true,
         elementClasses = "",
         menu = false,
+        escapeLabel = escapeLabel,
     )
 }
 
@@ -329,6 +340,7 @@ data class CheckboxInput(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = false,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -343,6 +355,7 @@ data class CheckboxInput(
         text = false,
         textArea = false,
         checkbox = true,
+        radio = false,
         disabled = disabled,
         options = emptyArray(),
         hideLabel = hideLabel,
@@ -350,6 +363,44 @@ data class CheckboxInput(
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
         hidden = false,
+        escapeLabel = escapeLabel,
+    )
+}
+
+data class RadioInput(
+    override val label: String,
+    override val name: String,
+    val value: Boolean = false,
+    val required: Boolean = false,
+    override val help: String? = null,
+    override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
+    val stacked: Boolean = false,
+    val escapeLabel: Boolean = true,
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
+        isFormElement = true,
+        label = label,
+        name = name,
+        help = help,
+        value = value,
+        select = false,
+        time = false,
+        required = required,
+        number = false,
+        text = false,
+        textArea = false,
+        checkbox = false,
+        radio = true,
+        disabled = disabled,
+        options = emptyArray(),
+        hideLabel = hideLabel,
+        stacked = stacked,
+        elementClasses = elementClasses.joinToString(" "),
+        menu = false,
+        hidden = false,
+        escapeLabel = escapeLabel,
     )
 }
 
@@ -364,6 +415,7 @@ data class TextArea(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = true,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -378,6 +430,7 @@ data class TextArea(
         number = false,
         text = false,
         textArea = true,
+        radio = false,
         checkbox = false,
         options = emptyArray(),
         overrideType = overrideType?.value,
@@ -386,6 +439,7 @@ data class TextArea(
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
         hidden = false,
+        escapeLabel = escapeLabel,
     )
 }
 
@@ -399,6 +453,7 @@ data class NumberInput(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = true,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -420,6 +475,8 @@ data class NumberInput(
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
         hidden = false,
+        radio = false,
+        escapeLabel = escapeLabel,
     )
 }
 
@@ -433,6 +490,7 @@ data class TimeInput(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = true,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -450,6 +508,7 @@ data class TimeInput(
         number = false,
         disabled = disabled,
         text = false,
+        radio = false,
         textArea = false,
         checkbox = false,
         options = emptyArray(),
@@ -458,6 +517,7 @@ data class TimeInput(
         elementClasses = elementClasses.joinToString(" "),
         menu = false,
         hidden = false,
+        escapeLabel = escapeLabel,
     )
 }
 
@@ -470,6 +530,7 @@ data class Menu(
     val elementClasses: List<String> = emptyList(),
     val disabled: Boolean = false,
     val stacked: Boolean = true,
+    val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -485,12 +546,14 @@ data class Menu(
         text = false,
         textArea = false,
         checkbox = false,
+        radio = false,
         options = emptyArray(),
         hideLabel = hideLabel,
         stacked = stacked,
         elementClasses = elementClasses.joinToString(" "),
         menu = true,
         hidden = false,
+        escapeLabel = escapeLabel,
     )
 }
 

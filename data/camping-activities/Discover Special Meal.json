@@ -1,28 +1,27 @@
 {
-    "name": "Discover Special Meal",
-    "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.5I8jnFjirbbIUkGy",
-    "isLocked": false,
-    "isSecret": false,
-    "dc": "zone",
-    "skillRequirements": [
-        {
-            "skill": "cooking",
-            "proficiency": "trained"
-        }
-    ],
-    "skills": [
-        "cooking"
-    ],
-    "criticalSuccess": {
-        "message": "You discover the special meal and add it to the list of recipes the party knows. In addition, your research was efficient, and you recover half of the ingredients you had to expend to attempt this activity."
-    },
-    "success": {
-        "message": "As critical success, but you do not recover any ingredients."
-    },
-    "failure": {
-        "message": "You fail to discover the special meal and do not recover any ingredients."
-    },
-    "criticalFailure": {
-        "message": "As failure, but you also expose yourself to the special meal’s critical failure effect while performing an unwise taste test."
+  "name": "Discover Special Meal",
+  "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.5I8jnFjirbbIUkGy",
+  "isLocked": false,
+  "isSecret": false,
+  "skillRequirements": [
+    {
+      "skill": "cooking",
+      "proficiency": "trained"
     }
+  ],
+  "skills": [
+    "cooking"
+  ],
+  "criticalSuccess": {
+    "message": "You discover the special meal and add it to the list of recipes the party knows. In addition, your research was efficient, and you recover half of the ingredients you had to expend to attempt this activity."
+  },
+  "success": {
+    "message": "As critical success, but you do not recover any ingredients."
+  },
+  "failure": {
+    "message": "You fail to discover the special meal and do not recover any ingredients."
+  },
+  "criticalFailure": {
+    "message": "As failure, but you also expose yourself to the special meal’s critical failure effect while performing an unwise taste test."
+  }
 }
