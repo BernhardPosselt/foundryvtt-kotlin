@@ -290,41 +290,46 @@ class CampingSheet(
     private suspend fun rollCheck(activityName: String, actorUuid: String) {
         getCampingActivityCreatureByUuid(actorUuid)?.let { campingActor ->
             actor.getCamping()?.let { camping ->
-                if (activityName == "Discover Special Meal") {
-                    pickSpecialRecipe(camping = camping, partyActor = game.party())
-                    return
-                }
-                val region = camping.findCurrentRegion()
-                val data = camping.getAllActivities().find { it.name == activityName }
-                val activity = camping.campingActivities
-                    .find { it.activity == activityName && it.actorUuid == actorUuid }
-                val skill = activity
-                    ?.selectedSkill
-                    ?.let { Attribute.fromString(it) }
-                if (region != null && data != null && skill != null)
+                val data = campingActor.getCampingCheckData(camping, activityName)
+                if (data != null) {
+                    val activity = data.data.data
+                    val recipe = if (activity.isDiscoverSpecialMeal()) askRecipe(camping) else null
                     campingActor.campingActivityCheck(
-                        region = region,
-                        activity = data,
-                        skill = skill,
+                        data = data,
+                        overrideDc = recipe?.cookingLoreDC,
                     )?.let { result ->
-                        activity.result = result.toCamelCase()
+                        camping.campingActivities.find { it.activity == activityName }?.result = result.toCamelCase()
                         actor.setCamping(camping)
-                        if (data.isHuntAndGather()) {
-                            camping.findCurrentRegion()?.let { region ->
-                                postHuntAndGather(
-                                    actor = campingActor,
-                                    degreeOfSuccess = result,
-                                    zoneDc = region.zoneDc,
-                                    regionLevel = region.level,
-                                )
-                            }
-                        } else if (data.isDiscoverSpecialMeal()) {
-//                            postLearnRecipe()
+                        if (activity.isHuntAndGather()) {
+                            postHuntAndGather(
+                                actor = campingActor,
+                                degreeOfSuccess = result,
+                                zoneDc = data.region.zoneDc,
+                                regionLevel = data.region.level,
+                            )
+                        } else if (activity.isDiscoverSpecialMeal() && recipe != null) {
+                            postDiscoverSpecialMeal(
+                                actorUuid = campingActor.uuid,
+                                recipe = recipe,
+                                degreeOfSuccess = result,
+                            )
                         }
                     }
+                }
             }
         }
     }
+
+    private suspend fun askRecipe(
+        camping: CampingData
+    ): RecipeData? =
+        try {
+            pickSpecialRecipe(camping = camping, partyActor = game.party())
+        } catch (_: Exception) {
+            ui.notifications.error("Discover Special Meal: No recipe chosen!")
+            null
+        }
+
 
     private suspend fun resetActivities() {
         actor.getCamping()?.let { camping ->

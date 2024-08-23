@@ -2,12 +2,14 @@ package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.camping.dialogs.*
+import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.regions.Terrain
 import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.utils.deepClone
+import com.foundryvtt.pf2e.actor.PF2ECreature
 import com.foundryvtt.pf2e.actor.PF2ENpc
 
 private val playlistUuid = "Playlist.7CiwVus60FiuKFhK"

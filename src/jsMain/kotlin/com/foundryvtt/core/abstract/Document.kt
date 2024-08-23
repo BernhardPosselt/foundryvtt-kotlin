@@ -68,9 +68,21 @@ abstract external class Document(
         operation: DatabaseCreateOperation = definedExternally
     ): Promise<Array<T>>
 
+    open fun <T : Document> createEmbeddedDocuments(
+        name: String,
+        data: Array<T>? = definedExternally,
+        operation: DatabaseCreateOperation = definedExternally
+    ): Promise<Array<T>>
+
     open fun <T : Document> updateEmbeddedDocuments(
         name: String,
         data: Array<AnyObject>? = definedExternally,
+        operation: DatabaseUpdateOperation = definedExternally
+    ): Promise<Array<T>>
+
+    open fun <T : Document> updateEmbeddedDocuments(
+        name: String,
+        data: Array<T>? = definedExternally,
         operation: DatabaseUpdateOperation = definedExternally
     ): Promise<Array<T>>
 

@@ -16,7 +16,7 @@ open external class Item : ClientDocument {
     val thumbnail: String
     val isOwned: Boolean
 
-    var _id: String
+    var _id: String?
     var name: String?
     var type: String
     var img: String

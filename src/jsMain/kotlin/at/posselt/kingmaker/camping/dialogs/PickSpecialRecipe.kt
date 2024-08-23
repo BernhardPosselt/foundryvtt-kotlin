@@ -9,7 +9,6 @@ import at.posselt.kingmaker.camping.RecipeData
 import at.posselt.kingmaker.camping.buildFoodCost
 import at.posselt.kingmaker.camping.discoverCost
 import at.posselt.kingmaker.camping.findCurrentRegion
-import at.posselt.kingmaker.camping.getActorsInCamp
 import at.posselt.kingmaker.camping.getAllRecipes
 import at.posselt.kingmaker.camping.getCompendiumFoodItems
 import at.posselt.kingmaker.camping.getFoodAmount

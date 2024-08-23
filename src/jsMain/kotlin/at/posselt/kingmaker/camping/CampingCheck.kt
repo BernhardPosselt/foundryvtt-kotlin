@@ -13,9 +13,9 @@ import at.posselt.kingmaker.fromOrdinal
 import at.posselt.kingmaker.slugify
 import at.posselt.kingmaker.utils.postChatTemplate
 import at.posselt.kingmaker.utils.postDegreeOfSuccess
+import com.foundryvtt.pf2e.actor.PF2ECreature
 import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
-import com.foundryvtt.pf2e.actor.PF2ECreature
 import js.array.push
 import js.objects.Object
 import js.objects.recordOf
@@ -87,25 +87,47 @@ fun PF2ECreature.findCampingActivitySkills(
     }
 }
 
+data class CampingCheckData(
+    val region: RegionSetting,
+    val data: ActivityAndData,
+    val skill: Attribute,
+)
+
+fun PF2ECreature.getCampingCheckData(camping: CampingData, activityName: String): CampingCheckData? {
+    val region = camping.findCurrentRegion()
+    val data = camping.groupActivities().find { it.data.name == activityName && it.result.actorUuid == uuid }
+    val skill = data?.result?.selectedSkill?.let { Attribute.fromString(it) }
+    return if (skill != null && region != null) {
+        CampingCheckData(
+            region = region,
+            data = data,
+            skill = skill,
+        )
+    } else {
+        null
+    }
+}
+
+
 /**
  * @throws Error if a popup asking for a skill or dc is closed
  */
 suspend fun PF2ECreature.campingActivityCheck(
-    region: RegionSetting,
-    activity: CampingActivityData,
-    skill: Attribute,
+    data: CampingCheckData,
+    overrideDc: Int? = null,
 ): DegreeOfSuccess? {
+    val activity = data.data.data
     val activityName = activity.name
     val extraRollOptions = arrayOf("action:${activityName.slugify()}")
-    val dc = when (val activityDc = activity.dc) {
-        "zone" -> region.zoneDc
+    val dc = overrideDc ?: when (val activityDc = activity.dc) {
+        "zone" -> data.region.zoneDc
         "actorLevel" -> getLevelBasedDC(level)
         null -> askDc(activityName)
         is String -> activityDc.toInt()
         else -> activityDc as Int
     }
     val result = performCampingCheck(
-        attribute = skill,
+        attribute = data.skill,
         isSecret = activity.isSecret,
         extraRollOptions = extraRollOptions,
         dc = dc,
