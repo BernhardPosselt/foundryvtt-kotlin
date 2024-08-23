@@ -1,0 +1,25 @@
+<form>
+    <div class="row">
+        <table>
+            <thead>
+            <tr>
+                <th>Recipe</th>
+                <th>DC</th>
+                <th>Cost</th>
+                <th>Choose</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each formRows}}
+                <tr>
+                    <td>{{{label}}}</td>
+                    <td>{{dc}}</td>
+                    <td>{{> foodCost discoverCost}}</td>
+                    <td>{{> formElement this}}</td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <button data-action="save">Learn</button>
+</form>

@@ -18,6 +18,7 @@ open external class PF2EItem : Item {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EItem?>
     val sourceId: String
     val quantity: Int
+    val slug: String
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

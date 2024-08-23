@@ -1,19 +1,22 @@
 package at.posselt.kingmaker.camping.dialogs
 
+import at.posselt.kingmaker.app.FormElementContext
 import at.posselt.kingmaker.app.RadioInput
 import at.posselt.kingmaker.app.awaitablePrompt
 import at.posselt.kingmaker.camping.CampingData
-import at.posselt.kingmaker.camping.Cooking
+import at.posselt.kingmaker.camping.FoodCost
 import at.posselt.kingmaker.camping.RecipeData
+import at.posselt.kingmaker.camping.buildFoodCost
+import at.posselt.kingmaker.camping.discoverCost
 import at.posselt.kingmaker.camping.findCurrentRegion
+import at.posselt.kingmaker.camping.getActorsInCamp
 import at.posselt.kingmaker.camping.getAllRecipes
-import at.posselt.kingmaker.utils.awaitAll
+import at.posselt.kingmaker.camping.getCompendiumFoodItems
+import at.posselt.kingmaker.camping.getFoodAmount
 import at.posselt.kingmaker.utils.buildUuid
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.ui.TextEditor
-import com.foundryvtt.pf2e.actor.PF2ECreature
-import js.array.toTypedArray
-import js.objects.recordOf
-import kotlinx.coroutines.CoroutineScope
+import com.foundryvtt.pf2e.actor.PF2EParty
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
@@ -21,39 +24,64 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
-external interface LearnSpecialRecipeData {
+private external interface LearnSpecialRecipeData {
     val recipe: String
 }
 
+@JsPlainObject
+private external interface RecipeContextRow {
+    val label: String
+    val dc: Int
+    val discoverCost: FoodCost
+    val formElement: FormElementContext
+}
 
-suspend fun learnSpecialRecipe(
-    actor: PF2ECreature,
-    camping: CampingData,
+@JsPlainObject
+private external interface LearnSpecialRecipeContext {
+    val formRows: Array<RecipeContextRow>
+}
+
+suspend fun pickSpecialRecipe(
+    partyActor: PF2EParty,
+    camping: CampingData
 ): RecipeData? = coroutineScope {
     val learnedRecipes = camping.cooking.knownRecipes.toSet()
     val allRecipes = camping.getAllRecipes()
-    val learnableRecipes = allRecipes.asSequence()
+    val items = getCompendiumFoodItems()
+    val totalItems = camping.getFoodAmount(partyActor, items)
+    val rows = allRecipes.asSequence()
         .filter { it.level < (camping.findCurrentRegion()?.level ?: 0) }
         .filter { it.name !in learnedRecipes }
+        .sortedBy { it.level }
         .mapIndexed { index, recipe ->
             async {
-                RadioInput(
-                    name = "recipe",
-                    value = index == 0,
-                    label = TextEditor.enrichHTML(buildUuid(recipe.uuid, recipe.name)).await(),
-
-                    )
+                val label = "${recipe.name} (DC ${recipe.cookingLoreDC})"
+                RecipeContextRow(
+                    label = label,
+                    dc = recipe.cookingLoreDC,
+                    discoverCost = buildFoodCost(
+                        amount = recipe.discoverCost(),
+                        totalAmount = totalItems,
+                        items = items
+                    ),
+                    formElement = RadioInput(
+                        name = "recipe",
+                        value = index == 0,
+                        label = TextEditor.enrichHTML(buildUuid(recipe.uuid, label)).await(),
+                        escapeLabel = false,
+                        hideLabel = true,
+                    ).toContext(),
+                )
             }
-        }
-        .toList()
+        }.toList()
         .awaitAll()
-
+        .toTypedArray()
     awaitablePrompt<LearnSpecialRecipeData, RecipeData?>(
         title = "Recipes learnable in Zone",
-        templatePath = "components/forms/form.hbs",
-        templateContext = recordOf(
-            "formRows" to learnableRecipes
-        )
+        templatePath = "applications/camping/learn-recipe.hbs",
+        templateContext = LearnSpecialRecipeContext(
+            formRows = rows,
+        ).unsafeCast<AnyObject>()
     ) { data ->
         allRecipes.find { it.name == data.recipe }
     }

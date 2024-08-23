@@ -1,6 +1,7 @@
 @import "./applications/camping/camping.css";
 @import "./components/forms/form.css";
 @import "./components/tabs/style.css";
+@import "./components/food-cost/food-cost.css";
 
 :root {
     --primary-km: #275125;

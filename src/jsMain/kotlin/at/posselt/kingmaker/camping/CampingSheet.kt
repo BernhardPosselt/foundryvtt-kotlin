@@ -314,6 +314,8 @@ class CampingSheet(
                                     regionLevel = region.level,
                                 )
                             }
+                        } else if (data.isDiscoverSpecialMeal()) {
+//                            postLearnRecipe()
                         }
                     }
             }

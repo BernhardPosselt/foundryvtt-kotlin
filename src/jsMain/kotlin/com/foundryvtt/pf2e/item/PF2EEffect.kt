@@ -23,7 +23,6 @@ external class PF2EEffect : PF2EItem {
 
     val system: PF2EEffectData
     val isExpired: Boolean
-    val slug: String
     val badge: IntValue
 }
 

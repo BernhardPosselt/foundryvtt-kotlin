@@ -2,6 +2,8 @@ package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.camping.RecipeData
+import at.posselt.kingmaker.camping.cookingCost
+import at.posselt.kingmaker.camping.discoverCost
 import at.posselt.kingmaker.camping.getAllRecipes
 import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.setCamping
@@ -69,12 +71,8 @@ class ManageRecipesApplication(
                             recipe.rarity,
                             recipe.level.toString(),
                             recipe.cookingLoreDC.toString(),
-                            renderIngredientCost(recipe.basicIngredients, recipe.specialIngredients),
-                            renderIngredientCost(
-                                recipe.basicIngredients,
-                                recipe.specialIngredients,
-                                learnRecipe = true
-                            ),
+                            recipe.cookingCost().toDescription(),
+                            recipe.discoverCost().toDescription(),
                             recipe.cost,
                         ),
                         enable = CheckboxInput(
@@ -104,13 +102,3 @@ class ManageRecipesApplication(
         undefined
     }
 }
-
-private fun renderIngredientCost(basic: Int, special: Int?, learnRecipe: Boolean = false): String =
-    sequenceOf(
-        basic.takeIf { it > 0 }
-            ?.let { if (learnRecipe) it * 2 else it }
-            ?.let { "Basic: $it" },
-        special?.takeIf { it > 0 }
-            ?.let { if (learnRecipe) it * 2 else it }
-            ?.let { "Special: $it" },
-    ).joinToString(", ")

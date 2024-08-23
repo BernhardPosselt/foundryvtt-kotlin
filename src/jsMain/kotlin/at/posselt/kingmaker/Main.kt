@@ -27,6 +27,7 @@ fun main() {
                     "campingTile" to "applications/camping/camping-tile.hbs",
                     "formElement" to "components/forms/form-element.hbs",
                     "tabs" to "components/tabs/tabs.hbs",
+                    "foodCost" to "components/foot-cost/foot-cost.hbs",
                 )
             )
             game.settings.kingmakerTools.register()

@@ -36,5 +36,17 @@ external interface RecipeData {
     val favoriteMeal: CookingOutcome?
 }
 
+fun RecipeData.cookingCost(): FoodAmount =
+    FoodAmount(
+        basicIngredients = basicIngredients * 2,
+        specialIngredients = (specialIngredients ?: 0) * 2,
+        rations = 2,
+    )
+
+
+fun RecipeData.discoverCost(): FoodAmount =
+    cookingCost() * 2
+
+
 @JsModule("./data/recipes.json")
 external val recipes: Array<RecipeData>

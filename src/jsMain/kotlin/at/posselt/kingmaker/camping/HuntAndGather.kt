@@ -26,11 +26,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlin.math.min
 
-data class FoodAmount(
-    val basicIngredients: Int = 0,
-    val specialIngredients: Int = 0,
-    val rations: Int = 0,
-)
 
 private suspend fun getHuntAndGatherQuantities(
     degreeOfSuccess: DegreeOfSuccess,
@@ -79,34 +74,6 @@ private suspend fun getHuntAndGatherQuantities(
     }
 }
 
-const val specialIngredientUuid = "Compendium.pf2e.equipment-srd.Item.OCTireuX60MaPcEi";
-const val basicIngredientUuid = "Compendium.pf2e.equipment-srd.Item.kKnMlymiqZLVEAtI";
-const val rationUuid = "Compendium.pf2e.equipment-srd.Item.L9ZV076913otGtiB";
-
-suspend fun PF2EActor.addConsumableToInventory(uuid: String, quantity: Int) {
-    if (quantity > 0) {
-        fromUuidTypeSafe<PF2EConsumable>(uuid)?.let { item ->
-            val obj = item.toObject().unsafeCast<dynamic>()
-            val system = obj.system.unsafeCast<PF2EConsumableData>()
-            if (system.uses.max > 1) {
-                val max = system.uses.max
-                system.quantity = quantity.divideRoundingUp(max)
-                system.uses.value = quantity % max
-            } else {
-                system.quantity = quantity
-            }
-            addToInventory(obj, undefined, false)
-        }
-    }
-}
-
-suspend fun PF2EActor.addFoodToInventory(foodAmount: FoodAmount) = coroutineScope {
-    listOf(
-        async { addConsumableToInventory(specialIngredientUuid, foodAmount.specialIngredients) },
-        async { addConsumableToInventory(basicIngredientUuid, foodAmount.basicIngredients) },
-        async { addConsumableToInventory(rationUuid, foodAmount.rations) },
-    ).awaitAll()
-}
 
 suspend fun postHuntAndGather(
     actor: PF2ECreature,

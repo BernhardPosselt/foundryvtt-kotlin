@@ -1,0 +1,13 @@
+<div class="km-food-cost">
+    {{#if rations}}
+        <span>{{rations}}{{#if totalRations}}/{{totalRations}}{{/if}} <img src="{{rationImage}}" alt="rations"></span>
+    {{/if}}
+    {{#if basicIngredients}}
+        <span>{{basicIngredients}}{{#if totalBasicIngredients}}/{{totalBasicIngredients}}{{/if}} <img
+                src="{{basicImage}}" alt="basic ingredients"></span>
+    {{/if}}
+    {{#if specialIngredients}}
+        <span>{{specialIngredients}}{{#if totalSpecialIngredients}}/{{totalSpecialIngredients}}{{/if}} <img
+                src="{{specialImage}}" alt="special ingredients"></span>
+    {{/if}}
+</div>

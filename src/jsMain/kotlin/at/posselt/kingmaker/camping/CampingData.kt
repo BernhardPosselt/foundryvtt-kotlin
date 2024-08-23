@@ -3,6 +3,10 @@ package at.posselt.kingmaker.camping
 import at.posselt.kingmaker.camping.dialogs.RegionSettings
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
+import com.foundryvtt.pf2e.actor.PF2EActor
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -54,6 +58,13 @@ external interface CampingData {
     var minimumTravelSpeed: Int?
     var regionSettings: RegionSettings
     var section: String
+}
+
+suspend fun CampingData.getActorsInCamp(): List<PF2EActor> = coroutineScope {
+    actorUuids
+        .map { async { getCampingActorByUuid(it) } }
+        .awaitAll()
+        .filterNotNull()
 }
 
 fun CampingActivity.parseResult() =
