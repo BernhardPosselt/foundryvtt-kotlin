@@ -15,13 +15,19 @@ import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
+@JsPlainObject
+external interface CrudColumn {
+    val value: String
+    val escapeHtml: Boolean
+}
+
 
 @JsPlainObject
 external interface CrudItem {
     val id: String
     val name: String
     val nameIsHtml: Boolean
-    val additionalColumns: Array<String>
+    val additionalColumns: Array<CrudColumn>
     val enable: FormElementContext
     val canBeEdited: Boolean
     val canBeDeleted: Boolean

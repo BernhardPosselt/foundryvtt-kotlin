@@ -17,7 +17,7 @@
                 <tr>
                     <td>{{#if nameIsHtml}}{{{name}}}{{else}}{{name}}{{/if}}</td>
                     {{#each additionalColumns}}
-                        <td>{{this}}</td>
+                        <td>{{#if escapeHtml}}{{value}}{{else}}{{{value}}}{{/if}}</td>
                     {{/each}}
                     <td>{{> formElement enable }}</td>
                     <td>

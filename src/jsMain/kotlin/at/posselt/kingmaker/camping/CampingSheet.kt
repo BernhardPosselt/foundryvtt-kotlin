@@ -290,6 +290,10 @@ class CampingSheet(
     private suspend fun rollCheck(activityName: String, actorUuid: String) {
         getCampingActivityCreatureByUuid(actorUuid)?.let { campingActor ->
             actor.getCamping()?.let { camping ->
+                if (activityName == "Discover Special Meal") {
+                    pickSpecialRecipe(camping = camping, partyActor = game.party())
+                    return
+                }
                 val region = camping.findCurrentRegion()
                 val data = camping.getAllActivities().find { it.name == activityName }
                 val activity = camping.campingActivities

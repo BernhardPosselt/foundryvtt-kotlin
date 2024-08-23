@@ -42,25 +42,31 @@ external interface FoodCost {
     val rationImage: String?
     val basicImage: String?
     val specialImage: String?
-    val totalRations: Int
-    val totalBasicIngredients: Int
-    val totalSpecialIngredients: Int
+    val totalRations: Int?
+    val totalBasicIngredients: Int?
+    val totalSpecialIngredients: Int?
+    val missingRations: Boolean
+    val missingBasic: Boolean
+    val missingSpecial: Boolean
 }
 
 fun buildFoodCost(
     amount: FoodAmount,
-    totalAmount: FoodAmount,
+    totalAmount: FoodAmount? = null,
     items: FoodItems,
 ) = FoodCost(
     rations = amount.rations,
     basicIngredients = amount.basicIngredients,
     specialIngredients = amount.specialIngredients,
-    totalRations = totalAmount.rations,
-    totalBasicIngredients = totalAmount.basicIngredients,
-    totalSpecialIngredients = totalAmount.specialIngredients,
+    totalRations = totalAmount?.rations,
+    totalBasicIngredients = totalAmount?.basicIngredients,
+    totalSpecialIngredients = totalAmount?.specialIngredients,
     rationImage = items.ration.img,
     basicImage = items.basic.img,
     specialImage = items.special.img,
+    missingBasic = amount.basicIngredients > (totalAmount?.basicIngredients ?: -1),
+    missingSpecial = amount.specialIngredients > (totalAmount?.specialIngredients ?: -1),
+    missingRations = amount.rations > (totalAmount?.rations ?: -1),
 )
 
 
@@ -151,10 +157,10 @@ suspend fun getCompendiumFoodItems() = coroutineScope {
 }
 
 suspend fun CampingData.getFoodAmount(
-    party: PF2EParty,
+    party: PF2EParty?,
     foodItems: FoodItems,
 ): FoodAmount = coroutineScope {
-    val actors = getActorsInCamp() + party
+    val actors = getActorsInCamp() + (party?.let { listOf(it) } ?: emptyList())
     actors.map {
         findTotalFood(
             actor = it,

@@ -38,9 +38,9 @@ external interface RecipeData {
 
 fun RecipeData.cookingCost(): FoodAmount =
     FoodAmount(
-        basicIngredients = basicIngredients * 2,
-        specialIngredients = (specialIngredients ?: 0) * 2,
-        rations = 2,
+        basicIngredients = basicIngredients,
+        specialIngredients = (specialIngredients ?: 0),
+        rations = 1,
     )
 
 

@@ -1,13 +1,26 @@
 <div class="km-food-cost">
     {{#if rations}}
-        <span>{{rations}}{{#if totalRations}}/{{totalRations}}{{/if}} <img src="{{rationImage}}" alt="rations"></span>
+        <span
+                class="{{#if missingRations}}km-missing-ingredients{{/if}}"
+                title="{{#if totalRations}}available: {{totalRations}}{{/if}}"
+        >{{rations}}
+            <img src="{{rationImage}}" alt="rations">
+        </span>
     {{/if}}
     {{#if basicIngredients}}
-        <span>{{basicIngredients}}{{#if totalBasicIngredients}}/{{totalBasicIngredients}}{{/if}} <img
-                src="{{basicImage}}" alt="basic ingredients"></span>
+        <span
+                class="{{#if missingBasic}}km-missing-ingredients{{/if}}"
+                title="{{#if totalBasicIngredients}}available: {{totalBasicIngredients}}{{/if}}"
+        >{{basicIngredients}}
+            <img src="{{basicImage}}" alt="basic ingredients">
+        </span>
     {{/if}}
     {{#if specialIngredients}}
-        <span>{{specialIngredients}}{{#if totalSpecialIngredients}}/{{totalSpecialIngredients}}{{/if}} <img
-                src="{{specialImage}}" alt="special ingredients"></span>
+        <span
+                class="{{#if missingSpecial}}km-missing-ingredients{{/if}}"
+                title="{{#if totalSpecialIngredients}}available: {{totalSpecialIngredients}}{{/if}}"
+        >{{specialIngredients}}
+            <img src="{{specialImage}}" alt="special ingredients">
+        </span>
     {{/if}}
 </div>

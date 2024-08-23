@@ -33,7 +33,7 @@ private external interface RecipeContextRow {
     val label: String
     val dc: Int
     val discoverCost: FoodCost
-    val formElement: FormElementContext
+    val input: FormElementContext
 }
 
 @JsPlainObject
@@ -42,7 +42,7 @@ private external interface LearnSpecialRecipeContext {
 }
 
 suspend fun pickSpecialRecipe(
-    partyActor: PF2EParty,
+    partyActor: PF2EParty?,
     camping: CampingData
 ): RecipeData? = coroutineScope {
     val learnedRecipes = camping.cooking.knownRecipes.toSet()
@@ -55,7 +55,7 @@ suspend fun pickSpecialRecipe(
         .sortedBy { it.level }
         .mapIndexed { index, recipe ->
             async {
-                val label = "${recipe.name} (DC ${recipe.cookingLoreDC})"
+                val label = TextEditor.enrichHTML(buildUuid(recipe.uuid, recipe.name)).await()
                 RecipeContextRow(
                     label = label,
                     dc = recipe.cookingLoreDC,
@@ -64,10 +64,10 @@ suspend fun pickSpecialRecipe(
                         totalAmount = totalItems,
                         items = items
                     ),
-                    formElement = RadioInput(
+                    input = RadioInput(
                         name = "recipe",
                         value = index == 0,
-                        label = TextEditor.enrichHTML(buildUuid(recipe.uuid, label)).await(),
+                        label = label,
                         escapeLabel = false,
                         hideLabel = true,
                     ).toContext(),
@@ -76,6 +76,7 @@ suspend fun pickSpecialRecipe(
         }.toList()
         .awaitAll()
         .toTypedArray()
+    console.log(rows)
     awaitablePrompt<LearnSpecialRecipeData, RecipeData?>(
         title = "Recipes learnable in Zone",
         templatePath = "applications/camping/learn-recipe.hbs",
