@@ -293,6 +293,11 @@ class CampingSheet(
                 val data = campingActor.getCampingCheckData(camping, activityName)
                 if (data != null) {
                     val activity = data.data.data
+                    if (activity.isPrepareCamp()) {
+                        camping.getActorsInCamp()
+                            .forEach { it.clearMealEffects(camping.getAllRecipes()) }
+                        postChatMessage("Preparing Campsite, removing all existing Meal Effects")
+                    }
                     val recipe = if (activity.isDiscoverSpecialMeal()) askRecipe(camping) else null
                     campingActor.campingActivityCheck(
                         data = data,

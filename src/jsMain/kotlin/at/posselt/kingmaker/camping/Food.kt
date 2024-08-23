@@ -63,7 +63,7 @@ suspend fun PF2EActor.clearEffectsByUuid(uuids: Set<String>) {
     deleteEmbeddedDocuments<PF2EEffect>("item", idsToRemove)
 }
 
-suspend fun PF2EActor.clearMealEffects(recipes: List<RecipeData>) {
+suspend fun PF2EActor.clearMealEffects(recipes: Array<RecipeData>) {
     clearEffectsByUuid(
         recipes
             .flatMap(::getMealEffectUuids)
