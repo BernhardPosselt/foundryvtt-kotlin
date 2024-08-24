@@ -5,7 +5,6 @@ import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.camping.dialogs.*
-import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
@@ -62,6 +61,14 @@ external interface NightModes {
 }
 
 @JsPlainObject
+external interface RecipeContext {
+    val name: String
+    val cost: FoodCost
+    val uuid: String
+    val icon: String
+}
+
+@JsPlainObject
 external interface CampingSheetContext : HandlebarsRenderContext {
     var actors: Array<CampingSheetActor>
     var prepareCamp: CampingSheetActivity?
@@ -84,6 +91,7 @@ external interface CampingSheetContext : HandlebarsRenderContext {
     var prepareCampSection: Boolean
     var campingActivitiesSection: Boolean
     var eatingSection: Boolean
+    var recipes: Array<RecipeContext>
 }
 
 @JsPlainObject
@@ -132,6 +140,8 @@ private enum class CampingSheetSection {
     EATING,
 }
 
+private const val windowWidth = 970
+
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 @JsName("CampingSheet")
@@ -141,7 +151,7 @@ class CampingSheet(
 ) : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
-    width = 970,
+    width = windowWidth,
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players", gmOnly = true),
@@ -261,6 +271,14 @@ class CampingSheet(
                 }
             }
 
+            "open-item" -> {
+                event.preventDefault()
+                event.stopPropagation()
+                buildPromise {
+                    target.dataset["uuid"]?.let { openItem(it) }
+                }
+            }
+
             "help" -> buildPromise {
                 openJournal("Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.iAQCUYEAq4Dy8uCY.JournalEntryPage.7z4cDr3FMuSy22t1")
             }
@@ -288,39 +306,46 @@ class CampingSheet(
     }
 
     private suspend fun rollCheck(activityName: String, actorUuid: String) {
-        getCampingActivityCreatureByUuid(actorUuid)?.let { campingActor ->
-            actor.getCamping()?.let { camping ->
-                val data = campingActor.getCampingCheckData(camping, activityName)
-                if (data != null) {
-                    val activity = data.data.data
-                    if (activity.isPrepareCamp()) {
-                        camping.getActorsInCamp()
-                            .forEach { it.clearMealEffects(camping.getAllRecipes()) }
-                        postChatMessage("Preparing Campsite, removing all existing Meal Effects")
-                    }
-                    val recipe = if (activity.isDiscoverSpecialMeal()) askRecipe(camping) else null
-                    campingActor.campingActivityCheck(
-                        data = data,
-                        overrideDc = recipe?.cookingLoreDC,
-                    )?.let { result ->
-                        camping.campingActivities.find { it.activity == activityName }?.result = result.toCamelCase()
-                        actor.setCamping(camping)
-                        if (activity.isHuntAndGather()) {
-                            postHuntAndGather(
-                                actor = campingActor,
-                                degreeOfSuccess = result,
-                                zoneDc = data.region.zoneDc,
-                                regionLevel = data.region.level,
-                            )
-                        } else if (activity.isDiscoverSpecialMeal() && recipe != null) {
-                            postDiscoverSpecialMeal(
-                                actorUuid = campingActor.uuid,
-                                recipe = recipe,
-                                degreeOfSuccess = result,
-                            )
-                        }
-                    }
-                }
+        val checkActor = getCampingActivityCreatureByUuid(actorUuid)
+        checkNotNull(checkActor) { "Could not find camping actor with uuid $actorUuid" }
+
+        val camping = actor.getCamping()
+        checkNotNull(camping) { "Could not find camping data on actor ${actor.uuid}" }
+
+        val campingCheckData = checkActor.getCampingCheckData(camping, activityName)
+        checkNotNull(campingCheckData) { "Could not resolve skill or region" }
+
+        val activity = campingCheckData.activityData.data
+
+        // preparing check removes all meal effects
+        if (activity.isPrepareCamp()) {
+            camping.getActorsInCamp()
+                .forEach { it.clearMealEffects(camping.getAllRecipes()) }
+            postChatMessage("Preparing Campsite, removing all existing Meal Effects")
+        }
+
+        // if it's a recipe we need to know the dc
+        val recipe = if (activity.isDiscoverSpecialMeal()) askRecipe(camping) else null
+        checkActor.campingActivityCheck(
+            data = campingCheckData,
+            overrideDc = recipe?.cookingLoreDC,
+        )?.let { result ->
+            camping.campingActivities.find { it.activity == activityName }?.result = result.toCamelCase()
+            actor.setCamping(camping)
+
+            if (activity.isHuntAndGather()) {
+                postHuntAndGather(
+                    actor = checkActor,
+                    degreeOfSuccess = result,
+                    zoneDc = campingCheckData.region.zoneDc,
+                    regionLevel = campingCheckData.region.level,
+                )
+            } else if (activity.isDiscoverSpecialMeal() && recipe != null) {
+                postDiscoverSpecialMeal(
+                    actorUuid = checkActor.uuid,
+                    recipe = recipe,
+                    degreeOfSuccess = result,
+                )
             }
         }
     }
@@ -519,7 +544,8 @@ class CampingSheet(
         val parent = super._preparePartContext(partId, context, options).await()
         val time = game.getPF2EWorldTime().time
         val dayPercentage = time.toSecondOfDay().toFloat() / 86400f
-        val pxTimeOffset = -((dayPercentage * 968).toInt() - 968 / 2)
+        val widthWithoutBorder = windowWidth - 2
+        val pxTimeOffset = -((dayPercentage * widthWithoutBorder).toInt() - widthWithoutBorder / 2)
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = getCampingActorsByUuid(camping.actorUuids).associateBy(PF2EActor::uuid)
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }
@@ -564,17 +590,32 @@ class CampingSheet(
                 },
             )
         }.toTypedArray()
+        val recipes = camping.getAllRecipes()
         val fullRestDuration = getFullRestDuration(
             watchers = actorsByUuid.values.filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) },
-            recipes = camping.getAllRecipes().toList(),
+            recipes = recipes.toList(),
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
         )
+        val compendiumFoodItems = getCompendiumFoodItems()
+        val recipesContext = recipes.mapNotNull { recipe ->
+            val cookingCost = buildFoodCost(
+                recipe.cookingCost(), // TODO: pass in total cooking cost
+                items = compendiumFoodItems
+            )
+            RecipeContext(
+                name = recipe.name,
+                cost = cookingCost, // TODO: multiply by actors
+                uuid = recipe.uuid,
+                icon = recipe.icon ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
+            )
+        }.toTypedArray()
         val currentRegion = camping.findCurrentRegion()
         val regions = camping.regionSettings.regions
         val isGM = game.user.isGM
         CampingSheetContext(
             partId = parent.partId,
+            recipes = recipesContext,
             terrain = currentRegion?.terrain ?: "plains",
             region = Select(
                 label = "Region",

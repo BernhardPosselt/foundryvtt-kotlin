@@ -130,6 +130,9 @@
                     {{#each activities}}
                         {{> campingTile this}}
                     {{/each}}
+                    {{#each recipes}}
+                        {{> recipeTile }}
+                    {{/each}}
                 </div>
             </div>
             <button {{#if eatingSection}}hidden{{/if}}

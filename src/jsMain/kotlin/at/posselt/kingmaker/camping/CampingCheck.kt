@@ -13,9 +13,9 @@ import at.posselt.kingmaker.fromOrdinal
 import at.posselt.kingmaker.slugify
 import at.posselt.kingmaker.utils.postChatTemplate
 import at.posselt.kingmaker.utils.postDegreeOfSuccess
-import com.foundryvtt.pf2e.actor.PF2ECreature
 import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
+import com.foundryvtt.pf2e.actor.PF2ECreature
 import js.array.push
 import js.objects.Object
 import js.objects.recordOf
@@ -89,7 +89,7 @@ fun PF2ECreature.findCampingActivitySkills(
 
 data class CampingCheckData(
     val region: RegionSetting,
-    val data: ActivityAndData,
+    val activityData: ActivityAndData,
     val skill: Attribute,
 )
 
@@ -100,7 +100,7 @@ fun PF2ECreature.getCampingCheckData(camping: CampingData, activityName: String)
     return if (skill != null && region != null) {
         CampingCheckData(
             region = region,
-            data = data,
+            activityData = data,
             skill = skill,
         )
     } else {
@@ -116,7 +116,7 @@ suspend fun PF2ECreature.campingActivityCheck(
     data: CampingCheckData,
     overrideDc: Int? = null,
 ): DegreeOfSuccess? {
-    val activity = data.data.data
+    val activity = data.activityData.data
     val activityName = activity.name
     val extraRollOptions = arrayOf("action:${activityName.slugify()}")
     val dc = overrideDc ?: when (val activityDc = activity.dc) {

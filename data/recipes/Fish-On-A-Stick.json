@@ -1,5 +1,6 @@
 {
   "name": "Fish-On-A-Stick",
+  "icon": "icons/consumables/food/cooked-kebab-meat-skewer-orange.webp",
   "basicIngredients": 2,
   "specialIngredients": 0,
   "cookingLoreDC": 17,

@@ -1,41 +1,42 @@
 {
-    "name": "Smoked Trout And Hydra Pate",
-    "basicIngredients": 6,
-    "specialIngredients": 2,
-    "cookingLoreDC": 26,
-    "survivalDC": 28,
-    "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.t5pXd39gRgNkPoiu",
-    "level": 8,
-    "cost": "25 gp",
-    "rarity": "uncommon",
-    "criticalSuccess": {
-        "effects": [
-            {
-                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.4d6roHW75xe52o7A"
-            }
-        ]
-    },
-    "criticalFailure": {
-        "effects": [
-            {
-                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.LBzsqdKb182lO5Fm",
-                "removeAfterRest": true
-            }
-        ]
-    },
-    "success": {
-        "effects": [
-            {
-                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.miTcZbTcQLJu2NKR",
-                "removeAfterRest": true
-            }
-        ]
-    },
-    "favoriteMeal": {
-        "effects": [
-            {
-                "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.ve7NrzeHMwLsmbl3"
-            }
-        ]
-    }
+  "name": "Smoked Trout And Hydra Pate",
+  "icon": "icons/consumables/food/plate-fish-grilled-brown.webp",
+  "basicIngredients": 6,
+  "specialIngredients": 2,
+  "cookingLoreDC": 26,
+  "survivalDC": 28,
+  "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.t5pXd39gRgNkPoiu",
+  "level": 8,
+  "cost": "25 gp",
+  "rarity": "uncommon",
+  "criticalSuccess": {
+    "effects": [
+      {
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.4d6roHW75xe52o7A"
+      }
+    ]
+  },
+  "criticalFailure": {
+    "effects": [
+      {
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.LBzsqdKb182lO5Fm",
+        "removeAfterRest": true
+      }
+    ]
+  },
+  "success": {
+    "effects": [
+      {
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.miTcZbTcQLJu2NKR",
+        "removeAfterRest": true
+      }
+    ]
+  },
+  "favoriteMeal": {
+    "effects": [
+      {
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.ve7NrzeHMwLsmbl3"
+      }
+    ]
+  }
 }

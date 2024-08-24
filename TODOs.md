@@ -10,6 +10,7 @@ Kingmaker
 
 # TODO
 
+* configure recipe icon
 * Update manual
 * Add upgrading notice
 * Always display manual in chat unless specifically disabled

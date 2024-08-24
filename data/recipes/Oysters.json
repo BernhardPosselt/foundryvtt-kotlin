@@ -1,5 +1,6 @@
 {
   "name": "Oysters",
+  "icon": "icons/consumables/meat/oyster-shell-grey.webp",
   "basicIngredients": 3,
   "specialIngredients": 2,
   "cookingLoreDC": 26,

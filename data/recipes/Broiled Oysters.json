@@ -1,5 +1,6 @@
 {
   "name": "Broiled Oysters",
+  "icon": "icons/consumables/meat/oyster-shell-glowing-orange.webp",
   "basicIngredients": 2,
   "specialIngredients": 1,
   "cookingLoreDC": 20,

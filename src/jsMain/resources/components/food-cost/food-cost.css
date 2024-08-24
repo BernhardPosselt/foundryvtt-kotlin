@@ -17,11 +17,12 @@
     span {
         display: flex;
         flex-direction: column;
-        padding: 10px 5px;
+        padding: 2px;
 
         img {
             height: 2em;
             width: 2em;
+            border-radius: 100%;
         }
     }
 }

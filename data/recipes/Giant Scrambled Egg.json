@@ -1,5 +1,6 @@
 {
   "name": "Giant Scrambled Egg",
+  "icon": "icons/consumables/eggs/egg-broken-yolk-yellow.webp",
   "basicIngredients": 6,
   "specialIngredients": 2,
   "cookingLoreDC": 33,

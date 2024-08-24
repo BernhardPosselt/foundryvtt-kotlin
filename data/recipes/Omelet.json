@@ -1,5 +1,6 @@
 {
   "name": "Omelet",
+  "icon": "icons/consumables/eggs/egg-nest-dotted-red.webp",
   "basicIngredients": 4,
   "specialIngredients": 1,
   "cookingLoreDC": 25,

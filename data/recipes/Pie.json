@@ -1,5 +1,6 @@
 {
   "name": "Pie",
+  "icon": "icons/consumables/grains/pastry-bread-brown.webp",
   "basicIngredients": 3,
   "specialIngredients": 2,
   "cookingLoreDC": 27,

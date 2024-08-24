@@ -25,6 +25,7 @@ fun main() {
             loadTpls(
                 arrayOf(
                     "campingTile" to "applications/camping/camping-tile.hbs",
+                    "recipeTile" to "applications/camping/recipe-tile.hbs",
                     "formElement" to "components/forms/form-element.hbs",
                     "tabs" to "components/tabs/tabs.hbs",
                     "foodCost" to "components/food-cost/food-cost.hbs",

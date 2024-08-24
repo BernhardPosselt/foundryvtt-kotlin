@@ -355,7 +355,75 @@ ul.km-camping-actors {
         padding: 20px;
         flex: 1;
 
-        .km-camping-activity {
+        .km-camping-recipe {
+            .km-recipe-data {
+                .km-camping-tile-result {
+                    select {
+                        border-bottom-left-radius: 0;
+                    }
+                }
+            }
+
+            .km-recipe-content {
+                display: flex;
+                border-bottom-left-radius: 5px;
+            }
+
+            .km-recipe-cost {
+                width: 100%;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                font-size: .85em;
+                border-bottom: 1px solid;
+                height: 2.36em;
+
+                .km-food-cost {
+                    span {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        margin: 0 .5em;
+
+                        img {
+                            margin-left: .25em;
+                        }
+                    }
+                }
+            }
+
+            .km-recipe-actors {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                overflow-y: auto;
+                border-right: 1px solid;
+                border-bottom-left-radius: 5px;
+
+                li {
+                    border-bottom: 1px solid;
+                }
+
+                li:last-child {
+                    border-bottom: 0;
+
+                    img {
+                    }
+                }
+
+                img {
+                    object-fit: cover;
+                    object-position: top center;
+                    border: 0;
+                    border-radius: 0;
+                    width: 2.5em;
+                    height: 2.5em;
+                }
+            }
+        }
+
+        .km-camping-tile {
             font-size: var(--font-size-13);
             border: 1px solid;
             border-radius: 5px;
@@ -377,7 +445,7 @@ ul.km-camping-actors {
                 border-bottom: 1px solid;
             }
 
-            .km-camping-activity-portrait {
+            .km-camping-tile-portrait {
                 position: relative;
                 display: flex;
                 border-bottom: 1px solid;
@@ -429,7 +497,7 @@ ul.km-camping-actors {
                     width: 100%;
                 }
 
-                img {
+                img.cover {
                     height: 100%;
                     width: 100%;
                     object-fit: cover;
@@ -439,7 +507,7 @@ ul.km-camping-actors {
                 }
             }
 
-            .km-camping-activity-check {
+            .km-camping-tile-check {
                 display: flex;
 
                 select {
@@ -455,7 +523,7 @@ ul.km-camping-actors {
                     overflow: hidden;
                 }
 
-                button[data-action="roll-camping-check"] {
+                button.km-tile-check {
                     border-radius: 0;
                     margin: 0;
                     border: 0;
@@ -470,7 +538,7 @@ ul.km-camping-actors {
                 }
             }
 
-            .km-camping-activity-result {
+            .km-camping-tile-result {
                 select {
                     border-radius: 0 0 5px 5px;
                     border-top: 1px solid;
@@ -517,7 +585,9 @@ ul.km-camping-actors {
     }
 
     .empty-activity,
-    .km-camping-activity-check {
+    .km-recipe-actors,
+    .km-recipe-cost,
+    .km-camping-tile-check {
         background: var(--background);
     }
 }
@@ -528,12 +598,15 @@ ul.km-camping-actors {
     }
 
     button.km-camping-action,
-    .km-camping-activity-check,
+    .km-camping-tile-check,
+    .km-camping-tile-result,
+    .km-recipe-actors,
+    .km-recipe-cost,
     .empty-activity {
         background: url("/ui/parchment.jpg") repeat;
     }
 
-    button.km-camping-action[data-action="roll-camping-check"] {
+    button.km-camping-action.km-tile-check {
         &:hover {
             box-shadow: none;
             background: transparent;

@@ -1,11 +1,11 @@
-<div class="km-camping-activity"
+<div class="km-camping-activity km-camping-tile"
     {{#if hidden}}hidden{{/if}}
     {{#if actor}}data-actor-uuid="{{actor.uuid}}"{{/if}}
      data-activity-name="{{name}}"
 >
     <header><a href="#" data-uuid="{{journalUuid}}" data-action="open-journal">{{name}}</a>
     </header>
-    <div class="km-camping-activity-portrait {{#unless requiresCheck}}km-no-skill-check{{/unless}}">
+    <div class="km-camping-tile-portrait {{#unless requiresCheck}}km-no-skill-check{{/unless}}">
         {{#if actor}}
             <button class="km-camping-action"
                     data-action="clear-activity"
@@ -14,7 +14,7 @@
                     class="fa-regular fa-circle-xmark"></i></button>
             <a href="#"
                data-uuid="{{actor.uuid}}"
-               data-action="open-actor"><img src="{{actor.image}}"></a>
+               data-action="open-actor"><img class="cover" src="{{actor.image}}"></a>
         {{else}}
             <div class="empty-activity">
                 <header>Drop Actor from Above</header>
@@ -23,14 +23,14 @@
         {{/if}}
     </div>
     {{#if requiresCheck}}
-        <div class="km-camping-activity-check">
+        <div class="km-camping-tile-check">
             {{> formElement skills }}
-            <button class="km-camping-action" data-action="roll-camping-check" type="button"
+            <button class="km-camping-action km-tile-check" data-action="roll-camping-check" type="button"
                     {{#unless actor}}disabled{{/unless}}>
                 <i class="fa-solid fa-dice-d20"></i>
             </button>
         </div>
-        <div class="km-camping-activity-result">
+        <div class="km-camping-tile-result">
             {{#if actor}}
                 {{> formElement actor.degreeOfSuccess }}
             {{else}}

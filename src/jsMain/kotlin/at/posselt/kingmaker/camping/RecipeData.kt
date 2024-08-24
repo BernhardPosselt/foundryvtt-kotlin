@@ -26,6 +26,7 @@ external interface RecipeData {
     val cookingLoreDC: Int
     val survivalDC: Int
     val uuid: String
+    val icon: String?
     val level: Int
     val cost: String
     val rarity: String
