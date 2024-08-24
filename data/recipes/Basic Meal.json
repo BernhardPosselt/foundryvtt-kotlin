@@ -1,6 +1,6 @@
 {
   "name": "Basic Meal",
-  "icon": "icons/consumables/food/bowl-stew-brown.webp ",
+  "icon": "icons/consumables/grains/bread-loaf-sliced-wheat-brown.webp",
   "basicIngredients": 2,
   "specialIngredients": 0,
   "cookingLoreDC": 18,

@@ -1,6 +1,6 @@
 {
   "name": "Hearty Meal",
-  "icon": "icons/consumables/food/bowl-stew-tofu-potato-brown.webp",
+  "icon": "icons/consumables/food/bowl-stew-brown.webp ",
   "basicIngredients": 4,
   "specialIngredients": 0,
   "cookingLoreDC": 14,
