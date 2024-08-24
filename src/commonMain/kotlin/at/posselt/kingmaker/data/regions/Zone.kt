@@ -9,4 +9,6 @@ enum class Terrain {
     FOREST,
     MOUNTAIN,
     SWAMP,
+    URBAN,
+    DUNGEON,
 }

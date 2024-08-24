@@ -312,6 +312,22 @@ ul.km-camping-actors {
     background-image: url("../../../img/camping/backgrounds/forest-night.webp");
 }
 
+#km-camping-content[data-terrain="dungeon"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/dungeon-day.webp");
+}
+
+#km-camping-content[data-terrain="dungeon"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/dungeon-night.webp");
+}
+
+#km-camping-content[data-terrain="urban"][data-day="true"] {
+    background-image: url("../../../img/camping/backgrounds/urban-day.webp");
+}
+
+#km-camping-content[data-terrain="urban"][data-day="false"] {
+    background-image: url("../../../img/camping/backgrounds/urban-night.webp");
+}
+
 #km-camping-content {
     background-size: cover;
     height: calc(100vh - 310px);
