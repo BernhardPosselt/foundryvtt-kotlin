@@ -1,33 +1,47 @@
 <div class="km-camping-tile km-camping-recipe">
-    <header><a href="#" data-uuid="{{uuid}}" data-action="open-item">{{name}}</a></header>
+    <header>
+        {{#if uuid}}
+            <a href="#" data-uuid="{{uuid}}" data-action="open-item">{{name}}</a>
+        {{else}}
+            {{name}}
+        {{/if}}
+    </header>
     <div class="km-recipe-content">
         <ul class="km-recipe-actors">
             <li>
                 <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
             </li>
         </ul>
-        <section class="km-recipe-data">
+        <section class="km-recipe-data {{#unless requiresCheck}}km-no-skill-check{{/unless}}">
             <div class="km-camping-tile-portrait">
-                <a href="#">
+                {{#if uuid}}
+                    <a href="#" data-uuid="{{uuid}}" data-action="open-item">
+                        <img class="cover" src="{{icon}}">
+                    </a>
+                {{else}}
                     <img class="cover" src="{{icon}}">
-                </a>
+                {{/if}}
             </div>
-            <div class="km-recipe-cost">
-                {{> foodCost cost}}
-            </div>
-            <div class="km-camping-tile-check">
-                <select aria-label="Selected Skill" required="" class="km-proficiency">
-                    <option class="km-proficiency-untrained" value="survival" selected="">Survival</option>
-                    <option class="km-proficiency-untrained" value="cooking" selected="">Cooking</option>
-                </select>
-                <button class="km-camping-action km-tile-check" data-action="roll-recipe-check" type="button">
-                    <i class="fa-solid fa-dice-d20"></i>
-                </button>
-            </div>
-            <div class="km-camping-tile-result">
-                <select disabled>
-                    <option>-</option>
-                </select>
-            </div>
+            {{#if cost}}
+                <div class="km-recipe-cost">
+                    {{> foodCost cost}}
+                </div>
+            {{/if}}
+            {{#if requiresCheck}}
+                <div class="km-camping-tile-check">
+                    <select aria-label="Selected Skill" required="" class="km-proficiency">
+                        <option class="km-proficiency-untrained" value="survival" selected="">Survival</option>
+                        <option class="km-proficiency-untrained" value="cooking" selected="">Cooking</option>
+                    </select>
+                    <button class="km-camping-action km-tile-check" data-action="roll-recipe-check" type="button">
+                        <i class="fa-solid fa-dice-d20"></i>
+                    </button>
+                </div>
+                <div class="km-camping-tile-result">
+                    <select disabled>
+                        <option>-</option>
+                    </select>
+                </div>
+            {{/if}}
     </div>
 </div>

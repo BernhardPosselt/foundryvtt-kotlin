@@ -63,9 +63,10 @@ external interface NightModes {
 @JsPlainObject
 external interface RecipeContext {
     val name: String
-    val cost: FoodCost
-    val uuid: String
+    val cost: FoodCost?
+    val uuid: String?
     val icon: String
+    val requiresCheck: Boolean
 }
 
 @JsPlainObject
@@ -536,6 +537,38 @@ class CampingSheet(
         game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
     }
 
+    private suspend fun getRecipeContext(camping: CampingData): Array<RecipeContext> {
+        val foodItems = getCompendiumFoodItems()
+        val total = camping.getFoodAmount(game.party(), foodItems)
+        val starving = RecipeContext(
+            name = "Starve",
+            icon = "icons/containers/kitchenware/bowl-clay-brown.webp",
+            requiresCheck = false,
+        )
+        val rations = RecipeContext(
+            name = "Rations",
+            icon = "icons/consumables/food/berries-ration-round-red.webp",
+            requiresCheck = false,
+        )
+        return arrayOf(starving, rations) + recipes
+            .sortedBy { it.level }
+            .mapNotNull { recipe ->
+                val cookingCost = buildFoodCost(
+                    recipe.cookingCost(),
+                    totalAmount = total,
+                    items = foodItems
+                )
+                RecipeContext(
+                    name = recipe.name,
+                    cost = cookingCost, // TODO: multiply by actors
+                    uuid = recipe.uuid,
+                    icon = recipe.icon ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
+                    requiresCheck = true,
+                )
+            }
+            .toTypedArray()
+    }
+
     override fun _preparePartContext(
         partId: String,
         context: HandlebarsRenderContext,
@@ -597,19 +630,7 @@ class CampingSheet(
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
         )
-        val compendiumFoodItems = getCompendiumFoodItems()
-        val recipesContext = recipes.mapNotNull { recipe ->
-            val cookingCost = buildFoodCost(
-                recipe.cookingCost(), // TODO: pass in total cooking cost
-                items = compendiumFoodItems
-            )
-            RecipeContext(
-                name = recipe.name,
-                cost = cookingCost, // TODO: multiply by actors
-                uuid = recipe.uuid,
-                icon = recipe.icon ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
-            )
-        }.toTypedArray()
+        val recipesContext = getRecipeContext(camping)
         val currentRegion = camping.findCurrentRegion()
         val regions = camping.regionSettings.regions
         val isGM = game.user.isGM

@@ -373,7 +373,19 @@ ul.km-camping-actors {
 
         .km-camping-recipe {
             .km-recipe-data {
+                &.km-no-skill-check {
+                    height: 17.5em;
+                    border-bottom: 0;
+                    background-color: black;
+
+                    .km-camping-tile-portrait {
+                        border-bottom: 0;
+                    }
+                }
+
                 .km-camping-tile-result {
+                    border-bottom-left-radius: 0;
+
                     select {
                         border-bottom-left-radius: 0;
                     }
@@ -555,8 +567,11 @@ ul.km-camping-actors {
             }
 
             .km-camping-tile-result {
+                border-radius: 0 0 5px 5px;
+
                 select {
                     border-radius: 0 0 5px 5px;
+                    border-style: none;
                     border-top: 1px solid;
                     outline: none;
                     box-shadow: none;
@@ -631,7 +646,7 @@ ul.km-camping-actors {
         }
     }
 
-    .km-camping-activity header {
+    .km-camping-tile header {
         background: url("/ui/parchment.jpg") repeat;
     }
 

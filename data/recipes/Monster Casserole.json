@@ -1,6 +1,6 @@
 {
   "name": "Monster Casserole",
-  "icon": "icons/commodities/materials/bowl-powder-pink.webp",
+  "icon": "icons/consumables/food/soup-broth-bowl-tentacle.webp",
   "basicIngredients": 7,
   "specialIngredients": 2,
   "cookingLoreDC": 28,
