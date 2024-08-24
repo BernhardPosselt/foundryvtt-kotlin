@@ -163,7 +163,7 @@ class CampingSheet(
         MenuControl(label = "Settings", action = "settings", gmOnly = true),
         MenuControl(label = "Help", action = "help"),
     ),
-    scrollable = arrayOf("#km-camping-content", ".km-camping-actors"),
+    scrollable = arrayOf("#km-camping-content-wrapper", ".km-camping-actors", ".km-recipe-actors"),
     renderOnSubmit = false,
 ) {
     init {
@@ -541,7 +541,7 @@ class CampingSheet(
         val foodItems = getCompendiumFoodItems()
         val total = camping.getFoodAmount(game.party(), foodItems)
         val starving = RecipeContext(
-            name = "Starve",
+            name = "Skip Meal",
             icon = "icons/containers/kitchenware/bowl-clay-brown.webp",
             requiresCheck = false,
         )

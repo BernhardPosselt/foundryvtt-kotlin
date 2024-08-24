@@ -331,14 +331,14 @@ ul.km-camping-actors {
 #km-camping-content {
     background-size: cover;
     height: calc(100vh - 310px);
-    overflow-y: auto;
+    position: relative;
 
     #km-camping-content-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
         min-height: 100%;
+        overflow-y: auto;
     }
 
     h1 {
@@ -356,10 +356,9 @@ ul.km-camping-actors {
         display: flex;
         flex-direction: column;
         position: absolute;
+        overflow-y: auto;
         top: 0;
         bottom: 0;
-        left: 60px;
-        right: 60px;
     }
 
     .km-camping-activities {
@@ -373,21 +372,22 @@ ul.km-camping-actors {
 
         .km-camping-recipe {
             .km-recipe-data {
+
                 &.km-no-skill-check {
-                    height: 17.5em;
                     border-bottom: 0;
                     background-color: black;
+                    display: flex;
+                    align-items: center;
 
                     .km-camping-tile-portrait {
                         border-bottom: 0;
-                    }
-                }
+                        height: 17.5em;
+                        width: 11.5em;
 
-                .km-camping-tile-result {
-                    border-bottom-left-radius: 0;
-
-                    select {
-                        border-bottom-left-radius: 0;
+                        img.cover {
+                            object-fit: contain;
+                            object-position: center;
+                        }
                     }
                 }
             }
@@ -395,6 +395,7 @@ ul.km-camping-actors {
             .km-recipe-content {
                 display: flex;
                 border-bottom-left-radius: 5px;
+                position: relative;
             }
 
             .km-recipe-cost {
@@ -425,18 +426,54 @@ ul.km-camping-actors {
                 margin: 0;
                 padding: 0;
                 display: flex;
-                overflow-y: auto;
-                border-right: 1px solid;
+                flex-direction: column;
                 border-bottom-left-radius: 5px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 2;
+                width: 0;
+                transition: width .5s;
+                box-sizing: content-box;
+                overflow: hidden;
 
                 li {
+                    margin: 0;
                     border-bottom: 1px solid;
-                }
+                    border-right: 1px solid;
+                    box-sizing: content-box;
+                    height: 2.5em;
+                    width: 2.5em;
+                    display: flex;
 
-                li:last-child {
-                    border-bottom: 0;
+                    button {
+                        width: 2.5em;
+                        height: 2.5em;
+                        box-sizing: content-box;
+                        padding: 0;
+                        margin: 0;
+                        border-radius: 0;
+                        border: 0;
+                        font-size: inherit;
+                        flex-shrink: 0;
+
+                        &:hover {
+                            color: #b52135;
+                            outline: none;
+                            box-shadow: none;
+                            background-color: transparent;
+                        }
+
+                        i {
+                            margin: 0;
+                        }
+                    }
 
                     img {
+                        flex-shrink: 0;
+                        width: 2.5em;
+                        box-sizing: content-box;
                     }
                 }
 
@@ -478,7 +515,12 @@ ul.km-camping-actors {
                 display: flex;
                 border-bottom: 1px solid;
                 height: 11.5em;
-                width: 11.5em;
+                min-width: 11.5em;
+
+                &:hover .km-recipe-actors {
+                    width: 5em;
+                    overflow-y: auto;
+                }
 
                 button[data-action="clear-activity"] {
                     font-size: 1.7em;
@@ -572,7 +614,6 @@ ul.km-camping-actors {
                 select {
                     border-radius: 0 0 5px 5px;
                     border-style: none;
-                    border-top: 1px solid;
                     outline: none;
                     box-shadow: none;
                     font-size: 1em;
@@ -597,8 +638,9 @@ ul.km-camping-actors {
         background: transparent;
         -webkit-text-stroke-color: #000;
         -webkit-text-stroke-width: 1px;
-        position: fixed;
-        top: 50%;
+        position: absolute;
+        top: calc(50% - 100px);
+        z-index: 2;
 
         &:hover {
             box-shadow: none;
@@ -616,10 +658,13 @@ ul.km-camping-actors {
     }
 
     .empty-activity,
-    .km-recipe-actors,
     .km-recipe-cost,
     .km-camping-tile-check {
         background: var(--background);
+    }
+
+    .km-camping-tile-result {
+        border-top: 1px solid;
     }
 }
 
@@ -631,10 +676,13 @@ ul.km-camping-actors {
     button.km-camping-action,
     .km-camping-tile-check,
     .km-camping-tile-result,
-    .km-recipe-actors,
     .km-recipe-cost,
     .empty-activity {
         background: url("/ui/parchment.jpg") repeat;
+    }
+
+    .km-camping-tile-result {
+        border-top: 1px solid black;
     }
 
     button.km-camping-action.km-tile-check {
