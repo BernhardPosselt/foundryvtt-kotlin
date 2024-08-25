@@ -561,8 +561,8 @@ ul.km-camping-actors {
                         top: 1em;
                         background: transparent;
                         border: 0;
-                        text-align: center;
                         width: 100%;
+                        line-height: 1.2em;
                     }
 
                     i {
