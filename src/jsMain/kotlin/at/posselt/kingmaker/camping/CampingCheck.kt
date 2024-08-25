@@ -39,64 +39,47 @@ private suspend fun askDc(activity: String): Int {
     }
 }
 
-@JsPlainObject
-private external interface AskSkillData {
-    val skill: String
-}
-
 fun PF2ECreature.satisfiesSkillRequirement(
-    selectedSkill: String,
-    skillRequirements: Array<SkillRequirement>,
+    skill: ParsedCampingSkill,
 ): Boolean {
-    val requirements = skillRequirements.find { it.skill == selectedSkill }
-    return if (requirements == null) {
-        true
-    } else {
-        val attribute = Attribute.fromString(selectedSkill)
-        val rank = resolveAttribute(attribute)?.rank ?: 0
-        fromCamelCase<Proficiency>(requirements.proficiency)
-            ?.let { rank >= it.ordinal }
-            ?: false
-    }
+    val rank = resolveAttribute(skill.attribute)?.rank ?: 0
+    return skill.proficiency.let { rank >= it.ordinal }
 }
 
 fun PF2ECreature.hasAnyActivitySkill(
     activity: CampingActivityData,
 ): Boolean =
     findCampingActivitySkills(activity, true)
-        .map { Attribute.fromString(it) }
+        .map { it.attribute }
         .any { resolveAttribute(it) != null }
 
 fun PF2ECreature.findCampingActivitySkills(
     activity: CampingActivityData,
     disableSkillRequirements: Boolean,
-): List<String> {
-    val activitySkills = activity.skills
-    val availableSkills = if (activitySkills == "any") {
-        Object.keys(skills)
-    } else {
-        @Suppress("UNCHECKED_CAST")
-        activitySkills as Array<String>
-    }
-    return availableSkills.filter {
-        if (disableSkillRequirements) {
-            true
-        } else {
-            satisfiesSkillRequirement(it, activity.skillRequirements)
+): List<ParsedCampingSkill> {
+    return activity.getCampingSkills(this)
+        ?.filter {
+            if (disableSkillRequirements) {
+                true
+            } else {
+                satisfiesSkillRequirement(it)
+            }
         }
-    }
+        ?: emptyList()
 }
 
 data class CampingCheckData(
     val region: RegionSetting,
     val activityData: ActivityAndData,
-    val skill: Attribute,
+    val skill: ParsedCampingSkill,
 )
 
 fun PF2ECreature.getCampingCheckData(camping: CampingData, activityName: String): CampingCheckData? {
     val region = camping.findCurrentRegion()
     val data = camping.groupActivities().find { it.data.name == activityName && it.result.actorUuid == uuid }
-    val skill = data?.result?.selectedSkill?.let { Attribute.fromString(it) }
+    val skill = data?.result?.selectedSkill
+        ?.let { Attribute.fromString(it) }
+        ?.let { attr -> data.data.getCampingSkills(this)?.find { it.attribute == attr } }
     return if (skill != null && region != null) {
         CampingCheckData(
             region = region,
@@ -118,16 +101,17 @@ suspend fun PF2ECreature.campingActivityCheck(
 ): DegreeOfSuccess? {
     val activity = data.activityData.data
     val activityName = activity.name
+    val skill = data.skill
     val extraRollOptions = arrayOf("action:${activityName.slugify()}")
-    val dc = overrideDc ?: when (val activityDc = activity.dc) {
-        "zone" -> data.region.zoneDc
-        "actorLevel" -> getLevelBasedDC(level)
-        null -> askDc(activityName)
-        is String -> activityDc.toInt()
-        else -> activityDc as Int
+    val dc = overrideDc ?: when (skill.dcType) {
+        DcType.ACTOR_LEVEL -> getLevelBasedDC(level)
+        DcType.ZONE -> data.region.zoneDc
+        DcType.NONE -> askDc(activityName)
+        DcType.STATIC -> skill.dc ?: askDc(activityName)
     }
+
     val result = performCampingCheck(
-        attribute = data.skill,
+        attribute = skill.attribute,
         isSecret = activity.isSecret,
         extraRollOptions = extraRollOptions,
         dc = dc,

@@ -1,11 +1,15 @@
 package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.actor.getLoreAttributes
+import at.posselt.kingmaker.camping.getLoreSkills
 import at.posselt.kingmaker.data.actor.*
+import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.fromCamelCase
 import com.foundryvtt.pf2e.actor.PF2ECreature
 import kotlinx.js.JsPlainObject
+import kotlin.collections.associateBy
+import kotlin.collections.find
 
 
 @JsPlainObject
@@ -23,12 +27,6 @@ external interface ModifyEncounterDc {
 }
 
 @JsPlainObject
-external interface SkillRequirement {
-    val skill: String
-    val proficiency: String
-}
-
-@JsPlainObject
 external interface ActivityEffect {
     val uuid: String
     val target: String?
@@ -36,17 +34,23 @@ external interface ActivityEffect {
 }
 
 @JsPlainObject
+external interface CampingSkill {
+    val name: String
+    val proficiency: String
+    val dcType: String // zone, actorLevel , static, none
+    val dc: Int?
+}
+
+@JsPlainObject
 external interface CampingActivityData {
     val name: String
     val journalUuid: String?
-    val skillRequirements: Array<SkillRequirement>
-    val dc: Any?  // zone, actorLevel or a number
-    val skills: Any // array of strings or any
+    val skills: Array<CampingSkill>?
     val modifyRandomEncounterDc: ModifyEncounterDc?
     val isSecret: Boolean
     val isLocked: Boolean
     val effectUuids: Array<ActivityEffect>?
-    val isHomebrew: Boolean?
+    val isHomebrew: Boolean
     val criticalSuccess: ActivityOutcome?
     val success: ActivityOutcome?
     val failure: ActivityOutcome?
@@ -77,9 +81,18 @@ fun ModifyEncounterDc.atTime(isDay: Boolean) =
         night
     }
 
-data class ProficiencyRequirement(
+enum class DcType {
+    ACTOR_LEVEL,
+    ZONE,
+    NONE,
+    STATIC
+}
+
+data class ParsedCampingSkill(
     val attribute: Attribute,
     val proficiency: Proficiency,
+    val dcType: DcType,
+    val dc: Int?,
 )
 
 data class ActivityAndData(
@@ -93,27 +106,36 @@ data class ActivityAndData(
     fun isPrepareCamp() = data.isPrepareCamp()
 
     fun isNotPrepareCamp() = !isPrepareCamp()
+}
 
-    fun getSkills(actor: PF2ECreature?): List<ProficiencyRequirement>? {
-        val skillAndProficiency = data.skillRequirements.associate {
-            it.skill to fromCamelCase<Proficiency>(it.proficiency)
-        }
-        val lores: List<Attribute> = actor?.getLoreAttributes()
-            ?: data.getLoreSkills()
-        val allSkills = (Skill.entries + lores + Perception).map {
-            ProficiencyRequirement(
+fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<ParsedCampingSkill>? {
+    val theSkills = skills
+    if (theSkills == null) return null
+    // if an actor exists, fetch all lore skills for the dropdown, otherwise go
+    // with the one on the activity
+    val lores: List<Attribute> = actor?.getLoreAttributes()
+        ?: getLoreSkills()
+    val allAttributes = Skill.entries + lores + Perception
+    val anySkill = theSkills.find { it.name == "any" }
+    return if (anySkill != null) {
+        allAttributes.map {
+            ParsedCampingSkill(
                 attribute = it,
-                proficiency = skillAndProficiency[it.value] ?: Proficiency.UNTRAINED
+                proficiency = fromCamelCase<Proficiency>(anySkill.proficiency) ?: Proficiency.UNTRAINED,
+                dcType = fromCamelCase<DcType>(anySkill.dcType) ?: DcType.NONE,
+                dc = anySkill.dc,
             )
         }
-        return if (data.skills == "any") {
-            allSkills
-        } else {
-            val sk = data.skills.unsafeCast<Array<String>>().toSet()
-            if (sk.isEmpty()) {
-                null
-            } else {
-                allSkills.filter { sk.contains(it.attribute.value) }
+    } else {
+        val activitySkills = theSkills.associateBy { Attribute.fromString(it.name) }
+        allAttributes.mapNotNull { attribute ->
+            activitySkills[attribute]?.let { skill ->
+                ParsedCampingSkill(
+                    attribute = attribute,
+                    proficiency = fromCamelCase<Proficiency>(skill.proficiency) ?: Proficiency.UNTRAINED,
+                    dcType = fromCamelCase<DcType>(skill.dcType) ?: DcType.NONE,
+                    dc = skill.dc,
+                )
             }
         }
     }
@@ -132,21 +154,21 @@ fun CampingData.groupActivities(): List<ActivityAndData> {
     }
 }
 
-fun CampingActivityData.getLoreSkills(): List<Lore> {
-    if (skills == "any") {
-        return emptyList()
+fun CampingActivityData.getLoreSkills(): List<Lore> =
+    if (skills?.any { it.name == "any" } != false) {
+        emptyList()
     } else {
-        return skills.unsafeCast<Array<String>>()
-            .map { Attribute.fromString(it) }
-            .filterIsInstance<Lore>()
+        skills
+            ?.map { Attribute.fromString(it.name) }
+            ?.filterIsInstance<Lore>()
+            ?: emptyList()
     }
-}
 
 fun CampingActivityData.doesNotRequireACheck(): Boolean =
     !requiresACheck()
 
 fun CampingActivityData.requiresACheck(): Boolean =
-    skills == "any" || (skills as Array<*>).isNotEmpty()
+    skills != null
 
 @JsModule("./data/camping-activities.json")
 external val campingActivityData: Array<CampingActivityData>

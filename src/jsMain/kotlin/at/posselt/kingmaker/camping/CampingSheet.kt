@@ -428,7 +428,7 @@ class CampingSheet(
                     CampingActivity(
                         activity = activityName,
                         actorUuid = actorUuid,
-                        selectedSkill = skill,
+                        selectedSkill = skill?.attribute?.value,
                     )
                 )
                 actor.setCamping(camping)
@@ -709,13 +709,13 @@ fun getActivitySkills(
     groupedActivity: ActivityAndData,
     ignoreSkillRequirements: Boolean,
 ): FormElementContext? {
-    return groupedActivity.getSkills(actor)?.let { skillsAndProficiencies ->
+    return groupedActivity.data.getCampingSkills(actor)?.let { skillsAndProficiencies ->
         val options = skillsAndProficiencies
             .filter {
                 if (ignoreSkillRequirements || actor == null) {
                     true
                 } else {
-                    actor.satisfiesSkillRequirement(it.attribute.value, groupedActivity.data.skillRequirements)
+                    actor.satisfiesSkillRequirement(it)
                 }
             }
             .map {

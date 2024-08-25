@@ -3,6 +3,7 @@ package at.posselt.kingmaker.migrations.migrations
 import at.posselt.kingmaker.actor.npcs
 import at.posselt.kingmaker.camping.CampingData
 import at.posselt.kingmaker.camping.dialogs.CombatTrack
+import at.posselt.kingmaker.camping.getDefaultCamping
 import at.posselt.kingmaker.combattracks.getCombatTrack
 import at.posselt.kingmaker.combattracks.setCombatTrack
 import at.posselt.kingmaker.kingdom.getParsedStructureData
@@ -30,6 +31,15 @@ private val structureNamesToMigrate = setOf(
     "Wall, Stone",
     "Wall, Wooden",
 )
+private val replacements = mapOf(
+    "Broiled Tuskwater Oysters" to "Broiled Oysters",
+    "First World Mince Pie" to "Supernatural Mince Pie",
+    "Galt Ragout" to "Ragout",
+    "Giant Scrambled Egg With Shambletus" to "Giant Scrambled Egg",
+    "Kameberry Pie" to "Pie",
+    "Whiterose Oysters" to "Oysters",
+    "Owlbear Omelet" to "Omelet",
+)
 
 class Migration10 : Migration(10) {
     override suspend fun migrateCamping(game: Game, camping: CampingData) {
@@ -46,6 +56,15 @@ class Migration10 : Migration(10) {
         camping.randomEncounterRollMode = game.settings.getString("randomEncounterRollMode").ifBlank { "gmroll" }
         val proxyTableName = game.settings.getString("proxyEncounterTable")
         camping.proxyRandomEncounterTableUuid = game.tables.getName(proxyTableName)?.uuid
+        camping.regionSettings = getDefaultCamping(game).regionSettings
+        camping.cooking.knownRecipes = camping.cooking.knownRecipes.mapNotNull {
+            if (it in replacements) {
+                replacements[it]
+            } else {
+                it
+            }
+        }.toTypedArray()
+        camping.section = "prepareCamp"
     }
 
     override suspend fun migrateOther(game: Game) {

@@ -1,13 +1,12 @@
 {
-    "name": "Enhance Campfire",
-    "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.ytyW9F39m7xf0gx5",
-    "isLocked": true,
-    "isSecret": false,
-    "skillRequirements": [],
-    "skills": [],
-    "effectUuids": [
-        {
-            "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-camping-effects.Item.NFPQHxvpJd2vsKMe"
-        }
-    ]
+  "name": "Enhance Campfire",
+  "journalUuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.uSTTCqRYCWj7a38F.JournalEntryPage.ytyW9F39m7xf0gx5",
+  "isLocked": true,
+  "isSecret": false,
+  "isHomebrew": false,
+  "effectUuids": [
+    {
+      "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-camping-effects.Item.NFPQHxvpJd2vsKMe"
+    }
+  ]
 }

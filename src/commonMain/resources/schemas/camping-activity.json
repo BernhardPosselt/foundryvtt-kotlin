@@ -10,8 +10,7 @@
       "additionalProperties": false,
       "required": [
         "name",
-        "skillRequirements",
-        "skills",
+        "isHomebrew",
         "isSecret",
         "isLocked"
       ],
@@ -22,41 +21,11 @@
         "journalUuid": {
           "type": "string"
         },
-        "skillRequirements": {
+        "skills": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/SkillRequirement"
+            "$ref": "#/$defs/CampingSkill"
           }
-        },
-        "dc": {
-          "oneOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "enum": [
-                "zone",
-                "actorLevel"
-              ]
-            }
-          ]
-        },
-        "skills": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            {
-              "type": "string",
-              "enum": [
-                "any"
-              ]
-            }
-          ]
         },
         "modifyRandomEncounterDc": {
           "$ref": "#/$defs/ModifyEncounterDc"
@@ -90,19 +59,39 @@
         }
       }
     },
-    "SkillRequirement": {
+    "CampingSkill": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "skill",
+        "name",
+        "dcType",
         "proficiency"
       ],
       "properties": {
-        "skill": {
+        "name": {
           "type": "string"
         },
         "proficiency": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "untrained",
+            "trained",
+            "expert",
+            "master",
+            "legendary"
+          ]
+        },
+        "dc": {
+          "type": "number"
+        },
+        "dcType": {
+          "type": "string",
+          "enum": [
+            "zone",
+            "actorLevel",
+            "none",
+            "static"
+          ]
         }
       }
     },

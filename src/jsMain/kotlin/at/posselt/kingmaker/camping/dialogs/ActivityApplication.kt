@@ -154,21 +154,6 @@ class ActivityApplication(
 //                            stacked = false,
 //                            item = journalItem,
 //                        ),
-                        // TODO: skills
-                        Select(
-                            stacked = false,
-                            value = currentActivity?.dc?.toString(),
-                            label = "DC",
-                            name = "dc",
-                            required = false,
-                            options = listOf(
-                                SelectOption(label = "Zone", value = "zone"),
-                                SelectOption(label = "Actor Level", value = "actorLevel"),
-                            ) + generateSequence(0) { it + 1 }
-                                .take(61)
-                                .map { SelectOption(it.toString(), it.toString()) }
-                                .toList(),
-                        ),
                         CheckboxInput(
                             label = "Secret Check",
                             name = "isSecret",
@@ -238,9 +223,7 @@ class ActivityApplication(
         currentActivity = CampingActivityData(
             name = editActivityName ?: value.name,
             journalUuid = value.journalUuid,
-            skillRequirements = emptyArray(), // TODO
-            dc = parseDc(value.dc),
-            skills = "", // TODO
+            skills = emptyArray(), // TODO
             modifyRandomEncounterDc = value.modifyRandomEncounterDc,
             isSecret = value.isSecret,
             isLocked = editActivityLocked ?: false,

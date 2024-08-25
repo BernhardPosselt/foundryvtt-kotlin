@@ -1,29 +1,52 @@
 package at.posselt.kingmaker.migrations.migrations
 
-import at.posselt.kingmaker.camping.CampingData
-import at.posselt.kingmaker.camping.getDefaultCamping
+import at.posselt.kingmaker.camping.CampingSkill
 import com.foundryvtt.core.Game
 
-private val replacements = mapOf(
-    "Broiled Tuskwater Oysters" to "Broiled Oysters",
-    "First World Mince Pie" to "Supernatural Mince Pie",
-    "Galt Ragout" to "Ragout",
-    "Giant Scrambled Egg With Shambletus" to "Giant Scrambled Egg",
-    "Kameberry Pie" to "Pie",
-    "Whiterose Oysters" to "Oysters",
-    "Owlbear Omelet" to "Omelet",
-)
 
 class Migration11 : Migration(11) {
-    override suspend fun migrateCamping(game: Game, camping: CampingData) {
-        camping.regionSettings = getDefaultCamping(game).regionSettings
-        camping.cooking.knownRecipes = camping.cooking.knownRecipes.mapNotNull {
-            if (it in replacements) {
-                replacements[it]
+    override suspend fun migrateCamping(game: Game, camping: dynamic) {
+        val newSkills: Map<String, Array<CampingSkill>> = camping.homebrewCampingActivities.map { activity ->
+            val dc = parseDcValue(activity)
+            val dcType = parseDcType(activity)
+            if (activity.skills == "any") {
+                activity.name to arrayOf(
+                    CampingSkill(
+                        name = "any",
+                        proficiency = "untrained",
+                        dcType = dcType,
+                        dc = dc,
+                    )
+                )
             } else {
-                it
+                activity.skills.map { skill: String ->
+                    CampingSkill(
+                        name = skill,
+                        proficiency = activity.skillRequirements.find { req ->
+                            req.skill == skill
+                        }?.proficiency ?: "untrained",
+                        dcType = dcType,
+                        dc = dc,
+                    )
+                }
             }
-        }.toTypedArray()
-        camping.section = "prepareCamp"
+        }.toMap()
+        camping.homebrewCampingActivities.forEach { activity ->
+            activity.skills = newSkills[activity.name]?.takeIf { it.isNotEmpty() } ?: emptyArray<CampingSkill>()
+        }
     }
+}
+
+private fun parseDcValue(activity: dynamic): Int? = when (val activityDc = activity.dc) {
+    "zone" -> null
+    "actorLevel" -> null
+    null -> null
+    else -> activityDc as Int
+}
+
+private fun parseDcType(activity: dynamic): String = when (val activityDc = activity.dc) {
+    "zone" -> "zone"
+    "actorLevel" -> "actorLevel"
+    null -> "none"
+    else -> "static"
 }
