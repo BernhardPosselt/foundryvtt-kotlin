@@ -53,6 +53,7 @@ fun PF2ECreature.satisfiesAnyActivitySkillRequirement(
         true
     } else {
         campingSkills.any { satisfiesSkillRequirement(it) }
+                && campingSkills.filter { it.required }.all { satisfiesSkillRequirement(it) }
     }
 }
 

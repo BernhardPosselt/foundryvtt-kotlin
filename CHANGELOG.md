@@ -28,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Meal Effects are now removed right before Prepare Campsite RAW
 * Instead of a single meal, players can now choose from the entire array of available recipes RAW
-* Hunt and Gather requires either Hunting or Survival trained instead of requiring trained in Survival to rules a
-  Hunting check. This is not RAW but very likely RAI, since rolling against the region DC requires a scaling skill
 * If you don't use the official module, you will need to:
     * Set your combat tracks and random encounters manually in camping sheet
 * All companion names have been removed from camping activities, kingdom events, kingdom activities

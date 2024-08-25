@@ -8,7 +8,8 @@
     {
       "name": "survival",
       "proficiency": "trained",
-      "dcType": "zone"
+      "dcType": "zone",
+      "required": true
     },
     {
       "name": "hunting",

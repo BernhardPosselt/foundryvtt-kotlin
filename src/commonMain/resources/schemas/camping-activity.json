@@ -87,6 +87,9 @@
         "validateOnly": {
           "type": "boolean"
         },
+        "required": {
+          "type": "boolean"
+        },
         "dcType": {
           "type": "string",
           "enum": [
