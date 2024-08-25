@@ -4,6 +4,14 @@
   "isLocked": false,
   "isSecret": false,
   "isHomebrew": false,
+  "skills": [
+    {
+      "name": "cooking",
+      "proficiency": "trained",
+      "dcType": "none",
+      "validateOnly": true
+    }
+  ],
   "criticalSuccess": {
     "message": "The character gains the recipe’s listed critical success effect."
   },

@@ -524,7 +524,7 @@ ul.km-camping-actors {
                 display: flex;
                 border-bottom: 1px solid;
                 height: 11.5em;
-                min-width: 11.5em;
+                width: 11.5em;
 
                 &:hover .km-recipe-actors {
                     width: 5em;

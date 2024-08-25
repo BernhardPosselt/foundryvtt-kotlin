@@ -50,6 +50,14 @@ data object Perception : Attribute {
 
 class Lore(value: String) : Attribute {
     override val value: String = value.removeSuffix("-lore")
+
+    override fun equals(other: Any?): Boolean {
+        return other is Lore && value == other.value
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 }
 
 enum class Proficiency {

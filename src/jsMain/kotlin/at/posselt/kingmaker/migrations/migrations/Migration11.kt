@@ -6,11 +6,13 @@ import com.foundryvtt.core.Game
 
 class Migration11 : Migration(11) {
     override suspend fun migrateCamping(game: Game, camping: dynamic) {
-        val newSkills: Map<String, Array<CampingSkill>> = camping.homebrewCampingActivities.map { activity ->
+        val homebrewCampingActivities = camping.homebrewCampingActivities.unsafeCast<Array<dynamic>>()
+        val newSkills: Map<String, Array<CampingSkill>> = homebrewCampingActivities.map { activity ->
+            val activityName = activity.name as String
             val dc = parseDcValue(activity)
             val dcType = parseDcType(activity)
             if (activity.skills == "any") {
-                activity.name to arrayOf(
+                activityName to arrayOf(
                     CampingSkill(
                         name = "any",
                         proficiency = "untrained",
@@ -19,7 +21,7 @@ class Migration11 : Migration(11) {
                     )
                 )
             } else {
-                activity.skills.map { skill: String ->
+                activityName to activity.skills.map { skill: String ->
                     CampingSkill(
                         name = skill,
                         proficiency = activity.skillRequirements.find { req ->
@@ -34,6 +36,7 @@ class Migration11 : Migration(11) {
         camping.homebrewCampingActivities.forEach { activity ->
             activity.skills = newSkills[activity.name]?.takeIf { it.isNotEmpty() } ?: emptyArray<CampingSkill>()
         }
+        camping.cooking.minimumSubsistence = 0
     }
 }
 
@@ -44,7 +47,7 @@ private fun parseDcValue(activity: dynamic): Int? = when (val activityDc = activ
     else -> activityDc as Int
 }
 
-private fun parseDcType(activity: dynamic): String = when (val activityDc = activity.dc) {
+private fun parseDcType(activity: dynamic): String = when (activity.dc) {
     "zone" -> "zone"
     "actorLevel" -> "actorLevel"
     null -> "none"

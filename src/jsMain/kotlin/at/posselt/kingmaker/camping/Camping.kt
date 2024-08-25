@@ -53,14 +53,12 @@ fun getDefaultCamping(game: Game): CampingData {
             .map(CampingActivityData::name)
             .toTypedArray(),
         cooking = Cooking(
-            chosenMeal = "Basic Meal",
             actorMeals = emptyArray(),
-            magicalSubsistenceAmount = 0,
-            subsistenceAmount = 0,
-            knownRecipes = arrayOf("asic Meal", "Hearty Meal"),
+            knownRecipes = arrayOf("Basic Meal", "Hearty Meal"),
             homebrewMeals = emptyArray(),
             cookingSkill = "survival",
             degreeOfSuccess = null,
+            minimumSubsistence = 0,
         ),
         watchSecondsRemaining = 0,
         gunsToClean = 0,

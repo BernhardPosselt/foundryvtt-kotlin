@@ -41,6 +41,7 @@ external interface CampingSettings {
     val randomEncounterRollMode: String
     val ignoreSkillRequirements: Boolean
     val minimumTravelSpeed: Int?
+    val minimumSubsistence: Int
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -96,6 +97,7 @@ class CampingSettingsApplication(
             randomEncounterRollMode = camping.randomEncounterRollMode,
             ignoreSkillRequirements = camping.ignoreSkillRequirements,
             minimumTravelSpeed = camping.minimumTravelSpeed,
+            minimumSubsistence = camping.cooking.minimumSubsistence,
         )
     }
 
@@ -169,6 +171,18 @@ class CampingSettingsApplication(
                     )
                 ),
                 Section(
+                    legend = "Cooking",
+                    formRows = listOf(
+                        NumberInput(
+                            name = "minimumSubsistence",
+                            label = "Minimum Subsistence",
+                            help = "Reduce ration cost when cooking by this amount",
+                            value = settings.minimumSubsistence,
+                            stacked = false,
+                        ),
+                    )
+                ),
+                Section(
                     legend = "Resting",
                     formRows = listOf(
                         NumberInput(
@@ -235,6 +249,7 @@ class CampingSettingsApplication(
                         camping.randomEncounterRollMode = settings.randomEncounterRollMode
                         camping.ignoreSkillRequirements = settings.ignoreSkillRequirements
                         camping.minimumTravelSpeed = settings.minimumTravelSpeed
+                        camping.cooking.minimumSubsistence = settings.minimumSubsistence
                         campingActor.setCamping(camping)
                     }
                     close()

@@ -8,7 +8,6 @@ import at.posselt.kingmaker.data.actor.*
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.data.checks.getLevelBasedDC
-import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.fromOrdinal
 import at.posselt.kingmaker.slugify
 import at.posselt.kingmaker.utils.postChatTemplate
@@ -17,7 +16,6 @@ import com.foundryvtt.pf2e.Dc
 import com.foundryvtt.pf2e.PF2ERollOptions
 import com.foundryvtt.pf2e.actor.PF2ECreature
 import js.array.push
-import js.objects.Object
 import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
@@ -44,6 +42,18 @@ fun PF2ECreature.satisfiesSkillRequirement(
 ): Boolean {
     val rank = resolveAttribute(skill.attribute)?.rank ?: 0
     return skill.proficiency.let { rank >= it.ordinal }
+}
+
+fun PF2ECreature.satisfiesAnyActivitySkillRequirement(
+    activity: CampingActivityData,
+    disableSkillRequirements: Boolean,
+): Boolean {
+    val campingSkills = activity.getCampingSkills()
+    return if (disableSkillRequirements == true || campingSkills == null) {
+        true
+    } else {
+        campingSkills.any { satisfiesSkillRequirement(it) }
+    }
 }
 
 fun PF2ECreature.hasAnyActivitySkill(

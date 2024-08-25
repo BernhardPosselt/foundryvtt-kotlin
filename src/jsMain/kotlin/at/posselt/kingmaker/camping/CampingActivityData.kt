@@ -39,6 +39,7 @@ external interface CampingSkill {
     val proficiency: String
     val dcType: String // zone, actorLevel , static, none
     val dc: Int?
+    val validateOnly: Boolean?
 }
 
 @JsPlainObject
@@ -93,6 +94,7 @@ data class ParsedCampingSkill(
     val proficiency: Proficiency,
     val dcType: DcType,
     val dc: Int?,
+    val validateOnly: Boolean
 )
 
 data class ActivityAndData(
@@ -124,6 +126,7 @@ fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<Pars
                 proficiency = fromCamelCase<Proficiency>(anySkill.proficiency) ?: Proficiency.UNTRAINED,
                 dcType = fromCamelCase<DcType>(anySkill.dcType) ?: DcType.NONE,
                 dc = anySkill.dc,
+                validateOnly = anySkill.validateOnly == true,
             )
         }
     } else {
@@ -135,6 +138,7 @@ fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<Pars
                     proficiency = fromCamelCase<Proficiency>(skill.proficiency) ?: Proficiency.UNTRAINED,
                     dcType = fromCamelCase<DcType>(skill.dcType) ?: DcType.NONE,
                     dc = skill.dc,
+                    validateOnly = skill.validateOnly == true,
                 )
             }
         }
@@ -168,7 +172,7 @@ fun CampingActivityData.doesNotRequireACheck(): Boolean =
     !requiresACheck()
 
 fun CampingActivityData.requiresACheck(): Boolean =
-    skills != null
+    skills?.filter { it.validateOnly != true }?.isNotEmpty() == true
 
 @JsModule("./data/camping-activities.json")
 external val campingActivityData: Array<CampingActivityData>

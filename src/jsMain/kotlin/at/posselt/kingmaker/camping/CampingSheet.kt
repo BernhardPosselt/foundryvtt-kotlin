@@ -411,10 +411,7 @@ class CampingSheet(
                 ui.notifications.error("Only NPCs and Characters can perform camping activities")
             } else if (activity == null) {
                 ui.notifications.error("Activity with name $activityName not found")
-            } else if (
-                activity.requiresACheck()
-                && activityActor.findCampingActivitySkills(activity, camping.ignoreSkillRequirements).isEmpty()
-            ) {
+            } else if (!activityActor.satisfiesAnyActivitySkillRequirement(activity, camping.ignoreSkillRequirements)) {
                 ui.notifications.error("Actor does not satisfy skill requirements to perform $activityName")
             } else if (activity.requiresACheck() && !activityActor.hasAnyActivitySkill(activity)) {
                 ui.notifications.error("Actor does not have the required skills to perform $activityName")
@@ -423,6 +420,7 @@ class CampingSheet(
                     camping.campingActivities.filter { it.activity != activityName }.toTypedArray()
                 val skill = activityActor
                     .findCampingActivitySkills(activity, camping.ignoreSkillRequirements)
+                    .filterNot { it.validateOnly }
                     .firstOrNull()
                 camping.campingActivities.push(
                     CampingActivity(
@@ -718,6 +716,7 @@ fun getActivitySkills(
                     actor.satisfiesSkillRequirement(it)
                 }
             }
+            .filter { it.validateOnly != true }
             .map {
                 SelectOption(
                     label = it.attribute.label,

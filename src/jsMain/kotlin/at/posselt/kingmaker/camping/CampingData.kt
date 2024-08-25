@@ -19,13 +19,11 @@ external interface ActorMeal {
 @JsPlainObject
 external interface Cooking {
     var knownRecipes: Array<String>
-    var subsistenceAmount: Int
-    var magicalSubsistenceAmount: Int
-    var chosenMeal: String
     var cookingSkill: String
     var actorMeals: Array<ActorMeal>
     var homebrewMeals: Array<RecipeData>
     var degreeOfSuccess: String?
+    var minimumSubsistence: Int
 }
 
 @JsPlainObject

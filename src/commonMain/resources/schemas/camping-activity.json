@@ -84,6 +84,9 @@
         "dc": {
           "type": "number"
         },
+        "validateOnly": {
+          "type": "boolean"
+        },
         "dcType": {
           "type": "string",
           "enum": [
