@@ -2,6 +2,7 @@
 @import "./components/forms/form.css";
 @import "./components/tabs/style.css";
 @import "./components/food-cost/food-cost.css";
+@import "./components/skill-picker/skill-picker.css";
 
 :root {
     --primary-km: #275125;

@@ -1,0 +1,20 @@
+<div>
+    <div class="row km-skill-picker-row">
+        {{#each anySkill.cells}}
+            {{> formElement this }}
+        {{/each}}
+        <div class="km-any-skill-spacer"></div>
+    </div>
+    <hr>
+    {{#each skills}}
+        <div class="row km-skill-picker-row">
+            {{#each cells}}
+                {{> formElement this }}
+            {{/each}}
+        </div>
+    {{/each}}
+    {{#if allowLores}}
+        <button class="full-width" type="button" data-action="add-lore">Add Lore</button>
+    {{/if}}
+    <button type="submit" data-action="save">Save</button>
+</div>

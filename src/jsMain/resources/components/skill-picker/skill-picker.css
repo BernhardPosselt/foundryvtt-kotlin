@@ -1,0 +1,37 @@
+.skill-picker {
+    .km-hidden {
+        display: none;
+    }
+
+    .km-any-skill-spacer {
+        width: 15em;
+    }
+
+    .km-skill-picker-row {
+        &.row:not(:first-of-type) {
+            margin-top: 0;
+        }
+
+        display: flex;
+        padding: .5em;
+        justify-content: space-between;
+
+        .km-proficiency {
+            width: 10em;
+        }
+
+        input[type=text] {
+            width: 8.7em;
+        }
+
+        & > label:first-child {
+            flex-direction: row-reverse;
+            min-width: 10em;
+            margin-right: 2em;
+        }
+
+        &:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+}

@@ -5,6 +5,9 @@ import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
 import at.posselt.kingmaker.camping.dialogs.*
+import at.posselt.kingmaker.data.actor.Perception
+import at.posselt.kingmaker.data.actor.Proficiency
+import at.posselt.kingmaker.data.actor.Skill
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
@@ -26,6 +29,7 @@ import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
+import kotlin.String
 import kotlin.js.Promise
 import kotlin.math.max
 
@@ -216,6 +220,31 @@ class CampingSheet(
         appHook.onCreateItem { _, _, _, _ -> render() }
         appHook.onDeleteItem { _, _, _ -> render() }
         appHook.onUpdateItem { _, _, _, _ -> render() }
+
+        val anySkill = PickerSkill(
+            label = "Any",
+            name = "any",
+            enabled = false,
+            isLore = false,
+            proficiency = Proficiency.UNTRAINED,
+            required = true,
+            validateOnly = true,
+        )
+        SkillPickerApplication(
+            allowLores = true,
+            skills = (Skill.entries + Perception).map {
+                PickerSkill(
+                    label = it.label,
+                    name = it.value,
+                    enabled = true,
+                    isLore = false,
+                    proficiency = Proficiency.EXPERT,
+                    required = true,
+                    validateOnly = true,
+                )
+            }.toTypedArray() + anySkill,
+            afterSubmit = {}
+        ).launch()
     }
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {

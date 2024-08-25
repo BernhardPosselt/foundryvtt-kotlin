@@ -320,7 +320,7 @@ data class HiddenInput(
         number = false,
         text = false,
         textArea = false,
-        checkbox = true,
+        checkbox = false,
         image = false,
         radio = false,
         disabled = false,
