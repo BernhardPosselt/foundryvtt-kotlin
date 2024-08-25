@@ -1,6 +1,6 @@
 {
   "name": "Cheese Crostata",
-  "icon": "icons/consumables/food/cheese-wedge-swiss-yellow.webp",
+  "icon": "icons/consumables/food/cheese-wheel-round-yellow.webp",
   "basicIngredients": 4,
   "specialIngredients": 0,
   "cookingLoreDC": 22,
