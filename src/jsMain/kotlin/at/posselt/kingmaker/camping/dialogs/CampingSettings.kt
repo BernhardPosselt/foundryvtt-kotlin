@@ -63,6 +63,7 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
             string("randomEncounterRollMode")
             boolean("ignoreSkillRequirements")
             int("minimumTravelSpeed")
+            int("minimumSubsistence")
         }
     }
 }
@@ -176,7 +177,7 @@ class CampingSettingsApplication(
                         NumberInput(
                             name = "minimumSubsistence",
                             label = "Minimum Subsistence",
-                            help = "Reduce ration cost when cooking by this amount",
+                            help = "Reduce ration meal cost by this amount",
                             value = settings.minimumSubsistence,
                             stacked = false,
                         ),

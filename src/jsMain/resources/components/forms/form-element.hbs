@@ -47,6 +47,9 @@
 {{else if menu}}
         <button type="button" data-action="{{value}}"  {{#if
                 elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}}>{{name}}</button>
+{{else if image}}
+        <img src="{{value}}" data-name="{{name}}" class="image-upload {{#if elementClasses}}{{elementClasses}}{{/if}}"
+             {{#if disabled}}disabled{{/if}}>
 {{/if}}
 {{#if link}}
         <!-- This does not work for stacked=true yet -->

@@ -548,9 +548,10 @@ class CampingSheet(
             icon = "icons/consumables/food/berries-ration-round-red.webp",
             requiresCheck = false,
         )
-        return arrayOf(starving, rations) + recipes
+        return arrayOf(starving, rations) + camping.getAllRecipes()
             .sortedBy { it.level }
             .mapNotNull { recipe ->
+                val item = itemFromUuid(recipe.uuid)
                 val cookingCost = buildFoodCost(
                     recipe.cookingCost(),
                     totalAmount = total,
@@ -560,7 +561,7 @@ class CampingSheet(
                     name = recipe.name,
                     cost = cookingCost, // TODO: multiply by actors
                     uuid = recipe.uuid,
-                    icon = recipe.icon ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
+                    icon = recipe.icon ?: item?.img ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
                     requiresCheck = true,
                 )
             }

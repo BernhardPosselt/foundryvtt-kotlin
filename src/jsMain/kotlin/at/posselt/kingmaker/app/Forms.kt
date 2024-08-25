@@ -71,6 +71,7 @@ external interface FormElementContext {
     val radio: Boolean
     val link: DocumentLinkContext?
     val escapeLabel: Boolean
+    val image: Boolean
 }
 
 enum class OverrideType(val value: String) {
@@ -123,6 +124,7 @@ data class Select(
         textArea = false,
         checkbox = false,
         radio = false,
+        image = false,
         disabled = disabled,
         stacked = stacked,
         overrideType = overrideType?.value,
@@ -281,6 +283,7 @@ data class TextInput(
         text = true,
         time = false,
         textArea = false,
+        image = false,
         checkbox = false,
         disabled = disabled,
         overrideType = overrideType?.value,
@@ -318,6 +321,7 @@ data class HiddenInput(
         text = false,
         textArea = false,
         checkbox = true,
+        image = false,
         radio = false,
         disabled = false,
         options = emptyArray(),
@@ -355,6 +359,7 @@ data class CheckboxInput(
         text = false,
         textArea = false,
         checkbox = true,
+        image = false,
         radio = false,
         disabled = disabled,
         options = emptyArray(),
@@ -392,6 +397,7 @@ data class RadioInput(
         text = false,
         textArea = false,
         checkbox = false,
+        image = false,
         radio = true,
         disabled = disabled,
         options = emptyArray(),
@@ -401,6 +407,43 @@ data class RadioInput(
         menu = false,
         hidden = false,
         escapeLabel = escapeLabel,
+    )
+}
+
+data class ImageInput(
+    override val label: String,
+    override val name: String,
+    val value: String,
+    val required: Boolean = false,
+    override val help: String? = null,
+    override val hideLabel: Boolean = false,
+    val elementClasses: List<String> = emptyList(),
+    val disabled: Boolean = false,
+    val stacked: Boolean = false,
+) : IntoFormElementContext {
+    override fun toContext() = FormElementContext(
+        isFormElement = true,
+        label = label,
+        name = name,
+        help = help,
+        value = value,
+        select = false,
+        time = false,
+        required = required,
+        number = false,
+        text = false,
+        textArea = false,
+        checkbox = false,
+        radio = false,
+        image = true,
+        disabled = disabled,
+        options = emptyArray(),
+        hideLabel = hideLabel,
+        stacked = stacked,
+        elementClasses = elementClasses.joinToString(" "),
+        menu = false,
+        hidden = false,
+        escapeLabel = false,
     )
 }
 
@@ -431,6 +474,7 @@ data class TextArea(
         text = false,
         textArea = true,
         radio = false,
+        image = false,
         checkbox = false,
         options = emptyArray(),
         overrideType = overrideType?.value,
@@ -467,6 +511,7 @@ data class NumberInput(
         disabled = disabled,
         number = true,
         text = false,
+        image = false,
         textArea = false,
         checkbox = false,
         options = emptyArray(),
@@ -509,6 +554,7 @@ data class TimeInput(
         disabled = disabled,
         text = false,
         radio = false,
+        image = false,
         textArea = false,
         checkbox = false,
         options = emptyArray(),
@@ -544,6 +590,7 @@ data class Menu(
         number = false,
         disabled = disabled,
         text = false,
+        image = false,
         textArea = false,
         checkbox = false,
         radio = false,
