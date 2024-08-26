@@ -29,6 +29,7 @@ fun main() {
                     "formElement" to "components/forms/form-element.hbs",
                     "tabs" to "components/tabs/tabs.hbs",
                     "foodCost" to "components/food-cost/food-cost.hbs",
+                    "skillPickerInput" to "components/skill-picker/skill-picker-input.hbs"
                 )
             )
             game.settings.kingmakerTools.register()

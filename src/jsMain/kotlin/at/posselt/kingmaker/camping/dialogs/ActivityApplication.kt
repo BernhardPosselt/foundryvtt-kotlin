@@ -7,6 +7,7 @@ import at.posselt.kingmaker.data.actor.Perception
 import at.posselt.kingmaker.data.actor.Proficiency
 import at.posselt.kingmaker.data.actor.Skill
 import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import at.posselt.kingmaker.utils.launch
@@ -21,6 +22,8 @@ import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.array.push
 import js.core.Void
+import js.objects.Record
+import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -66,7 +69,7 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
         fun defineSchema() = buildSchema {
             string("name")
             boolean("isSecret")
-            string("journalUuid")
+            string("journalUuid", nullable = true)
             string("journalyEntryUuid", nullable = true)
             schema("modifyRandomEncounterDc") {
                 int("day")
@@ -108,9 +111,13 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
     }
 }
 
-private fun launchSkillPicker(skills: Array<ParsedCampingSkill>, afterSubmit: (Array<CampingSkill>) -> Unit) {
+private fun launchSkillPicker(
+    skills: List<ParsedCampingSkill>,
+    afterSubmit: (Array<CampingSkill>) -> Unit,
+) {
     val skillsByAttribute = skills.associateBy { it.attribute }
     val loreAttributes = skills.filter { it.attribute is Lore }.map { it.attribute }
+    console.log(skills)
     val anySkill = skills.find { it.attribute.value == "any" }?.let {
         PickerSkill(
             label = "Any",
@@ -166,35 +173,19 @@ private fun launchSkillPicker(skills: Array<ParsedCampingSkill>, afterSubmit: (A
         allowLores = true,
         skills = skills + anySkill,
         dcTypes = DcType.entries.map { it.toCamelCase() }.toTypedArray(),
-        afterSubmit = { allSkills ->
-            val anySkill = allSkills.find { it.name == "any" && it.enabled }
-            val skills = if (anySkill == null) {
-                allSkills
-                    .filter { it.name == "any" }
-                    .map {
-                        CampingSkill(
-                            name = it.name,
-                            proficiency = it.proficiency.toCamelCase(),
-                            dcType = it.dcType,
-                            dc = it.dc,
-                            validateOnly = it.validateOnly,
-                            required = it.required,
-                        )
-                    }
-                    .toTypedArray()
-            } else {
-                arrayOf(
+        afterSubmit = {
+            afterSubmit(
+                it.map {
                     CampingSkill(
-                        name = "any",
-                        proficiency = anySkill.proficiency.toCamelCase(),
-                        dcType = anySkill.dcType,
-                        dc = anySkill.dc,
-                        validateOnly = false,
-                        required = false,
+                        name = it.name,
+                        proficiency = it.proficiency.toCamelCase(),
+                        dcType = it.dcType,
+                        dc = it.dc,
+                        validateOnly = it.validateOnly,
+                        required = it.required,
                     )
-                )
-            }
-            afterSubmit(skills)
+                }.toTypedArray()
+            )
         }
     ).launch()
 }
@@ -219,7 +210,20 @@ class ActivityApplication(
 ) {
     private val editActivityName = data?.name
     private val editActivityLocked = data?.isLocked
-    private var currentActivity: CampingActivityData? = data
+    private var currentActivity: CampingActivityData = data ?: CampingActivityData(
+        name = "",
+        journalUuid = null,
+        skills = emptyArray<CampingSkill>(),
+        modifyRandomEncounterDc = null,
+        isSecret = false,
+        isLocked = false,
+        effectUuids = null,
+        isHomebrew = true,
+        criticalSuccess = null,
+        success = null,
+        failure = null,
+        criticalFailure = null,
+    )
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
@@ -230,6 +234,12 @@ class ActivityApplication(
             }
 
             "save" -> save()
+            "edit-skills" -> launchSkillPicker(
+                currentActivity.getCampingSkills(expandAny = false)
+            ) {
+                currentActivity.skills = it
+                render()
+            }
         }
     }
 
@@ -241,8 +251,7 @@ class ActivityApplication(
         val parent = super._preparePartContext(partId, context, options).await()
         val effects = game.items.contents
             .filterIsInstance<PF2EEffect>()
-        val journal = currentActivity
-            ?.journalUuid
+        val journal = currentActivity.journalUuid
             ?.let {
                 when (val journal = fromUuidTypeSafe<JournalEntryPage>(it) ?: fromUuidTypeSafe<JournalEntry>(it)) {
                     is JournalEntryPage -> Journals(journal.parent!!, journal)
@@ -255,22 +264,22 @@ class ActivityApplication(
 
         val criticalSuccess = createActivityEffectInputs(
             namePrefix = "criticalSuccess.",
-            outcome = currentActivity?.criticalSuccess,
+            outcome = currentActivity.criticalSuccess,
             allEffects = effects,
         )
         val success = createActivityEffectInputs(
             namePrefix = "success.",
-            outcome = currentActivity?.success,
+            outcome = currentActivity.success,
             allEffects = effects,
         )
         val failure = createActivityEffectInputs(
             namePrefix = "failure.",
-            outcome = currentActivity?.failure,
+            outcome = currentActivity.failure,
             allEffects = effects,
         )
         val criticalFailure = createActivityEffectInputs(
             namePrefix = "criticalFailure.",
-            outcome = currentActivity?.criticalFailure,
+            outcome = currentActivity.criticalFailure,
             allEffects = effects,
         )
         ActivityContext(
@@ -285,7 +294,7 @@ class ActivityApplication(
                             label = "Name",
                             name = "name",
                             disabled = editActivityName != null,
-                            value = currentActivity?.name ?: "",
+                            value = currentActivity.name ?: "",
                             required = true,
                             help = "To override an existing activity, use the same name",
                         ),
@@ -293,11 +302,12 @@ class ActivityApplication(
                             label = "Journal",
                             name = "journalUuid",
                             value = journal?.page?.uuid,
+                            required = false,
                             options = game.journal.contents.mapNotNull { it.toOption(useUuid = true) },
                             stacked = false,
                         ),
                         Select(
-                            label = "JournalEntry",
+                            label = "Journal Entry",
                             name = "journalEntryUuid",
                             required = false,
                             value = journal?.entry?.uuid,
@@ -305,11 +315,18 @@ class ActivityApplication(
                                 ?: emptyList(),
                             stacked = false,
                         ),
-                        // TODO: skills + clear button
+                        Component(
+                            label = "Skills",
+                            templatePartial = "skillPickerInput",
+                            value = toSkillContext(
+                                currentActivity.skills ?: emptyArray()
+                            ).unsafeCast<AnyObject>(),
+                            stacked = false,
+                        ),
                         CheckboxInput(
                             label = "Secret Check",
                             name = "isSecret",
-                            value = currentActivity?.isSecret ?: false,
+                            value = currentActivity.isSecret ?: false,
                         ),
                     ),
                 ),
@@ -318,7 +335,7 @@ class ActivityApplication(
                     formRows = formContext(
                         // TODO: effects
                         *createEncounterModifierInputs(
-                            dc = currentActivity?.modifyRandomEncounterDc,
+                            dc = currentActivity.modifyRandomEncounterDc,
                         )
                     )
                 ),
@@ -342,11 +359,37 @@ class ActivityApplication(
         )
     }
 
+    private fun toSkillContext(skills: Array<CampingSkill>): SkillInputContext {
+        val anySkill = skills.find { it.name == "any" }
+        return if (anySkill == null) {
+            SkillInputContext(
+                skills = skills
+                    .filter { it.validateOnly != true }
+                    .map {
+                        SkillInputArrayContext(
+                            label = it.name.toLabel(),
+                            proficiency = it.proficiency.toLabel(),
+                        )
+                    }
+                    .toTypedArray()
+            )
+        } else {
+            SkillInputContext(
+                skills = arrayOf(
+                    SkillInputArrayContext(
+                        label = "Any",
+                        proficiency = anySkill.proficiency.toLabel(),
+                    )
+                )
+            )
+        }
+    }
+
 
     fun save(): Promise<Void> = buildPromise {
         if (isValid()) {
             actor.getCamping()?.let { camping ->
-                currentActivity?.let { data ->
+                currentActivity.let { data ->
                     camping.homebrewCampingActivities = camping.homebrewCampingActivities
                         .filter { it.name != data.name }
                         .toTypedArray()
@@ -364,16 +407,16 @@ class ActivityApplication(
         currentActivity = CampingActivityData(
             name = editActivityName ?: value.name,
             journalUuid = value.journalEntryUuid ?: value.journalUuid,
-            skills = currentActivity?.skills ?: emptyArray(),
+            skills = currentActivity.skills,
             modifyRandomEncounterDc = value.modifyRandomEncounterDc,
             isSecret = value.isSecret,
             isLocked = editActivityLocked == true,
-            effectUuids = currentActivity?.effectUuids,
+            effectUuids = currentActivity.effectUuids,
             isHomebrew = true,
-            criticalSuccess = parseOutcome(currentActivity?.criticalSuccess, value.criticalSuccess),
-            success = parseOutcome(currentActivity?.success, value.success),
-            failure = parseOutcome(currentActivity?.failure, value.failure),
-            criticalFailure = parseOutcome(currentActivity?.criticalFailure, value.criticalFailure),
+            criticalSuccess = parseOutcome(currentActivity.criticalSuccess, value.criticalSuccess),
+            success = parseOutcome(currentActivity.success, value.success),
+            failure = parseOutcome(currentActivity.failure, value.failure),
+            criticalFailure = parseOutcome(currentActivity.criticalFailure, value.criticalFailure),
         )
         undefined
     }

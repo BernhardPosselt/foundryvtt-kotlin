@@ -68,6 +68,7 @@
         input[type="time"],
         input[type="number"],
         select,
+        div,
         textarea {
             margin-left: 0.5em;
             width: 180px;

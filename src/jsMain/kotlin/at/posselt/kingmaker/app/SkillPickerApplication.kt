@@ -5,7 +5,10 @@ import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.slugify
 import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
+import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.data.dsl.buildSchema
 import com.foundryvtt.core.utils.deepClone
 import js.array.push
 import js.core.Void
@@ -17,6 +20,17 @@ import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.Boolean
 import kotlin.String
 import kotlin.js.Promise
+
+@JsPlainObject
+external interface SkillInputArrayContext {
+    val label: String
+    val proficiency: String
+}
+
+@JsPlainObject
+external interface SkillInputContext {
+    val skills: Array<SkillInputArrayContext>
+}
 
 @JsPlainObject
 external interface PickerSkill {
@@ -69,6 +83,32 @@ external interface SkillPickerSubmitData {
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
+class SkillPickerDataModel(val value: AnyObject) : DataModel(value) {
+    companion object {
+        @Suppress("unused")
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun defineSchema() = buildSchema {
+            array("skills") {
+                schema {
+                    string("label")
+                    string("name")
+                    boolean("enabled")
+                    boolean("isLore")
+                    string("dcType")
+                    int("dc", nullable = true)
+                    string("proficiency")
+                    boolean("required")
+                    boolean("validateOnly")
+                }
+            }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 class SkillPickerApplication(
     skills: Array<PickerSkill>,
     private val allowLores: Boolean = false,
@@ -80,6 +120,7 @@ class SkillPickerApplication(
     width = 1000,
     debug = true,
     classes = arrayOf("skill-picker"),
+    dataModel = SkillPickerDataModel::class.js,
 ) {
     var currentSkills = deepClone(skills)
     var atLeastOneSkillError = false
@@ -88,7 +129,9 @@ class SkillPickerApplication(
         when (target.dataset["action"]) {
             "save" -> buildPromise {
                 if (isFormValid) {
-                    afterSubmit(currentSkills)
+                    val skills = currentSkills.find { it.name == "any" && it.enabled }?.let { arrayOf(it) }
+                        ?: currentSkills.filter { it.enabled }.toTypedArray()
+                    afterSubmit(skills)
                     close().await()
                 }
             }

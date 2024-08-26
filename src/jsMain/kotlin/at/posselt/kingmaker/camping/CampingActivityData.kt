@@ -45,18 +45,18 @@ external interface CampingSkill {
 
 @JsPlainObject
 external interface CampingActivityData {
-    val name: String
-    val journalUuid: String?
-    val skills: Array<CampingSkill>
-    val modifyRandomEncounterDc: ModifyEncounterDc?
-    val isSecret: Boolean
-    val isLocked: Boolean
-    val effectUuids: Array<ActivityEffect>?
-    val isHomebrew: Boolean
-    val criticalSuccess: ActivityOutcome?
-    val success: ActivityOutcome?
-    val failure: ActivityOutcome?
-    val criticalFailure: ActivityOutcome?
+    var name: String
+    var journalUuid: String?
+    var skills: Array<CampingSkill>
+    var modifyRandomEncounterDc: ModifyEncounterDc?
+    var isSecret: Boolean
+    var isLocked: Boolean
+    var effectUuids: Array<ActivityEffect>?
+    var isHomebrew: Boolean
+    var criticalSuccess: ActivityOutcome?
+    var success: ActivityOutcome?
+    var failure: ActivityOutcome?
+    var criticalFailure: ActivityOutcome?
 }
 
 fun CampingActivityData.isPrepareCamp() =
@@ -112,7 +112,10 @@ data class ActivityAndData(
     fun isNotPrepareCamp() = !isPrepareCamp()
 }
 
-fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<ParsedCampingSkill> {
+fun CampingActivityData.getCampingSkills(
+    actor: PF2ECreature? = null,
+    expandAny: Boolean = true,
+): List<ParsedCampingSkill> {
     val theSkills = skills
     if (theSkills.isEmpty()) return emptyList()
     // if an actor exists, fetch all lore skills for the dropdown, otherwise go
@@ -121,18 +124,7 @@ fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<Pars
         ?: getLoreSkills()
     val allAttributes = Skill.entries + lores + Perception
     val anySkill = theSkills.find { it.name == "any" }
-    return if (anySkill != null) {
-        allAttributes.map {
-            ParsedCampingSkill(
-                attribute = it,
-                proficiency = fromCamelCase<Proficiency>(anySkill.proficiency) ?: Proficiency.UNTRAINED,
-                dcType = fromCamelCase<DcType>(anySkill.dcType) ?: DcType.NONE,
-                dc = anySkill.dc,
-                validateOnly = anySkill.validateOnly == true,
-                required = false,
-            )
-        }
-    } else {
+    return if (anySkill == null) {
         val activitySkills = theSkills.associateBy { Attribute.fromString(it.name) }
         allAttributes.mapNotNull { attribute ->
             activitySkills[attribute]?.let { skill ->
@@ -146,6 +138,28 @@ fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<Pars
                 )
             }
         }
+    } else if (expandAny) {
+        allAttributes.map {
+            ParsedCampingSkill(
+                attribute = it,
+                proficiency = fromCamelCase<Proficiency>(anySkill.proficiency) ?: Proficiency.UNTRAINED,
+                dcType = fromCamelCase<DcType>(anySkill.dcType) ?: DcType.NONE,
+                dc = anySkill.dc,
+                validateOnly = anySkill.validateOnly == true,
+                required = false,
+            )
+        }
+    } else {
+        listOf(
+            ParsedCampingSkill(
+                attribute = Attribute.fromString("any"),
+                proficiency = fromCamelCase<Proficiency>(anySkill.proficiency) ?: Proficiency.UNTRAINED,
+                dcType = fromCamelCase<DcType>(anySkill.dcType) ?: DcType.NONE,
+                dc = anySkill.dc,
+                validateOnly = anySkill.validateOnly == true,
+                required = false,
+            )
+        )
     }
 }
 

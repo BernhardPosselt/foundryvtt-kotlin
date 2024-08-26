@@ -3,6 +3,7 @@
 @import "./components/tabs/style.css";
 @import "./components/food-cost/food-cost.css";
 @import "./components/skill-picker/skill-picker.css";
+@import "./components/skill-picker/skill-picker-input.css";
 
 :root {
     --primary-km: #275125;

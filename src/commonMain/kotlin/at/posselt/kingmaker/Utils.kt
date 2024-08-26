@@ -21,7 +21,9 @@ fun <T : Enum<T>> Enum<T>.toLabel(): String =
     name.split("_")
         .joinToString(" ") { it.lowercase().toLabel() }
 
-fun String.toLabel() = replaceFirstChar(Char::uppercase)
+fun String.toLabel() =
+    split(" ")
+        .joinToString(" ") { replaceFirstChar(Char::uppercase) }
 
 inline fun <reified T : Enum<T>> fromOrdinal(index: Int): T? =
     enumEntries<T>().getOrNull(index)

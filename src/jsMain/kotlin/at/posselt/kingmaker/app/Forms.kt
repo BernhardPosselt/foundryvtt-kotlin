@@ -57,6 +57,7 @@ external interface FormElementContext {
     val number: Boolean
     val time: Boolean
     val text: Boolean
+    val component: Boolean
     val textArea: Boolean
     val checkbox: Boolean
     val options: Array<Option>
@@ -72,6 +73,7 @@ external interface FormElementContext {
     val link: DocumentLinkContext?
     val escapeLabel: Boolean
     val image: Boolean
+    val templatePartial: String?
 }
 
 enum class OverrideType(val value: String) {
@@ -148,6 +150,7 @@ data class Select(
             null
         },
         escapeLabel = escapeLabel,
+        component = false,
     )
 
     companion object {
@@ -295,6 +298,7 @@ data class TextInput(
         hidden = false,
         radio = false,
         escapeLabel = escapeLabel,
+        component = false,
     )
 }
 
@@ -331,6 +335,7 @@ data class HiddenInput(
         menu = false,
         escapeLabel = escapeLabel,
         overrideType = overrideType?.value,
+        component = false,
     )
 }
 
@@ -370,6 +375,7 @@ data class CheckboxInput(
         menu = false,
         hidden = false,
         escapeLabel = escapeLabel,
+        component = false,
     )
 }
 
@@ -408,6 +414,7 @@ data class RadioInput(
         menu = false,
         hidden = false,
         escapeLabel = escapeLabel,
+        component = false,
     )
 }
 
@@ -445,6 +452,7 @@ data class ImageInput(
         menu = false,
         hidden = false,
         escapeLabel = false,
+        component = false,
     )
 }
 
@@ -485,6 +493,7 @@ data class TextArea(
         menu = false,
         hidden = false,
         escapeLabel = escapeLabel,
+        component = false,
     )
 }
 
@@ -523,6 +532,7 @@ data class NumberInput(
         hidden = false,
         radio = false,
         escapeLabel = escapeLabel,
+        component = false,
     )
 }
 
@@ -565,17 +575,17 @@ data class TimeInput(
         menu = false,
         hidden = false,
         escapeLabel = escapeLabel,
+        component = false,
     )
 }
 
-data class Menu(
+data class Component(
     override val label: String,
-    override val name: String,
-    val value: String,
+    override val name: String = "",
+    val value: AnyObject,
+    val templatePartial: String,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
-    val elementClasses: List<String> = emptyList(),
-    val disabled: Boolean = false,
     val stacked: Boolean = true,
     val escapeLabel: Boolean = true,
 ) : IntoFormElementContext {
@@ -589,7 +599,7 @@ data class Menu(
         time = false,
         required = false,
         number = false,
-        disabled = disabled,
+        disabled = false,
         text = false,
         image = false,
         textArea = false,
@@ -598,12 +608,15 @@ data class Menu(
         options = emptyArray(),
         hideLabel = hideLabel,
         stacked = stacked,
-        elementClasses = elementClasses.joinToString(" "),
-        menu = true,
+        elementClasses = "",
+        menu = false,
         hidden = false,
         escapeLabel = escapeLabel,
+        templatePartial = templatePartial,
+        component = true,
     )
 }
+
 
 data class Section(
     val legend: String,
