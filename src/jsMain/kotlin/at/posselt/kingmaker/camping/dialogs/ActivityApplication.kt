@@ -221,12 +221,6 @@ class ActivityApplication(
     private val editActivityLocked = data?.isLocked
     private var currentActivity: CampingActivityData? = data
 
-    init {
-        launchSkillPicker(emptyArray()) {
-            console.log(it)
-        }
-    }
-
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
             "openDocumentLink" -> buildPromise {
@@ -311,7 +305,7 @@ class ActivityApplication(
                                 ?: emptyList(),
                             stacked = false,
                         ),
-                        // TODO: skills
+                        // TODO: skills + clear button
                         CheckboxInput(
                             label = "Secret Check",
                             name = "isSecret",
@@ -370,11 +364,11 @@ class ActivityApplication(
         currentActivity = CampingActivityData(
             name = editActivityName ?: value.name,
             journalUuid = value.journalEntryUuid ?: value.journalUuid,
-            skills = emptyArray(), // TODO
+            skills = currentActivity?.skills ?: emptyArray(),
             modifyRandomEncounterDc = value.modifyRandomEncounterDc,
             isSecret = value.isSecret,
             isLocked = editActivityLocked == true,
-            effectUuids = emptyArray(), // TODO
+            effectUuids = currentActivity?.effectUuids,
             isHomebrew = true,
             criticalSuccess = parseOutcome(currentActivity?.criticalSuccess, value.criticalSuccess),
             success = parseOutcome(currentActivity?.success, value.success),

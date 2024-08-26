@@ -49,7 +49,7 @@ fun PF2ECreature.satisfiesAnyActivitySkillRequirement(
     disableSkillRequirements: Boolean,
 ): Boolean {
     val campingSkills = activity.getCampingSkills()
-    return if (disableSkillRequirements == true || campingSkills == null) {
+    return if (disableSkillRequirements == true || campingSkills.isEmpty()) {
         true
     } else {
         campingSkills.any { satisfiesSkillRequirement(it) }
@@ -68,15 +68,13 @@ fun PF2ECreature.findCampingActivitySkills(
     activity: CampingActivityData,
     disableSkillRequirements: Boolean,
 ): List<ParsedCampingSkill> {
-    return activity.getCampingSkills(this)
-        ?.filter {
-            if (disableSkillRequirements) {
-                true
-            } else {
-                satisfiesSkillRequirement(it)
-            }
+    return activity.getCampingSkills(this).filter {
+        if (disableSkillRequirements) {
+            true
+        } else {
+            satisfiesSkillRequirement(it)
         }
-        ?: emptyList()
+    }
 }
 
 data class CampingCheckData(
@@ -90,7 +88,7 @@ fun PF2ECreature.getCampingCheckData(camping: CampingData, activityName: String)
     val data = camping.groupActivities().find { it.data.name == activityName && it.result.actorUuid == uuid }
     val skill = data?.result?.selectedSkill
         ?.let { Attribute.fromString(it) }
-        ?.let { attr -> data.data.getCampingSkills(this)?.find { it.attribute == attr } }
+        ?.let { attr -> data.data.getCampingSkills(this).find { it.attribute == attr } }
     return if (skill != null && region != null) {
         CampingCheckData(
             region = region,

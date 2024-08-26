@@ -4,6 +4,7 @@
   "isLocked": true,
   "isSecret": false,
   "isHomebrew": false,
+  "skills": [],
   "modifyRandomEncounterDc": {
     "day": 0,
     "night": 2

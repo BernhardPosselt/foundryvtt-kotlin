@@ -4,6 +4,7 @@
   "isLocked": true,
   "isSecret": false,
   "isHomebrew": false,
+  "skills": [],
   "effectUuids": [
     {
       "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-camping-effects.Item.NFPQHxvpJd2vsKMe"

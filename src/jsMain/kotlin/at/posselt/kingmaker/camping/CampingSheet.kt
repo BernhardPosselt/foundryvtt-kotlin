@@ -712,7 +712,7 @@ fun getActivitySkills(
     groupedActivity: ActivityAndData,
     ignoreSkillRequirements: Boolean,
 ): FormElementContext? {
-    return groupedActivity.data.getCampingSkills(actor)?.let { skillsAndProficiencies ->
+    return groupedActivity.data.getCampingSkills(actor).let { skillsAndProficiencies ->
         val options = skillsAndProficiencies
             .filter {
                 if (ignoreSkillRequirements || actor == null) {

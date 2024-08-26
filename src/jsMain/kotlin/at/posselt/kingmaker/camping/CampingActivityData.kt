@@ -47,7 +47,7 @@ external interface CampingSkill {
 external interface CampingActivityData {
     val name: String
     val journalUuid: String?
-    val skills: Array<CampingSkill>?
+    val skills: Array<CampingSkill>
     val modifyRandomEncounterDc: ModifyEncounterDc?
     val isSecret: Boolean
     val isLocked: Boolean
@@ -112,9 +112,9 @@ data class ActivityAndData(
     fun isNotPrepareCamp() = !isPrepareCamp()
 }
 
-fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<ParsedCampingSkill>? {
+fun CampingActivityData.getCampingSkills(actor: PF2ECreature? = null): List<ParsedCampingSkill> {
     val theSkills = skills
-    if (theSkills == null) return null
+    if (theSkills.isEmpty()) return emptyList()
     // if an actor exists, fetch all lore skills for the dropdown, otherwise go
     // with the one on the activity
     val lores: List<Attribute> = actor?.getLoreAttributes()
@@ -163,20 +163,18 @@ fun CampingData.groupActivities(): List<ActivityAndData> {
 }
 
 fun CampingActivityData.getLoreSkills(): List<Lore> =
-    if (skills?.any { it.name == "any" } != false) {
+    if (skills.any { it.name == "any" } != false) {
         emptyList()
     } else {
-        skills
-            ?.map { Attribute.fromString(it.name) }
-            ?.filterIsInstance<Lore>()
-            ?: emptyList()
+        skills.map { Attribute.fromString(it.name) }
+            .filterIsInstance<Lore>()
     }
 
 fun CampingActivityData.doesNotRequireACheck(): Boolean =
     !requiresACheck()
 
 fun CampingActivityData.requiresACheck(): Boolean =
-    skills?.filter { it.validateOnly != true }?.isNotEmpty() == true
+    skills.filter { it.validateOnly != true }.isNotEmpty()
 
 @JsModule("./data/camping-activities.json")
 external val campingActivityData: Array<CampingActivityData>

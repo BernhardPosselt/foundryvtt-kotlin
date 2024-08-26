@@ -34,7 +34,7 @@ class Migration11 : Migration(11) {
             }
         }.toMap()
         camping.homebrewCampingActivities.forEach { activity ->
-            activity.skills = newSkills[activity.name]?.takeIf { it.isNotEmpty() } ?: emptyArray<CampingSkill>()
+            activity.skills = newSkills[activity.name] ?: emptyArray<CampingSkill>()
         }
         camping.cooking.minimumSubsistence = 0
     }

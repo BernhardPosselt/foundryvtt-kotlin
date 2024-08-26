@@ -12,7 +12,8 @@
         "name",
         "isHomebrew",
         "isSecret",
-        "isLocked"
+        "isLocked",
+        "skills"
       ],
       "properties": {
         "name": {
