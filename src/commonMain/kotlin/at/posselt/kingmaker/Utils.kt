@@ -19,14 +19,18 @@ fun <T : Enum<T>> Enum<T>.toCamelCase(): String =
 
 fun <T : Enum<T>> Enum<T>.toLabel(): String =
     name.split("_")
-        .joinToString(" ") { it.lowercase().replaceFirstChar(Char::uppercase) }
+        .joinToString(" ") { it.lowercase().toLabel() }
+
+fun String.toLabel() = replaceFirstChar(Char::uppercase)
 
 inline fun <reified T : Enum<T>> fromOrdinal(index: Int): T? =
     enumEntries<T>().getOrNull(index)
 
+val specialCharacterRegex = "[\$&+,:;=?@#|'<>.^*()%!-]".toRegex()
 
 fun String.slugify(): String =
-    split(" ")
+    replace(specialCharacterRegex, "")
+        .split(" ")
         .filter { it.isNotBlank() }
         .joinToString("-") { it.trim().lowercase() }
 

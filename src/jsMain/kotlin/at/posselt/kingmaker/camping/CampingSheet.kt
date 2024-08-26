@@ -220,31 +220,6 @@ class CampingSheet(
         appHook.onCreateItem { _, _, _, _ -> render() }
         appHook.onDeleteItem { _, _, _ -> render() }
         appHook.onUpdateItem { _, _, _, _ -> render() }
-
-        val anySkill = PickerSkill(
-            label = "Any",
-            name = "any",
-            enabled = false,
-            isLore = false,
-            proficiency = Proficiency.UNTRAINED,
-            required = true,
-            validateOnly = true,
-        )
-        SkillPickerApplication(
-            allowLores = true,
-            skills = (Skill.entries + Perception).map {
-                PickerSkill(
-                    label = it.label,
-                    name = it.value,
-                    enabled = true,
-                    isLore = false,
-                    proficiency = Proficiency.EXPERT,
-                    required = true,
-                    validateOnly = true,
-                )
-            }.toTypedArray() + anySkill,
-            afterSubmit = {}
-        ).launch()
     }
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {

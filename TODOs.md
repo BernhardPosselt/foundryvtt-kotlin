@@ -1,21 +1,8 @@
-# OGL questions
-
-Kingmaker
-
-* Allowed to use random encounter roll tables?
-* Allowed to use random kingdom events or are these considered storylines?
-* Proper module name: is Kingmaker Tools (Unofficial) ok or do I need to rename it as "Kingdom Building, Camping &
-  Weather" - "No!!!"
-* Am I allowed to reference ip purely in code? e.g. name a piece of code kingmakerSomething()
-
 # TODO
 
-* configure recipe icon
 * Update manual
 * Add upgrading notice
 * Always display manual in chat unless specifically disabled
-* Remove page numbers from random encounter tables
-* Remove any mentions of Kingmaker compatibility
 * Migrate structure image conversion macro
 * Rename module to "Kingdom Building, Camping & Weather"
 * Test camping & rolling random encounters
@@ -29,7 +16,7 @@ Clean the followings things off OGLism:
 
 ## Camping
 
-* Display checkboxes when all PCs have selected a meal
+* Display meal icon above PC portrait when all PCs have selected a meal
 * Changing the degree of success value of an activity should post random encounters or other values to chat if required
 * Don't consider locked activities for effect syncing unless companion checkboxes are clicked
 * Sync camping effects

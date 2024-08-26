@@ -330,6 +330,7 @@ data class HiddenInput(
         elementClasses = "",
         menu = false,
         escapeLabel = escapeLabel,
+        overrideType = overrideType?.value,
     )
 }
 
@@ -715,6 +716,25 @@ fun Actor.toOption(useUuid: Boolean = false) =
             SelectOption(label = name, value = it)
         }
     }
+
+fun JournalEntry.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        SelectOption(label = name, value = uuid)
+    } else {
+        id?.let {
+            SelectOption(label = name, value = it)
+        }
+    }
+
+fun JournalEntryPage.toOption(useUuid: Boolean = false) =
+    if (useUuid) {
+        SelectOption(label = name, value = uuid)
+    } else {
+        id?.let {
+            SelectOption(label = name, value = it)
+        }
+    }
+
 
 fun Item.toOption(useUuid: Boolean = false) =
     if (useUuid) {

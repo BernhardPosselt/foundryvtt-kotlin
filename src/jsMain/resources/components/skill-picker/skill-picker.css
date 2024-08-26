@@ -1,10 +1,26 @@
 .skill-picker {
+    .km-picker-error {
+        color: #cc1717;
+        text-align: center;
+        padding: 1em 0;
+    }
+
+    button {
+        i {
+            margin-right: 0;
+        }
+    }
+
+    .km-delete-placeholder {
+        width: 2.1em;
+    }
+
     .km-hidden {
         display: none;
     }
 
     .km-any-skill-spacer {
-        width: 15em;
+        width: 19.3em;
     }
 
     .km-skill-picker-row {
@@ -16,12 +32,13 @@
         padding: .5em;
         justify-content: space-between;
 
-        .km-proficiency {
-            width: 10em;
+        select {
+            width: 8em;
         }
 
+
         input[type=text] {
-            width: 8.7em;
+            width: 8.4em;
         }
 
         & > label:first-child {

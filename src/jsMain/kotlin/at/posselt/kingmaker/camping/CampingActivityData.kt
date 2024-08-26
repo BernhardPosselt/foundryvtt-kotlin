@@ -84,8 +84,8 @@ fun ModifyEncounterDc.atTime(isDay: Boolean) =
     }
 
 enum class DcType {
-    ACTOR_LEVEL,
     ZONE,
+    ACTOR_LEVEL,
     NONE,
     STATIC
 }

@@ -7,7 +7,13 @@
   "skills": [
     {
       "name": "cooking",
-      "proficiency": "trained",
+      "proficiency": "untrained",
+      "dcType": "none",
+      "validateOnly": true
+    },
+    {
+      "name": "survival",
+      "proficiency": "untrained",
       "dcType": "none",
       "validateOnly": true
     }
