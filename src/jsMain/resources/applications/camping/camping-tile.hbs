@@ -3,7 +3,12 @@
     {{#if actor}}data-actor-uuid="{{actor.uuid}}"{{/if}}
      data-activity-name="{{name}}"
 >
-    <header><a href="#" data-uuid="{{journalUuid}}" data-action="open-journal">{{name}}</a>
+    <header>
+        {{#if journalUuid}}
+            <a href="#" data-uuid="{{journalUuid}}" data-action="open-journal">{{name}}</a>
+        {{else}}
+            {{name}}
+        {{/if}}
     </header>
     <div class="km-camping-tile-portrait {{#unless requiresCheck}}km-no-skill-check{{/unless}}">
         {{#if actor}}

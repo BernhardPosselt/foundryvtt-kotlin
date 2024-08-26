@@ -375,6 +375,8 @@ ul.km-camping-actors {
 
                 &.km-no-skill-check {
                     border-bottom: 0;
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
                     background-color: black;
                     display: flex;
                     align-items: center;
