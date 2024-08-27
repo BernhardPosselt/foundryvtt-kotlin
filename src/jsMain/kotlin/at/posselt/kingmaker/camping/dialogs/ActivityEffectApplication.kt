@@ -138,6 +138,7 @@ class ActivityEffectApplication(
                     stacked = false,
                     value = currentActivityEffect?.target?.let { fromCamelCase<ActivityEffectTarget>(it) }
                         ?: ActivityEffectTarget.ALL,
+                    help = "Allies excludes yourself",
                 ),
                 CheckboxInput(
                     name = "doublesHealing",

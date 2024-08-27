@@ -447,7 +447,7 @@ private fun createActivityEffectInputs(
         TextArea(
             name = "${namePrefix}message",
             label = "Chat Message",
-            value = "",
+            value = outcome?.message ?: "",
             stacked = false,
         ),
         CheckboxInput(

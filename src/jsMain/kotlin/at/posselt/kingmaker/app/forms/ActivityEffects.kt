@@ -1,6 +1,8 @@
 package at.posselt.kingmaker.app.forms
 
 import at.posselt.kingmaker.camping.ActivityEffect
+import at.posselt.kingmaker.camping.dialogs.ActivityEffectTarget
+import at.posselt.kingmaker.toLabel
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.pf2e.item.PF2EEffect
 import kotlinx.js.JsPlainObject
@@ -10,6 +12,7 @@ external interface ActivityEffectItem {
     val uuid: String
     val img: String
     val label: String
+    val target: String
 }
 
 @JsPlainObject
@@ -50,6 +53,7 @@ fun toActivityEffectContext(
                 uuid = effect.uuid,
                 img = effectItem.img,
                 label = effectItem.name!!,
+                target = effect.target?.toLabel() ?: ActivityEffectTarget.ALL.toLabel(),
             )
         }
     }.toTypedArray()
