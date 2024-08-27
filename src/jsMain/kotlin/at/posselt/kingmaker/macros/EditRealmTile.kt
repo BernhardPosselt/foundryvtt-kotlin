@@ -1,8 +1,8 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.app.Select
-import at.posselt.kingmaker.app.SelectOption
-import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.SelectOption
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.app.prompt
 import at.posselt.kingmaker.deCamelCase
 import at.posselt.kingmaker.utils.RealmTileData

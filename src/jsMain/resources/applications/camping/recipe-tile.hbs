@@ -7,7 +7,8 @@
         {{/if}}
     </header>
     <div class="km-recipe-content">
-        <section class="km-recipe-data {{#unless requiresCheck}}km-no-skill-check{{/unless}}">
+        <section class="km-recipe-data {{#unless requiresCheck}}km-no-skill-check{{/unless}} {{#if
+                cost}}km-with-food-cost{{/if}}">
             <div class="km-camping-tile-portrait">
                 <ul class="km-recipe-actors">
                     <li>

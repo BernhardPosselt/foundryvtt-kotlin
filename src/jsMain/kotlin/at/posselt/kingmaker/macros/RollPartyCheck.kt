@@ -2,6 +2,10 @@ package at.posselt.kingmaker.macros
 
 import at.posselt.kingmaker.actor.rollChecks
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.forms.CheckboxInput
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.SelectOption
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.data.actor.Attribute
 import at.posselt.kingmaker.data.actor.Perception
 import at.posselt.kingmaker.data.actor.Skill

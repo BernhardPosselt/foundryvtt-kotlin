@@ -2,9 +2,19 @@ package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.CheckboxInput
+import at.posselt.kingmaker.app.forms.NumberInput
+import at.posselt.kingmaker.app.forms.Section
+import at.posselt.kingmaker.app.forms.SectionsContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.SelectOption
+import at.posselt.kingmaker.app.forms.formContext
+import at.posselt.kingmaker.app.forms.toOption
 import at.posselt.kingmaker.camping.*
 import at.posselt.kingmaker.data.checks.RollMode
 import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.utils.asSequence
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidsOfTypes
@@ -54,7 +64,7 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
         fun defineSchema() = buildSchema {
             int("gunsToClean")
             string("restRollMode") {
-                choices = arrayOf("none", "one", "one-every-4-hours")
+                choices = RestRollMode.entries.map { it.toCamelCase() }.toTypedArray()
             }
             int("increaseWatchActorNumber")
             stringArray("actorUuidsNotKeepingWatch")
@@ -71,6 +81,12 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
 @JsPlainObject
 external interface CampingSettingsContext : HandlebarsRenderContext, SectionsContext {
     val isFormValid: Boolean
+}
+
+enum class RestRollMode {
+    NONE,
+    ONE,
+    ONE_EVERY_FOUR_HOURS,
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -198,15 +214,10 @@ class CampingSettingsApplication(
                             value = settings.increaseWatchActorNumber,
                             stacked = false,
                         ),
-                        Select(
+                        Select.fromEnum<RestRollMode>(
                             name = "restRollMode",
-                            label = "Encounters During Rest",
-                            value = settings.restRollMode,
-                            options = listOf(
-                                SelectOption(label = "None", value = "none"),
-                                SelectOption(label = "1 Check", value = "one"),
-                                SelectOption(label = "1 Check Every 4 Hours", value = "one-every-4-hours"),
-                            ),
+                            label = "Roll Random Encounter During Rest",
+                            value = fromCamelCase<RestRollMode>(settings.restRollMode),
                             stacked = false,
                         ),
                         *actors.mapIndexed { index, actor ->

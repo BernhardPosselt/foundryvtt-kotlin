@@ -1,6 +1,6 @@
 package at.posselt.kingmaker.camping.dialogs
 
-import at.posselt.kingmaker.app.CheckboxInput
+import at.posselt.kingmaker.app.forms.CheckboxInput
 import at.posselt.kingmaker.app.CrudApplication
 import at.posselt.kingmaker.app.CrudData
 import at.posselt.kingmaker.app.CrudItem

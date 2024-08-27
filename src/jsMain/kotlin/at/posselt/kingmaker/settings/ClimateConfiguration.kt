@@ -1,6 +1,8 @@
 package at.posselt.kingmaker.settings
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.Select
 import at.posselt.kingmaker.camping.dialogs.TableHead
 import at.posselt.kingmaker.data.regions.Month
 import at.posselt.kingmaker.data.regions.Season

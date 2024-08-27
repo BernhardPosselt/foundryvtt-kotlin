@@ -1,9 +1,9 @@
 package at.posselt.kingmaker.macros
 
 import at.posselt.kingmaker.SetTimeOfDayMode
-import at.posselt.kingmaker.app.TimeInput
+import at.posselt.kingmaker.app.forms.TimeInput
 import at.posselt.kingmaker.app.WaitButton
-import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.app.wait
 import at.posselt.kingmaker.secondsBetweenNowAndTarget
 import at.posselt.kingmaker.toUtcInstant

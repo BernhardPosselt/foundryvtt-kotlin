@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.app.NumberInput
-import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.forms.NumberInput
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.app.prompt
 import at.posselt.kingmaker.utils.postChatMessage
 import at.posselt.kingmaker.utils.typeSafeUpdate

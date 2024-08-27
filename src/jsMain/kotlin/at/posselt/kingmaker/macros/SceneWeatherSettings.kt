@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.app.CheckboxInput
-import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.forms.CheckboxInput
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.app.prompt
 import at.posselt.kingmaker.weather.SceneWeatherSettings
 import at.posselt.kingmaker.weather.getWeatherSettings

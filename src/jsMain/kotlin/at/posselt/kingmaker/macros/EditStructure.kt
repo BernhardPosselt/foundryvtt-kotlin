@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.app.TextArea
-import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.forms.TextArea
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.app.prompt
 import at.posselt.kingmaker.kingdom.*
 import at.posselt.kingmaker.takeIfInstance

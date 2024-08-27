@@ -2,6 +2,7 @@ package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.forms.CheckboxInput
 import at.posselt.kingmaker.camping.RecipeData
 import at.posselt.kingmaker.camping.buildFoodCost
 import at.posselt.kingmaker.camping.cookingCost

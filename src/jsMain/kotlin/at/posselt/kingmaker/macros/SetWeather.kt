@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.macros
 
-import at.posselt.kingmaker.app.Select
-import at.posselt.kingmaker.app.formContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.formContext
 import at.posselt.kingmaker.app.prompt
 import at.posselt.kingmaker.data.regions.WeatherEffect
 import at.posselt.kingmaker.fromCamelCase

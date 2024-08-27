@@ -1,10 +1,26 @@
 package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.app.forms.CheckboxInput
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.forms.HiddenInput
+import at.posselt.kingmaker.app.forms.OverrideType
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.SelectOption
+import at.posselt.kingmaker.app.forms.TextInput
+import at.posselt.kingmaker.app.forms.formContext
+import at.posselt.kingmaker.camping.CampingSkill
+import at.posselt.kingmaker.camping.DcType
+import at.posselt.kingmaker.camping.ParsedCampingSkill
+import at.posselt.kingmaker.data.actor.Lore
+import at.posselt.kingmaker.data.actor.Perception
 import at.posselt.kingmaker.data.actor.Proficiency
+import at.posselt.kingmaker.data.actor.Skill
 import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.slugify
+import at.posselt.kingmaker.toCamelCase
 import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
+import at.posselt.kingmaker.utils.launch
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
@@ -17,9 +33,9 @@ import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
-import kotlin.Boolean
-import kotlin.String
 import kotlin.js.Promise
+import kotlin.text.toInt
+
 
 @JsPlainObject
 external interface SkillInputArrayContext {
@@ -27,10 +43,6 @@ external interface SkillInputArrayContext {
     val proficiency: String
 }
 
-@JsPlainObject
-external interface SkillInputContext {
-    val skills: Array<SkillInputArrayContext>
-}
 
 @JsPlainObject
 external interface PickerSkill {
@@ -325,4 +337,82 @@ class SkillPickerApplication(
         }
     }
 
+}
+
+fun launchCampingSkillPicker(
+    skills: List<ParsedCampingSkill>,
+    afterSubmit: (Array<CampingSkill>) -> Unit,
+) {
+    val skillsByAttribute = skills.associateBy { it.attribute }
+    val loreAttributes = skills.filter { it.attribute is Lore }.map { it.attribute }
+    val anySkill = skills.find { it.attribute.value == "any" }?.let {
+        PickerSkill(
+            label = "Any",
+            name = "any",
+            enabled = true,
+            isLore = false,
+            proficiency = it.proficiency,
+            required = false,
+            validateOnly = false,
+            dcType = it.dcType.toCamelCase(),
+            dc = it.dc,
+        )
+    } ?: PickerSkill(
+        label = "Any",
+        name = "any",
+        enabled = false,
+        isLore = false,
+        proficiency = Proficiency.UNTRAINED,
+        required = false,
+        validateOnly = false,
+        dcType = "zone",
+        dc = null,
+    )
+    val skills = (Skill.entries + Perception + loreAttributes).mapNotNull { attribute ->
+        val existingValue = skillsByAttribute[attribute]
+        if (existingValue == null) {
+            PickerSkill(
+                label = attribute.label,
+                name = attribute.value,
+                enabled = false,
+                isLore = attribute is Lore,
+                proficiency = Proficiency.UNTRAINED,
+                required = false,
+                validateOnly = false,
+                dcType = "zone",
+                dc = null,
+            )
+        } else {
+            PickerSkill(
+                label = existingValue.attribute.label,
+                name = existingValue.attribute.value,
+                enabled = true,
+                isLore = attribute is Lore,
+                proficiency = existingValue.proficiency,
+                required = existingValue.required,
+                validateOnly = existingValue.validateOnly,
+                dcType = existingValue.dcType.toCamelCase(),
+                dc = existingValue.dc,
+            )
+        }
+    }.toTypedArray()
+    SkillPickerApplication(
+        allowLores = true,
+        skills = skills + anySkill,
+        dcTypes = DcType.entries.map { it.toCamelCase() }.toTypedArray(),
+        afterSubmit = {
+            afterSubmit(
+                it.map {
+                    CampingSkill(
+                        name = it.name,
+                        proficiency = it.proficiency.toCamelCase(),
+                        dcType = it.dcType,
+                        dc = it.dc,
+                        validateOnly = it.validateOnly,
+                        required = it.required,
+                    )
+                }.toTypedArray()
+            )
+        }
+    ).launch()
 }

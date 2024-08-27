@@ -1,16 +1,28 @@
 package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.ActivityEffects
+import at.posselt.kingmaker.app.forms.CheckboxInput
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.forms.NumberInput
+import at.posselt.kingmaker.app.forms.SectionContext
+import at.posselt.kingmaker.app.forms.SectionsContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.SkillPicker
+import at.posselt.kingmaker.app.forms.TextArea
+import at.posselt.kingmaker.app.forms.TextInput
+import at.posselt.kingmaker.app.forms.formContext
+import at.posselt.kingmaker.app.forms.toActivityEffectContext
+import at.posselt.kingmaker.app.forms.toOption
+import at.posselt.kingmaker.app.forms.toSkillContext
+import at.posselt.kingmaker.app.launchCampingSkillPicker
 import at.posselt.kingmaker.camping.*
-import at.posselt.kingmaker.data.actor.Lore
-import at.posselt.kingmaker.data.actor.Perception
-import at.posselt.kingmaker.data.actor.Proficiency
-import at.posselt.kingmaker.data.actor.Skill
-import at.posselt.kingmaker.toCamelCase
-import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import at.posselt.kingmaker.utils.launch
+import at.posselt.kingmaker.utils.openItem
+import at.posselt.kingmaker.utils.without
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.abstract.DataModel
@@ -22,8 +34,6 @@ import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.array.push
 import js.core.Void
-import js.objects.Record
-import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
@@ -111,84 +121,6 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
     }
 }
 
-private fun launchSkillPicker(
-    skills: List<ParsedCampingSkill>,
-    afterSubmit: (Array<CampingSkill>) -> Unit,
-) {
-    val skillsByAttribute = skills.associateBy { it.attribute }
-    val loreAttributes = skills.filter { it.attribute is Lore }.map { it.attribute }
-    console.log(skills)
-    val anySkill = skills.find { it.attribute.value == "any" }?.let {
-        PickerSkill(
-            label = "Any",
-            name = "any",
-            enabled = true,
-            isLore = false,
-            proficiency = it.proficiency,
-            required = false,
-            validateOnly = false,
-            dcType = it.dcType.toCamelCase(),
-            dc = it.dc,
-        )
-    } ?: PickerSkill(
-        label = "Any",
-        name = "any",
-        enabled = false,
-        isLore = false,
-        proficiency = Proficiency.UNTRAINED,
-        required = false,
-        validateOnly = false,
-        dcType = "zone",
-        dc = null,
-    )
-    val skills = (Skill.entries + Perception + loreAttributes).mapNotNull { attribute ->
-        val existingValue = skillsByAttribute[attribute]
-        if (existingValue == null) {
-            PickerSkill(
-                label = attribute.label,
-                name = attribute.value,
-                enabled = false,
-                isLore = attribute is Lore,
-                proficiency = Proficiency.UNTRAINED,
-                required = false,
-                validateOnly = false,
-                dcType = "zone",
-                dc = null,
-            )
-        } else {
-            PickerSkill(
-                label = existingValue.attribute.label,
-                name = existingValue.attribute.value,
-                enabled = true,
-                isLore = attribute is Lore,
-                proficiency = existingValue.proficiency,
-                required = existingValue.required,
-                validateOnly = existingValue.validateOnly,
-                dcType = existingValue.dcType.toCamelCase(),
-                dc = existingValue.dc,
-            )
-        }
-    }.toTypedArray()
-    SkillPickerApplication(
-        allowLores = true,
-        skills = skills + anySkill,
-        dcTypes = DcType.entries.map { it.toCamelCase() }.toTypedArray(),
-        afterSubmit = {
-            afterSubmit(
-                it.map {
-                    CampingSkill(
-                        name = it.name,
-                        proficiency = it.proficiency.toCamelCase(),
-                        dcType = it.dcType,
-                        dc = it.dc,
-                        validateOnly = it.validateOnly,
-                        required = it.required,
-                    )
-                }.toTypedArray()
-            )
-        }
-    ).launch()
-}
 
 private data class Journals(
     val entry: JournalEntry,
@@ -234,14 +166,103 @@ class ActivityApplication(
             }
 
             "save" -> save()
-            "edit-skills" -> launchSkillPicker(
-                currentActivity.getCampingSkills(expandAny = false)
-            ) {
+            "edit-skills" -> launchCampingSkillPicker(currentActivity.getCampingSkills(expandAny = false)) {
                 currentActivity.skills = it
                 render()
             }
+
+            "open-item" -> {
+                event.preventDefault()
+                event.stopPropagation()
+                buildPromise {
+                    target.dataset["uuid"]?.let { openItem(it) }
+                }
+            }
+
+            "add-effect" -> target.dataset["section"]?.let { section ->
+                ActivityEffectApplication(
+                    game = game,
+                    afterSubmit = { createEffectAt(section, it) }
+                ).launch()
+            }
+
+            "delete-effect" -> {
+                val index = target.dataset["index"]?.toInt()
+                val section = target.dataset["section"]
+                if (index != null) {
+                    removeEffectAt(section, index)
+                }
+            }
+
+            "edit-effect" -> {
+                val index = target.dataset["index"]?.toInt()
+                val section = target.dataset["section"]
+                val data = index?.let { getEffectsSection(section)?.get(it) }
+                if (data != null) {
+                    ActivityEffectApplication(
+                        game = game,
+                        data = data,
+                        afterSubmit = { update ->
+                            data.uuid = update.uuid
+                            data.doublesHealing = update.doublesHealing
+                            data.target = update.target
+                            render()
+                        }
+                    ).launch()
+                }
+            }
         }
     }
+
+    private fun removeEffectAt(section: String?, index: Int) {
+        if (section == "effects") {
+            currentActivity.effectUuids = currentActivity
+                .effectUuids
+                ?.without(index)
+        } else if (section == "criticalSuccess") {
+            currentActivity.criticalSuccess?.effectUuids = currentActivity
+                .criticalSuccess
+                ?.effectUuids
+                ?.without(index)
+        } else if (section == "success") {
+            currentActivity.success?.effectUuids = currentActivity
+                .success
+                ?.effectUuids
+                ?.without(index)
+        } else if (section == "failure") {
+            currentActivity.failure?.effectUuids = currentActivity
+                .failure
+                ?.effectUuids
+                ?.without(index)
+        } else if (section == "criticalFailure") {
+            currentActivity.criticalFailure?.effectUuids = currentActivity
+                .criticalFailure
+                ?.effectUuids
+                ?.without(index)
+        }
+        render()
+    }
+
+    private fun createEffectAt(section: String, effect: ActivityEffect) {
+        getEffectsSection(section)?.push(effect)
+        render()
+    }
+
+    private fun getEffectsSection(section: String?): Array<ActivityEffect>? =
+        if (section == "effects") {
+            currentActivity.effectUuids
+        } else if (section == "criticalSuccess") {
+            currentActivity.criticalSuccess?.effectUuids
+        } else if (section == "success") {
+            currentActivity.success?.effectUuids
+        } else if (section == "failure") {
+            currentActivity.failure?.effectUuids
+        } else if (section == "criticalFailure") {
+            currentActivity.criticalFailure?.effectUuids
+        } else {
+            null
+        }
+
 
     override fun _preparePartContext(
         partId: String,
@@ -262,26 +283,6 @@ class ActivityApplication(
                 }
             }
 
-        val criticalSuccess = createActivityEffectInputs(
-            namePrefix = "criticalSuccess.",
-            outcome = currentActivity.criticalSuccess,
-            allEffects = effects,
-        )
-        val success = createActivityEffectInputs(
-            namePrefix = "success.",
-            outcome = currentActivity.success,
-            allEffects = effects,
-        )
-        val failure = createActivityEffectInputs(
-            namePrefix = "failure.",
-            outcome = currentActivity.failure,
-            allEffects = effects,
-        )
-        val criticalFailure = createActivityEffectInputs(
-            namePrefix = "criticalFailure.",
-            outcome = currentActivity.criticalFailure,
-            allEffects = effects,
-        )
         ActivityContext(
             partId = parent.partId,
             isFormValid = isFormValid,
@@ -315,12 +316,8 @@ class ActivityApplication(
                                 ?: emptyList(),
                             stacked = false,
                         ),
-                        Component(
-                            label = "Skills",
-                            templatePartial = "skillPickerInput",
-                            value = toSkillContext(
-                                currentActivity.skills ?: emptyArray()
-                            ).unsafeCast<AnyObject>(),
+                        SkillPicker(
+                            context = toSkillContext(currentActivity.skills ?: emptyArray()),
                             stacked = false,
                         ),
                         CheckboxInput(
@@ -333,56 +330,52 @@ class ActivityApplication(
                 SectionContext(
                     legend = "When Performed",
                     formRows = formContext(
-                        // TODO: effects
                         *createEncounterModifierInputs(
                             dc = currentActivity.modifyRandomEncounterDc,
-                        )
+                        ),
+                        ActivityEffects(
+                            value = toActivityEffectContext(
+                                allEffects = effects.toTypedArray(),
+                                section = "effects",
+                                effects = currentActivity.effectUuids ?: emptyArray()
+                            )
+                        ),
                     )
                 ),
                 SectionContext(
                     legend = "Critical Success",
-                    formRows = criticalSuccess,
+                    formRows = createActivityEffectInputs(
+                        namePrefix = "criticalSuccess.",
+                        outcome = currentActivity.criticalSuccess,
+                        allEffects = effects,
+                    ),
                 ),
                 SectionContext(
                     legend = "Success",
-                    formRows = success,
+                    formRows = createActivityEffectInputs(
+                        namePrefix = "success.",
+                        outcome = currentActivity.success,
+                        allEffects = effects,
+                    ),
                 ),
                 SectionContext(
                     legend = "Failure",
-                    formRows = failure,
+                    formRows = createActivityEffectInputs(
+                        namePrefix = "failure.",
+                        outcome = currentActivity.failure,
+                        allEffects = effects,
+                    ),
                 ),
                 SectionContext(
                     legend = "Critical Failure",
-                    formRows = criticalFailure,
+                    formRows = createActivityEffectInputs(
+                        namePrefix = "criticalFailure.",
+                        outcome = currentActivity.criticalFailure,
+                        allEffects = effects,
+                    ),
                 ),
             )
         )
-    }
-
-    private fun toSkillContext(skills: Array<CampingSkill>): SkillInputContext {
-        val anySkill = skills.find { it.name == "any" }
-        return if (anySkill == null) {
-            SkillInputContext(
-                skills = skills
-                    .filter { it.validateOnly != true }
-                    .map {
-                        SkillInputArrayContext(
-                            label = it.name.toLabel(),
-                            proficiency = it.proficiency.toLabel(),
-                        )
-                    }
-                    .toTypedArray()
-            )
-        } else {
-            SkillInputContext(
-                skills = arrayOf(
-                    SkillInputArrayContext(
-                        label = "Any",
-                        proficiency = anySkill.proficiency.toLabel(),
-                    )
-                )
-            )
-        }
     }
 
 
@@ -462,8 +455,14 @@ private fun createActivityEffectInputs(
             value = outcome?.checkRandomEncounter == true,
             label = "Random Encounter Check",
         ),
-        *createEncounterModifierInputs(namePrefix = namePrefix, dc = outcome?.modifyRandomEncounterDc)
-        // TODO effects
+        *createEncounterModifierInputs(namePrefix = namePrefix, dc = outcome?.modifyRandomEncounterDc),
+        ActivityEffects(
+            value = toActivityEffectContext(
+                allEffects = allEffects.toTypedArray(),
+                section = namePrefix.trimEnd('.'),
+                effects = outcome?.effectUuids ?: emptyArray()
+            )
+        ),
     )
 }
 

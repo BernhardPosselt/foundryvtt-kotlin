@@ -1,6 +1,11 @@
 package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.TextInput
+import at.posselt.kingmaker.app.forms.toOption
 import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.setCamping
 import at.posselt.kingmaker.data.regions.Terrain

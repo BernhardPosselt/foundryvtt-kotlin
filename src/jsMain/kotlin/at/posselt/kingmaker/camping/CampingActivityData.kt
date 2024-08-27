@@ -14,10 +14,10 @@ import kotlin.collections.find
 
 @JsPlainObject
 external interface ActivityOutcome {
-    val message: String
-    val effectUuids: Array<ActivityEffect>?
-    val modifyRandomEncounterDc: ModifyEncounterDc?
-    val checkRandomEncounter: Boolean?
+    var message: String
+    var effectUuids: Array<ActivityEffect>?
+    var modifyRandomEncounterDc: ModifyEncounterDc?
+    var checkRandomEncounter: Boolean?
 }
 
 @JsPlainObject
@@ -28,9 +28,9 @@ external interface ModifyEncounterDc {
 
 @JsPlainObject
 external interface ActivityEffect {
-    val uuid: String
-    val target: String?
-    val doublesHealing: Boolean?
+    var uuid: String
+    var target: String?
+    var doublesHealing: Boolean?
 }
 
 @JsPlainObject

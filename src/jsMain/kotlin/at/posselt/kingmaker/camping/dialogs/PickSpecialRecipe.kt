@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.camping.dialogs
 
-import at.posselt.kingmaker.app.FormElementContext
-import at.posselt.kingmaker.app.RadioInput
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.forms.RadioInput
 import at.posselt.kingmaker.app.awaitablePrompt
 import at.posselt.kingmaker.camping.CampingData
 import at.posselt.kingmaker.camping.FoodCost

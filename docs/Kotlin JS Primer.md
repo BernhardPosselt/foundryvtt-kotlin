@@ -2,7 +2,8 @@
 
 ## Async
 
-Instead of marking a function async, using await and returning promises, Kotlin has **suspend**ing function that are awaited automatically:
+Instead of marking a function async, using await and returning promises, Kotlin has **suspend**ing function that are
+awaited automatically:
 
 JS:
 
@@ -30,7 +31,8 @@ suspend fun f(): Int {
 }
 ```
 
-You can also use Promises like in JavaScript, but Promises are not suspending functions, so you need to call the **.await()** method on it which itself is a suspending function. 
+You can also use Promises like in JavaScript, but Promises are not suspending functions, so you need to call the *
+*.await()** method on it which itself is a suspending function.
 **Promise.all()** functionality is provided out of the box with a **.awaitAll()** extension function on a list.
 
 JS:
@@ -64,7 +66,8 @@ suspend fun f(): Array<Int> {
 }
 ```
 
-Should you find yourself having to await a list of suspending functions rather than a list of Promises, you need to provide a coroutine scope:
+Should you find yourself having to await a list of suspending functions rather than a list of Promises, you need to
+provide a coroutine scope:
 
 ```kt
 suspend fun work(num: Int) = num
@@ -99,7 +102,8 @@ fun main() {
 
 ## Objects
 
-Passing Kotlin objects to JavaScript functions does not work because object properties are minified. There are 2 ways around that:
+Passing Kotlin objects to JavaScript functions does not work because object properties are minified. There are 2 ways
+around that:
 
 * Record: Similar to TypeScript's Record
 * @JsPlainObject: Similar to TypeScript's interface
@@ -112,19 +116,21 @@ external interface Plain {
 }
 
 fun acceptPlain(param: Plain) {
-    
+
 }
 
 fun acceptRecord(param: Record<String, Int>) {
-    
+
 }
 
 fun main() {
     // the following are equivalent but the interface is typed
-    acceptPlain(Plain(required=3))
-    acceptRecord(recordOf(
-        "required" to 3
-    ))
+    acceptPlain(Plain(required = 3))
+    acceptRecord(
+        recordOf(
+            "required" to 3
+        )
+    )
 }
 ```
 
@@ -164,9 +170,12 @@ external class B
 
 ## Inheriting Static Methods
 
-JS allows you to inherit static methods and resolve the actual instance. In Kotlin, this is not supported, but you can share common logic by pulling it out into a separate open class and letting your companion objects extend from it. This means you need to maintain a separate chain of inheritance outside the companion object:
+JS allows you to inherit static methods and resolve the actual instance. In Kotlin, this is not supported, but you can
+share common logic by pulling it out into a separate open class and letting your companion objects extend from it. This
+means you need to maintain a separate chain of inheritance outside the companion object:
 
 JS:
+
 ```js
 class Test {
     static create() {
@@ -174,7 +183,8 @@ class Test {
     }
 }
 
-class Test2 extends Test {}
+class Test2 extends Test {
+}
 
 console.log(Test2.create())  // prints Test2 {}
 ```
@@ -214,7 +224,7 @@ If a JS function has a default parameter, you need to declare it using **defined
 
 ```js
 function name(name, param = 1) {
-    
+
 }
 ```
 
@@ -255,13 +265,15 @@ fun x(attribute: Attribute) {}
 
 ## Null/Undefined/void
 
-A function that returns Unit will be compiled to a function that correctly returns undefined. 
+A function that returns Unit will be compiled to a function that correctly returns undefined.
 
-If you need to export your class to JS however using @JsExport, you might need to return Void instead, e.g. Promise<Void> and end that with a return null.
+If you need to export your class to JS however using @JsExport, you might need to return Void instead, e.g.
+Promise<Void> and end that with a return null.
 
 Passing values to JS APIs that have optional parameters is tricky. There are a couple cases:
 
-* Passing an object using @JsPlainObject: these properties will be omitted if you don't pass a value; they will not be omitted if you pass null however. Example:
+* Passing an object using @JsPlainObject: these properties will be omitted if you don't pass a value; they will not be
+  omitted if you pass null however. Example:
     ```kt
     @JsPlainObject
     external interface Test {
@@ -273,7 +285,8 @@ Passing values to JS APIs that have optional parameters is tricky. There are a c
     val x = Test(required=true, optional=null)  // compiles to {required: true, optional: null}
     ```
 * Passing a null to a function will turn it into a JS null value
-* Passing **undefined** to a function instead if you want to pass undefined. This is also important for default parameters, which you should write as:
+* Passing **undefined** to a function instead if you want to pass undefined. This is also important for default
+  parameters, which you should write as:
     ```kt
     fun x(value: String, optionalValue: String? = undefined) {
         callJsFunction(value, optionalValue)
@@ -287,7 +300,7 @@ Passing values to JS APIs that have optional parameters is tricky. There are a c
     const js2 = null
     js2?.value // undefined
     ```
-    
+
     ```kt
     val y: String? = null 
     y?.length // null
@@ -299,6 +312,7 @@ Passing values to JS APIs that have optional parameters is tricky. There are a c
 ## Scalar Mappings
 
 The following don't translate to JS' **Number**:
+
 * Int::class.js
 * Double::class.js
 * Float::class.js
@@ -306,16 +320,20 @@ The following don't translate to JS' **Number**:
 Instead, use JsNumber::class.js
 
 The following work:
+
 * String::class.js
 * Boolean::class.js
 * Any Other Class that is defined as a JS class
 
 ## Equality
-Kotlin compiles equality pretty much as you'd expect it to behave, if it was Kotlin. The only difference is that Double values are equal to Ints if they are the same number technically.
+
+Kotlin compiles equality pretty much as you'd expect it to behave, if it was Kotlin. The only difference is that Double
+values are equal to Ints if they are the same number technically.
 
 === is basically only used to compare null and undefined
 
 In general, === in Kotlin translates to === in JS. == in Kotlin however translates to a special function:
+
 ```kt
 // Kotlin below
 null == undefined // true
@@ -326,3 +344,11 @@ null === undefined // false
 // objects with "equals" methods use that one
 // === checks are used for everything else
 ```
+
+## Bugs
+
+* https://youtrack.jetbrains.com/issue/KT-70260/JsPlainObject-improve-compiler-error-if-a-method-is-present
+* https://youtrack.jetbrains.com/issue/KT-70664/Extending-a-JsPlainObject-interface-with-a-generic-type-parameter-fails-with-a-compile-error
+* https://youtrack.jetbrains.com/issue/KT-68904/JsPlainObject-breaks-when-inside-a-file-with-fileJsQualifier
+* https://youtrack.jetbrains.com/issue/KT-70078/JsPlainObject-compiles-broken-code-when-inlining-suspend-function
+* https://youtrack.jetbrains.com/issue/KT-70987/Kotlin-JS-Exporting-a-class-with-a-private-data-class-produces-a-compilation-error

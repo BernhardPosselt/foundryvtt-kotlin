@@ -1,13 +1,16 @@
 package at.posselt.kingmaker.camping.dialogs
 
-import at.posselt.kingmaker.app.CheckboxInput
+import at.posselt.kingmaker.app.forms.CheckboxInput
 import at.posselt.kingmaker.app.FormApp
-import at.posselt.kingmaker.app.FormElementContext
+import at.posselt.kingmaker.app.forms.FormElementContext
 import at.posselt.kingmaker.app.HandlebarsRenderContext
-import at.posselt.kingmaker.app.Select
-import at.posselt.kingmaker.app.formContext
-import at.posselt.kingmaker.app.toOption
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.formContext
+import at.posselt.kingmaker.app.forms.toOption
 import at.posselt.kingmaker.camping.ActivityEffect
+import at.posselt.kingmaker.fromCamelCase
+import at.posselt.kingmaker.toCamelCase
+import at.posselt.kingmaker.toLabel
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import at.posselt.kingmaker.utils.launch
@@ -16,6 +19,7 @@ import com.foundryvtt.core.Game
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.data.dsl.buildSchema
+import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.core.Void
 import kotlinx.coroutines.await
@@ -23,6 +27,7 @@ import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
 import org.w3c.dom.pointerevents.PointerEvent
+import kotlin.String
 import kotlin.js.Promise
 
 @OptIn(ExperimentalJsExport::class)
@@ -35,7 +40,7 @@ class ActivityEffectDataModel(value: AnyObject) : DataModel(value) {
         fun defineSchema() = buildSchema {
             string("uuid")
             string("target") {
-                choices = arrayOf("all", "self", "allies")
+                choices = ActivityEffectTarget.entries.map { it.toCamelCase() }.toTypedArray()
             }
             boolean("doublesHealing")
         }
@@ -45,6 +50,7 @@ class ActivityEffectDataModel(value: AnyObject) : DataModel(value) {
 @JsPlainObject
 external interface ActivityEffectContext : HandlebarsRenderContext {
     val formRows: Array<FormElementContext>
+    val isFormValid: Boolean
 }
 
 enum class ActivityEffectTarget {
@@ -72,8 +78,9 @@ class ActivityEffectApplication(
     template = "components/forms/application-form.hbs",
     debug = true,
     dataModel = ActivityEffectDataModel::class.js,
+    width = 400,
 ) {
-    var currentActivityEffect: ActivityEffect? = data
+    var currentActivityEffect: ActivityEffect? = data?.let(::deepClone)
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
@@ -106,8 +113,16 @@ class ActivityEffectApplication(
             .filterIsInstance<PF2EEffect>()
         val item = currentActivityEffect?.uuid?.let { fromUuidTypeSafe<PF2EEffect>(it) }
             ?: effects.firstOrNull()
+        if (currentActivityEffect == null) {
+            currentActivityEffect = ActivityEffect(
+                uuid = item?.uuid ?: "",
+                target = "all",
+                doublesHealing = false
+            )
+        }
         ActivityEffectContext(
             partId = parent.partId,
+            isFormValid = isFormValid,
             formRows = formContext(
                 Select(
                     label = "Effect",
@@ -121,11 +136,14 @@ class ActivityEffectApplication(
                     label = "Target",
                     name = "target",
                     stacked = false,
+                    value = currentActivityEffect?.target?.let { fromCamelCase<ActivityEffectTarget>(it) }
+                        ?: ActivityEffectTarget.ALL,
                 ),
                 CheckboxInput(
                     name = "doublesHealing",
                     label = "Doubles Healing",
                     stacked = false,
+                    value = currentActivityEffect?.doublesHealing == true,
                 )
             )
         )

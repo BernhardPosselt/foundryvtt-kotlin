@@ -373,13 +373,29 @@ ul.km-camping-actors {
         .km-camping-recipe {
             .km-recipe-data {
 
+
                 &.km-no-skill-check {
+                    &.km-with-food-cost {
+
+                        .km-camping-tile-portrait {
+                            height: 15.5em
+                        }
+
+                        .km-recipe-cost {
+                            border-top: 1px solid;
+                            border-bottom: 0;
+                            border-bottom-left-radius: 5px;
+                            border-bottom-right-radius: 5px;
+                        }
+                    }
+
                     border-bottom: 0;
-                    border-bottom-left-radius: 5px;
-                    border-bottom-right-radius: 5px;
                     background-color: black;
                     display: flex;
+                    flex-direction: column;
                     align-items: center;
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
 
                     .km-camping-tile-portrait {
                         border-bottom: 0;

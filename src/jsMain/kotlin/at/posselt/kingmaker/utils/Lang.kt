@@ -98,3 +98,6 @@ fun <T> Sequence<Pair<String, T>>.toMutableRecord(): Record<String, T> =
 
 fun <T : Any> JsClass<T>.newInstance(parameters: ReadonlyArray<Any?>) =
     Reflect.construct(this, parameters)
+
+fun <T> Array<T>.without(index: Int): Array<T> =
+    filterIndexed { i, _ -> i != index }.toTypedArray()

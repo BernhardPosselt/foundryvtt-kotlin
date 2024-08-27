@@ -1,7 +1,7 @@
 package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.actor.resolveAttribute
-import at.posselt.kingmaker.app.Select
+import at.posselt.kingmaker.app.forms.Select
 import at.posselt.kingmaker.app.awaitablePrompt
 import at.posselt.kingmaker.camping.dialogs.RegionSetting
 import at.posselt.kingmaker.data.actor.*

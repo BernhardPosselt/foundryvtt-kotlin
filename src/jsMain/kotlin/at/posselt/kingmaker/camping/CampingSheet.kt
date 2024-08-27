@@ -4,10 +4,12 @@ import at.posselt.kingmaker.*
 import at.posselt.kingmaker.actor.openActor
 import at.posselt.kingmaker.actor.party
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.MenuControl
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.SelectOption
 import at.posselt.kingmaker.camping.dialogs.*
-import at.posselt.kingmaker.data.actor.Perception
-import at.posselt.kingmaker.data.actor.Proficiency
-import at.posselt.kingmaker.data.actor.Skill
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
 import at.posselt.kingmaker.utils.*
 import com.foundryvtt.core.Game
@@ -551,6 +553,11 @@ class CampingSheet(
             name = "Rations",
             icon = "icons/consumables/food/berries-ration-round-red.webp",
             requiresCheck = false,
+            cost = buildFoodCost(
+                FoodAmount(rations = 1), // TODO: set to numbers of players eating rations
+                totalAmount = total,
+                items = foodItems
+            )
         )
         return arrayOf(starving, rations) + camping.getAllRecipes()
             .sortedBy { it.level }

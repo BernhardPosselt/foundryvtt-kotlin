@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.app.forms.normalizeArrays
 import js.objects.ReadonlyRecord
 import js.objects.recordOf
 import kotlin.test.Test

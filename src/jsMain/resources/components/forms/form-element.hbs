@@ -1,5 +1,6 @@
-{{#unless hideLabel}}<label class="{{#unless stacked}}form-element-inline{{/unless}}">{{#if
-        escapeLabel}}{{label}}{{else}}{{{label}}}{{/if}}{{/unless}}
+{{#unless hideLabel}}
+    <{{labelElement}} class="km-label {{#unless stacked}}form-element-inline{{/unless}}">
+    {{#if escapeLabel}}{{label}}{{else}}{{{label}}}{{/if}}{{/unless}}
 {{#if select}}
     {{#if link}}
         <div class="km-select-with-link">
@@ -62,7 +63,7 @@
         </div>
     </div>
 {{/if}}
-{{#unless hideLabel}}</label>{{/unless}}
+{{#unless hideLabel}}</{{labelElement}}>{{/unless}}
 
 {{#if help}}
     <div class="help">{{help}}</div>

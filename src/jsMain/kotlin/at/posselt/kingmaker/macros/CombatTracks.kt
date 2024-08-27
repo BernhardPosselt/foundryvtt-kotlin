@@ -1,6 +1,11 @@
 package at.posselt.kingmaker.macros
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.formContext
+import at.posselt.kingmaker.app.forms.toOption
 import at.posselt.kingmaker.camping.dialogs.CombatTrack
 import at.posselt.kingmaker.combattracks.getCombatTrack
 import at.posselt.kingmaker.combattracks.setCombatTrack

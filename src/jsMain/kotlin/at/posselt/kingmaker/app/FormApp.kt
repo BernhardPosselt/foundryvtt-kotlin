@@ -1,12 +1,17 @@
 package at.posselt.kingmaker.app
 
+import at.posselt.kingmaker.app.forms.parseFormData
 import at.posselt.kingmaker.utils.buildPromise
 import at.posselt.kingmaker.utils.newInstance
 import at.posselt.kingmaker.utils.resolveTemplatePath
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
 import com.foundryvtt.core.abstract.DataModel
-import com.foundryvtt.core.applications.api.*
+import com.foundryvtt.core.applications.api.ApplicationFormConfiguration
+import com.foundryvtt.core.applications.api.ApplicationHeaderControlsEntry
+import com.foundryvtt.core.applications.api.ApplicationPosition
+import com.foundryvtt.core.applications.api.HandlebarsTemplatePart
+import com.foundryvtt.core.applications.api.Window
 import com.foundryvtt.core.game
 import js.core.Void
 import js.objects.recordOf
@@ -38,7 +43,7 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
     protected val renderOnSubmit: Boolean = true,
     protected val dataModel: JsClass<out DataModel>? = null,
 ) : App<T>(
-    HandlebarsFormApplicationOptions(
+    at.posselt.kingmaker.app.HandlebarsFormApplicationOptions(
         window = Window(
             title = title,
             resizable = resizable,

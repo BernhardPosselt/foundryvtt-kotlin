@@ -1,6 +1,15 @@
 package at.posselt.kingmaker.camping.dialogs
 
 import at.posselt.kingmaker.app.*
+import at.posselt.kingmaker.app.FormApp
+import at.posselt.kingmaker.app.forms.CheckboxInput
+import at.posselt.kingmaker.app.forms.FormElementContext
+import at.posselt.kingmaker.app.forms.NumberInput
+import at.posselt.kingmaker.app.forms.SectionsContext
+import at.posselt.kingmaker.app.forms.Select
+import at.posselt.kingmaker.app.forms.TextInput
+import at.posselt.kingmaker.app.forms.formContext
+import at.posselt.kingmaker.app.forms.toOption
 import at.posselt.kingmaker.camping.*
 import at.posselt.kingmaker.data.general.Rarity
 import at.posselt.kingmaker.fromCamelCase
@@ -110,7 +119,7 @@ class RecipeApplication(
             partId = parent.partId,
             isFormValid = isFormValid,
             sections = arrayOf(
-                SectionContext(
+                at.posselt.kingmaker.app.forms.SectionContext(
                     legend = "Basic",
                     formRows = formContext(
                         TextInput(
@@ -150,7 +159,7 @@ class RecipeApplication(
                         )
                     )
                 ),
-                SectionContext(
+                at.posselt.kingmaker.app.forms.SectionContext(
                     legend = "Cooking",
                     formRows = formContext(
                         Select.dc(
@@ -179,19 +188,19 @@ class RecipeApplication(
                         ),
                     )
                 ),
-                SectionContext(
+                at.posselt.kingmaker.app.forms.SectionContext(
                     legend = "Favorite Meal",
                     formRows = favoriteMeal,
                 ),
-                SectionContext(
+                at.posselt.kingmaker.app.forms.SectionContext(
                     legend = "Critical Success",
                     formRows = criticalSuccess,
                 ),
-                SectionContext(
+                at.posselt.kingmaker.app.forms.SectionContext(
                     legend = "Success",
                     formRows = success,
                 ),
-                SectionContext(
+                at.posselt.kingmaker.app.forms.SectionContext(
                     legend = "Critical Failure",
                     formRows = criticalFailure,
                 ),
