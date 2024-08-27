@@ -14,7 +14,7 @@ import kotlin.collections.find
 
 @JsPlainObject
 external interface ActivityOutcome {
-    var message: String
+    var message: String?
     var effectUuids: Array<ActivityEffect>?
     var modifyRandomEncounterDc: ModifyEncounterDc?
     var checkRandomEncounter: Boolean?

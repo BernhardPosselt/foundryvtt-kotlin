@@ -17,6 +17,7 @@ external interface SectionsContext {
 
 @JsPlainObject
 external interface SectionContext {
+    val hidden: Boolean?
     val legend: String
     val formRows: Array<FormElementContext>
 }

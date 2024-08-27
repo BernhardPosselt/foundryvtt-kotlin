@@ -126,3 +126,7 @@
         background-color: var(--legendary);
     }
 }
+
+.km-hidden {
+    display: none;
+}

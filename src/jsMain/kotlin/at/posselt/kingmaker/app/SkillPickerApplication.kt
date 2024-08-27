@@ -123,11 +123,12 @@ class SkillPickerDataModel(val value: AnyObject) : DataModel(value) {
 @JsExport
 class SkillPickerApplication(
     skills: Array<PickerSkill>,
+    private val chooseOne: Boolean = false,
     private val allowLores: Boolean = false,
     private val dcTypes: Array<String>,
     private val afterSubmit: (skills: Array<PickerSkill>) -> Unit,
 ) : FormApp<SkillPickerContext, SkillPickerSubmitData>(
-    title = "Choose At Least One Skill",
+    title = if (chooseOne) "Choose At Least One Skill" else "Choose Skills",
     template = "components/skill-picker/skill-picker.hbs",
     width = 1000,
     debug = true,
@@ -329,7 +330,7 @@ class SkillPickerApplication(
     }
 
     private fun validateAtLeastOnePresent(value: Array<PickerSkill>) {
-        if (value.none { it.enabled }) {
+        if (chooseOne && value.none { it.enabled }) {
             isFormValid = false
             atLeastOneSkillError = true
         } else {
@@ -398,6 +399,7 @@ fun launchCampingSkillPicker(
     }.toTypedArray()
     SkillPickerApplication(
         allowLores = true,
+        chooseOne = false,
         skills = skills + anySkill,
         dcTypes = DcType.entries.map { it.toCamelCase() }.toTypedArray(),
         afterSubmit = {

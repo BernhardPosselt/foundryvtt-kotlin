@@ -1,7 +1,7 @@
 <div>
     {{#if sections}}
         {{#each sections}}
-            <fieldset>
+            <fieldset {{#if hidden}}hidden{{/if}}>
                 <legend>{{legend}}</legend>
                 {{#each formRows}}
                     <div class="row">

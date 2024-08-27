@@ -50,7 +50,7 @@ external interface ActivityContext : SectionsContext, HandlebarsRenderContext {
 
 @JsPlainObject
 external interface ActivityOutcomeSubmitData {
-    val message: String
+    val message: String?
     val modifyRandomEncounterDc: ModifyEncounterDc
     val checkRandomEncounter: Boolean
 }
@@ -86,7 +86,7 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
                 int("night")
             }
             schema("criticalSuccess") {
-                string("message")
+                string("message", nullable = true)
                 boolean("checkRandomEncounter")
                 schema("modifyRandomEncounterDc") {
                     int("day")
@@ -94,7 +94,7 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
                 }
             }
             schema("success") {
-                string("message")
+                string("message", nullable = true)
                 boolean("checkRandomEncounter")
                 schema("modifyRandomEncounterDc") {
                     int("day")
@@ -102,7 +102,7 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
                 }
             }
             schema("failure") {
-                string("message")
+                string("message", nullable = true)
                 boolean("checkRandomEncounter")
                 schema("modifyRandomEncounterDc") {
                     int("day")
@@ -110,7 +110,7 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
                 }
             }
             schema("criticalFailure") {
-                string("message")
+                string("message", nullable = true)
                 boolean("checkRandomEncounter")
                 schema("modifyRandomEncounterDc") {
                     int("day")
@@ -282,7 +282,7 @@ class ActivityApplication(
                         ?.let { Journals(it) }
                 }
             }
-
+        val hasCheck = currentActivity.requiresACheck()
         ActivityContext(
             partId = parent.partId,
             isFormValid = isFormValid,
@@ -343,6 +343,7 @@ class ActivityApplication(
                     )
                 ),
                 SectionContext(
+                    hidden = !hasCheck,
                     legend = "Critical Success",
                     formRows = createActivityEffectInputs(
                         namePrefix = "criticalSuccess.",
@@ -351,6 +352,7 @@ class ActivityApplication(
                     ),
                 ),
                 SectionContext(
+                    hidden = !hasCheck,
                     legend = "Success",
                     formRows = createActivityEffectInputs(
                         namePrefix = "success.",
@@ -359,6 +361,7 @@ class ActivityApplication(
                     ),
                 ),
                 SectionContext(
+                    hidden = !hasCheck,
                     legend = "Failure",
                     formRows = createActivityEffectInputs(
                         namePrefix = "failure.",
@@ -367,6 +370,7 @@ class ActivityApplication(
                     ),
                 ),
                 SectionContext(
+                    hidden = !hasCheck,
                     legend = "Critical Failure",
                     formRows = createActivityEffectInputs(
                         namePrefix = "criticalFailure.",
@@ -448,6 +452,7 @@ private fun createActivityEffectInputs(
             name = "${namePrefix}message",
             label = "Chat Message",
             value = outcome?.message ?: "",
+            required = false,
             stacked = false,
         ),
         CheckboxInput(
