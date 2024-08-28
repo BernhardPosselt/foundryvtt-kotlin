@@ -73,6 +73,7 @@ external interface RecipeContext {
     val uuid: String?
     val icon: String
     val requiresCheck: Boolean
+    val hidden: Boolean
 }
 
 @JsPlainObject
@@ -99,6 +100,8 @@ external interface CampingSheetContext : HandlebarsRenderContext {
     var campingActivitiesSection: Boolean
     var eatingSection: Boolean
     var recipes: Array<RecipeContext>
+    var totalFoodCost: FoodCost
+    var availableFood: FoodCost
 }
 
 @JsPlainObject
@@ -541,23 +544,28 @@ class CampingSheet(
         game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
     }
 
-    private suspend fun getRecipeContext(camping: CampingData): Array<RecipeContext> {
-        val foodItems = getCompendiumFoodItems()
-        val total = camping.getFoodAmount(game.party(), foodItems)
+    private suspend fun getRecipeContext(
+        foodItems: FoodItems,
+        total: FoodAmount,
+        camping: CampingData,
+        section: CampingSheetSection,
+    ): Array<RecipeContext> {
         val starving = RecipeContext(
             name = "Skip Meal",
             icon = "icons/containers/kitchenware/bowl-clay-brown.webp",
             requiresCheck = false,
+            hidden = section != CampingSheetSection.EATING,
         )
         val rations = RecipeContext(
             name = "Rations",
             icon = "icons/consumables/food/berries-ration-round-red.webp",
             requiresCheck = false,
             cost = buildFoodCost(
-                FoodAmount(rations = 1), // TODO: set to numbers of players eating rations
+                FoodAmount(rations = 1),
                 totalAmount = total,
                 items = foodItems
-            )
+            ),
+            hidden = section != CampingSheetSection.EATING,
         )
         return arrayOf(starving, rations) + camping.getAllRecipes()
             .sortedBy { it.level }
@@ -570,13 +578,33 @@ class CampingSheet(
                 )
                 RecipeContext(
                     name = recipe.name,
-                    cost = cookingCost, // TODO: multiply by actors
+                    cost = cookingCost,
                     uuid = recipe.uuid,
                     icon = recipe.icon ?: item?.img ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
                     requiresCheck = true,
+                    hidden = section != CampingSheetSection.EATING,
                 )
             }
             .toTypedArray()
+    }
+
+    private fun calculateTotalFoodCost(
+        actorMeals: Array<ActorMeal>,
+        availableFood: FoodAmount,
+        foodItems: FoodItems,
+    ): FoodCost {
+        val amount = actorMeals
+            .map {
+                if (it.chosenMeal == "rationsOrSubsistence") {
+                    FoodAmount(rations = 1)
+                } else if (it.chosenMeal == "nothing") {
+                    FoodAmount()
+                } else {
+                    recipes.find { recipe -> it.chosenMeal == recipe.name }?.cookingCost() ?: FoodAmount()
+                }
+            }
+            .sum()
+        return buildFoodCost(amount, totalAmount = availableFood, items = foodItems)
     }
 
     override fun _preparePartContext(
@@ -641,11 +669,26 @@ class CampingSheet(
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
         )
-        val recipesContext = getRecipeContext(camping)
+        val foodItems = getCompendiumFoodItems()
+        val totalFood = camping.getFoodAmount(game.party(), foodItems)
+        val availableFood = buildFoodCost(totalFood, items = foodItems)
+        console.log(availableFood)
+        val recipesContext = getRecipeContext(
+            foodItems = foodItems,
+            total = totalFood,
+            camping = camping,
+            section = section,
+        )
         val currentRegion = camping.findCurrentRegion()
         val regions = camping.regionSettings.regions
         val isGM = game.user.isGM
         CampingSheetContext(
+            availableFood = availableFood,
+            totalFoodCost = calculateTotalFoodCost(
+                actorMeals = camping.cooking.actorMeals + ActorMeal(actorUuid = "test", chosenMeal = "Haggis"),
+                foodItems = foodItems,
+                availableFood = totalFood,
+            ),
             partId = parent.partId,
             recipes = recipesContext,
             terrain = currentRegion?.terrain ?: "plains",
@@ -704,8 +747,8 @@ class CampingSheet(
                 CampingActivity(
                     activity = it.activity,
                     actorUuid = it.actorUuid,
-                    result = value.activities.degreeOfSuccess[it.activity],
-                    selectedSkill = value.activities.selectedSkill[it.activity],
+                    result = value.activities.degreeOfSuccess?.get(it.activity),
+                    selectedSkill = value.activities.selectedSkill?.get(it.activity),
                 )
             }.toTypedArray()
             actor.setCamping(camping)

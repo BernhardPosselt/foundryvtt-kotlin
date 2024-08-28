@@ -1,5 +1,6 @@
 package at.posselt.kingmaker.migrations
 
+import at.posselt.kingmaker.Config
 import at.posselt.kingmaker.actor.npcs
 import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.getCampingActor
@@ -47,13 +48,13 @@ suspend fun Game.migrateKingmakerTools() {
     val currentVersion = settings.kingmakerTools.getSchemaVersion()
     if (currentVersion < 6) {
         ui.notifications.error(
-            "Kingdom Building, Camping & Weather: Upgrades from versions prior to 0.12.2 are not supported anymore. " +
+            "${Config.moduleName}: Upgrades from versions prior to 0.12.2 are not supported anymore. " +
                     "Please upgrade to 1.1.1 first"
         )
         return
     }
     if (isFirstGM() && currentVersion < latestMigrationVersion) {
-        ui.notifications.info("Kingdom Building, Camping & Weather: Running migrations, please do not close the window")
+        ui.notifications.info("$Config.moduleName: Running migrations, please do not close the window")
 
         // create backups
         val kingdomActors = npcs().filter { it.getKingdom() != null }

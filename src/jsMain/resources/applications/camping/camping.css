@@ -367,7 +367,7 @@ ul.km-camping-actors {
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
-        padding: 20px;
+        margin: 20px;
         flex: 1;
 
         .km-camping-recipe {
@@ -655,8 +655,36 @@ ul.km-camping-actors {
         left: 0;
     }
 
+    .km-camping-eating-total {
+        position: absolute;
+        border-radius: 5px;
+        border: 1px solid;
+        top: calc(50% - 165px);
+        right: 10px;
+        z-index: 2;
+
+        h2 {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: var(--font-size-14);
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+            font-family: Signika, sans-serif;
+        }
+
+        .km-food-cost {
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+        }
+    }
+
     button.km-camping-previous,
     button.km-camping-next {
+        position: absolute;
+        z-index: 2;
+        top: calc(50% - 100px);
         height: 200px;
         width: 20px;
         font-size: 50px;
@@ -665,9 +693,6 @@ ul.km-camping-actors {
         background: transparent;
         -webkit-text-stroke-color: #000;
         -webkit-text-stroke-width: 1px;
-        position: absolute;
-        top: calc(50% - 100px);
-        z-index: 2;
 
         &:hover {
             box-shadow: none;
@@ -686,6 +711,7 @@ ul.km-camping-actors {
 
     .empty-activity,
     .km-recipe-cost,
+    .km-camping-eating-total,
     .km-camping-tile-check {
         background: var(--background);
     }
@@ -704,6 +730,7 @@ ul.km-camping-actors {
     .km-camping-tile-check,
     .km-camping-tile-result,
     .km-recipe-cost,
+    .km-camping-eating-total,
     .empty-activity {
         background: url("/ui/parchment.jpg") repeat;
     }

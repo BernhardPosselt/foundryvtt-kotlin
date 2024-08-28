@@ -1,4 +1,4 @@
-<div class="km-camping-tile km-camping-recipe">
+<div class="km-camping-tile km-camping-recipe" {{#if hidden}}hidden{{/if}}>
     <header>
         {{#if uuid}}
             <a href="#" data-uuid="{{uuid}}" data-action="open-item">{{name}}</a>
@@ -69,5 +69,6 @@
                     </select>
                 </div>
             {{/if}}
+        </section>
     </div>
 </div>

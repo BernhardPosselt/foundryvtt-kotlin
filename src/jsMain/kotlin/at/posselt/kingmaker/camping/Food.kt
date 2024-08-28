@@ -91,9 +91,9 @@ suspend fun PF2EActor.applyMealEffects(outcomes: List<CookingOutcome>) {
 
 @JsPlainObject
 external interface FoodCost {
-    val rations: Int
-    val basicIngredients: Int
-    val specialIngredients: Int
+    val rations: String
+    val basicIngredients: String
+    val specialIngredients: String
     val rationImage: String?
     val basicImage: String?
     val specialImage: String?
@@ -109,20 +109,29 @@ fun buildFoodCost(
     amount: FoodAmount,
     totalAmount: FoodAmount? = null,
     items: FoodItems,
+    capAt: Int? = 99,
 ) = FoodCost(
-    rations = amount.rations,
-    basicIngredients = amount.basicIngredients,
-    specialIngredients = amount.specialIngredients,
+    rations = capAt(amount.rations, capAt),
+    basicIngredients = capAt(amount.basicIngredients, capAt),
+    specialIngredients = capAt(amount.specialIngredients, capAt),
     totalRations = totalAmount?.rations,
     totalBasicIngredients = totalAmount?.basicIngredients,
     totalSpecialIngredients = totalAmount?.specialIngredients,
     rationImage = items.ration.img,
     basicImage = items.basic.img,
     specialImage = items.special.img,
-    missingBasic = amount.basicIngredients > (totalAmount?.basicIngredients ?: -1),
-    missingSpecial = amount.specialIngredients > (totalAmount?.specialIngredients ?: -1),
-    missingRations = amount.rations > (totalAmount?.rations ?: -1),
+    missingBasic = totalAmount?.let { it.basicIngredients < amount.basicIngredients } == true,
+    missingSpecial = totalAmount?.let { it.specialIngredients < amount.specialIngredients } == true,
+    missingRations = totalAmount?.let { it.rations < amount.rations } == true,
 )
+
+fun capAt(number: Int, cap: Int? = null): String {
+    return if (cap == null || number <= cap) {
+        number.toString()
+    } else {
+        "$number+"
+    }
+}
 
 data class FoodAmount(
     val basicIngredients: Int = 0,

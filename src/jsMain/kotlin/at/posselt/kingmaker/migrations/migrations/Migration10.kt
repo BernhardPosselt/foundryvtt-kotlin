@@ -1,6 +1,7 @@
 package at.posselt.kingmaker.migrations.migrations
 
 import at.posselt.kingmaker.actor.npcs
+import at.posselt.kingmaker.camping.ActorMeal
 import at.posselt.kingmaker.camping.CampingData
 import at.posselt.kingmaker.camping.CampingSkill
 import at.posselt.kingmaker.camping.dialogs.CombatTrack
@@ -117,6 +118,13 @@ class Migration10 : Migration(10) {
             camping.restRollMode
         }
         camping.alwaysPerformActivities = emptyArray()
+        camping.cooking.actorMeals = camping.cooking.actorMeals.map {
+            ActorMeal(
+                actorUuid = it.actorUuid,
+                favoriteMeal = it.favoriteMeal,
+                chosenMeal = "nothing"
+            )
+        }.toTypedArray()
     }
 
     override suspend fun migrateOther(game: Game) {
