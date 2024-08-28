@@ -49,6 +49,7 @@ external interface CampingData {
     var restRollMode: String
     var increaseWatchActorNumber: Int
     var actorUuidsNotKeepingWatch: Array<String>
+    var alwaysPerformActivities: Array<String>
     var huntAndGatherTargetActorUuid: String?
     var proxyRandomEncounterTableUuid: String?
     var randomEncounterRollMode: String

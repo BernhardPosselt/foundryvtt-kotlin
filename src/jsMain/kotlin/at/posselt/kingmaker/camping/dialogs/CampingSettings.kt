@@ -52,6 +52,7 @@ external interface CampingSettings {
     val ignoreSkillRequirements: Boolean
     val minimumTravelSpeed: Int?
     val minimumSubsistence: Int
+    val alwaysPerformActivities: Array<String>
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -68,6 +69,7 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
             }
             int("increaseWatchActorNumber")
             stringArray("actorUuidsNotKeepingWatch")
+            stringArray("alwaysPerformActivities")
             string("huntAndGatherTargetActorUuid", nullable = true)
             string("proxyRandomEncounterTableUuid", nullable = true)
             string("randomEncounterRollMode")
@@ -88,6 +90,21 @@ enum class RestRollMode {
     ONE,
     ONE_EVERY_FOUR_HOURS,
 }
+
+private val companionActivities = setOf(
+    "Blend Into The Night",
+    "Bolster Confidence",
+    "Bolster Confidence",
+    "Enhance Weapons",
+    "Healer's Blessing",
+    "Intimidating Posture",
+    "Maintain Armor",
+    "Set Alarms",
+    "Set Traps",
+    "Undead Guardians",
+    "Water Hazards",
+    "Wilderness Survival",
+)
 
 @OptIn(ExperimentalJsExport::class)
 @JsExport
@@ -115,6 +132,7 @@ class CampingSettingsApplication(
             ignoreSkillRequirements = camping.ignoreSkillRequirements,
             minimumTravelSpeed = camping.minimumTravelSpeed,
             minimumSubsistence = camping.cooking.minimumSubsistence,
+            alwaysPerformActivities = camping.alwaysPerformActivities,
         )
     }
 
@@ -135,7 +153,6 @@ class CampingSettingsApplication(
         val huntAndGatherUuids = (actors + listOfNotNull(game.party()))
             .mapNotNull { it.toOption(useUuid = true) }
         val uuidsNotKeepingWatch = setOf(*settings.actorUuidsNotKeepingWatch)
-        console.log(camping)
         CampingSettingsContext(
             partId = parent.partId,
             isFormValid = isFormValid,
@@ -153,7 +170,7 @@ class CampingSettingsApplication(
                         Select.fromEnum<RollMode>(
                             name = "randomEncounterRollMode",
                             label = "Random Encounter Roll Mode",
-                            value = settings.randomEncounterRollMode.let { fromCamelCase<RollMode>(it) },
+                            value = fromCamelCase<RollMode>(settings.randomEncounterRollMode),
                             labelFunction = { it.label },
                             stacked = false,
                         ),
@@ -186,6 +203,18 @@ class CampingSettingsApplication(
                             stacked = false,
                         ),
                     )
+                ),
+                Section(
+                    legend = "Always Performed Activities",
+                    formRows = companionActivities.map {
+                        CheckboxInput(
+                            label = it,
+                            name = "alwaysPerformActivities.$it",
+                            value = settings.alwaysPerformActivities.contains(it),
+                            stacked = false,
+                            help = "Activity will be hidden from list of activities and will be automatically enabled"
+                        )
+                    }
                 ),
                 Section(
                     legend = "Cooking",
@@ -240,6 +269,11 @@ class CampingSettingsApplication(
             .filter { it.component2() == true }
             .map { it.component1() }
             .toTypedArray()
+        val activities = (value["alwaysPerformActivities"] ?: jso()) as Record<String, Boolean>
+        value["alwaysPerformActivities"] = flattenObject(activities).asSequence()
+            .filter { it.component2() == true }
+            .map { it.component1() }
+            .toTypedArray()
     }
 
     override fun onParsedSubmit(value: CampingSettings): Promise<Void> = buildPromise {
@@ -262,6 +296,7 @@ class CampingSettingsApplication(
                         camping.ignoreSkillRequirements = settings.ignoreSkillRequirements
                         camping.minimumTravelSpeed = settings.minimumTravelSpeed
                         camping.cooking.minimumSubsistence = settings.minimumSubsistence
+                        camping.alwaysPerformActivities = settings.alwaysPerformActivities
                         campingActor.setCamping(camping)
                     }
                     close()

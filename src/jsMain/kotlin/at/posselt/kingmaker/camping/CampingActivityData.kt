@@ -104,7 +104,8 @@ data class ActivityAndData(
     val result: CampingActivity,
 ) {
     fun done(): Boolean {
-        return (data.doesNotRequireACheck() && result.actorUuid != null) || result.checkPerformed()
+        return (data.doesNotRequireACheck() && result.actorUuid != null)
+                || result.checkPerformed()
     }
 
     fun isPrepareCamp() = data.isPrepareCamp()

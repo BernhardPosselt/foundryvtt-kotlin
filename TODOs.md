@@ -21,7 +21,6 @@ Clean the followings things off OGLism:
 * Don't consider locked activities for effect syncing unless companion checkboxes are clicked
 * Sync camping effects
 * Update docs
-* Add checkboxes to auto enable camping activities without checks for companions
 * Resting (playlist + check + removing fx + healing + macro)
 * Put combat effects to chat after rolling perception check
 * Apply meal effects should ask if it should consume rations and ingredients instead of clicking on separate buttons

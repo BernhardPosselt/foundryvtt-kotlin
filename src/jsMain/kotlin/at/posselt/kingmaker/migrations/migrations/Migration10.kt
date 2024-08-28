@@ -116,6 +116,7 @@ class Migration10 : Migration(10) {
         } else {
             camping.restRollMode
         }
+        camping.alwaysPerformActivities = emptyArray()
     }
 
     override suspend fun migrateOther(game: Game) {

@@ -70,6 +70,7 @@ fun getDefaultCamping(game: Game): CampingData {
         ignoreSkillRequirements = false,
         randomEncounterRollMode = "gmroll",
         section = "prepareCamp",
+        alwaysPerformActivities = emptyArray(),
         regionSettings = RegionSettings(
             regions = arrayOf(
                 RegionSetting(

@@ -68,7 +68,7 @@ suspend fun rollRandomEncounter(
 
 private fun calculateModifierIncrease(camping: CampingData, isDay: Boolean): Int =
     camping.groupActivities().asSequence()
-        .filter(ActivityAndData::done)
+        .filter { it.done() || camping.alwaysPerformActivities.contains(it.data.name) }
         .map { (data, activity) -> calculateModifierIncrease(data, isDay, activity.parseResult()) }
         .sum()
 

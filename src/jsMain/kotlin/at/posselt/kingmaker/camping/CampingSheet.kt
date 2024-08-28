@@ -609,6 +609,7 @@ class CampingSheet(
                     || (prepareCampSection && !groupedActivity.isPrepareCamp())
                     || (campingActivitiesSection && groupedActivity.isPrepareCamp())
                     || eatingSection
+                    || camping.alwaysPerformActivities.contains(data.name)
             CampingSheetActivity(
                 journalUuid = data.journalUuid,
                 name = data.name,
