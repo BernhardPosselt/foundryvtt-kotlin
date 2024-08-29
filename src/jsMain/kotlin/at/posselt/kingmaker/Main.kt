@@ -10,6 +10,7 @@ import at.posselt.kingmaker.camping.checkPreActorUpdate
 import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.camping.openCampingSheet
+import at.posselt.kingmaker.camping.rollRandomEncounter
 import at.posselt.kingmaker.combattracks.registerCombatTrackHooks
 import at.posselt.kingmaker.macros.*
 import at.posselt.kingmaker.migrations.migrateKingmakerTools
@@ -55,11 +56,15 @@ fun main() {
             registerCombatTrackHooks(game)
 
             Hooks.onPreUpdateActor { actor, update, _, _ ->
-                when (checkPreActorUpdate(actor, update)) {
-                    CampingCommand.CLEAR_ACTIVITIES -> console.log("Clear Activities")
-                    CampingCommand.SKIP_ACTIVITIES -> console.log("Skip Activities")
-                    CampingCommand.SYNC_ACTIVITIES -> console.log("Sync Activities", update)
-                    CampingCommand.DO_NOTHING -> console.log("Do Nothing")
+                when (val result = checkPreActorUpdate(actor, update)) {
+                    is CampingCommand.ClearActivities -> console.log("Clear Activities")
+                    is CampingCommand.DoNothing -> console.log("Do Nothing")
+                    is CampingCommand.SkipActivities -> console.log("Skip Activities", result.rollRandomEncounter)
+                    is CampingCommand.SyncActivities -> console.log(
+                        "Sync Activities",
+                        update,
+                        result.rollRandomEncounter
+                    )
                 }
             }
 
