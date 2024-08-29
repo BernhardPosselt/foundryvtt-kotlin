@@ -1,10 +1,12 @@
 package at.posselt.kingmaker
 
 import at.posselt.kingmaker.actor.partyMembers
+import at.posselt.kingmaker.camping.CampingCommand
 import at.posselt.kingmaker.camping.CampingSheet
 import at.posselt.kingmaker.camping.HuntAndGatherMessage
 import at.posselt.kingmaker.camping.addHuntAndGather
 import at.posselt.kingmaker.camping.bindCampingChatEventListeners
+import at.posselt.kingmaker.camping.checkPreActorUpdate
 import at.posselt.kingmaker.camping.getCamping
 import at.posselt.kingmaker.camping.getCampingActor
 import at.posselt.kingmaker.camping.openCampingSheet
@@ -16,6 +18,8 @@ import at.posselt.kingmaker.utils.*
 import at.posselt.kingmaker.weather.registerWeatherHooks
 import at.posselt.kingmaker.weather.rollWeather
 import com.foundryvtt.core.*
+import com.foundryvtt.core.utils.diffObject
+import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.objects.recordOf
 
 fun main() {
@@ -49,6 +53,15 @@ fun main() {
             }
             registerWeatherHooks(game)
             registerCombatTrackHooks(game)
+
+            Hooks.onPreUpdateActor { actor, update, _, _ ->
+                when (checkPreActorUpdate(actor, update)) {
+                    CampingCommand.CLEAR_ACTIVITIES -> console.log("Clear Activities")
+                    CampingCommand.SKIP_ACTIVITIES -> console.log("Skip Activities")
+                    CampingCommand.SYNC_ACTIVITIES -> console.log("Sync Activities", update)
+                    CampingCommand.DO_NOTHING -> console.log("Do Nothing")
+                }
+            }
 
             game.socket.onKingmakerTools { data ->
                 buildPromise {
