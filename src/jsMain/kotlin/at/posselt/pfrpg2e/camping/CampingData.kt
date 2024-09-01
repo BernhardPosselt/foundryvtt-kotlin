@@ -11,9 +11,9 @@ import kotlinx.js.JsPlainObject
 
 @JsPlainObject
 external interface ActorMeal {
-    val actorUuid: String
-    val favoriteMeal: String?
-    val chosenMeal: String
+    var actorUuid: String
+    var favoriteMeal: String?
+    var chosenMeal: String
 }
 
 @JsPlainObject

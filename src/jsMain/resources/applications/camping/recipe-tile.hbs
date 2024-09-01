@@ -1,4 +1,4 @@
-<div class="km-camping-tile km-camping-recipe" {{#if hidden}}hidden{{/if}}>
+<div class="km-camping-tile km-camping-recipe" {{#if hidden}}hidden{{/if}} data-recipe-name="{{targetRecipe}}">
     <header>
         {{#if uuid}}
             <a href="#" data-uuid="{{uuid}}" data-action="open-item">{{name}}</a>
@@ -8,37 +8,12 @@
     </header>
     <div class="km-recipe-content">
         <section class="km-recipe-data {{#unless requiresCheck}}km-no-skill-check{{/unless}} {{#if
-                cost}}km-with-food-cost{{/if}}">
+                cost}}km-with-food-cost{{/if}} {{#if rations}}km-rations-tile{{/if}}">
             <div class="km-camping-tile-portrait">
                 <ul class="km-recipe-actors">
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
-                    <li>
-                        <img src="systems/pf2e/icons/iconics/FumbusFull.webp">
-                        <button type="button"><i class="fa-regular fa-heart"></i></button>
-                    </li>
+                    {{#each actors}}
+                        <li><img src="{{image}}" alt="{{name}}"></li>
+                    {{/each}}
                 </ul>
                 {{#if uuid}}
                     <a href="#" data-uuid="{{uuid}}" data-action="open-item">
@@ -48,6 +23,11 @@
                     <img class="cover" src="{{icon}}">
                 {{/if}}
             </div>
+            {{#if rations }}
+                <div class="km-recipe-rations">
+                    <button type="button" data-action="consume-rations">Consume Rations</button>
+                </div>
+            {{/if}}
             {{#if cost}}
                 <div class="km-recipe-cost">
                     {{> foodCost cost}}

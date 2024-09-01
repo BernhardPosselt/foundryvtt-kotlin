@@ -38,7 +38,7 @@ suspend fun getFullRestSeconds(
 ): Int = calculateRestDurationSeconds(getRestSecondsPerPlayer(watchers, recipes, increaseActorsKeepingWatch)) +
         calculateDailyPreparationSeconds(gunsToClean)
 
-suspend fun getFullRestDuration(
+suspend fun getTotalRestDuration(
     watchers: List<PF2EActor>,
     recipes: List<RecipeData>,
     gunsToClean: Int,
@@ -51,6 +51,7 @@ suspend fun getFullRestDuration(
         increaseActorsKeepingWatch = increaseActorsKeepingWatch
     )
 )
+
 
 suspend fun healsDoubleHp(
     actor: PF2ECharacter,

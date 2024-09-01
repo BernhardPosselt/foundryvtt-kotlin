@@ -136,7 +136,7 @@ private suspend fun CampingData.syncCampingEffects() = coroutineScope {
     val actors = getActorsInCamp()
     val effectsThatShouldBePresent = null
     // TODO:
-    //  * check which effects should be active on each actor
+    //  * check which effects should be active on each actor (also check alwaysPerformActivities)
     //  * check which effects are present on each actor
     //  * remove effects that are not present on active actors
     //  * add effects which are not present on actors

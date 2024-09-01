@@ -1,17 +1,38 @@
 package at.posselt.pfrpg2e.camping
 
-import at.posselt.pfrpg2e.*
 import at.posselt.pfrpg2e.actor.openActor
 import at.posselt.pfrpg2e.actor.party
-import at.posselt.pfrpg2e.app.*
+import at.posselt.pfrpg2e.app.ActorRef
+import at.posselt.pfrpg2e.app.DocumentRef
 import at.posselt.pfrpg2e.app.FormApp
+import at.posselt.pfrpg2e.app.HandlebarsRenderContext
 import at.posselt.pfrpg2e.app.forms.FormElementContext
 import at.posselt.pfrpg2e.app.MenuControl
 import at.posselt.pfrpg2e.app.forms.Select
 import at.posselt.pfrpg2e.app.forms.SelectOption
-import at.posselt.pfrpg2e.camping.dialogs.*
+import at.posselt.pfrpg2e.calculateHexplorationActivities
+import at.posselt.pfrpg2e.camping.dialogs.CampingSettingsApplication
+import at.posselt.pfrpg2e.camping.dialogs.ManageActivitiesApplication
+import at.posselt.pfrpg2e.camping.dialogs.ManageRecipesApplication
+import at.posselt.pfrpg2e.camping.dialogs.RegionConfig
+import at.posselt.pfrpg2e.camping.dialogs.pickSpecialRecipe
 import at.posselt.pfrpg2e.data.checks.DegreeOfSuccess
-import at.posselt.pfrpg2e.utils.*
+import at.posselt.pfrpg2e.fromCamelCase
+import at.posselt.pfrpg2e.takeIfInstance
+import at.posselt.pfrpg2e.toCamelCase
+import at.posselt.pfrpg2e.toLabel
+import at.posselt.pfrpg2e.utils.buildPromise
+import at.posselt.pfrpg2e.utils.emitPfrpg2eKingdomCampingWeather
+import at.posselt.pfrpg2e.utils.formatSeconds
+import at.posselt.pfrpg2e.utils.fromDateInputString
+import at.posselt.pfrpg2e.utils.fromUuidTypeSafe
+import at.posselt.pfrpg2e.utils.getPF2EWorldTime
+import at.posselt.pfrpg2e.utils.isDay
+import at.posselt.pfrpg2e.utils.launch
+import at.posselt.pfrpg2e.utils.openItem
+import at.posselt.pfrpg2e.utils.openJournal
+import at.posselt.pfrpg2e.utils.postChatMessage
+import at.posselt.pfrpg2e.utils.toDateInputString
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
@@ -19,14 +40,16 @@ import com.foundryvtt.core.documents.onDeleteItem
 import com.foundryvtt.core.documents.onUpdateItem
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.core.ui
-import com.foundryvtt.pf2e.actor.*
-import com.foundryvtt.pf2e.item.*
+import com.foundryvtt.pf2e.actor.PF2EActor
+import com.foundryvtt.pf2e.actor.PF2ECreature
+import com.foundryvtt.pf2e.actor.PF2ENpc
+import com.foundryvtt.pf2e.item.itemFromUuid
 import js.array.push
 import js.core.Void
 import js.objects.ReadonlyRecord
 import js.objects.recordOf
 import kotlinx.coroutines.await
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalTime
 import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.get
@@ -35,11 +58,16 @@ import kotlin.String
 import kotlin.js.Promise
 import kotlin.math.max
 
+
 @JsPlainObject
-external interface CampingSheetActor {
+external interface BaseActorContext {
     val name: String
     val uuid: String
     val image: String?
+}
+
+@JsPlainObject
+external interface CampingSheetActor : BaseActorContext {
     val choseActivity: Boolean
     val degreeOfSuccess: FormElementContext?
 }
@@ -67,13 +95,22 @@ external interface NightModes {
 }
 
 @JsPlainObject
+external interface RecipeActorContext : BaseActorContext {
+    val chosenMeal: String
+    val favoriteMeal: String?
+}
+
+@JsPlainObject
 external interface RecipeContext {
     val name: String
+    val targetRecipe: String
     val cost: FoodCost?
     val uuid: String?
     val icon: String
     val requiresCheck: Boolean
     val hidden: Boolean
+    val rations: Boolean
+    val actors: Array<RecipeActorContext>
 }
 
 @JsPlainObject
@@ -152,6 +189,7 @@ private enum class CampingSheetSection {
 
 private const val windowWidth = 970
 
+
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 @JsName("CampingSheet")
@@ -166,6 +204,7 @@ class CampingSheet(
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players", gmOnly = true),
         MenuControl(label = "Reset Activities", action = "reset-activities", gmOnly = true),
+        MenuControl(label = "Reset Chosen Meals", action = "reset-meals", gmOnly = true),
         MenuControl(label = "Activities", action = "configure-activities", gmOnly = true),
         MenuControl(label = "Recipes", action = "configure-recipes", gmOnly = true),
         MenuControl(label = "Regions", action = "configure-regions", gmOnly = true),
@@ -221,6 +260,21 @@ class CampingSheet(
                 }
             }
         }
+        onDocumentRefDrop(
+            ".km-camping-recipe",
+            { it.dragstartSelector == ".km-camping-actor" }
+        ) { event, documentRef ->
+            buildPromise {
+                val target = event.target as HTMLElement
+                val tile = target.closest(".km-camping-recipe") as HTMLElement?
+                val recipeName = tile?.dataset?.get("recipeName")
+                buildPromise {
+                    if (documentRef is ActorRef && recipeName != null) {
+                        assignRecipeTo(documentRef.uuid, recipeName)
+                    }
+                }
+            }
+        }
         appHook.onUpdateWorldTime { _, _, _, _ -> render() }
         appHook.onCreateItem { _, _, _, _ -> render() }
         appHook.onDeleteItem { _, _, _ -> render() }
@@ -233,8 +287,10 @@ class CampingSheet(
             "configure-recipes" -> ManageRecipesApplication(game, actor).launch()
             "configure-activities" -> ManageActivitiesApplication(game, actor).launch()
             "reset-activities" -> buildPromise { resetActivities() }
+            "reset-meals" -> buildPromise { resetMeals() }
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
+            "consume-rations" -> console.log("consuming rations")
             "roll-camping-check" -> buildPromise {
                 target.closest(".km-camping-activity")
                     ?.takeIfInstance<HTMLElement>()
@@ -371,6 +427,14 @@ class CampingSheet(
         }
 
 
+    private suspend fun resetMeals() {
+        actor.getCamping()?.let { camping ->
+            camping.cooking.actorMeals.forEach { it.chosenMeal = "nothing" }
+            actor.setCamping(camping)
+        }
+    }
+
+
     private suspend fun resetActivities() {
         actor.getCamping()?.let { camping ->
             camping.campingActivities = camping.campingActivities.filter { it.isPrepareCamp() }.toTypedArray()
@@ -410,6 +474,23 @@ class CampingSheet(
 
     private suspend fun rollEncounter(includeFlatCheck: Boolean) {
         rollRandomEncounter(game, actor, includeFlatCheck)
+    }
+
+    private suspend fun assignRecipeTo(actorUuid: String, recipeName: String) {
+        actor.getCamping()?.let { camping ->
+            val existingMeal = camping.cooking.actorMeals.find { it.actorUuid == actorUuid }
+            if (existingMeal == null) {
+                camping.cooking.actorMeals.push(
+                    ActorMeal(
+                        actorUuid = actorUuid,
+                        chosenMeal = recipeName,
+                    )
+                )
+            } else {
+                existingMeal.chosenMeal = recipeName
+            }
+            actor.setCamping(camping)
+        }
     }
 
     private suspend fun assignActivityTo(actorUuid: String, activityName: String) {
@@ -545,26 +626,34 @@ class CampingSheet(
     }
 
     private suspend fun getRecipeContext(
+        recipeActors: List<RecipeActorContext>,
         foodItems: FoodItems,
         total: FoodAmount,
         camping: CampingData,
         section: CampingSheetSection,
     ): Array<RecipeContext> {
+        val actorsByChosenMeal = recipeActors.groupBy { it.chosenMeal }
         val starving = RecipeContext(
             name = "Skip Meal",
+            targetRecipe = "nothing",
             icon = "icons/containers/kitchenware/bowl-clay-brown.webp",
             requiresCheck = false,
             hidden = section != CampingSheetSection.EATING,
+            rations = false,
+            actors = actorsByChosenMeal["nothing"]?.toTypedArray() ?: emptyArray(),
         )
         val rations = RecipeContext(
             name = "Rations",
+            targetRecipe = "rationsOrSubsistence",
             icon = "icons/consumables/food/berries-ration-round-red.webp",
             requiresCheck = false,
             cost = buildFoodCost(
                 FoodAmount(rations = 1),
                 totalAmount = total,
-                items = foodItems
+                items = foodItems,
             ),
+            rations = true,
+            actors = actorsByChosenMeal["rationsOrSubsistence"]?.toTypedArray() ?: emptyArray(),
             hidden = section != CampingSheetSection.EATING,
         )
         return arrayOf(starving, rations) + camping.getAllRecipes()
@@ -578,11 +667,14 @@ class CampingSheet(
                 )
                 RecipeContext(
                     name = recipe.name,
+                    targetRecipe = recipe.name,
                     cost = cookingCost,
                     uuid = recipe.uuid,
                     icon = recipe.icon ?: item?.img ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
                     requiresCheck = true,
                     hidden = section != CampingSheetSection.EATING,
+                    rations = false,
+                    actors = actorsByChosenMeal[recipe.name]?.toTypedArray() ?: emptyArray(),
                 )
             }
             .toTypedArray()
@@ -663,7 +755,7 @@ class CampingSheet(
             )
         }.toTypedArray()
         val recipes = camping.getAllRecipes()
-        val fullRestDuration = getFullRestDuration(
+        val fullRestDuration = getTotalRestDuration(
             watchers = actorsByUuid.values.filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) },
             recipes = recipes.toList(),
             gunsToClean = camping.gunsToClean,
@@ -672,8 +764,20 @@ class CampingSheet(
         val foodItems = getCompendiumFoodItems()
         val totalFood = camping.getFoodAmount(game.party(), foodItems)
         val availableFood = buildFoodCost(totalFood, items = foodItems)
-        console.log(availableFood)
+        val recipeActors = camping.cooking.actorMeals
+            .mapNotNull { meal ->
+                actorsByUuid[meal.actorUuid]?.let { actor ->
+                    RecipeActorContext(
+                        name = actor.name,
+                        uuid = actor.uuid,
+                        image = actor.img,
+                        chosenMeal = meal.chosenMeal,
+                        favoriteMeal = meal.favoriteMeal,
+                    )
+                }
+            }
         val recipesContext = getRecipeContext(
+            recipeActors = recipeActors,
             foodItems = foodItems,
             total = totalFood,
             camping = camping,
