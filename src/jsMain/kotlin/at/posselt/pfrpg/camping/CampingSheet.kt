@@ -18,6 +18,7 @@ import at.posselt.pfrpg.camping.dialogs.RegionConfig
 import at.posselt.pfrpg.camping.dialogs.pickSpecialRecipe
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.fromCamelCase
+import at.posselt.pfrpg.resting.getTotalRestDuration
 import at.posselt.pfrpg.takeIfInstance
 import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.toLabel
@@ -213,7 +214,7 @@ class CampingSheet(
         MenuControl(label = "Settings", action = "settings", gmOnly = true),
         MenuControl(label = "Help", action = "help"),
     ),
-    scrollable = arrayOf(".km-camping-activities-wrapper", ".km-camping-actors", ".km-recipe-actors"),
+    scrollable = arrayOf(".km-camping-activities-wrapper", ".km-camping-actors"),
     renderOnSubmit = false,
 ) {
     init {
@@ -491,6 +492,7 @@ class CampingSheet(
             } else {
                 existingMeal.chosenMeal = recipeName
             }
+
             actor.setCamping(camping)
         }
     }
@@ -658,7 +660,7 @@ class CampingSheet(
             actors = actorsByChosenMeal["rationsOrSubsistence"]?.toTypedArray() ?: emptyArray(),
             hidden = section != CampingSheetSection.EATING,
         )
-        
+
         return arrayOf(starving, rations) + camping.getAllRecipes()
             .sortedBy { it.level }
             .mapNotNull { recipe ->
@@ -744,11 +746,10 @@ class CampingSheet(
         val chosenMealsByActorUuid = recipesContext.asSequence()
             .flatMap { recipe ->
                 recipe.actors.asSequence()
-                    .filter { it.chosenMeal == "nothing" }
+                    .filter { it.chosenMeal != "nothing" }
                     .map { it.uuid to recipe }
             }
             .toMap()
-        console.log("rendering")
         val activities = groupActivities.mapIndexed { index, groupedActivity ->
             val (data, result) = groupedActivity
             val actor = result.actorUuid?.let { actorsByUuid[it] }?.unsafeCast<PF2ECreature>()

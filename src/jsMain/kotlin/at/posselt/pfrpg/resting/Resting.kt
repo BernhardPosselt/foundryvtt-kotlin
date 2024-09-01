@@ -1,5 +1,15 @@
-package at.posselt.pfrpg.camping
+package at.posselt.pfrpg.resting
 
+import at.posselt.pfrpg.camping.CampingActivityData
+import at.posselt.pfrpg.camping.MealEffect
+import at.posselt.pfrpg.camping.RecipeData
+import at.posselt.pfrpg.camping.calculateDailyPreparationSeconds
+import at.posselt.pfrpg.camping.calculateRestDurationSeconds
+import at.posselt.pfrpg.camping.campingEffectsDoublingHealing
+import at.posselt.pfrpg.camping.getAppliedCampingEffects
+import at.posselt.pfrpg.camping.getAppliedMealEffects
+import at.posselt.pfrpg.camping.mealEffectsChangingRestDuration
+import at.posselt.pfrpg.camping.mealEffectsDoublingHealing
 import at.posselt.pfrpg.utils.awaitAll
 import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.formatSeconds
