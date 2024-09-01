@@ -6,8 +6,6 @@ import at.posselt.pfrpg.app.forms.FormElementContext
 import at.posselt.pfrpg.app.forms.HiddenInput
 import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.app.forms.SelectOption
-import at.posselt.pfrpg.app.forms.formContext
-import at.posselt.pfrpg.camping.CampingActivityData
 import at.posselt.pfrpg.camping.canBeFavoriteMeal
 import at.posselt.pfrpg.camping.getActorsInCamp
 import at.posselt.pfrpg.camping.getAllRecipes
@@ -67,6 +65,7 @@ external interface FavoriteMealSubmitData {
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 class FavoriteMealsApplication(
+    private val game: Game,
     private val actor: PF2ENpc,
 ) : FormApp<FavoriteMealContext, FavoriteMealSubmitData>(
     title = "Favorite Meals",
@@ -85,10 +84,16 @@ class FavoriteMealsApplication(
             "save" -> {
                 buildPromise {
                     actor.getCamping()?.let { camping ->
+                        val allowedActorUuids = camping.getActorsInCamp()
+                            .filter { game.user.isGM || it.isOwner }
+                            .map { it.uuid }
+                            .toSet()
                         val mealsByActorUuid = meals.associateBy { it.actorUuid }
-                        camping.cooking.actorMeals.forEach {
-                            it.favoriteMeal = mealsByActorUuid[it.actorUuid]?.favoriteMeal
-                        }
+                        camping.cooking.actorMeals
+                            .filter { it.actorUuid in allowedActorUuids }
+                            .forEach {
+                                it.favoriteMeal = mealsByActorUuid[it.actorUuid]?.favoriteMeal
+                            }
                         actor.setCamping(camping)
                     }
                     close()
@@ -106,7 +111,10 @@ class FavoriteMealsApplication(
     ): Promise<FavoriteMealContext> = buildPromise {
         val parent = super._preparePartContext(partId, context, options).await()
         val camping = actor.getCamping()
-        val actors = camping?.getActorsInCamp()?.associateBy { it.uuid } ?: emptyMap()
+        val actors = camping
+            ?.getActorsInCamp()
+            ?.filter { game.user.isGM || it.isOwner }
+            ?.associateBy { it.uuid } ?: emptyMap()
         val mealChoices = camping
             ?.getAllRecipes()
             ?.filter { it.canBeFavoriteMeal() }
@@ -117,6 +125,7 @@ class FavoriteMealsApplication(
             partId = parent.partId,
             isFormValid = isFormValid,
             formRows = meals
+                .filter { it.actorUuid in actors }
                 .flatMapIndexed { index, meal ->
                     val name = actors[meal.actorUuid]?.name
                     listOf(

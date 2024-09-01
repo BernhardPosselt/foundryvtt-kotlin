@@ -308,7 +308,7 @@ class CampingSheet(
                     }
             }
 
-            "favorite-meals" -> buildPromise { FavoriteMealsApplication(actor).launch() }
+            "favorite-meals" -> buildPromise { FavoriteMealsApplication(game, actor).launch() }
             "next-section" -> buildPromise { nextSection() }
             "previous-section" -> buildPromise { previousSection() }
             "check-encounter" -> buildPromise { rollEncounter(includeFlatCheck = true) }
