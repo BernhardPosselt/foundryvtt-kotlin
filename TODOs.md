@@ -7,6 +7,7 @@
 
 ## Camping
 
+* Firstrun tutorial
 * Changing the degree of success value of an activity should post random encounters or other values to chat if required
 * Don't consider locked activities for effect syncing unless companion checkboxes are clicked
 * Sync camping effects
