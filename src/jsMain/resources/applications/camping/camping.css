@@ -221,6 +221,18 @@ ul.km-camping-actors {
             border-radius: 0;
             display: flex;
         }
+
+        img.chosen-meal {
+            position: absolute;
+            border-radius: 100%;
+            box-shadow: 0 0 5px 1px black;
+            height: 30px;
+            width: 30px;
+            line-height: 20px;
+            top: 4px;
+            left: 4px;
+            border: 1px solid rgb(231, 209, 177);
+        }
     }
 
 
@@ -338,7 +350,6 @@ ul.km-camping-actors {
         align-items: center;
         justify-content: center;
         min-height: 100%;
-        overflow-y: auto;
     }
 
     h1 {

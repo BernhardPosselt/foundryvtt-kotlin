@@ -101,7 +101,11 @@
             <li class="km-camping-actor" draggable="true" data-uuid="{{uuid}}" data-type="Actor">
                 <a href="#" data-uuid="{{uuid}}" data-action="open-actor"><img src="{{image}}" alt="{{name}}"></a>
                 {{#if choseActivity}}
-                    <div class="taken-camping-activity"><i class="fa-solid fa-circle-check"></i></div>{{/if}}
+                    <div class="taken-camping-activity"><i class="fa-solid fa-circle-check"></i></div>
+                {{/if}}
+                {{#if chosenMealImg}}
+                    <img class="chosen-meal" src="{{chosenMealImg}}" alt="{{chosenMeal}}" title="{{chosenMeal}}">
+                {{/if}}
                 <button class="km-camping-action"
                         data-action="clear-actor"
                         type="button"
