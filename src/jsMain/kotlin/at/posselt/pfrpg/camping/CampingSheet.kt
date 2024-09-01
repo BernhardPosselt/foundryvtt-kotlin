@@ -805,7 +805,7 @@ class CampingSheet(
         CampingSheetContext(
             availableFood = availableFood,
             totalFoodCost = calculateTotalFoodCost(
-                actorMeals = camping.cooking.actorMeals + ActorMeal(actorUuid = "test", chosenMeal = "Haggis"),
+                actorMeals = camping.cooking.actorMeals,
                 foodItems = foodItems,
                 availableFood = totalFood,
             ),

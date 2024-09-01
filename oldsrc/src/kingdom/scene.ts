@@ -50,6 +50,7 @@ function parseStructureData(
                 dc: 0,
                 rp: 0,
             },
+            lots: 0,
             ...data,
         };
         const result = ruleSchema.validate(rule);
