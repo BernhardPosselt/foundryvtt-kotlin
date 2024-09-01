@@ -5,7 +5,8 @@ adventure for PFRPG.
 
 ## Licensing
 
-All PFRPG 2e content uses the [Open Gaming License](./OpenGameLicense.md)
+All PFRPG 2e content uses the [Open Gaming License](./OpenGameLicense.md). If you find non OGL content, please file an
+issue and I'll get it removed ASAP. I've tried my best to scrub existing content, but there might still be leftovers.
 
 The source code is licensed under the AGPLv3 license, except for
 the [src/jsMain/kotlin/com/foundryvtt](./src/jsMain/kotlin/com/foundryvtt) folder which is licensed
@@ -24,7 +25,7 @@ The package is available through the [module registry](https://foundryvtt.com/pa
 
 ## Functionality
 
-This module ships with implementations for all the extra mechanics provided in the 2e Kingmaker Adventure Path,
+This module ships with implementations for all the extra mechanics provided in the best sandbox PFRPG 2e adventure,
 including optional and popular homebrew from Vance & Kerenshara:
 
 * Camping Sheet

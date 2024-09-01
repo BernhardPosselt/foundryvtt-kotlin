@@ -30,7 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Instead of a single meal, players can now choose from the entire array of available recipes RAW
 * If you don't use the official module, you will need to:
     * Set your combat tracks and random encounters manually in camping sheet
-* All companion names have been removed from camping activities, kingdom events, kingdom activities
+* All companion names have been removed from camping activities, kingdom events and kingdom activities
+* Companion Kingdom Activities are now handled like all other activities, meaning: you don't have to force override them
+  to enable them without companion leaders. However, they are not migrated and don't automatically enable invested and
+  benefits anymore, when you assign a companion to a leadership position. Enable/Disable them like normally in your turn
+  tab. Regarding Octavia, there's a kingdom sheet setting now to enable that benefit
 * The following camping activities have been renamed:
     * Dawnflower's Blessing -> Healer's Blessing
 * The following recipes have been renamed
@@ -41,6 +45,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * Kameberry Pie -> Pie
     * Whiterose Oysters -> Oysters
     * Owlbear Omelet -> Omelet
+* The following Kingdom Activities have been renamed:
+    * Restore the Temple of the Elk -> Restore the Temple
+    * Harvest Azure Lily Pollen -> Harvest Lily Pollen
 * Migrations are not run anymore if you've updated from a version prior to 0.12.2 (released in October 2023). If you've
   upgraded from such a version, download to the latest version for your release that still ships these (1.1.1 for V12 or
   0.46.2 for V11), then upgrade to this release
