@@ -12,6 +12,7 @@ import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.app.forms.SelectOption
 import at.posselt.pfrpg.calculateHexplorationActivities
 import at.posselt.pfrpg.camping.dialogs.CampingSettingsApplication
+import at.posselt.pfrpg.camping.dialogs.FavoriteMealsApplication
 import at.posselt.pfrpg.camping.dialogs.ManageActivitiesApplication
 import at.posselt.pfrpg.camping.dialogs.ManageRecipesApplication
 import at.posselt.pfrpg.camping.dialogs.RegionConfig
@@ -207,7 +208,8 @@ class CampingSheet(
     controls = arrayOf(
         MenuControl(label = "Show Players", action = "show-players", gmOnly = true),
         MenuControl(label = "Reset Activities", action = "reset-activities", gmOnly = true),
-        MenuControl(label = "Reset Chosen Meals", action = "reset-meals", gmOnly = true),
+        MenuControl(label = "Reset Meals", action = "reset-meals", gmOnly = true),
+        MenuControl(label = "Favorite Meals", action = "favorite-meals", gmOnly = false),
         MenuControl(label = "Activities", action = "configure-activities", gmOnly = true),
         MenuControl(label = "Recipes", action = "configure-recipes", gmOnly = true),
         MenuControl(label = "Regions", action = "configure-regions", gmOnly = true),
@@ -306,6 +308,7 @@ class CampingSheet(
                     }
             }
 
+            "favorite-meals" -> buildPromise { FavoriteMealsApplication(actor).launch() }
             "next-section" -> buildPromise { nextSection() }
             "previous-section" -> buildPromise { previousSection() }
             "check-encounter" -> buildPromise { rollEncounter(includeFlatCheck = true) }

@@ -55,6 +55,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Combat Tracks can now select a track on a playlist in addition to selecting a playlist
 * TODO: detail new camping sheet
 
+## Fixed
+
+* Lots are not calculated from token size anymore
+
 ## [1.1.1] - 2024-07-17
 
 ### Fixed

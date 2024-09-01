@@ -88,7 +88,7 @@ export interface Structure {
     consumptionReduction?: number;
     unlockActivities?: string[];
     traits?: BuildingTrait[];
-    lots?: number;
+    lots: number;
     affectsEvents?: boolean;
     affectsDowntime?: boolean;
     reducesUnrest?: boolean;
@@ -178,6 +178,7 @@ const structures: Structure[] = [
             luxuries: 6,
             stone: 12,
         },
+        lots: 2,
     },
     {
         name: 'Alchemy Laboratory',
@@ -204,6 +205,7 @@ const structures: Structure[] = [
             stone: 5,
             dc: 16,
         },
+        lots: 1,
     },
     {
         name: 'Arcanist\'s Tower',
@@ -230,6 +232,7 @@ const structures: Structure[] = [
             stone: 6,
             dc: 20,
         },
+        lots: 1,
     },
     {
         name: 'Arena',
@@ -256,6 +259,7 @@ const structures: Structure[] = [
             lumber: 6,
             stone: 12,
         },
+        lots: 4,
     },
     {
         name: 'Bank',
@@ -276,6 +280,7 @@ const structures: Structure[] = [
             ore: 4,
             stone: 6,
         },
+        lots: 1,
     },
     {
         name: 'Barracks',
@@ -302,6 +307,7 @@ const structures: Structure[] = [
             lumber: 2,
             stone: 1,
         },
+        lots: 1,
     },
     {
         name: 'Brewery',
@@ -325,6 +331,7 @@ const structures: Structure[] = [
             rp: 6,
             lumber: 2,
         },
+        lots: 1,
     },
     {
         name: 'Bridge',
@@ -406,6 +413,7 @@ const structures: Structure[] = [
             lumber: 12,
             stone: 12,
         },
+        lots: 4,
     },
     {
         name: 'Cathedral',
@@ -443,6 +451,7 @@ const structures: Structure[] = [
             lumber: 20,
             stone: 20,
         },
+        lots: 4,
     },
     {
         name: 'Cemetery',
@@ -459,6 +468,7 @@ const structures: Structure[] = [
             rp: 4,
             stone: 1,
         },
+        lots: 1,
     },
     {
         name: 'Construction Yard',
@@ -482,6 +492,7 @@ const structures: Structure[] = [
             lumber: 10,
             stone: 10,
         },
+        lots: 4,
     },
     {
         name: 'Dump',
@@ -501,6 +512,7 @@ const structures: Structure[] = [
             dc: 16,
             rp: 4,
         },
+        lots: 1,
     },
     {
         name: 'Embassy',
@@ -525,6 +537,7 @@ const structures: Structure[] = [
             stone: 4,
             luxuries: 6,
         },
+        lots: 2,
     },
     {
         name: 'Festival Hall',
@@ -544,6 +557,7 @@ const structures: Structure[] = [
             rp: 7,
             lumber: 3,
         },
+        lots: 1,
     },
     {
         name: 'Foundry',
@@ -569,6 +583,7 @@ const structures: Structure[] = [
             stone: 3,
             ore: 2,
         },
+        lots: 2,
     },
     {
         name: 'Garrison',
@@ -598,6 +613,7 @@ const structures: Structure[] = [
             lumber: 6,
             stone: 3,
         },
+        lots: 2,
     },
     {
         name: 'General Store',
@@ -614,6 +630,7 @@ const structures: Structure[] = [
             rp: 8,
             lumber: 1,
         },
+        lots: 1,
     },
     {
         name: 'Gladiatorial Arena',
@@ -644,6 +661,7 @@ const structures: Structure[] = [
             }],
             dc: 34,
         },
+        lots: 4,
     },
     {
         name: 'Houses',
@@ -660,6 +678,7 @@ const structures: Structure[] = [
             }],
             dc: 15,
         },
+        lots: 1,
     },
     {
         name: 'Granary',
@@ -678,6 +697,7 @@ const structures: Structure[] = [
             }],
             dc: 15,
         },
+        lots: 1,
     },
     {
         name: 'Guildhall',
@@ -696,6 +716,7 @@ const structures: Structure[] = [
             dc: 20,
         },
         upgradeFrom: ['Trade Shop'],
+        lots: 2,
     },
     {
         name: 'Herbalist',
@@ -715,6 +736,7 @@ const structures: Structure[] = [
             }],
             dc: 15,
         },
+        lots: 1,
     },
     {
         name: 'Hospital',
@@ -741,6 +763,7 @@ const structures: Structure[] = [
             }],
             dc: 26,
         },
+        lots: 2,
     },
     {
         name: 'Illicit Market',
@@ -770,6 +793,7 @@ const structures: Structure[] = [
             }],
             dc: 22,
         },
+        lots: 1,
     },
     {
         name: 'Inn',
@@ -789,6 +813,7 @@ const structures: Structure[] = [
             }],
             dc: 15,
         },
+        lots: 1,
     },
     {
         name: 'Jail',
@@ -815,6 +840,7 @@ const structures: Structure[] = [
             }],
             dc: 16,
         },
+        lots: 1,
     },
     {
         name: 'Keep',
@@ -845,6 +871,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 2,
     },
     {
         name: 'Library',
@@ -868,6 +895,7 @@ const structures: Structure[] = [
             }],
             dc: 16,
         },
+        lots: 1,
     },
     {
         name: 'Lumberyard',
@@ -892,6 +920,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 2,
     },
     {
         name: 'Luxury Store',
@@ -919,6 +948,7 @@ const structures: Structure[] = [
             }],
             dc: 22,
         },
+        lots: 1,
     },
     {
         name: 'Magic Shop',
@@ -947,6 +977,7 @@ const structures: Structure[] = [
             }],
             dc: 24,
         },
+        lots: 1,
     },
     {
         name: 'Magical Streetlamps',
@@ -990,6 +1021,7 @@ const structures: Structure[] = [
             }],
             dc: 20,
         },
+        lots: 1,
     },
     {
         name: 'Marketplace',
@@ -1012,6 +1044,7 @@ const structures: Structure[] = [
             }],
             dc: 19,
         },
+        lots: 2,
     },
     {
         name: 'Menagerie',
@@ -1039,6 +1072,7 @@ const structures: Structure[] = [
             }],
             dc: 30,
         },
+        lots: 4,
     },
     {
         name: 'Military Academy',
@@ -1067,6 +1101,7 @@ const structures: Structure[] = [
             }],
             dc: 30,
         },
+        lots: 2,
     },
     {
         name: 'Mill',
@@ -1089,6 +1124,7 @@ const structures: Structure[] = [
             }],
             dc: 16,
         },
+        lots: 1,
     },
     {
         name: 'Mint',
@@ -1117,6 +1153,7 @@ const structures: Structure[] = [
             }],
             dc: 34,
         },
+        lots: 1,
     },
     {
         name: 'Monument',
@@ -1140,6 +1177,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Museum',
@@ -1163,6 +1201,7 @@ const structures: Structure[] = [
             }],
             dc: 20,
         },
+        lots: 2,
     },
     {
         name: 'Noble Villa',
@@ -1194,6 +1233,7 @@ const structures: Structure[] = [
             }],
             dc: 19,
         },
+        lots: 2,
     },
     {
         name: 'Occult Shop',
@@ -1222,6 +1262,7 @@ const structures: Structure[] = [
             }],
             dc: 32,
         },
+        lots: 1,
     },
     {
         name: 'Opera House',
@@ -1252,6 +1293,7 @@ const structures: Structure[] = [
             }],
             dc: 34,
         },
+        lots: 2,
     },
     {
         name: 'Orphanage',
@@ -1271,6 +1313,7 @@ const structures: Structure[] = [
             }],
             dc: 16,
         },
+        lots: 1,
     },
     {
         name: 'Palace',
@@ -1323,6 +1366,7 @@ const structures: Structure[] = [
             }],
             dc: 34,
         },
+        lots: 4,
     },
     {
         name: 'Park',
@@ -1345,6 +1389,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Paved Streets',
@@ -1381,6 +1426,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Rubble',
@@ -1388,6 +1434,7 @@ const structures: Structure[] = [
         affectsDowntime: false,
         reducesUnrest: false,
         level: 0,
+        lots: 1,
     },
     {
         name: 'Printing House',
@@ -1414,6 +1461,7 @@ const structures: Structure[] = [
             }],
             dc: 27,
         },
+        lots: 2,
     },
     {
         name: 'Sacred Grove',
@@ -1439,6 +1487,7 @@ const structures: Structure[] = [
             }],
             dc: 20,
         },
+        lots: 1,
     },
     {
         name: 'Secure Warehouse',
@@ -1464,6 +1513,7 @@ const structures: Structure[] = [
             }],
             dc: 22,
         },
+        lots: 2,
     },
     {
         name: 'Sewer System',
@@ -1514,6 +1564,7 @@ const structures: Structure[] = [
             }],
             dc: 15,
         },
+        lots: 1,
     },
     {
         name: 'Smithy',
@@ -1540,6 +1591,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Specialized Artisan',
@@ -1562,6 +1614,7 @@ const structures: Structure[] = [
             }],
             dc: 19,
         },
+        lots: 1,
     },
     {
         name: 'Stable',
@@ -1582,6 +1635,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Stockyard',
@@ -1602,6 +1656,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 4,
     },
     {
         name: 'Stonemason',
@@ -1625,6 +1680,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 2,
     },
     {
         name: 'Tannery',
@@ -1645,6 +1701,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Tavern, Dive',
@@ -1664,6 +1721,7 @@ const structures: Structure[] = [
             }],
             dc: 15,
         },
+        lots: 1,
     },
     {
         name: 'Tavern, Luxury',
@@ -1696,6 +1754,7 @@ const structures: Structure[] = [
             }],
             dc: 26,
         },
+        lots: 2,
     },
     {
         name: 'Tavern, Popular',
@@ -1727,6 +1786,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Tavern, World-Class',
@@ -1762,6 +1822,7 @@ const structures: Structure[] = [
             }],
             dc: 34,
         },
+        lots: 2,
     },
     {
         name: 'Temple',
@@ -1795,6 +1856,7 @@ const structures: Structure[] = [
             }],
             dc: 23,
         },
+        lots: 2,
     },
     {
         name: 'Tenement',
@@ -1818,6 +1880,7 @@ const structures: Structure[] = [
             }],
             dc: 14,
         },
+        lots: 1,
     },
     {
         name: 'Theater',
@@ -1844,6 +1907,7 @@ const structures: Structure[] = [
             }],
             dc: 26,
         },
+        lots: 2,
     },
     {
         name: 'Thieves\' Guild',
@@ -1870,6 +1934,7 @@ const structures: Structure[] = [
             }],
             dc: 20,
         },
+        lots: 1,
     },
     {
         name: 'Town Hall',
@@ -1900,6 +1965,7 @@ const structures: Structure[] = [
             }],
             dc: 16,
         },
+        lots: 2,
     },
     {
         name: 'Trade Shop',
@@ -1921,6 +1987,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'University',
@@ -1945,6 +2012,7 @@ const structures: Structure[] = [
             }],
             dc: 34,
         },
+        lots: 4,
     },
     {
         name: 'Wall, Stone',
@@ -2011,6 +2079,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Watchtower, Stone',
@@ -2034,6 +2103,7 @@ const structures: Structure[] = [
             }],
             dc: 18,
         },
+        lots: 1,
     },
     {
         name: 'Waterfront',
@@ -2062,6 +2132,7 @@ const structures: Structure[] = [
             }],
             dc: 24,
         },
+        lots: 4,
     },
 ];
 

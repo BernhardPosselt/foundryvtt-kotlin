@@ -16,7 +16,7 @@ function calculateLots(structure: Structure, tokenWidth: number, tokenHeight: nu
     } else {
         return {
             ...structure,
-            lots: tokenWidth * tokenHeight,
+            lots: 0,
         };
     }
 }

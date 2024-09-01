@@ -37,6 +37,8 @@ external interface RecipeData {
     val favoriteMeal: CookingOutcome?
 }
 
+fun RecipeData.canBeFavoriteMeal() = name != "Basic Meal"
+
 fun RecipeData.cookingCost(): FoodAmount =
     FoodAmount(
         basicIngredients = basicIngredients,
