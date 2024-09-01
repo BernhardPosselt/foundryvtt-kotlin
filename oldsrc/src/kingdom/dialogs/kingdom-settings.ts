@@ -1,29 +1,12 @@
-import {getBooleanSetting, getNumberSetting, getStringArraySetting, getStringSetting, setSetting} from '../../settings';
-import {isCompanionName} from '../data/companions';
+import {getBooleanSetting, getNumberSetting, getStringSetting, setSetting} from '../../settings';
 import {updateKingdomArmyConsumption} from '../../armies/utils';
 import {ResourceAutomationMode} from '../scene';
 import {LabelAndValue, RollModeChoices, rollModeChoices} from '../../utils';
 
-interface CompanionData {
-    amiri: boolean,
-    ekunday: boolean,
-    harrim: boolean,
-    jaethal: boolean,
-    jubilost: boolean,
-    kalikke: boolean,
-    kanerah: boolean,
-    linzi: boolean,
-    noknok: boolean,
-    octavia: boolean,
-    regongar: boolean,
-    tristian: boolean,
-    valerie: boolean,
-}
-
 type UntrainedSkillProficiency = 'level' | 'halfLevel' | 'none';
 
 interface KingdomSettingData {
-    companions: CompanionData;
+    expandMagicUse: boolean;
     vkXpRules: boolean;
     rpToXPConversionRate: number;
     rpToXpConversionLimit: number;
@@ -64,7 +47,7 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
         this.onSave = options.onSave;
         this.actor = options.sheetActor;
         this.data = {
-            companions: this.getCompanionBenefits(),
+            expandMagicUse: getBooleanSetting(this.game, 'expandMagicUse'),
             allStructuresItemBonusesStack: getBooleanSetting(this.game, 'kingdomAllStructureItemBonusesStack'),
             ignoreSkillRequirements: getBooleanSetting(this.game, 'kingdomIgnoreSkillRequirements'),
             automaticallyCalculateArmyConsumption: getBooleanSetting(this.game, 'autoCalculateArmyConsumption'),
@@ -96,16 +79,6 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
         };
     }
 
-    private getUntrainedProficiency(): UntrainedSkillProficiency {
-        if (getBooleanSetting(this.game, 'kingdomAlwaysAddLevel')) {
-            return 'level';
-        } else if (getBooleanSetting(this.game, 'kingdomAlwaysAddHalfLevel')) {
-            return 'halfLevel';
-        } else {
-            return 'none';
-        }
-    }
-
     static override get defaultOptions(): FormApplicationOptions {
         const options = super.defaultOptions;
         options.id = 'kingdom-settings';
@@ -123,35 +96,6 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
         return this.data;
     }
 
-    private getCompanionBenefits(): CompanionData {
-        const settings = new Set(getStringArraySetting(this.game, 'forceEnabledCompanionLeadershipBenefits')
-            .filter(isCompanionName));
-        return {
-            amiri: settings.has('Amiri'),
-            ekunday: settings.has('Ekundayo'),
-            harrim: settings.has('Harrim'),
-            jaethal: settings.has('Jaethal'),
-            jubilost: settings.has('Jubilost'),
-            kalikke: settings.has('Kalikke'),
-            kanerah: settings.has('Kanerah'),
-            linzi: settings.has('Linzi'),
-            noknok: settings.has('Nok-Nok'),
-            octavia: settings.has('Octavia'),
-            regongar: settings.has('Regongar'),
-            tristian: settings.has('Tristian'),
-            valerie: settings.has('Valerie'),
-        };
-    }
-
-    protected async _updateObject(event: Event, formData: object): Promise<void> {
-        this.data = {
-            ...this.data,
-            ...foundry.utils.expandObject(formData) as KingdomSettingData,
-        };
-        this.render();
-        console.log(this.data);
-    }
-
     override activateListeners(html: JQuery): void {
         super.activateListeners(html);
         const $html = html[0];
@@ -163,22 +107,26 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
             });
     }
 
+    protected async _updateObject(event: Event, formData: object): Promise<void> {
+        this.data = {
+            ...this.data,
+            ...foundry.utils.expandObject(formData) as KingdomSettingData,
+        };
+        this.render();
+        console.log(this.data);
+    }
+
+    private getUntrainedProficiency(): UntrainedSkillProficiency {
+        if (getBooleanSetting(this.game, 'kingdomAlwaysAddLevel')) {
+            return 'level';
+        } else if (getBooleanSetting(this.game, 'kingdomAlwaysAddHalfLevel')) {
+            return 'halfLevel';
+        } else {
+            return 'none';
+        }
+    }
+
     private async save(): Promise<void> {
-        await setSetting(this.game, 'forceEnabledCompanionLeadershipBenefits', [
-            ...(this.data.companions.amiri ? ['Amiri'] : []),
-            ...(this.data.companions.ekunday ? ['Ekundayo'] : []),
-            ...(this.data.companions.harrim ? ['Harrim'] : []),
-            ...(this.data.companions.jaethal ? ['Jaethal'] : []),
-            ...(this.data.companions.jubilost ? ['Jubilost'] : []),
-            ...(this.data.companions.kalikke ? ['Kalikke'] : []),
-            ...(this.data.companions.kanerah ? ['Kanerah'] : []),
-            ...(this.data.companions.linzi ? ['Linzi'] : []),
-            ...(this.data.companions.noknok ? ['Nok-Nok'] : []),
-            ...(this.data.companions.octavia ? ['Octavia'] : []),
-            ...(this.data.companions.regongar ? ['Regongar'] : []),
-            ...(this.data.companions.tristian ? ['Tristian'] : []),
-            ...(this.data.companions.valerie ? ['Valerie'] : []),
-        ]);
         await setSetting(this.game, 'kingdomAllStructureItemBonusesStack', this.data.allStructuresItemBonusesStack);
         await setSetting(this.game, 'autoCalculateArmyConsumption', this.data.automaticallyCalculateArmyConsumption);
         await setSetting(this.game, 'kingdomSkillIncreaseEveryLevel', this.data.doubleSkillIncreases);
@@ -195,6 +143,7 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
         await setSetting(this.game, 'capitalInvestmentInCapital', this.data.capitalInvestmentInCapital);
         await setSetting(this.game, 'reduceDCToBuildLumberStructures', this.data.reduceDCToBuildLumberStructures);
         await setSetting(this.game, 'automateResources', this.data.automateResources);
+        await setSetting(this.game, 'expandMagicUse', this.data.expandMagicUse);
         if (this.data.untrainedSkillProficiency === 'level') {
             await setSetting(this.game, 'kingdomAlwaysAddLevel', true);
             await setSetting(this.game, 'kingdomAlwaysAddHalfLevel', false);

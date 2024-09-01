@@ -115,6 +115,14 @@ Hooks.on('ready', async () => {
             requiresReload: true,
             type: Boolean,
         } as any);
+        gameInstance.settings.register('pf2e-kingmaker-tools', 'expandMagicUse', {
+            name: 'Expand use',
+            scope: 'world',
+            config: false,
+            default: false,
+            requiresReload: true,
+            type: Boolean,
+        } as any);
         gameInstance.settings.register('pf2e-kingmaker-tools', 'kingdomAlwaysAddLevel', {
             name: 'Always add Level to Skill',
             hint: 'If enabled, always adds the kingdom\'s level to a skill, even if it is untrained. Overrides Always add half Level to Skill',

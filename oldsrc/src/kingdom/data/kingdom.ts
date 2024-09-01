@@ -1,4 +1,3 @@
-import {ActorTypes} from './companions';
 import {Leader} from './leaders';
 import {getKingdomActivities, KingdomActivity} from './activityData';
 import {AbilityScores} from './abilities';
@@ -20,7 +19,6 @@ export type Leaders = Record<Leader, LeaderValues>;
 export interface LeaderValues {
     name: string;
     invested: boolean;
-    type: ActorTypes;
     vacant: boolean;
 }
 
@@ -410,49 +408,41 @@ export function getDefaultKingdomData(): Kingdom {
         leaders: {
             ruler: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             counselor: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             general: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             emissary: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             magister: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             treasurer: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             viceroy: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
             warden: {
                 invested: false,
-                type: 'pc',
                 vacant: false,
                 name: '',
             },
@@ -504,7 +494,7 @@ export function getDefaultKingdomData(): Kingdom {
             },
         },
         activityBlacklist: getKingdomActivities([])
-            .filter((data) => !data.enabled && !data.companion)
+            .filter((data) => !data.enabled)
             .map((data) => data.id),
         modifiers: [],
         homebrewActivities: [],

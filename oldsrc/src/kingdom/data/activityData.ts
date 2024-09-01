@@ -1,6 +1,5 @@
 import {KingdomPhase} from './activities';
 import {allSkills, Skill} from './skills';
-import {Companion} from './companions';
 import {Modifier} from '../modifiers';
 import {Commodities, hasFeat, Kingdom} from './kingdom';
 import {Ruin} from './ruin';
@@ -39,7 +38,6 @@ export interface ActivityContent extends ActivityResults {
     dc: 'control' | 'custom' | 'none' | 'scouting' | number;
     dcAdjustment?: number;
     enabled: boolean;
-    companion?: Companion;
     fortune: boolean;
     oncePerRound: boolean;
     hint?: string;
@@ -442,14 +440,13 @@ You can use Capital Investment to repay funds from Tap Treasury (page 528). In t
         special: 'You cannot influence a check with Supernatural Solution and Creative Solution simultaneously.',
     },
     'decadent-feasts': {
-        companion: 'Jaethal',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Decadent Feasts',
-        description: `Urgathoa is more than just the goddess of undeath— she’s also the goddess of gluttony. And Jaethal is no fool; she understands the fear her goddess inspires in the living and knows that focusing on other aspects of her worship are more likely to result in positive growth for the nation. In order to distract the populace, she arranges for decadent feasts for the people, simultaneously feeding the hungry while camouflaging some of her faith’s more sinister aspects. ${loseCommodities('food', '1d8')} and ${loseCommodities('luxuries', 1)}, then attempt a basic Agriculture or Trade check to determine how effective the feasts are.`,
+        description: `Your goddess is more than just the goddess of undeath— she’s also the goddess of gluttony. And you are no fool; you understand the fear your goddess inspires in the living and knows that focusing on other aspects of her worship are more likely to result in positive growth for the nation. In order to distract the populace, you arrange for decadent feasts for the people, simultaneously feeding the hungry while camouflaging some of your faith’s more sinister aspects. ${loseCommodities('food', '1d8')} and ${loseCommodities('luxuries', 1)}, then attempt a basic Agriculture or Trade check to determine how effective the feasts are.`,
         skills: simpleRank(['agriculture']),
         criticalSuccess: {
             msg: `The people rejoice and glut themselves on the repast! ${loseUnrest('1d6')}, and the next time this Kingdom turn you suffer an effect that increases Unrest, do not increase your Unrest.`,
@@ -465,17 +462,16 @@ You can use Capital Investment to repay funds from Tap Treasury (page 528). In t
         },
     },
     'deliberate-planning': {
-        companion: 'Kalikke',
         oncePerRound: false,
         fortune: true,
         enabled: false,
         phase: 'leadership',
         dc: 'custom',
         title: 'Deliberate Planning',
-        description: 'Kalikke takes time and weighs all options when faced with decisions, regardless of their importance. While this can sometimes lead her to taking too long to make choices, her theoretical analysis can be quite helpful in navigating continuous events. Choose a single continuous event that will affect your kingdom on this turn’s Event Phase, then attempt a Scholarship check against that event’s DC.',
+        description: 'Yout take time and weigh all options when faced with decisions, regardless of their importance. While this can sometimes lead you to taking too long to make choices, your theoretical analysis can be quite helpful in navigating continuous events. Choose a single continuous event that will affect your kingdom on this turn’s Event Phase, then attempt a Scholarship check against that event’s DC.',
         skills: simpleRank([...allSkills]),
         criticalSuccess: {
-            msg: 'Kalikke’s aid has been monumentally helpful. When you roll to resolve the continuous event you chose, you can roll twice and choose which result to apply. You gain a +1 circumstance bonus to each roll. This is a Fortune effect.',
+            msg: 'Your aid has been monumentally helpful. When you roll to resolve the continuous event you chose, you can roll twice and choose which result to apply. You gain a +1 circumstance bonus to each roll. This is a Fortune effect.',
             modifiers: () => [{
                 turns: 1,
                 enabled: false,
@@ -486,7 +482,7 @@ You can use Capital Investment to repay funds from Tap Treasury (page 528). In t
             }],
         },
         success: {
-            msg: 'Kalikke’s suggestions are useful, granting you a +1 circumstance bonus to rolls to resolve the chosen continuous event.',
+            msg: 'Your suggestions are useful, granting you a +1 circumstance bonus to rolls to resolve the chosen continuous event.',
             modifiers: () => [{
                 turns: 1,
                 enabled: false,
@@ -497,10 +493,10 @@ You can use Capital Investment to repay funds from Tap Treasury (page 528). In t
             }],
         },
         failure: {
-            msg: 'Kalikke’s advice isn’t helpful, but neither does it hinder your ability to handle the event.',
+            msg: 'Your advice isn’t helpful, but neither does it hinder your ability to handle the event.',
         },
         criticalFailure: {
-            msg: 'You got too caught up in Kalikke’s theoretical analysis and spent too much time preparing. When you roll to resolve the continuous event you tried to plan for, roll twice and take the worse result.',
+            msg: 'You got too caught up in your theoretical analysis and spent too much time preparing. When you roll to resolve the continuous event you tried to plan for, roll twice and take the worse result.',
         },
     },
     'demolish': {
@@ -742,37 +738,35 @@ The check’s DC is either the group’s Negotiation DC (see sidebar) or your ki
         },
     },
     'evangelize-the-dead': {
-        companion: 'Harrim',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Evangelize the Dead',
-        description: 'Harrim spends time preaching the End Times. While his sermons certainly aren’t for everyone, his methods avoid deliberately antagonizing those who see hope in the world while simultaneously providing ease and calm to the more desperate among the kingdom’s citizens. Attempt a basic Folklore check to determine how effective his sermons are.',
+        description: 'You spend time preaching the End Times. While your sermons certainly aren’t for everyone, your methods avoid deliberately antagonizing those who see hope in the world while simultaneously providing ease and calm to the more desperate among the kingdom’s citizens. Attempt a basic Folklore check to determine how effective your sermons are.',
         skills: simpleRank(['folklore']),
         criticalSuccess: {
-            msg: `Harrim’s prayers soothe and calm the more criminal-minded citizens for the time being. ${loseUnrest('1d4')}, and either ${loseRuin('crime', 2)} or ${loseRuin('corruption', 1)} or ${loseRuin('strife', 1)}.`,
+            msg: `Your prayers soothe and calm the more criminal-minded citizens for the time being. ${loseUnrest('1d4')}, and either ${loseRuin('crime', 2)} or ${loseRuin('corruption', 1)} or ${loseRuin('strife', 1)}.`,
         },
         success: {
-            msg: `Harrim’s prayers serve to redirect and calm discord. ${loseUnrest('1d3')}`,
+            msg: `Your prayers serve to redirect and calm discord. ${loseUnrest('1d3')}`,
         },
         failure: {
-            msg: `Harrim’s prayers serve to redirect and calm discord. ${loseUnrest('1')}`,
+            msg: `Your prayers serve to redirect and calm discord. ${loseUnrest('1')}`,
         },
         criticalFailure: {
-            msg: `Harrim’s prayers have unsettled some of your citizens. ${gainUnrest('1d4')} and ${gainRuin('decay', 1)} `,
+            msg: `Your prayers have unsettled some of your citizens. ${gainUnrest('1d4')} and ${gainRuin('decay', 1)} `,
         },
     },
     'false-victory': {
-        companion: 'Kanerah',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'False Victory',
-        description: 'Kanerah’s contacts with the criminal underworld and her knack for dodging punishment and claiming responsibility for victories she had no direct role in can be harnessed to engineer false victories to trick the kingdom’s citizens into thinking their leaders are doing more than they actually are to create a safe place to live. Such attempts are not without risks, though, for if things backfire, you can cause problems where none existed in the first place. When setting up a false victory, attempt a basic Intrigue check.',
+        description: 'Your contacts with the criminal underworld and your knack for dodging punishment and claiming responsibility for victories you had no direct role in can be harnessed to engineer false victories to trick the kingdom’s citizens into thinking their leaders are doing more than they actually are to create a safe place to live. Such attempts are not without risks, though, for if things backfire, you can cause problems where none existed in the first place. When setting up a false victory, attempt a basic Intrigue check.',
         skills: simpleRank(['intrigue']),
         criticalSuccess: {
             // TODO: ruin of your choice
@@ -933,24 +927,24 @@ The Cooperative Leadership Kingdom feat (page 531) increases the efficiency of t
             msg: `You lose some fishers to tragic accidents; ${gainUnrest(1)}`,
         },
     },
-    'harvest-azure-lily-pollen': {
+    'harvest-lily-pollen': {
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'region',
         dc: 'control',
-        title: 'Harvest Azure Lily Pollen',
-        description: 'You or a small group of trained herbalists or naturalists work to harvest and process azure lily pollen in hopes of creating a few doses of the poison (detailed on page 584). Attempt a DC 30 Agriculture check. You must then wait 1 Kingdom turn before attempting this activity again, to give the lilies time to recover.',
+        title: 'Harvest Lily Pollen',
+        description: 'You or a small group of trained herbalists or naturalists work to harvest and process @UUID[Compendium.pf2e.equipment-srd.Item.MvMa010Je10GN5dx]{Azure Lily Pollen} in hopes of creating a few doses of the poison (detailed on page 584). Attempt a DC 30 Agriculture check. You must then wait 1 Kingdom turn before attempting this activity again, to give the lilies time to recover.',
         skills: simpleRank(['agriculture'], 3),
         criticalSuccess: {
-            msg: 'You create 2 doses of azure lily pollen.',
+            msg: 'You create 2 doses of @UUID[Compendium.pf2e.equipment-srd.Item.MvMa010Je10GN5dx]{Azure Lily Pollen}.',
         },
         success: {
-            msg: `You create 1 dose of azure lily pollen but must also attempt a @Check[type:basic|dc:11|showDC:all]. On a failure, some of the poison makes its way into criminal hands; ${gainRuin('crime', 1)}`,
+            msg: `You create 1 dose of @UUID[Compendium.pf2e.equipment-srd.Item.MvMa010Je10GN5dx]{Azure Lily Pollen} but must also attempt a @Check[type:basic|dc:11|showDC:all]. On a failure, some of the poison makes its way into criminal hands; ${gainRuin('crime', 1)}`,
         },
         failure: {
             msg:
-                `You fail to harvest any azure lily pollen, in part because many of the resources make their way into the kingdom’s criminal underworld. ${gainRuin('crime', 1)}`,
+                `You fail to harvest any @UUID[Compendium.pf2e.equipment-srd.Item.MvMa010Je10GN5dx]{Azure Lily Pollen}, in part because many of the resources make their way into the kingdom’s criminal underworld. ${gainRuin('crime', 1)}`,
         },
         criticalFailure: {
             msg: `Not only do you fail to harvest any pollen, and not only do resources make their way into the hands of criminals, but whispers and rumors that you allowed this to happen on purpose spread through the kingdom. ${gainUnrest('1d4')}, ${gainRuin('corruption', 1)}, and ${gainRuin('crime', 2)}`,
@@ -1285,14 +1279,13 @@ You can attempt this skill check with Intrigue, Statecraft, or Warfare; however,
         },
     },
     'preventative-measures': {
-        companion: 'Tristian',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Preventative Measures',
-        description: 'Tristian helps to organize magical defenses and resources to combat potential upcoming disasters or dangers to the kingdom. Attempt a basic Magic check to determine how effective the magical preparations are.',
+        description: 'You help to organize magical defenses and resources to combat potential upcoming disasters or dangers to the kingdom. Attempt a basic Magic check to determine how effective the magical preparations are.',
         skills: simpleRank(['magic']),
         criticalSuccess: {
             msg: 'The next time during this Kingdom turn that you attempt a Kingdom skill check to resolve a dangerous event, you gain a +2 circumstance bonus to the check and, unless you roll a critical failure, the result is improved one degree. If you reach the end of this Kingdom turn and haven’t had a dangerous event, you may decrease one Ruin of your choice by 1.',
@@ -1328,14 +1321,13 @@ You can attempt this skill check with Intrigue, Statecraft, or Warfare; however,
         },
     },
     'process-hidden-fees': {
-        companion: 'Jubilost',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Process Hidden Fees',
-        description: 'With Jubilost’s aid, you can process additional taxes, fees, and payments. Attempt a basic Trade check to determine what sorts of additional resources you gather.',
+        description: 'With your aid, you can process additional taxes, fees, and payments. Attempt a basic Trade check to determine what sorts of additional resources you gather.',
         skills: simpleRank(['trade']),
         criticalSuccess: {
             msg: createResourceButton({
@@ -1496,7 +1488,6 @@ You can attempt this skill check with Intrigue, Statecraft, or Warfare; however,
         },
     },
     'read-all-about-it': {
-        companion: 'Linzi',
         oncePerRound: false,
         fortune: false,
         enabled: false,
@@ -1709,7 +1700,7 @@ You can attempt this skill check with Intrigue, Statecraft, or Warfare; however,
         phase: 'leadership',
         dc: 'custom',
         title: 'Recruit Army',
-        description: 'Either you recruit an army from your kingdom’s citizens, or you secure the allegiance of a specialized army you encountered in the Stolen Lands. If you’re recruiting an army from your kingdom’s citizens, choose one of the basic armies listed at the start of page 570 and attempt a Warfare check against the army’s Recruitment DC. If you’re securing a specialized army, you must attempt a Statecraft check against the Recruitment DC;',
+        description: 'Either you recruit an army from your kingdom’s citizens, or you secure the allegiance of a specialized army you encountered. If you’re recruiting an army from your kingdom’s citizens, choose one of the basic armies listed at the start of page 570 and attempt a Warfare check against the army’s Recruitment DC. If you’re securing a specialized army, you must attempt a Statecraft check against the Recruitment DC;',
         skills: simpleRank(['warfare', 'statecraft']),
         criticalSuccess: {
             msg: 'You recruit the army; it becomes efficient.',
@@ -1725,14 +1716,13 @@ You can attempt this skill check with Intrigue, Statecraft, or Warfare; however,
         },
     },
     'recruit-monsters': {
-        companion: 'Nok-Nok',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'region',
         dc: 'control',
         title: 'Recruit Monsters',
-        description: 'While Nok-Nok is quick to suggest that most of the monsters the party encounters during their adventures deserve killing, he also understands that there can be exceptions. Some can be bribed or allied with, while others can be trusted to act on their instincts—a canny person can capitalize on these instincts or alliances to bolster a kingdom’s defenses. Attempt a basic Intrigue check.',
+        description: 'While you are quick to suggest that most of the monsters the party encounters during their adventures deserve killing, you also understands that there can be exceptions. Some can be bribed or allied with, while others can be trusted to act on their instincts—a canny person can capitalize on these instincts or alliances to bolster a kingdom’s defenses. Attempt a basic Intrigue check.',
         skills: simpleRank(['intrigue']),
         criticalSuccess: {
             msg: `You manage to locate a monster’s lair and take steps to incorporate it into your kingdom’s defense. The next time your kingdom suffers a Bandit Activity, Monster Activity, Sacrifices, or Undead Uprising random event, you can use your recruited monster to help resolve the event. Doing so removes the Recruited Monster from your kingdom (you can attempt to recruit a new monster on a future kingdom turn though) but allows you to roll a skill check twice when resolving the Dangerous Hex event, taking the better of the two results as your actual result. This is a fortune effect.
@@ -2021,17 +2011,17 @@ You take time to relax, and you extend the chance to unwind to your citizens as 
             }],
         },
     },
-    'restore-the-temple-of-the-elk': {
+    'restore-the-temple': {
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 25,
-        title: 'Restore the Temple of the Elk',
-        description: `You work with several worshippers of Erastil, gifted masons, and skilled laborers to restore the temple and once more consecrate it as a sacred place devoted to the worship of Erastil. ${loseRP('1d6')}, then attempt a DC 25 Folklore check.`,
+        title: 'Restore the Temple',
+        description: `You work with several worshippers of the temple's faith, gifted masons, and skilled laborers to restore the temple and once more consecrate it as a sacred place devoted to the worship of their god. ${loseRP('1d6')}, then attempt a DC 25 Folklore check.`,
         skills: simpleRank(['folklore']),
         criticalSuccess: {
-            msg: 'The temple is restored and can now serve as a Refuge terrain feature. If you later build a settlement here, the temple instead functions as a free Shrine in the settlement. In addition, your work was so excellent that you’ve attracted Erastil’s attention! The PC who rolled the Folklore check is granted Erastil’s minor boon: whenever that PC critically fails a check to Subsist in the wild, they gain a failure instead. @UUID[Compendium.pf2e.boons-and-curses.hrTl9kfSNrOQeNze]{Erastil - Minor Boon}',
+            msg: 'The temple is restored and can now serve as a Refuge terrain feature. If you later build a settlement here, the temple instead functions as a free Shrine in the settlement. In addition, your work was so excellent that you’ve attracted their god’s attention! The PC who rolled the Folklore check is granted @UUID[Compendium.pf2e.boons-and-curses.Item.hrTl9kfSNrOQeNze]: whenever that PC critically fails a check to Subsist in the wild, they gain a failure instead.',
         },
         success: {
             msg: 'The temple is restored and can now serve as a Refuge terrain feature. If you later build a settlement here, the temple instead functions as a free Shrine in the settlement.',
@@ -2081,14 +2071,13 @@ You take time to relax, and you extend the chance to unwind to your citizens as 
         },
     },
     'show-of-force': {
-        companion: 'Regongar',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Show of Force',
-        description: 'Using Regongar’s advice, a public show of force is performed in an attempt to curtail criminal activity or subversive activity in the kingdom. Attempt a basic Warfare check to determine how effective the Show of Force is.',
+        description: 'Using your advice, a public show of force is performed in an attempt to curtail criminal activity or subversive activity in the kingdom. Attempt a basic Warfare check to determine how effective the Show of Force is.',
         skills: simpleRank(['warfare']),
         criticalSuccess: {
             msg: `The kingdom’s criminals are cowed by the show of force. ${loseRuin('crime', 2)} and reduce one other Ruin of your choice by 1.`,
@@ -2104,30 +2093,29 @@ You take time to relax, and you extend the chance to unwind to your citizens as 
         },
     },
     'spread-the-legend': {
-        companion: 'Linzi',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Spread the Legend',
-        description: 'Linzi works to spread the word of the party’s heroics and achievements, both through word of mouth and by distributing chapbooks or one-sheets detailing their exploits. Attempt a basic Arts check to determine the success of Linzi’s efforts. If she has secured a printing press for the kingdom after the PCs help with her quest (see To Ask for Forgiveness, below), the Arts check gains a +2 item bonus.',
+        description: 'You work to spread the word of the party’s heroics and achievements, both through word of mouth and by distributing chapbooks or one-sheets detailing their exploits. Attempt a basic Arts check to determine the success of your efforts. If you have secured a printing press for the kingdom, the Arts check gains a +2 item bonus.',
         skills: simpleRank(['arts']),
         criticalSuccess: {
-            msg: `Not only do Linzi’s stories bring pride and patriotism to the nation, but they also help increase its glory. ${loseUnrest('1d6')}, and ${createResourceButton({
+            msg: `Not only do your stories bring pride and patriotism to the nation, but they also help increase its glory. ${loseUnrest('1d6')}, and ${createResourceButton({
                 type: 'fame',
                 turn: 'next',
                 value: '1',
             })}. In addition, if the kingdom experiences a dangerous random event during this turn’s Event Phase, reduce that event’s level modifier by 1.`,
         },
         success: {
-            msg: `The rousing and inspiring stories Linzi spreads about the PCs helps to bring the nation together. ${loseUnrest('1d6')}`,
+            msg: `The rousing and inspiring stories you spread about the PCs helps to bring the nation together. ${loseUnrest('1d6')}`,
         },
         failure: {
-            msg: `Linzi avoids spreading unfortunate news, but only just barely. The citizens are only slightly entertained by their leaders’ exploits. ${loseUnrest(1)}.`,
+            msg: `You avoid spreading unfortunate news, but only just barely. The citizens are only slightly entertained by their leaders’ exploits. ${loseUnrest(1)}.`,
         },
         criticalFailure: {
-            msg: `Linzi accidentally spreads news of a humiliating or embarrassing nature, causing the people of the kingdom to lose respect for their leaders. ${gainUnrest('1d4')}.`,
+            msg: `You accidentally spreads news of a humiliating or embarrassing nature, causing the people of the kingdom to lose respect for their leaders. ${gainUnrest('1d4')}.`,
         },
     },
     'supernatural-solution': {
@@ -2154,14 +2142,13 @@ You take time to relax, and you extend the chance to unwind to your citizens as 
         special: 'You cannot influence a check with Supernatural Solution and Creative Solution simultaneously.',
     },
     'supplementary-hunting': {
-        companion: 'Ekundayo',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'region',
         dc: 'control',
         title: 'Supplementary Hunting',
-        description: 'Following Ekundayo’s advice, rural-dwelling citizens work to supplement stores of food and resources through hunting and trapping. Attempt a basic Wilderness check to gather excess livestock from the local wildlife, ranches, and farms to generate food commodities.',
+        description: 'Following your advice, rural-dwelling citizens work to supplement stores of food and resources through hunting and trapping. Attempt a basic Wilderness check to gather excess livestock from the local wildlife, ranches, and farms to generate food commodities.',
         skills: simpleRank(['wilderness']),
         criticalSuccess: {
             msg: `${gainCommodities('food', '1d4')}, ${gainCommodities('luxuries', 1)}, and ${createResourceButton({
@@ -2285,14 +2272,13 @@ You take time to relax, and you extend the chance to unwind to your citizens as 
         },
     },
     'warfare-exercises': {
-        companion: 'Valerie',
         oncePerRound: false,
         fortune: false,
         enabled: false,
         phase: 'leadership',
         dc: 'control',
         title: 'Warfare Exercises',
-        description: 'Valerie spends time studying the nation’s armies, speaking with its commanders, researching historical records of battles, and running simulations in war rooms to help predict the best ways to prepare for upcoming conflicts. Attempt a basic Warfare check to determine the success of these exercises.',
+        description: 'You spend time studying the nation’s armies, speaking with its commanders, researching historical records of battles, and running simulations in war rooms to help predict the best ways to prepare for upcoming conflicts. Attempt a basic Warfare check to determine the success of these exercises.',
         skills: simpleRank(['warfare']),
         criticalSuccess: {
             msg: 'The exercises reveal a wide range of suggestions for the PCs to use during that month’s military exercises. All Army activities taken during this Kingdom turn’s Activity Phase gain a +1 circumstance bonus. This bonus increases to +2 at Kingdom level 9 and +3 at Kingdom level 15. In addition, the next time this Kingdom turn that you roll a critical failure on an Army activity, the result is improved to a regular failure instead.',

@@ -39,7 +39,6 @@ interface GroupedActivityNames {
     commerce: Set<string>;
     upkeep: Set<string>;
     civic: Set<string>;
-    companion: Set<string>;
 }
 
 export function groupKingdomActivities(activities: KingdomActivityById): GroupedActivityNames {
@@ -57,13 +56,11 @@ export function groupKingdomActivities(activities: KingdomActivityById): Grouped
         commerce: new Set(),
         upkeep: new Set(),
         civic: new Set(),
-        companion: new Set(),
     };
     (Object.entries(activities) as [string, KingdomActivity][])
         .forEach(([activity, data]) => {
             result[data.phase].add(activity);
             if (data.oncePerRound) result.oncePerRound.add(activity);
-            if (data.companion) result.companion.add(activity);
             if (Object.values(data.skills).every(rank => rank === 0)) {
                 result.untrained.add(activity);
             } else if (Object.values(data.skills).every(rank => rank === 1)) {
@@ -78,17 +75,6 @@ export function groupKingdomActivities(activities: KingdomActivityById): Grouped
             }
         });
     return result;
-}
-
-export function enableCompanionActivities(type: KingdomPhase, unlockedCompanionActivities: Set<string>, names: GroupedActivityNames): string[] {
-    return Array.from(names[type])
-        .filter(activity => {
-            if (names.companion.has(activity)) {
-                return unlockedCompanionActivities.has(activity);
-            } else {
-                return true;
-            }
-        });
 }
 
 export function createActivityLabel(groupedActivities: GroupedActivityNames, activity: string, kingdom: Kingdom): string {

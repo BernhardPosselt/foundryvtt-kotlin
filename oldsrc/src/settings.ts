@@ -11,10 +11,6 @@ export function getStringSetting(game: Game, settingsKey: string): string {
     return game.settings.get(namespace, settingsKey) as string | undefined ?? '';
 }
 
-export function getStringArraySetting(game: Game, settingsKey: string): string[] {
-    return game.settings.get(namespace, settingsKey) as string[] | undefined ?? [];
-}
-
 export function getBooleanSetting(game: Game, settingsKey: string): boolean {
     return game.settings.get(namespace, settingsKey) as boolean | undefined ?? false;
 }

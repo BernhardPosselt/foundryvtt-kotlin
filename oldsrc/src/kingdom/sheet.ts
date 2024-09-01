@@ -53,14 +53,7 @@ import {calculateEventXP, calculateHexXP, calculateRpXP} from './xp';
 import {setupDialog} from './dialogs/setup-dialog';
 import {featuresByLevel, uniqueFeatures} from './data/features';
 import {
-    allCompanions,
-    applyLeaderCompanionRules,
-    getCompanionUnlockActivities,
-    getOverrideUnlockCompanionNames,
-} from './data/companions';
-import {
     createActivityLabel,
-    enableCompanionActivities,
     getPerformableActivities,
     groupKingdomActivities,
 } from './data/activities';
@@ -117,6 +110,17 @@ function createEffects(modifiers: Modifier[]): Effect[] {
 
 
 class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions, object, Kingdom> {
+    private sheetActor: Actor;
+    private readonly game: Game;
+    private nav: KingdomTab = 'turn';
+
+    constructor(object: Kingdom, options: Partial<FormApplicationOptions> & KingdomOptions) {
+        super(object, options);
+        this.game = options.game;
+        this.sheetActor = options.sheetActor;
+        this.sheetActor.apps[this.appId] = this;
+    }
+
     static override get defaultOptions(): FormApplicationOptions {
         const options = super.defaultOptions;
         options.id = 'kingdom-app';
@@ -129,17 +133,6 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
         options.height = 'auto';
         options.scrollY = ['.km-content', '.km-sidebar'];
         return options;
-    }
-
-    private sheetActor: Actor;
-    private readonly game: Game;
-    private nav: KingdomTab = 'turn';
-
-    constructor(object: Kingdom, options: Partial<FormApplicationOptions> & KingdomOptions) {
-        super(object, options);
-        this.game = options.game;
-        this.sheetActor = options.sheetActor;
-        this.sheetActor.apps[this.appId] = this;
     }
 
     override async getData(): Promise<object> {
@@ -161,10 +154,8 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
         const homebrewSkillIncreases = getBooleanSetting(this.game, 'kingdomSkillIncreaseEveryLevel');
         const activeSettlementStructureResult = getActiveSettlementStructureResult(this.game, kingdomData);
         const activeSettlement = getSettlement(this.game, kingdomData, kingdomData.activeSettlement);
-
         const unlockedActivities = new Set<string>([
             ...unlockedSettlementActivities,
-            ...getCompanionUnlockActivities(kingdomData.leaders, getOverrideUnlockCompanionNames(this.game)),
         ]);
         const hideActivities = kingdomData.activityBlacklist
             .map(activity => {
@@ -270,12 +261,6 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             heartlands: allHeartlands.map(heartland => {
                 return {label: unslugify(heartland), value: heartland};
             }),
-            actorTypes: [
-                {label: 'PC', value: 'pc'},
-                {label: 'NPC', value: 'npc'},
-                {label: 'Companion', value: 'companion'},
-            ],
-            companions: toLabelAndValue([...allCompanions]),
             fameValues: toLabelAndValue(range(0, 4)),
             aspirations: [{value: 'famous', label: 'Fame'}, {value: 'infamous', label: 'Infamy'}],
             settlements: kingdomData.settlements
@@ -306,16 +291,16 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             milestones: kingdomData.milestones.map(m => {
                 return {...m, display: (useXpHomebrew || !m.homebrew) && (isGM || !m.name.startsWith('Cult Event'))};
             }),
-            leadershipActivities: enableCompanionActivities('leadership', unlockedActivities, groupedActivities)
+            leadershipActivities: Array.from(groupedActivities['leadership'])
                 .map(activity => {
                     return {label: createActivityLabel(groupedActivities, activity, kingdomData), value: activity};
                 })
                 .sort((a, b) => a.label.localeCompare(b.label)),
-            regionActivities: enableCompanionActivities('region', unlockedActivities, groupedActivities)
+            regionActivities: Array.from(groupedActivities['region'])
                 .map(activity => {
                     return {label: createActivityLabel(groupedActivities, activity, kingdomData), value: activity};
                 }),
-            armyActivities: enableCompanionActivities('army', unlockedActivities, groupedActivities)
+            armyActivities: Array.from(groupedActivities['army'])
                 .map(activity => {
                     return {label: createActivityLabel(groupedActivities, activity, kingdomData), value: activity};
                 }),
@@ -343,44 +328,6 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             showRealmData,
             showAddRealmButton,
         };
-    }
-
-    private getFameLabel(fameType: FameType): string {
-        return fameType === 'famous' ? 'Fame' : 'Infamy';
-    }
-
-    private getActiveTabs(): Record<string, boolean> {
-        return {
-            statusTab: this.nav === 'status',
-            skillsTab: this.nav === 'skills',
-            turnTab: this.nav === 'turn',
-            groupsTab: this.nav === 'groups',
-            featsTab: this.nav === 'feats',
-            notesTab: this.nav === 'notes',
-            settlementsTab: this.nav === 'settlements',
-            effectsTab: this.nav === 'effects',
-        };
-    }
-
-    protected _getHeaderButtons(): Application.HeaderButton[] {
-        const buttons = super._getHeaderButtons();
-        buttons.unshift({
-            label: 'Help',
-            class: 'pf2e-kingmaker-tools-hb1',
-            icon: 'fas fa-question',
-            onclick: () => openJournal('Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.iAQCUYEAq4Dy8uCY.JournalEntryPage.ty6BS5eSI7ScfVBk'),
-        });
-        if (this.game.user?.isGM ?? false) {
-            buttons.unshift({
-                label: 'Show Players',
-                class: 'something-made-up',
-                icon: 'fas fa-eye',
-                onclick: () => this.game.socket!.emit('module.pf2e-kingmaker-tools', {
-                    action: 'openKingdomSheet',
-                }),
-            });
-        }
-        return buttons;
     }
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -692,6 +639,61 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             });
     }
 
+    override close(options?: FormApplication.CloseOptions): Promise<void> {
+        Hooks.off('closeKingmakerHexEdit', this.sceneChange);
+        Hooks.off('deleteScene', this.sceneChange);
+        Hooks.off('canvasReady', this.sceneChange);
+        Hooks.off('createToken', this.sceneChange);
+        Hooks.off('sightRefresh', this.sceneChange); // end of drag movement
+        Hooks.off('deleteToken', this.sceneChange);
+        Hooks.off('applyTokenStatusEffect', this.sceneChange);
+        Hooks.off('createTile', this.sceneChange);
+        Hooks.off('updateTile', this.sceneChange);
+        Hooks.off('deleteTile', this.sceneChange);
+        Hooks.off('createDrawing', this.sceneChange);
+        Hooks.off('updateDrawing', this.sceneChange);
+        Hooks.off('deleteDrawing', this.sceneChange);
+        return super.close(options);
+    }
+
+    protected _getHeaderButtons(): Application.HeaderButton[] {
+        const buttons = super._getHeaderButtons();
+        buttons.unshift({
+            label: 'Help',
+            class: 'pf2e-kingmaker-tools-hb1',
+            icon: 'fas fa-question',
+            onclick: () => openJournal('Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.iAQCUYEAq4Dy8uCY.JournalEntryPage.ty6BS5eSI7ScfVBk'),
+        });
+        if (this.game.user?.isGM ?? false) {
+            buttons.unshift({
+                label: 'Show Players',
+                class: 'something-made-up',
+                icon: 'fas fa-eye',
+                onclick: () => this.game.socket!.emit('module.pf2e-kingmaker-tools', {
+                    action: 'openKingdomSheet',
+                }),
+            });
+        }
+        return buttons;
+    }
+
+    private getFameLabel(fameType: FameType): string {
+        return fameType === 'famous' ? 'Fame' : 'Infamy';
+    }
+
+    private getActiveTabs(): Record<string, boolean> {
+        return {
+            statusTab: this.nav === 'status',
+            skillsTab: this.nav === 'skills',
+            turnTab: this.nav === 'turn',
+            groupsTab: this.nav === 'groups',
+            featsTab: this.nav === 'feats',
+            notesTab: this.nav === 'notes',
+            settlementsTab: this.nav === 'settlements',
+            effectsTab: this.nav === 'effects',
+        };
+    }
+
     private async upkeepGainFame(): Promise<void> {
         await ChatMessage.create({content: 'Gaining 1 Fame'});
         await this.saveKingdom(gainFame(this.getKingdom(), 1));
@@ -945,7 +947,6 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
         return Math.max(0, levelData.resourceDice + kingdom.resourceDice.now + featDice);
     }
 
-
     private calculateCommoditiesThisTurn(sites: WorkSites): Omit<Commodities, 'food'> {
         return {
             ore: sites.mines.quantity + sites.mines.resources,
@@ -953,23 +954,6 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             luxuries: sites.luxurySources.quantity + sites.luxurySources.resources,
             stone: sites.quarries.quantity + sites.quarries.resources,
         };
-    }
-
-    override close(options?: FormApplication.CloseOptions): Promise<void> {
-        Hooks.off('closeKingmakerHexEdit', this.sceneChange);
-        Hooks.off('deleteScene', this.sceneChange);
-        Hooks.off('canvasReady', this.sceneChange);
-        Hooks.off('createToken', this.sceneChange);
-        Hooks.off('sightRefresh', this.sceneChange); // end of drag movement
-        Hooks.off('deleteToken', this.sceneChange);
-        Hooks.off('applyTokenStatusEffect', this.sceneChange);
-        Hooks.off('createTile', this.sceneChange);
-        Hooks.off('updateTile', this.sceneChange);
-        Hooks.off('deleteTile', this.sceneChange);
-        Hooks.off('createDrawing', this.sceneChange);
-        Hooks.off('updateDrawing', this.sceneChange);
-        Hooks.off('deleteDrawing', this.sceneChange);
-        return super.close(options);
     }
 
     private getRuin(ruin: Ruin): object {
@@ -1022,12 +1006,10 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
     }
 
     private getLeaders(leaders: Leaders): object {
-        const appliedLeaders = applyLeaderCompanionRules(leaders);
-        return Object.fromEntries((Object.entries(appliedLeaders) as [keyof Leaders, LeaderValues][])
+        return Object.fromEntries((Object.entries(leaders) as [keyof Leaders, LeaderValues][])
             .map(([leader, values]) => {
                 return [leader, {
                     label: capitalize(leader),
-                    isCompanion: values.type === 'companion',
                     ...values,
                 }];
             }));

@@ -7,13 +7,6 @@
 * Rename module to "Kingdom Building, Camping & Weather"
 * Test camping & rolling random encounters
 
-## Non OGLisms
-
-Clean the followings things off OGLism:
-
-* Companion Leadership & Region Activities
-* Companion Names
-
 ## Camping
 
 * Display meal icon above PC portrait when all PCs have selected a meal

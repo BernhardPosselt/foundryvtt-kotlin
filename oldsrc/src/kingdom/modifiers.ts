@@ -4,7 +4,6 @@ import {getLevelData, Kingdom, Leaders, Ruin, Settlement} from './data/kingdom';
 import {allFeatsByName} from './data/feats';
 import {Skill, skillAbilities} from './data/skills';
 import {Ability, AbilityScores, calculateAbilityModifier} from './data/abilities';
-import {applyLeaderCompanionRules} from './data/companions';
 import {isInvested} from './data/leaders';
 import {calculateUnrestPenalty} from './data/unrest';
 import {abilityRuins} from './data/ruin';
@@ -431,8 +430,7 @@ export function createInvestedModifier(
     ability: Ability,
     leaders: Leaders,
 ): Modifier | undefined {
-    const appliedLeaders = applyLeaderCompanionRules(leaders);
-    if (isInvested(ability, appliedLeaders)) {
+    if (isInvested(ability, leaders)) {
         return {
             value: getLevelData(kingdomLevel).investedLeadershipBonus,
             enabled: true,

@@ -1,7 +1,9 @@
 package at.posselt.kingmaker.camping
 
 import at.posselt.kingmaker.Config
+import at.posselt.kingmaker.camping.dialogs.ActivityEffectTarget
 import at.posselt.kingmaker.data.checks.DegreeOfSuccess
+import at.posselt.kingmaker.fromCamelCase
 import at.posselt.kingmaker.takeIfInstance
 import at.posselt.kingmaker.utils.fromUuidTypeSafe
 import com.foundryvtt.core.Actor
@@ -79,24 +81,50 @@ fun checkPreActorUpdate(actor: Actor, update: AnyObject): CampingCommand =
             }
         } ?: CampingCommand.DoNothing()
 
-private fun getCampingEffectUuids(effectUuids: Array<ActivityEffect>?): Sequence<String> =
+private fun getCampingEffectUuids(effectUuids: Array<ActivityEffect>?): Sequence<Pair<String, String>> =
     effectUuids?.let {
-        it.asSequence().map { it.uuid }
+        it.asSequence().map { it.uuid to (it.target ?: "all") }
     } ?: emptySequence()
 
-private suspend fun CampingData.getCampingEffectItems(): List<PF2EEffect> = coroutineScope {
+private data class EffectAndTarget(
+    val effect: PF2EEffect,
+    val target: ActivityEffectTarget,
+)
+
+private suspend fun CampingData.getAllCampingEffectItems() =
+    (getCampingEffectItems(DegreeOfSuccess.CRITICAL_FAILURE) +
+            getCampingEffectItems(DegreeOfSuccess.FAILURE) +
+            getCampingEffectItems(DegreeOfSuccess.SUCCESS) +
+            getCampingEffectItems(DegreeOfSuccess.CRITICAL_SUCCESS))
+        .distinctBy { it.effect.slug }
+
+private suspend fun CampingData.getCampingEffectItems(
+    degreeOfSuccess: DegreeOfSuccess? = null
+): List<EffectAndTarget> = coroutineScope {
     getAllActivities().asSequence()
         .flatMap {
-            getCampingEffectUuids(it.effectUuids) +
-                    getCampingEffectUuids(it.criticalSuccess?.effectUuids) +
-                    getCampingEffectUuids(it.success?.effectUuids) +
-                    getCampingEffectUuids(it.failure?.effectUuids) +
-                    getCampingEffectUuids(it.criticalFailure?.effectUuids)
+            val defaultEffects = getCampingEffectUuids(it.effectUuids)
+            val degreeEffects = when (degreeOfSuccess) {
+                DegreeOfSuccess.CRITICAL_FAILURE -> getCampingEffectUuids(it.criticalFailure?.effectUuids)
+                DegreeOfSuccess.FAILURE -> getCampingEffectUuids(it.failure?.effectUuids)
+                DegreeOfSuccess.SUCCESS -> getCampingEffectUuids(it.success?.effectUuids)
+                DegreeOfSuccess.CRITICAL_SUCCESS -> getCampingEffectUuids(it.criticalSuccess?.effectUuids)
+                null -> emptySequence()
+            }
+            defaultEffects + degreeEffects
         }
-        .map { async { fromUuidTypeSafe<PF2EEffect>(it) } }
+        .map { async { fromUuidTypeSafe<PF2EEffect>(it.first) to fromCamelCase<ActivityEffectTarget>(it.second) } }
         .toList()
         .awaitAll()
-        .filterNotNull()
+        .mapNotNull {
+            val effect = it.first
+            val target = it.second
+            if (effect == null || target == null) {
+                null
+            } else {
+                EffectAndTarget(effect = effect, target = target)
+            }
+        }
 }
 
 private fun PF2EActor.findCampingEffectsInInventory(compendiumItems: List<PF2EEffect>): List<PF2EEffect> {
@@ -104,32 +132,32 @@ private fun PF2EActor.findCampingEffectsInInventory(compendiumItems: List<PF2EEf
     return itemTypes.effect.filter { it.slug in slugs }
 }
 
-// TODO: effects have a target and need to be filtered by actor
-private fun CampingData.findActiveEffects(
-    activities: List<CampingActivity>,
-    compendiumItems: List<PF2EEffect>,
-): List<PF2EEffect> {
-    val activityDataByName = getAllActivities().associateBy { it.name }
-    val itemsByUuid = compendiumItems.associateBy { it.uuid }
-    return activities
-        .asSequence()
-        .mapNotNull {
-            activityDataByName[it.activity]?.let { data ->
-                val effectUuids = data.effectUuids?.map { it.uuid }?.toTypedArray() ?: emptyArray()
-                val resultUuids = if (data.requiresACheck()) {
-                    it.parseResult()
-                        ?.let { data.getOutcome(it) }
-                        ?.effectUuids
-                        ?.map { it.uuid }
-                        ?.toTypedArray()
-                        ?: emptyArray()
-                } else {
-                    emptyArray()
-                }
-                resultUuids + effectUuids
+private suspend fun CampingData.syncCampingEffects() = coroutineScope {
+    val actors = getActorsInCamp()
+    val effectsThatShouldBePresent = null
+    // TODO:
+    //  * check which effects should be active on each actor
+    //  * check which effects are present on each actor
+    //  * remove effects that are not present on active actors
+    //  * add effects which are not present on actors
+}
+
+private suspend fun CampingData.clearCampingEffects() = coroutineScope {
+    val actors = getActorsInCamp()
+    val campingEffectSlugs = getCampingEffectItems().map { it.effect.slug }.toSet()
+    actors
+        .map { actor ->
+            val idsToRemove = actor.itemTypes.effect
+                .filter { it.slug in campingEffectSlugs }
+                .mapNotNull { it.id }
+                .toTypedArray()
+            actor to idsToRemove
+        }
+        .map {
+            async {
+                it.first.deleteEmbeddedDocuments<PF2EEffect>("item", it.second)
             }
         }
-        .flatMap { it.asSequence() }
-        .mapNotNull { itemsByUuid[it] }
-        .toList()
+        .awaitAll()
+
 }

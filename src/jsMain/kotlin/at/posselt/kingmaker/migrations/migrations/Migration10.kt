@@ -8,6 +8,7 @@ import at.posselt.kingmaker.camping.dialogs.CombatTrack
 import at.posselt.kingmaker.camping.getDefaultCamping
 import at.posselt.kingmaker.combattracks.getCombatTrack
 import at.posselt.kingmaker.combattracks.setCombatTrack
+import at.posselt.kingmaker.kingdom.KingdomData
 import at.posselt.kingmaker.kingdom.getParsedStructureData
 import at.posselt.kingmaker.settings.*
 import at.posselt.kingmaker.utils.typeSafeUpdate
@@ -56,6 +57,11 @@ private fun parseDcType(activity: dynamic): String = when (activity.dc) {
     null -> "none"
     else -> "static"
 }
+
+private val activityBlacklistMappings = mapOf(
+    "restore-the-temple-of-the-elk" to "restore-the-temple",
+    "harvest-azure-lily-pollen" to "harvest-lily-pollen",
+)
 
 class Migration10 : Migration(10) {
     override suspend fun migrateCamping(game: Game, camping: CampingData) {
@@ -125,6 +131,15 @@ class Migration10 : Migration(10) {
                 chosenMeal = "nothing"
             )
         }.toTypedArray()
+    }
+
+    override suspend fun migrateKingdom(game: Game, kingdom: KingdomData) {
+        val replacements = kingdom.activityBlacklist
+            .filter { activityBlacklistMappings.contains(it) }
+            .mapNotNull { activityBlacklistMappings[it] }
+            .toTypedArray()
+        kingdom.activityBlacklist = kingdom.activityBlacklist
+            .filter { !activityBlacklistMappings.contains(it) }.toTypedArray() + replacements
     }
 
     override suspend fun migrateOther(game: Game) {

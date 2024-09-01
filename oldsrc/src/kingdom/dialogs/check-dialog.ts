@@ -13,7 +13,6 @@ import {allKingdomPhases, getActivitySkills, KingdomPhase} from '../data/activit
 import {Skill, skillAbilities} from '../data/skills';
 import {createSkillModifiers} from '../skills';
 import {getControlDC, hasFeat, Kingdom, SkillRanks} from '../data/kingdom';
-import {getCompanionSkillUnlocks, getOverrideUnlockCompanionNames} from '../data/companions';
 import {capitalize, encodeJson, LabelAndValue, rollModeChoices, toLabelAndValue, unslugify} from '../../utils';
 import {getKingdomActivitiesById, KingdomActivityById} from '../data/activityData';
 import {cooperativeLeadership, rollCheck} from '../rolls';
@@ -115,18 +114,6 @@ export class CheckDialog extends FormApplication<FormApplicationOptions & CheckD
     private rollMode: RollMode = 'publicroll';
     private additionalChatMessages: AdditionalChatMessages;
 
-    static override get defaultOptions(): FormApplicationOptions {
-        const options = super.defaultOptions;
-        options.id = 'kingdom-check';
-        options.title = 'Skill Check';
-        options.template = 'modules/pf2e-kingmaker-tools/templates/kingdom/check.hbs';
-        options.submitOnChange = true;
-        options.closeOnSubmit = false;
-        options.classes = [];
-        options.height = 'auto';
-        return options;
-    }
-
     constructor(object: null, options: Partial<FormApplicationOptions> & CheckDialogFeatOptions) {
         super(object, options);
         this.type = options.type;
@@ -170,17 +157,16 @@ export class CheckDialog extends FormApplication<FormApplicationOptions & CheckD
         }
     }
 
-    private getActivitySkills(ranks: SkillRanks, activities: KingdomActivityById): Skill[] {
-        const activity = this.activity!;
-        const companionSkillUnlocks = getCompanionSkillUnlocks(this.kingdom.leaders, getOverrideUnlockCompanionNames(this.game));
-        const companionUnlockSkills = (Object.entries(companionSkillUnlocks) as [Skill, string[]][])
-            .filter(([, activities]) => activities.includes(activity))
-            .map(([skill]) => skill);
-        const ignoreSkillRequirements = getBooleanSetting(this.game, 'kingdomIgnoreSkillRequirements');
-        const skillRankFilters = ignoreSkillRequirements ? undefined : ranks;
-        const activitySkills = getActivitySkills(this.overrideSkills ?? activities[activity].skills, skillRankFilters);
-        const practicalMagic: Skill[] = activitySkills.includes('engineering') && hasFeat(this.kingdom, 'Practical Magic') ? ['magic'] : [];
-        return Array.from(new Set([...activitySkills, ...companionUnlockSkills, ...practicalMagic]));
+    static override get defaultOptions(): FormApplicationOptions {
+        const options = super.defaultOptions;
+        options.id = 'kingdom-check';
+        options.title = 'Skill Check';
+        options.template = 'modules/pf2e-kingmaker-tools/templates/kingdom/check.hbs';
+        options.submitOnChange = true;
+        options.closeOnSubmit = false;
+        options.classes = [];
+        options.height = 'auto';
+        return options;
     }
 
     override getData(options?: Partial<FormApplicationOptions & { feats: KingdomFeat[] }>): Promise<object> | object {
@@ -274,54 +260,6 @@ export class CheckDialog extends FormApplication<FormApplicationOptions & CheckD
         };
     }
 
-    private calculateModifiers(
-        applicableSkills: Skill[],
-        activeSettlementStructureResult: ActiveSettlementStructureResult | undefined,
-        additionalModifiers: Modifier[],
-        convertedCustomModifiers: Modifier[],
-        activities: KingdomActivityById,
-    ): Record<Skill, TotalAndModifiers> {
-        return Object.fromEntries(applicableSkills.map(skill => {
-            const modifiers = createSkillModifiers({
-                ruin: this.kingdom.ruin,
-                unrest: this.kingdom.unrest,
-                skillRank: (this.kingdom.skillRanks)[skill],
-                abilityScores: this.kingdom.abilityScores,
-                leaders: this.kingdom.leaders,
-                kingdomLevel: this.kingdom.level,
-                untrainedProficiencyMode: getUntrainedProficiencyMode(this.game),
-                ability: skillAbilities[skill],
-                skillItemBonus: activeSettlementStructureResult?.merged?.skillBonuses?.[skill],
-                additionalModifiers: [...additionalModifiers, ...convertedCustomModifiers],
-                activity: this.activity,
-                phase: this.phase,
-                skill,
-                overrides: this.modifierOverrides,
-                activities,
-            });
-            const total = calculateModifiers(modifiers);
-            return [skill, {total, modifiers}];
-        })) as Record<Skill, TotalAndModifiers>;
-    }
-
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    protected async _updateObject(event: Event, formData: any): Promise<void> {
-        const data = foundry.utils.expandObject(formData) as CheckFormData;
-        console.log(data);
-        this.selectedSkill = data.selectedSkill;
-        this.dc = data.dc;
-        this.phase = data.phase;
-        this.rollMode = data.rollMode;
-        this.customModifiers = this.homogenize(data.customModifiers);
-        this.modifierOverrides = (Object.entries(data.overrideModifiers ?? {}) as [string, string][])
-            .filter(([, state]) => state !== '-')
-            .map(([id, state]) => {
-                return {[id]: state === 'enabled'};
-            })
-            .reduce((a, b) => Object.assign(a, b), {});
-        this.render();
-    }
-
     override activateListeners(html: JQuery): void {
         super.activateListeners(html);
         const $html = html[0];
@@ -402,6 +340,66 @@ export class CheckDialog extends FormApplication<FormApplicationOptions & CheckD
         });
     }
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    protected async _updateObject(event: Event, formData: any): Promise<void> {
+        const data = foundry.utils.expandObject(formData) as CheckFormData;
+        console.log(data);
+        this.selectedSkill = data.selectedSkill;
+        this.dc = data.dc;
+        this.phase = data.phase;
+        this.rollMode = data.rollMode;
+        this.customModifiers = this.homogenize(data.customModifiers);
+        this.modifierOverrides = (Object.entries(data.overrideModifiers ?? {}) as [string, string][])
+            .filter(([, state]) => state !== '-')
+            .map(([id, state]) => {
+                return {[id]: state === 'enabled'};
+            })
+            .reduce((a, b) => Object.assign(a, b), {});
+        this.render();
+    }
+
+    private getActivitySkills(ranks: SkillRanks, activities: KingdomActivityById): Skill[] {
+        const activity = this.activity!;
+        const expandMagicActivities = new Set([
+            'celebrate-holiday', 'craft-luxuries', 'create-a-masterpiece', 'rest-and-relax'
+        ]);
+        const ignoreSkillRequirements = getBooleanSetting(this.game, 'kingdomIgnoreSkillRequirements');
+        const skillRankFilters = ignoreSkillRequirements ? undefined : ranks;
+        const activitySkills = getActivitySkills(this.overrideSkills ?? activities[activity].skills, skillRankFilters);
+        const practicalMagic: Skill[] = activitySkills.includes('engineering') && hasFeat(this.kingdom, 'Practical Magic') ? ['magic'] : [];
+        const expandMagicSkills: Skill[] = getBooleanSetting(this.game, 'expandMagicUse') && expandMagicActivities.has(activity) ? ['magic'] : [];
+        return Array.from(new Set([...activitySkills, ...expandMagicSkills, ...practicalMagic]));
+    }
+
+    private calculateModifiers(
+        applicableSkills: Skill[],
+        activeSettlementStructureResult: ActiveSettlementStructureResult | undefined,
+        additionalModifiers: Modifier[],
+        convertedCustomModifiers: Modifier[],
+        activities: KingdomActivityById,
+    ): Record<Skill, TotalAndModifiers> {
+        return Object.fromEntries(applicableSkills.map(skill => {
+            const modifiers = createSkillModifiers({
+                ruin: this.kingdom.ruin,
+                unrest: this.kingdom.unrest,
+                skillRank: (this.kingdom.skillRanks)[skill],
+                abilityScores: this.kingdom.abilityScores,
+                leaders: this.kingdom.leaders,
+                kingdomLevel: this.kingdom.level,
+                untrainedProficiencyMode: getUntrainedProficiencyMode(this.game),
+                ability: skillAbilities[skill],
+                skillItemBonus: activeSettlementStructureResult?.merged?.skillBonuses?.[skill],
+                additionalModifiers: [...additionalModifiers, ...convertedCustomModifiers],
+                activity: this.activity,
+                phase: this.phase,
+                skill,
+                overrides: this.modifierOverrides,
+                activities,
+            });
+            const total = calculateModifiers(modifiers);
+            return [skill, {total, modifiers}];
+        })) as Record<Skill, TotalAndModifiers>;
+    }
 
     private createSelectableSkills(skillModifiers: Record<Skill, TotalAndModifiers>): LabelAndValue[] {
         return Object.entries(skillModifiers).map(([skill, data]) => {

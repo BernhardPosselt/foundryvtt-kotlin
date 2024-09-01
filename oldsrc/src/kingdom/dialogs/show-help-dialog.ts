@@ -15,6 +15,13 @@ class HelpApplication extends Application<ApplicationOptions & HelpOptions> {
     private game: Game;
     private actor: Actor;
 
+    constructor(options: Partial<ApplicationOptions> & HelpOptions) {
+        super(options);
+        this.activity = options.activity;
+        this.game = options.game;
+        this.actor = options.actor;
+    }
+
     static override get defaultOptions(): ApplicationOptions {
         const options = super.defaultOptions;
         options.id = 'help-app';
@@ -24,13 +31,6 @@ class HelpApplication extends Application<ApplicationOptions & HelpOptions> {
         options.width = 500;
         options.height = 'auto';
         return options;
-    }
-
-    constructor(options: Partial<ApplicationOptions> & HelpOptions) {
-        super(options);
-        this.activity = options.activity;
-        this.game = options.game;
-        this.actor = options.actor;
     }
 
     async getData(): Promise<unknown> {
@@ -55,7 +55,6 @@ class HelpApplication extends Application<ApplicationOptions & HelpOptions> {
             criticalFailure: await this.enrichIfDefined(data.criticalFailure?.msg),
             description: await this.enrichIfDefined(data.description),
             requirement: await this.enrichIfDefined(data.requirement),
-            companion: await this.enrichIfDefined(data.companion),
             title: data.title,
             special: data.special,
             traits,
