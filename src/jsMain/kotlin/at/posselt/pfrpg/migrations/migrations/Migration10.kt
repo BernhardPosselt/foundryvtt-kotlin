@@ -39,7 +39,7 @@ private val replacements = mapOf(
     "First World Mince Pie" to "Supernatural Mince Pie",
     "Galt Ragout" to "Ragout",
     "Giant Scrambled Egg With Shambletus" to "Giant Scrambled Egg",
-    "Kameberry Pie" to "Pie",
+    "Berry Pie" to "Pie",
     "Whiterose Oysters" to "Oysters",
     "Owlbear Omelet" to "Omelet",
 )

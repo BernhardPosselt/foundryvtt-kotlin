@@ -1,5 +1,5 @@
 {
-  "name": "Pie",
+  "name": "Berry Pie",
   "icon": "icons/consumables/grains/pastry-bread-brown.webp",
   "basicIngredients": 3,
   "specialIngredients": 2,
@@ -15,7 +15,7 @@
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.elsXArG4GqGin6LB",
         "removeAfterRest": true,
         "healFormula": "3d8",
-        "healAfterConsumptionAndRest": true
+        "healMode": "afterConsumptionAndRest"
       }
     ]
   },
@@ -32,7 +32,7 @@
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.n6ykp8NjXDFcvqXM",
         "removeAfterRest": true,
         "healFormula": "6d8",
-        "healAfterConsumptionAndRest": true
+        "healMode": "afterConsumptionAndRest"
       }
     ]
   },

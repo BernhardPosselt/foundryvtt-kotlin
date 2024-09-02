@@ -48,7 +48,8 @@ external interface OutcomeSubmitData {
     val changeRestDurationSeconds: Int
     val healFormula: String
     val damageFormula: String
-    val healAfterConsumptionAndRest: Boolean
+    val healMode: String
+    val reduceConditions: ReduceConditions
 }
 
 @JsPlainObject
@@ -66,6 +67,17 @@ external interface RecipeSubmitData {
     val criticalSuccess: OutcomeSubmitData
     val success: OutcomeSubmitData
     val criticalFailure: OutcomeSubmitData
+}
+
+enum class HealMode {
+    AFTER_CONSUMPTION,
+    AFTER_REST,
+    AFTER_CONSUMPTION_AND_REST,
+}
+
+enum class ReduceConditionMode {
+    ALL,
+    RANDOM
 }
 
 @OptIn(ExperimentalJsStatic::class, ExperimentalJsExport::class)
@@ -95,7 +107,18 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
                 boolean("removeAfterRest")
                 boolean("doublesHealing")
                 boolean("halvesHealing")
-                boolean("healAfterConsumptionAndRest")
+                string("healMode") {
+                    choices = HealMode.entries.map { it.toCamelCase() }.toTypedArray()
+                }
+                schema("reduceConditions") {
+                    int("drained")
+                    int("enfeebled")
+                    int("clumsy")
+                    int("stupefied")
+                    string("mode") {
+                        choices = ReduceConditionMode.entries.map { it.toCamelCase() }.toTypedArray()
+                    }
+                }
             }
             schema("criticalSuccess") {
                 string("uuid")
@@ -105,7 +128,18 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
                 boolean("removeAfterRest")
                 boolean("doublesHealing")
                 boolean("halvesHealing")
-                boolean("healAfterConsumptionAndRest")
+                string("healMode") {
+                    choices = HealMode.entries.map { it.toCamelCase() }.toTypedArray()
+                }
+                schema("reduceConditions") {
+                    int("drained")
+                    int("enfeebled")
+                    int("clumsy")
+                    int("stupefied")
+                    string("mode") {
+                        choices = ReduceConditionMode.entries.map { it.toCamelCase() }.toTypedArray()
+                    }
+                }
             }
             schema("success") {
                 string("uuid")
@@ -115,7 +149,18 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
                 boolean("removeAfterRest")
                 boolean("doublesHealing")
                 boolean("halvesHealing")
-                boolean("healAfterConsumptionAndRest")
+                string("healMode") {
+                    choices = HealMode.entries.map { it.toCamelCase() }.toTypedArray()
+                }
+                schema("reduceConditions") {
+                    int("drained")
+                    int("enfeebled")
+                    int("clumsy")
+                    int("stupefied")
+                    string("mode") {
+                        choices = ReduceConditionMode.entries.map { it.toCamelCase() }.toTypedArray()
+                    }
+                }
             }
             schema("criticalFailure") {
                 string("uuid")
@@ -125,7 +170,18 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
                 boolean("removeAfterRest")
                 boolean("doublesHealing")
                 boolean("halvesHealing")
-                boolean("healAfterConsumptionAndRest")
+                string("healMode") {
+                    choices = HealMode.entries.map { it.toCamelCase() }.toTypedArray()
+                }
+                schema("reduceConditions") {
+                    int("drained")
+                    int("enfeebled")
+                    int("clumsy")
+                    int("stupefied")
+                    string("mode") {
+                        choices = ReduceConditionMode.entries.map { it.toCamelCase() }.toTypedArray()
+                    }
+                }
             }
         }
     }
@@ -366,12 +422,6 @@ private suspend fun createMealInputs(
             required = false,
             stacked = false,
         ),
-        CheckboxInput(
-            label = "Heal After Consumption and Rest",
-            help = "Rolls the healing formula twice, once after consumption and once after resting",
-            name = "$namePrefix.healAfterConsumptionAndRest",
-            value = firstEffect?.healAfterConsumptionAndRest ?: false,
-        ),
         TextInput(
             label = "Damage Formula",
             help = "Deal damage equal to this roll upon consumption",
@@ -379,6 +429,45 @@ private suspend fun createMealInputs(
             value = firstEffect?.damageFormula ?: "",
             placeholder = "3d8[poison]",
             required = false,
+            stacked = false,
+        ),
+        Select.fromEnum<HealMode>(
+            label = "Heal Mode",
+            help = "When to roll healing, damage and reduce conditions",
+            name = "$namePrefix.healMode",
+            value = firstEffect?.healMode?.let { fromCamelCase<HealMode>(it) } ?: HealMode.AFTER_CONSUMPTION,
+            stacked = false,
+        ),
+        NumberInput(
+            label = "Reduce Clumsy By",
+            name = "$namePrefix.reduceConditions.clumsy",
+            stacked = false,
+            value = firstEffect?.reduceConditions?.clumsy ?: 0,
+        ),
+        NumberInput(
+            label = "Reduce Drained By",
+            name = "$namePrefix.reduceConditions.drained",
+            stacked = false,
+            value = firstEffect?.reduceConditions?.drained ?: 0,
+        ),
+        NumberInput(
+            label = "Reduce Enfeebled By",
+            name = "$namePrefix.reduceConditions.enfeebled",
+            stacked = false,
+            value = firstEffect?.reduceConditions?.enfeebled ?: 0,
+        ),
+        NumberInput(
+            label = "Reduce Stupefied By",
+            name = "$namePrefix.reduceConditions.stupefied",
+            stacked = false,
+            value = firstEffect?.reduceConditions?.stupefied ?: 0,
+        ),
+        Select.fromEnum<ReduceConditionMode>(
+            label = "Reduce Condition Mode",
+            help = "All reduces all conditions, random picks one at random if more than one applies",
+            name = "$namePrefix.reduceConditions.mode",
+            value = firstEffect?.reduceConditions?.mode?.let { fromCamelCase<ReduceConditionMode>(it) }
+                ?: ReduceConditionMode.ALL,
             stacked = false,
         ),
         NumberInput(
@@ -402,7 +491,14 @@ private fun toOutcome(outcome: OutcomeSubmitData): CookingOutcome =
                 halvesHealing = outcome.halvesHealing,
                 healFormula = outcome.healFormula,
                 damageFormula = outcome.damageFormula,
-                healAfterConsumptionAndRest = outcome.healAfterConsumptionAndRest
+                healMode = outcome.healMode,
+                reduceConditions = ReduceConditions(
+                    drained = outcome.reduceConditions.drained,
+                    enfeebled = outcome.reduceConditions.enfeebled,
+                    clumsy = outcome.reduceConditions.clumsy,
+                    stupefied = outcome.reduceConditions.stupefied,
+                    mode = outcome.reduceConditions.mode,
+                )
             )
         )
     )

@@ -13,7 +13,11 @@
     "effects": [
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.3a5uIGu77TLQE9ZB",
-        "healFormula": "4d6"
+        "healFormula": "4d6",
+        "healMode": "afterRest",
+        "reduceConditions": {
+          "drained": 1
+        }
       }
     ]
   },
@@ -29,6 +33,7 @@
     "effects": [
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.COa19ug1vjTGHy04",
+        "healMode": "afterRest",
         "healFormula": "2d6"
       }
     ]

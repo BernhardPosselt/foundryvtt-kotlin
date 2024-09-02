@@ -3,6 +3,15 @@ package at.posselt.pfrpg.camping
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
+external interface ReduceConditions {
+    val drained: Int?
+    val enfeebled: Int?
+    val clumsy: Int?
+    val stupefied: Int?
+    val mode: String? // all or random
+}
+
+@JsPlainObject
 external interface MealEffect {
     val uuid: String
     val removeAfterRest: Boolean?
@@ -11,7 +20,8 @@ external interface MealEffect {
     val halvesHealing: Boolean?
     val healFormula: String?
     val damageFormula: String?
-    val healAfterConsumptionAndRest: Boolean?
+    val healMode: String? // afterConsumption, afterRest, afterConsumptionAndRest
+    val reduceConditions: ReduceConditions?
 }
 
 

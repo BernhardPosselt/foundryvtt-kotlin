@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * First World Mince Pie -> Supernatural Mince Pie
     * Galt Ragout -> Ragout
     * Giant Scrambled Egg With Shambletus -> Giant Scrambled Egg
-    * Kameberry Pie -> Pie
+    * Kameberry Pie -> Berry Pie
     * Whiterose Oysters -> Oysters
     * Owlbear Omelet -> Omelet
 * The following Kingdom Activities have been renamed:

@@ -92,6 +92,30 @@
         }
       }
     },
+    "Conditions": {
+      "type": "object",
+      "required": [
+        "condition",
+        "value"
+      ],
+      "properties": {
+        "condition": {
+          "type": "string",
+          "enum": [
+            "drained",
+            "enfeebled",
+            "stupefied",
+            "clumsy"
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "afterRest": {
+          "type": "boolean"
+        }
+      }
+    },
     "MealEffect": {
       "type": "object",
       "properties": {
@@ -101,8 +125,30 @@
         "changeRestDurationSeconds": {
           "type": "number"
         },
-        "removeAfterRest": {
-          "type": "boolean"
+        "reduceConditions": {
+          "type": "object",
+          "mode": {
+            "type": "string",
+            "enum": [
+              "all",
+              "random"
+            ]
+          },
+          "drained": {
+            "type": "number"
+          },
+          "stupefied": {
+            "type": "number"
+          },
+          "clumsy": {
+            "type": "number"
+          },
+          "enfeebled": {
+            "type": "number"
+          },
+          "afterRest": {
+            "type": "boolean"
+          }
         },
         "doublesHealing": {
           "type": "boolean"
@@ -110,34 +156,19 @@
         "halvesHealing": {
           "type": "boolean"
         },
-        "healAfterConsumptionAndRest": {
-          "type": "boolean"
+        "healMode": {
+          "type": "string",
+          "enum": [
+            "afterConsumption",
+            "afterRest",
+            "afterConsumptionAndRest"
+          ]
         },
         "healFormula": {
           "type": "string"
         },
         "damageFormula": {
           "type": "string"
-        },
-        "damageType": {
-          "type": "string",
-          "enum": [
-            "acid",
-            "bludgeoning",
-            "cold",
-            "electricity",
-            "fire",
-            "force",
-            "mental",
-            "piercing",
-            "poison",
-            "slashing",
-            "sonic",
-            "spirit",
-            "untyped",
-            "vitality",
-            "void"
-          ]
         }
       },
       "required": [
