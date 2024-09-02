@@ -6,7 +6,7 @@ import at.posselt.pfrpg.data.actor.Perception
 import at.posselt.pfrpg.data.actor.Skill
 import at.posselt.pfrpg.utils.awaitAll
 import com.foundryvtt.core.Game
-import com.foundryvtt.pf2e.PF2EActionMacroUseOptions
+import com.foundryvtt.pf2e.actions.ActionUseOptions
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.pf2e
 
@@ -18,9 +18,9 @@ private suspend fun rollExplorationSkillCheck(
     dc: Int?,
 ) {
     if (explorationEffectName == "Search" && attribute == Perception) {
-        game.pf2e.actions.get("seek")?.use(PF2EActionMacroUseOptions(actors = actors))
+        game.pf2e.actions.get("seek")?.use(ActionUseOptions(actors = actors))
     } else if (explorationEffectName == "Avoid Notice" && attribute == Skill.STEALTH) {
-        game.pf2e.actions.get("avoid-notice")?.use(PF2EActionMacroUseOptions(actors = actors))
+        game.pf2e.actions.get("avoid-notice")?.use(ActionUseOptions(actors = actors))
     } else {
         actors.rollChecks(attribute, dc).awaitAll()
     }

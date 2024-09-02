@@ -76,10 +76,6 @@ class ManageRecipesApplication(
                         "components/food-cost/food-cost.hbs",
                         buildFoodCost(recipe.cookingCost(), total, foodItems).unsafeCast<AnyObject>(),
                     )
-                    val discover = tpl(
-                        "components/food-cost/food-cost.hbs",
-                        buildFoodCost(recipe.discoverCost(), total, foodItems).unsafeCast<AnyObject>(),
-                    )
                     CrudItem(
                         nameIsHtml = true,
                         id = recipeName,
@@ -89,7 +85,6 @@ class ManageRecipesApplication(
                             CrudColumn(value = recipe.level.toString(), escapeHtml = true),
                             CrudColumn(value = recipe.cookingLoreDC.toString(), escapeHtml = true),
                             CrudColumn(value = cook, escapeHtml = false),
-                            CrudColumn(value = discover, escapeHtml = false),
                             CrudColumn(value = recipe.cost, escapeHtml = true),
                         ),
                         enable = CheckboxInput(
@@ -107,7 +102,7 @@ class ManageRecipesApplication(
     }
 
     override fun getHeadings(): Promise<Array<String>> = buildPromise {
-        arrayOf("Rarity", "Level", "DC", "Cooking Cost", "Learning Cost", "Purchase Cost")
+        arrayOf("Rarity", "Level", "DC", "Cooking Cost", "Purchase Cost")
     }
 
     override fun onParsedSubmit(value: CrudData): Promise<Void> = buildPromise {

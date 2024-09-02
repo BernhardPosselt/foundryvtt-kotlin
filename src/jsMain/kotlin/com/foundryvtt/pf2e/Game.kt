@@ -1,43 +1,10 @@
 package com.foundryvtt.pf2e
 
 import com.foundryvtt.core.Game
-import com.foundryvtt.core.utils.Collection
-import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actions.PF2EActionMacros
+import com.foundryvtt.pf2e.time.PF2EWorldClock
 import kotlinx.js.JsPlainObject
-import kotlin.js.Promise
 
-@JsPlainObject
-external interface PF2EActionMacroUseOptions {
-    val actors: Array<PF2ECharacter>?
-    val target: Array<Any>? // TokenDocument or Actor
-}
-
-external class PF2EActionMacro {
-    fun use(options: PF2EActionMacroUseOptions): Promise<Any?>
-}
-
-@JsPlainObject
-external interface RestForTheNightOptions {
-    val actors: Array<PF2ECharacter>
-    val skilDialog: Boolean?
-}
-
-@JsPlainObject
-external interface SubsistOptions {
-    val actors: Array<PF2ECharacter>
-    val skill: String
-    val difficultyClass: Dc?
-}
-
-external class PF2EActionMacros : Collection<PF2EActionMacro> {
-    fun restForTheNight(options: RestForTheNightOptions): Promise<Unit>
-    fun subsist(options: SubsistOptions)
-}
-
-@JsPlainObject
-external interface PF2EWorldClock {
-    val month: String
-}
 
 @JsPlainObject
 external interface PF2EGame {

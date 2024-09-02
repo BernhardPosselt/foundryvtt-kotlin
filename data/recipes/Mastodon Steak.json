@@ -12,7 +12,8 @@
   "criticalFailure": {
     "effects": [
       {
-        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.0yH2V9UFRyGwXIRn"
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.0yH2V9UFRyGwXIRn",
+        "healFormula": "7d8"
       }
     ]
   },
@@ -27,7 +28,8 @@
     "effects": [
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.M6jcQsHsPEkigTTG",
-        "removeAfterRest": true
+        "removeAfterRest": true,
+        "healFormula": "4d8"
       }
     ]
   },

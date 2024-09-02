@@ -1,30 +1,21 @@
+@file:JsQualifier("foundryvttKotlinPatches")
+
 package at.posselt.pfrpg.app
 
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.FormDataExtended
-import com.foundryvtt.core.applications.api.*
+import com.foundryvtt.core.applications.api.ApplicationRenderOptions
+import com.foundryvtt.core.applications.api.ApplicationV2
+import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import js.core.Void
-import js.objects.ReadonlyRecord
 import js.objects.Record
 import kotlinx.html.org.w3c.dom.events.Event
-import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLFormElement
 import kotlin.js.Promise
 
-@JsPlainObject
-external interface HandlebarsFormApplicationOptions : ApplicationConfiguration {
-    val parts: ReadonlyRecord<String, HandlebarsTemplatePart>?
-}
 
-@JsPlainObject
-external interface HandlebarsRenderContext {
-    val partId: String
-}
-
-
-@JsName("SaneHandlebarsApplicationV2(foundry.applications.api.ApplicationV2)")
-@Suppress("NAME_CONTAINS_ILLEGAL_CHARS")
+@JsName("SaneHandlebarsApplicationV2")
 open external class HandlebarsApp<T : HandlebarsRenderContext>(
     options: HandlebarsFormApplicationOptions,
 ) : ApplicationV2 {

@@ -13,7 +13,9 @@
     "effects": [
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.elsXArG4GqGin6LB",
-        "removeAfterRest": true
+        "removeAfterRest": true,
+        "healFormula": "3d8",
+        "healAfterConsumptionAndRest": true
       }
     ]
   },
@@ -28,7 +30,9 @@
     "effects": [
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.n6ykp8NjXDFcvqXM",
-        "removeAfterRest": true
+        "removeAfterRest": true,
+        "healFormula": "6d8",
+        "healAfterConsumptionAndRest": true
       }
     ]
   },

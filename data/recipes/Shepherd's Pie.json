@@ -12,21 +12,24 @@
   "criticalSuccess": {
     "effects": [
       {
-        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.3a5uIGu77TLQE9ZB"
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.3a5uIGu77TLQE9ZB",
+        "healFormula": "4d6"
       }
     ]
   },
   "criticalFailure": {
     "effects": [
       {
-        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.84dIJjkOdLeHWkx2"
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.84dIJjkOdLeHWkx2",
+        "halvesHealing": true
       }
     ]
   },
   "success": {
     "effects": [
       {
-        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.COa19ug1vjTGHy04"
+        "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.COa19ug1vjTGHy04",
+        "healFormula": "2d6"
       }
     ]
   },

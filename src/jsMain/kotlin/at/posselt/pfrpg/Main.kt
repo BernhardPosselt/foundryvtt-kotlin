@@ -18,6 +18,8 @@ import at.posselt.pfrpg.utils.*
 import at.posselt.pfrpg.weather.registerWeatherHooks
 import at.posselt.pfrpg.weather.rollWeather
 import com.foundryvtt.core.*
+import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.rolls.DamageRoll
 import js.objects.recordOf
 
 fun main() {
@@ -117,7 +119,16 @@ fun main() {
                 toggleCombatTracksMacro = { buildPromise { toggleCombatTracksMacro(game) } },
                 realmTileDialogMacro = { buildPromise { editRealmTileMacro(game) } },
                 editStructureMacro = { actor -> buildPromise { editStructureMacro(actor) } },
-                openCampingSheet = { buildPromise { openCampingSheet(game) } }
+                openCampingSheet = { buildPromise { openCampingSheet(game) } },
+                subsistMacro = { actor ->
+                    buildPromise {
+                        if (actor is PF2ECharacter) {
+                            subsistMacro(game, actor)
+                        } else {
+                            ui.notifications.error("Please select a Character")
+                        }
+                    }
+                }
             )
         )
     }
@@ -130,6 +141,7 @@ fun main() {
                 ?.let { actor -> CampingSheet(game, actor) }
                 ?.launch()
         }
+        DamageRoll("1d4[fire]").toMessage()
     }
 
     Hooks.onRenderChatLog { _, _, _ ->

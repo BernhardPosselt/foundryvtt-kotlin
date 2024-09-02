@@ -24,6 +24,7 @@ external interface ToolsMacros {
     val realmTileDialogMacro: () -> Unit
     val editStructureMacro: (Actor?) -> Unit
     val openCampingSheet: () -> Unit
+    val subsistMacro: (Actor?) -> Unit
 //    val structureTokenMappingMacro: () -> Unit
 //    val viewKingdomMacro: () -> Unit
 }

@@ -8,6 +8,10 @@ external interface MealEffect {
     val removeAfterRest: Boolean?
     val changeRestDurationSeconds: Int?
     val doublesHealing: Boolean?
+    val halvesHealing: Boolean?
+    val healFormula: String?
+    val damageFormula: String?
+    val healAfterConsumptionAndRest: Boolean?
 }
 
 

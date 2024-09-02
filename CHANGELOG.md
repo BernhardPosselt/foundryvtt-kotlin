@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Regions and Climate can now be configured to use your own settings. This allows you to have custom regions with custom
   weather, combat tracks and random encounter tables
+* Added a custom Subsist macro that works off the current region and allows you to add Provisions items to your
+  inventory. Provisions are used up before rations and removed after resting. Automation is included for Coyote Cloak
+  and Forager
 
 ### Removed
 

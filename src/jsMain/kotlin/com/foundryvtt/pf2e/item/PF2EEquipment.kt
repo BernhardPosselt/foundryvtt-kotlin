@@ -24,6 +24,7 @@ external class PF2EEquipment : PF2EItem {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EEquipment?>
 
     val system: PF2EEquipmentData
+    val isInvested: Boolean
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

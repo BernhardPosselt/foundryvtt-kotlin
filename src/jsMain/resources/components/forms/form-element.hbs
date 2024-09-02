@@ -30,7 +30,8 @@
 {{else if text}}
         <input type="text" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}} {{#if
-                elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}}>
+                elementClasses}}class="{{elementClasses}}"{{/if}} {{#if disabled}}disabled{{/if}} {{#if
+                placeholder}}placeholder="{{placeholder}}"{{/if}}>
 {{else if checkbox}}
         <input type="checkbox" name="{{name}}" {{checked value}}  {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if elementClasses}}class="{{elementClasses}}"{{/if}} {{#if

@@ -13,6 +13,7 @@ data class TextInput(
     val stacked: Boolean = true,
     val escapeLabel: Boolean = true,
     val labelElement: String = "label",
+    val placeholder: String? = null,
 ) : IntoFormElementContext {
     override fun toContext() = FormElementContext(
         isFormElement = true,
@@ -40,6 +41,7 @@ data class TextInput(
         escapeLabel = escapeLabel,
         component = false,
         labelElement = labelElement,
+        placeholder = placeholder,
     )
 }
 

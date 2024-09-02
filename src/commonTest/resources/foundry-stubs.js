@@ -1,3 +1,8 @@
+class Hooks {
+    static on(key) {
+    }
+}
+
 const foundry = {
     abstract: {
         DataModel: class {

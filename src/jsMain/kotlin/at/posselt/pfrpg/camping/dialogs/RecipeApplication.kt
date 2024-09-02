@@ -14,11 +14,15 @@ import at.posselt.pfrpg.app.forms.toOption
 import at.posselt.pfrpg.camping.*
 import at.posselt.pfrpg.data.general.Rarity
 import at.posselt.pfrpg.fromCamelCase
+import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.launch
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
+import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
+import com.foundryvtt.core.data.dsl.buildSchema
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.array.push
@@ -40,7 +44,11 @@ external interface OutcomeSubmitData {
     val uuid: String
     val removeAfterRest: Boolean
     val doublesHealing: Boolean
+    val halvesHealing: Boolean
     val changeRestDurationSeconds: Int
+    val healFormula: String
+    val damageFormula: String
+    val healAfterConsumptionAndRest: Boolean
 }
 
 @JsPlainObject
@@ -60,6 +68,69 @@ external interface RecipeSubmitData {
     val criticalFailure: OutcomeSubmitData
 }
 
+@OptIn(ExperimentalJsStatic::class, ExperimentalJsExport::class)
+@JsExport
+class RecipeDataModel(val value: AnyObject) : DataModel(value) {
+    companion object {
+        @Suppress("unused")
+        @OptIn(ExperimentalJsStatic::class)
+        @JsStatic
+        fun defineSchema() = buildSchema {
+            string("name")
+            string("uuid")
+            int("level")
+            string("rarity") {
+                choices = Rarity.entries.map { it.toCamelCase() }.toTypedArray()
+            }
+            string("cost")
+            int("cookingLoreDC")
+            int("survivalDC")
+            int("basicIngredients")
+            int("specialIngredients")
+            schema("favoriteMeal") {
+                string("uuid")
+                string("healFormula", nullable = true)
+                string("damageFormula", nullable = true)
+                int("changeRestDurationSeconds")
+                boolean("removeAfterRest")
+                boolean("doublesHealing")
+                boolean("halvesHealing")
+                boolean("healAfterConsumptionAndRest")
+            }
+            schema("criticalSuccess") {
+                string("uuid")
+                string("healFormula", nullable = true)
+                string("damageFormula", nullable = true)
+                int("changeRestDurationSeconds")
+                boolean("removeAfterRest")
+                boolean("doublesHealing")
+                boolean("halvesHealing")
+                boolean("healAfterConsumptionAndRest")
+            }
+            schema("success") {
+                string("uuid")
+                string("healFormula", nullable = true)
+                string("damageFormula", nullable = true)
+                int("changeRestDurationSeconds")
+                boolean("removeAfterRest")
+                boolean("doublesHealing")
+                boolean("halvesHealing")
+                boolean("healAfterConsumptionAndRest")
+            }
+            schema("criticalFailure") {
+                string("uuid")
+                string("healFormula", nullable = true)
+                string("damageFormula", nullable = true)
+                int("changeRestDurationSeconds")
+                boolean("removeAfterRest")
+                boolean("doublesHealing")
+                boolean("halvesHealing")
+                boolean("healAfterConsumptionAndRest")
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 class RecipeApplication(
@@ -71,6 +142,7 @@ class RecipeApplication(
     title = if (recipe == null) "Add Recipe" else "Edit Recipe: ${recipe.name}",
     template = "components/forms/application-form.hbs",
     debug = true,
+    dataModel = RecipeDataModel::class.js,
 ) {
     private val editRecipeName = recipe?.name
     private var currentRecipe: RecipeData? = recipe
@@ -279,6 +351,36 @@ private suspend fun createMealInputs(
             name = "$namePrefix.doublesHealing",
             value = firstEffect?.doublesHealing ?: false,
         ),
+        CheckboxInput(
+            label = "Halves Healing",
+            help = "Halves HP regained from resting, does not stack with other effects that halve healing",
+            name = "$namePrefix.halvesHealing",
+            value = firstEffect?.halvesHealing ?: false,
+        ),
+        TextInput(
+            label = "Healing Formula",
+            help = "Restore hit points equal to this roll upon consumption",
+            placeholder = "3d8",
+            name = "$namePrefix.healFormula",
+            value = firstEffect?.healFormula ?: "",
+            required = false,
+            stacked = false,
+        ),
+        CheckboxInput(
+            label = "Heal After Consumption and Rest",
+            help = "Rolls the healing formula twice, once after consumption and once after resting",
+            name = "$namePrefix.healAfterConsumptionAndRest",
+            value = firstEffect?.healAfterConsumptionAndRest ?: false,
+        ),
+        TextInput(
+            label = "Damage Formula",
+            help = "Deal damage equal to this roll upon consumption",
+            name = "$namePrefix.damageFormula",
+            value = firstEffect?.damageFormula ?: "",
+            placeholder = "3d8[poison]",
+            required = false,
+            stacked = false,
+        ),
         NumberInput(
             label = "Rest Duration",
             help = "Seconds to add to an individuals rest duration; can be negative",
@@ -297,6 +399,10 @@ private fun toOutcome(outcome: OutcomeSubmitData): CookingOutcome =
                 removeAfterRest = outcome.removeAfterRest,
                 changeRestDurationSeconds = outcome.changeRestDurationSeconds,
                 doublesHealing = outcome.doublesHealing,
+                halvesHealing = outcome.halvesHealing,
+                healFormula = outcome.healFormula,
+                damageFormula = outcome.damageFormula,
+                healAfterConsumptionAndRest = outcome.healAfterConsumptionAndRest
             )
         )
     )

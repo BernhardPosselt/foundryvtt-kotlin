@@ -5,9 +5,9 @@ import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.data.checks.RollMode
 import at.posselt.pfrpg.fromOrdinal
 import at.posselt.pfrpg.toCamelCase
-import com.foundryvtt.pf2e.Dc
-import com.foundryvtt.pf2e.PF2ERollOptions
+import com.foundryvtt.pf2e.actions.CheckDC
 import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actor.StatisticRollParameters
 import js.array.toTypedArray
 import kotlin.js.Promise
 
@@ -21,8 +21,8 @@ fun PF2ECharacter.rollCheck(
     rollMode: RollMode = RollMode.GMROLL,
 ): Promise<ParsedRollResult>? = resolveAttribute(attribute)
     ?.let {
-        it.roll(PF2ERollOptions(dc = dc?.let { Dc(value = dc) }, rollMode = rollMode.toCamelCase()))
-            .then { result -> ParsedRollResult(fromOrdinal<DegreeOfSuccess>(result.degreeOfSuccess)!!) }
+        it.roll(StatisticRollParameters(dc = dc?.let { CheckDC(value = dc) }, rollMode = rollMode.toCamelCase()))
+            .then { result -> ParsedRollResult(fromOrdinal<DegreeOfSuccess>(result?.degreeOfSuccess ?: 0)!!) }
     }
 
 fun Array<PF2ECharacter>.rollChecks(

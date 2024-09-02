@@ -5,7 +5,11 @@ import at.posselt.pfrpg.data.checks.RollMode
 import at.posselt.pfrpg.takeIfInstance
 import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.toLabel
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.documents.ChatMessage
+import com.foundryvtt.core.documents.ChatSpeakerData
+import com.foundryvtt.core.documents.GetSpeakerOptions
+import com.foundryvtt.pf2e.actor.PF2EActor
 import js.objects.ReadonlyRecord
 import js.objects.jso
 import js.objects.recordOf
@@ -40,14 +44,24 @@ suspend fun postDegreeOfSuccess(
 suspend fun postChatTemplate(
     templatePath: String,
     templateContext: ReadonlyRecord<String, Any?> = jso(),
-    rollMode: RollMode? = null
+    rollMode: RollMode? = null,
+    speaker: Actor? = null,
 ) {
     val message = tpl(templatePath, templateContext)
-    postChatMessage(message, rollMode)
+    postChatMessage(message, rollMode, speaker = speaker)
 }
 
-suspend fun postChatMessage(message: String, rollMode: RollMode? = null) {
-    val data = recordOf("content" to message)
+suspend fun postChatMessage(
+    message: String,
+    rollMode: RollMode? = null,
+    speaker: Actor? = null
+) {
+    val data = recordOf<String, Any?>(
+        "content" to message
+    )
+    if (speaker != null) {
+        data["speaker"] = ChatMessage.getSpeaker(GetSpeakerOptions(actor = speaker))
+    }
     rollMode?.let { ChatMessage.applyRollMode(data, it.toCamelCase()) }
     ChatMessage.create(data).await()
 }

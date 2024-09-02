@@ -3,7 +3,7 @@
   "description": "A collection of utilities to run the most popular adventure for PFRPG 2e",
   "version": "2.0.0",
   "scripts": [
-    "dist/api/SaneHandlebarsApplicationV2.js",
+    "dist/api/patches.js",
     "dist/main.js",
     "dist/oldmain.js"
   ],

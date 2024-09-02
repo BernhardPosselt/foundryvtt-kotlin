@@ -12,9 +12,9 @@ import at.posselt.pfrpg.fromOrdinal
 import at.posselt.pfrpg.slugify
 import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.postDegreeOfSuccess
-import com.foundryvtt.pf2e.Dc
-import com.foundryvtt.pf2e.PF2ERollOptions
+import com.foundryvtt.pf2e.actions.CheckDC
 import com.foundryvtt.pf2e.actor.PF2ECreature
+import com.foundryvtt.pf2e.actor.StatisticRollParameters
 import js.array.push
 import js.objects.recordOf
 import kotlinx.coroutines.await
@@ -151,9 +151,9 @@ private suspend fun PF2ECreature.performCampingCheck(
     extraRollOptions: Array<String> = emptyArray(),
     dc: Int,
 ): DegreeOfSuccess? {
-    val data = PF2ERollOptions(
+    val data = StatisticRollParameters(
         rollMode = if (isSecret) "blindroll" else undefined,
-        dc = Dc(value = dc),
+        dc = CheckDC(value = dc),
         extraRollOptions = arrayOf("camping") + extraRollOptions
     )
     if (isWatch) {

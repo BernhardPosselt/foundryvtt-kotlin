@@ -3,6 +3,7 @@ package com.foundryvtt.core.documents
 import com.foundryvtt.core.*
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
+import io.kvision.jquery.JQuery
 import js.objects.ReadonlyRecord
 import js.objects.jso
 import kotlinx.js.JsPlainObject
@@ -10,10 +11,10 @@ import kotlin.js.Promise
 
 @JsPlainObject
 external interface ChatSpeakerData {
-    val scene: String
-    val actor: String
-    val token: String
-    val alias: String
+    val scene: String?
+    val actor: String?
+    val token: String?
+    val alias: String?
 }
 
 
@@ -33,6 +34,22 @@ external interface ChatMessageData {
     val emote: Boolean
 }
 
+@JsPlainObject
+external interface GetSpeakerOptions {
+    val scene: Scene?
+    val actor: Actor?
+    val token: TokenDocument?
+    val alias: String?
+}
+
+@JsPlainObject
+external interface SpeakerData {
+    val scene: String?
+    val actor: String?
+    val token: String?
+    val alias: String?
+}
+
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.ChatMessage.documentClass")
@@ -41,10 +58,17 @@ external class ChatMessage : ClientDocument {
     companion object : DocumentStatic<ChatMessage> {
         fun applyRollMode(data: Any, rollMode: String)
         fun getWhisperRecipients(name: String)
+        fun getSpeaker(options: GetSpeakerOptions = definedExternally): SpeakerData
+        fun getSpeakerActor(speaker: AnyObject): Actor?
     }
 
     override fun delete(operation: DatabaseDeleteOperation): Promise<ChatMessage>
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<ChatMessage?>
+
+    val alias: String
+    val isAuthor: Boolean
+    val isContentVisible: Boolean
+    val isRoll: Boolean
 
     var _id: String
     var blind: Boolean
@@ -55,12 +79,19 @@ external class ChatMessage : ClientDocument {
     var timestamp: Int
     var style: Int
     var type: String
+    var system: AnyObject
+    var author: User
+    var speaker: SpeakerData
+    var whisper: Array<String>
+    var rolls: Array<Roll>
+    var sound: String
 
     val _rollExpanded: Boolean
 
     fun prepareDerivedData()
     fun applyRollMode(rollMode: String)
     fun getRollData(): ReadonlyRecord<String, Any>
+    fun getHTML(): Promise<JQuery>
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")

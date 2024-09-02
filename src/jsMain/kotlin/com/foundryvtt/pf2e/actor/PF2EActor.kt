@@ -4,16 +4,12 @@ import com.foundryvtt.core.Actor
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
-import com.foundryvtt.pf2e.PF2ERollOptions
+import com.foundryvtt.core.collections.EmbeddedCollection
+import com.foundryvtt.pf2e.actions.CheckRoll
 import com.foundryvtt.pf2e.item.*
 import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
-
-@JsPlainObject
-external interface RollResult {
-    val degreeOfSuccess: Int
-}
 
 @JsPlainObject
 external interface ItemTypes {
@@ -22,12 +18,15 @@ external interface ItemTypes {
     val equipment: Array<PF2EEquipment>
     val action: Array<PF2EAction>
     val condition: Array<PF2ECondition>
+    val feat: Array<PF2EFeat>
+    val armor: Array<PF2EArmor>
 }
 
 
 external class PF2EAttribute {
     val rank: Int
-    fun roll(data: PF2ERollOptions): Promise<RollResult>
+    val label: String
+    fun roll(args: StatisticRollParameters = definedExternally): Promise<CheckRoll?>
 }
 
 /**
@@ -58,3 +57,5 @@ open external class PF2EActor : Actor {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
 fun PF2EActor.update(data: PF2EActor, operation: DatabaseUpdateOperation = jso()): Promise<PF2EActor?> =
     update(data as AnyObject, operation)
+
+fun PF2EActor.items() = items.unsafeCast<EmbeddedCollection<PF2EItem>>()

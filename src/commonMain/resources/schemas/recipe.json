@@ -106,6 +106,38 @@
         },
         "doublesHealing": {
           "type": "boolean"
+        },
+        "halvesHealing": {
+          "type": "boolean"
+        },
+        "healAfterConsumptionAndRest": {
+          "type": "boolean"
+        },
+        "healFormula": {
+          "type": "string"
+        },
+        "damageFormula": {
+          "type": "string"
+        },
+        "damageType": {
+          "type": "string",
+          "enum": [
+            "acid",
+            "bludgeoning",
+            "cold",
+            "electricity",
+            "fire",
+            "force",
+            "mental",
+            "piercing",
+            "poison",
+            "slashing",
+            "sonic",
+            "spirit",
+            "untyped",
+            "vitality",
+            "void"
+          ]
         }
       },
       "required": [

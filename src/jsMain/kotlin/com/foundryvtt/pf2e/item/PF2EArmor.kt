@@ -24,4 +24,5 @@ external class PF2EArmor : PF2EItem {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2EArmor?>
 
     val system: PF2EArmorData
+    val isInvested: Boolean
 }

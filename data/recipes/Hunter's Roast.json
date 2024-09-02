@@ -28,7 +28,8 @@
     "effects": [
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.RzOGQxp3VHlpYtWJ",
-        "removeAfterRest": true
+        "removeAfterRest": true,
+        "damageFormula": "2d6[poison]"
       }
     ]
   },
