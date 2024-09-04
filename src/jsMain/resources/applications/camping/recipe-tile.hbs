@@ -12,7 +12,12 @@
             <div class="km-camping-tile-portrait">
                 <ul class="km-recipe-actors">
                     {{#each actors}}
-                        <li><img src="{{image}}" alt="{{name}}"></li>
+                        <li>
+                            <a href="#"
+                               data-uuid="{{uuid}}"
+                               data-action="open-actor">
+                                <img src="{{image}}" alt="{{name}}">
+                            </a></li>
                     {{/each}}
                 </ul>
                 {{#if uuid}}

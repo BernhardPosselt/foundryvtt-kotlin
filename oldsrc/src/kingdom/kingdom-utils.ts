@@ -38,7 +38,7 @@ export function gainFame(kingdom: Kingdom, fame: number): Partial<Kingdom> {
     return {
         fame: {
             ...kingdom.fame,
-            now: clamped(kingdom.fame.now + fame, 0, 3),
+            now: clamped(kingdom.fame.now + fame, 0, kingdom.fame.max),
         },
     };
 }

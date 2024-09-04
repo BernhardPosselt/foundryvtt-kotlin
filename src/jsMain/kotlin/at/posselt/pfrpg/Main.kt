@@ -1,15 +1,15 @@
 package at.posselt.pfrpg
 
+import at.posselt.pfrpg.actions.ActionDispatcher
+import at.posselt.pfrpg.actions.handlers.AddHuntAndGatherResultHandler
+import at.posselt.pfrpg.actions.handlers.ClearActivitiesHandler
+import at.posselt.pfrpg.actions.handlers.OpenCampingSheetHandler
+import at.posselt.pfrpg.actions.handlers.SkipActivitiesHandler
+import at.posselt.pfrpg.actions.handlers.SyncActivitiesHandler
 import at.posselt.pfrpg.actor.partyMembers
-import at.posselt.pfrpg.camping.CampingCommand
-import at.posselt.pfrpg.camping.CampingSheet
-import at.posselt.pfrpg.camping.HuntAndGatherMessage
-import at.posselt.pfrpg.camping.addHuntAndGather
 import at.posselt.pfrpg.camping.bindCampingChatEventListeners
-import at.posselt.pfrpg.camping.checkPreActorUpdate
-import at.posselt.pfrpg.camping.getCamping
-import at.posselt.pfrpg.camping.getCampingActor
 import at.posselt.pfrpg.camping.openCampingSheet
+import at.posselt.pfrpg.camping.registerEffectSyncingHooks
 import at.posselt.pfrpg.combattracks.registerCombatTrackHooks
 import at.posselt.pfrpg.macros.*
 import at.posselt.pfrpg.migrations.migratePfrpg2eKingdomCampingWeather
@@ -19,11 +19,23 @@ import at.posselt.pfrpg.weather.registerWeatherHooks
 import at.posselt.pfrpg.weather.rollWeather
 import com.foundryvtt.core.*
 import com.foundryvtt.pf2e.actor.PF2ECharacter
-import com.foundryvtt.pf2e.rolls.DamageRoll
 import js.objects.recordOf
 
 fun main() {
     Hooks.onInit {
+        val actionDispatcher = ActionDispatcher(
+            game = game,
+            handlers = listOf(
+                AddHuntAndGatherResultHandler(game = game),
+                OpenCampingSheetHandler(game = game),
+                ClearActivitiesHandler(game = game),
+                SyncActivitiesHandler(game = game),
+                SkipActivitiesHandler(game = game),
+            )
+        ).apply {
+            listen()
+        }
+
         buildPromise {
             // register partials
             loadTpls(
@@ -43,48 +55,17 @@ fun main() {
             if (game.modules.get("pf2e-kingmaker")?.active != true) {
                 val data = recordOf(
                     "flags" to recordOf(
-                        "pf2e-kingmaker-tools" to recordOf(
-                            "pf2e-art" to "modules/pf2e-kingmaker-tools/token-map.json"
+                        Config.moduleId to recordOf(
+                            "pf2e-art" to "modules/${Config.moduleId}/token-map.json"
                         )
                     )
                 )
-                game.modules.get("pf2e-kingmaker-tools")
+                game.modules.get(Config.moduleId)
                     ?.updateSource(data)
             }
             registerWeatherHooks(game)
             registerCombatTrackHooks(game)
-
-            Hooks.onPreUpdateActor { actor, update, _, _ ->
-                when (val result = checkPreActorUpdate(actor, update)) {
-                    is CampingCommand.ClearActivities -> console.log("Clear Activities")
-                    is CampingCommand.DoNothing -> console.log("Do Nothing")
-                    is CampingCommand.SkipActivities -> console.log("Skip Activities", result.rollRandomEncounter)
-                    is CampingCommand.SyncActivities -> console.log(
-                        "Sync Activities",
-                        update,
-                        result.rollRandomEncounter
-                    )
-                }
-            }
-
-            game.socket.onPfrpg2eKingdomCampingWeather { data ->
-                buildPromise {
-                    if (isJsObject(data)) {
-                        val action = data["action"]
-                        if (action == "openCampingSheet") {
-                            game.getCampingActor()
-                                ?.let { actor -> CampingSheet(game, actor) }
-                                ?.launch()
-                        } else if (game.isFirstGM() && action == "addHuntAndGatherResult") {
-                            HuntAndGatherMessage.parse(data["data"])?.let { result ->
-                                game.getCampingActor()?.getCamping()?.let { camping ->
-                                    addHuntAndGather(game, camping, result)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            registerEffectSyncingHooks(actionDispatcher)
         }
 
         game.pf2eKingmakerTools = Pfrpg2eKingdomCampingWeather(
@@ -119,32 +100,21 @@ fun main() {
                 toggleCombatTracksMacro = { buildPromise { toggleCombatTracksMacro(game) } },
                 realmTileDialogMacro = { buildPromise { editRealmTileMacro(game) } },
                 editStructureMacro = { actor -> buildPromise { editStructureMacro(actor) } },
-                openCampingSheet = { buildPromise { openCampingSheet(game) } },
-                subsistMacro = { actor ->
-                    buildPromise {
-                        if (actor is PF2ECharacter) {
-                            subsistMacro(game, actor)
-                        } else {
-                            ui.notifications.error("Please select a Character")
-                        }
-                    }
-                }
+                openCampingSheet = { buildPromise { openCampingSheet(game, actionDispatcher) } },
+                subsistMacro = { actor -> buildPromise { subsistMacro(game, actor) } }
             )
         )
-    }
 
-    Hooks.onReady {
-        buildPromise {
-            game.migratePfrpg2eKingdomCampingWeather()
-
-            game.getCampingActor()
-                ?.let { actor -> CampingSheet(game, actor) }
-                ?.launch()
+        Hooks.onReady {
+            buildPromise {
+                game.migratePfrpg2eKingdomCampingWeather()
+                openCampingSheet(game, actionDispatcher)
+            }
+//            DamageRoll("1d4[fire]").toMessage()
         }
-        DamageRoll("1d4[fire]").toMessage()
-    }
 
-    Hooks.onRenderChatLog { _, _, _ ->
-        bindCampingChatEventListeners(game)
+        Hooks.onRenderChatLog { _, _, _ ->
+            bindCampingChatEventListeners(game, actionDispatcher)
+        }
     }
 }

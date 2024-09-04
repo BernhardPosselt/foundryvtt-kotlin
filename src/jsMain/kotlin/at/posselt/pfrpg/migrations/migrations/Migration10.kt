@@ -86,7 +86,7 @@ class Migration10 : Migration(10) {
                 it
             }
         }.toTypedArray()
-        camping.section = "prepareCamp"
+        camping.section = "prepareCampsite"
         val homebrewCampingActivities = camping.homebrewCampingActivities.unsafeCast<Array<dynamic>>()
         val newSkills: Map<String, Array<CampingSkill>> = homebrewCampingActivities.map { activity ->
             val activityName = activity.name as String
@@ -140,6 +140,7 @@ class Migration10 : Migration(10) {
             .toTypedArray()
         kingdom.activityBlacklist = kingdom.activityBlacklist
             .filter { !activityBlacklistMappings.contains(it) }.toTypedArray() + replacements
+        kingdom.fame.max = 3
     }
 
     override suspend fun migrateOther(game: Game) {

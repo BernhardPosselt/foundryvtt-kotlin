@@ -1,7 +1,9 @@
 import {getBooleanSetting, getNumberSetting, getStringSetting, setSetting} from '../../settings';
 import {updateKingdomArmyConsumption} from '../../armies/utils';
 import {ResourceAutomationMode} from '../scene';
-import {LabelAndValue, RollModeChoices, rollModeChoices} from '../../utils';
+import {clamped, LabelAndValue, RollModeChoices, rollModeChoices} from '../../utils';
+import {getKingdom, saveKingdom} from "../storage";
+import {Kingdom} from "../data/kingdom";
 
 type UntrainedSkillProficiency = 'level' | 'halfLevel' | 'none';
 
@@ -27,6 +29,7 @@ interface KingdomSettingData {
     rollModeChoices: RollModeChoices;
     untrainedSkillProficiencies: LabelAndValue[];
     automateResourcesChoices: LabelAndValue[];
+    maxFamePoints: number;
 }
 
 interface KingdomSettingOptions {
@@ -40,12 +43,14 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
     private onSave: () => void;
     private data: KingdomSettingData;
     private actor: Actor;
+    private kingdom: Kingdom;
 
     constructor(options: KingdomSettingOptions) {
         super(null, options);
         this.game = options.game;
         this.onSave = options.onSave;
         this.actor = options.sheetActor;
+        this.kingdom = getKingdom(this.actor);
         this.data = {
             expandMagicUse: getBooleanSetting(this.game, 'expandMagicUse'),
             allStructuresItemBonusesStack: getBooleanSetting(this.game, 'kingdomAllStructureItemBonusesStack'),
@@ -76,6 +81,7 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
                 {'value': 'tileBased', label: 'Tile/Drawing Based'},
                 {'value': 'manual', label: 'Manual'},
             ],
+            maxFamePoints: this.kingdom.fame.max,
         };
     }
 
@@ -161,6 +167,14 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
                 forceUpdate: true,
             });
         }
+        await saveKingdom(this.actor, {
+            fame: {
+                ...this.kingdom.fame,
+                now: clamped(this.kingdom.fame.now, 0, this.data.maxFamePoints),
+                next: clamped(this.kingdom.fame.next, 0, this.data.maxFamePoints),
+                max: Math.max(this.data.maxFamePoints, 0)
+            }
+        })
     }
 }
 

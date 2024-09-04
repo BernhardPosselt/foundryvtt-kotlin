@@ -1,6 +1,7 @@
 package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.Config
+import at.posselt.pfrpg.actions.ActionDispatcher
 import at.posselt.pfrpg.camping.dialogs.*
 import at.posselt.pfrpg.data.actor.Attribute
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
@@ -11,6 +12,7 @@ import com.foundryvtt.core.Game
 import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.actor.PF2ECreature
 import com.foundryvtt.pf2e.actor.PF2ENpc
+import js.objects.recordOf
 
 private val playlistUuid = "Playlist.7CiwVus60FiuKFhK"
 private val capital = "Playlist.7CiwVus60FiuKFhK.PlaylistSound.vGP8BFAN2DaZcpri"
@@ -57,7 +59,7 @@ fun getDefaultCamping(game: Game): CampingData {
             knownRecipes = arrayOf("Basic Meal", "Hearty Meal"),
             homebrewMeals = emptyArray(),
             cookingSkill = "survival",
-            degreeOfSuccess = null,
+            results = recordOf(),
             minimumSubsistence = 0,
         ),
         watchSecondsRemaining = 0,
@@ -69,7 +71,7 @@ fun getDefaultCamping(game: Game): CampingData {
         actorUuidsNotKeepingWatch = emptyArray(),
         ignoreSkillRequirements = false,
         randomEncounterRollMode = "gmroll",
-        section = "prepareCamp",
+        section = "prepareCampsite",
         alwaysPerformActivities = emptyArray(),
         restingPlaylistSoundUuid = null,
         restingPlaylistUuid = null,
@@ -292,9 +294,9 @@ fun CampingData.canPerformActivities() =
 fun CampingData.findCurrentRegion(): RegionSetting? =
     regionSettings.regions.find { it.name == currentRegion }
 
-suspend fun openCampingSheet(game: Game) {
+suspend fun openCampingSheet(game: Game, dispatcher: ActionDispatcher) {
     // TODO: create camping actor if not present
     game.getCampingActor()
-        ?.let { actor -> CampingSheet(game, actor) }
+        ?.let { actor -> CampingSheet(game, actor, dispatcher) }
         ?.launch()
 }

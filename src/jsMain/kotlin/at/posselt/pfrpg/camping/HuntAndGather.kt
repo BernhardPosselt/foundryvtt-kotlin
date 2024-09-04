@@ -2,15 +2,13 @@ package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.actor.party
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
-import at.posselt.pfrpg.utils.isInt
-import at.posselt.pfrpg.utils.isJsObject
 import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.roll
-import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.actor.PF2ECreature
 import js.objects.recordOf
+import kotlinx.js.JsPlainObject
 import kotlin.math.min
 
 
@@ -84,41 +82,12 @@ suspend fun postHuntAndGather(
     )
 }
 
-class HuntAndGatherMessage(
-    val actorUuid: String,
-    val basicIngredients: Int,
-    val specialIngredients: Int,
-) {
-    fun toMessage(): AnyObject {
-        return recordOf(
-            "action" to "addHuntAndGatherResult",
-            "data" to recordOf(
-                "actorUuid" to actorUuid,
-                "basicIngredients" to basicIngredients,
-                "specialIngredients" to specialIngredients,
-            )
-        )
-    }
-
-    companion object {
-        fun parse(data: Any?): HuntAndGatherMessage? {
-            if (isJsObject(data)) {
-                val actorUuid = data["actorUuid"]
-                val basicIngredients = data["basicIngredients"]
-                val specialIngredients = data["specialIngredients"]
-                if (actorUuid is String && isInt(basicIngredients) && isInt(specialIngredients)) {
-                    return HuntAndGatherMessage(
-                        actorUuid = actorUuid,
-                        basicIngredients = basicIngredients,
-                        specialIngredients = specialIngredients,
-                    )
-                }
-            }
-            return null
-        }
-    }
+@JsPlainObject
+external interface HuntAndGatherData {
+    val actorUuid: String
+    val basicIngredients: Int
+    val specialIngredients: Int
 }
-
 
 suspend fun findHuntAndGatherTargetActor(
     game: Game,
@@ -137,25 +106,3 @@ suspend fun findHuntAndGatherTargetActor(
     } ?: getCampingActorByUuid(defaultActorUuid)
 }
 
-suspend fun addHuntAndGather(
-    game: Game,
-    camping: CampingData,
-    result: HuntAndGatherMessage
-) = findHuntAndGatherTargetActor(game, result.actorUuid, camping)
-    ?.let {
-        console.log(it.name, result.toMessage())
-        it.addFoodToInventory(
-            FoodAmount(
-                basicIngredients = result.basicIngredients,
-                specialIngredients = result.specialIngredients,
-            )
-        )
-        postChatTemplate(
-            templatePath = "chatmessages/add-hunt-and-gather.hbs",
-            templateContext = recordOf(
-                "actorName" to it.name,
-                "basicIngredients" to result.basicIngredients,
-                "specialIngredients" to result.specialIngredients,
-            )
-        )
-    }

@@ -261,7 +261,7 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             heartlands: allHeartlands.map(heartland => {
                 return {label: unslugify(heartland), value: heartland};
             }),
-            fameValues: toLabelAndValue(range(0, 4)),
+            fameValues: toLabelAndValue(range(0, kingdomData.fame.max + 1)),
             aspirations: [{value: 'famous', label: 'Fame'}, {value: 'infamous', label: 'Infamy'}],
             settlements: kingdomData.settlements
                 .map(settlement => getSettlement(this.game, kingdomData, settlement.sceneId))
@@ -765,7 +765,7 @@ class KingdomApp extends FormApplication<FormApplicationOptions & KingdomOptions
             modifiers,
             fame: {
                 ...current.fame,
-                now: clamped(current.fame.next, 0, 3),
+                now: clamped(current.fame.next, 0, current.fame.max),
                 next: 0,
             },
             resourceDice: {

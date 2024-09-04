@@ -139,6 +139,7 @@ export interface Kingdom {
     fame: {
         now: number;
         next: number;
+        max: number;
         type: FameType;
     };
     level: number;
@@ -336,6 +337,7 @@ export function getDefaultKingdomData(): Kingdom {
         },
         fame: {
             type: 'famous',
+            max: 3,
             now: 0,
             next: 0,
         },

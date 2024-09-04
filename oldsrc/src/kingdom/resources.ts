@@ -105,7 +105,7 @@ export function getLimit(game: Game, kingdom: Kingdom, type: RolledResources, tu
     if (turn === 'now' && (type === 'food' || type === 'luxuries' || type === 'lumber' || type === 'ore' || type === 'stone')) {
         return (getCapacity(game, kingdom))[type];
     } else if (type === 'fame') {
-        return 3;
+        return kingdom.fame.max;
     } else {
         return undefined;
     }

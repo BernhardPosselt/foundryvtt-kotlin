@@ -1,5 +1,7 @@
 package at.posselt.pfrpg.camping
 
+import at.posselt.pfrpg.actions.ActionDispatcher
+import at.posselt.pfrpg.actions.emptyActionMessage
 import at.posselt.pfrpg.actor.openActor
 import at.posselt.pfrpg.actor.party
 import at.posselt.pfrpg.app.ActorRef
@@ -24,7 +26,6 @@ import at.posselt.pfrpg.takeIfInstance
 import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.toLabel
 import at.posselt.pfrpg.utils.buildPromise
-import at.posselt.pfrpg.utils.emitPfrpg2eKingdomCampingWeather
 import at.posselt.pfrpg.utils.formatSeconds
 import at.posselt.pfrpg.utils.fromDateInputString
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
@@ -49,7 +50,6 @@ import com.foundryvtt.pf2e.item.itemFromUuid
 import js.array.push
 import js.core.Void
 import js.objects.ReadonlyRecord
-import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.datetime.LocalTime
 import kotlinx.js.JsPlainObject
@@ -185,12 +185,6 @@ private fun calculateNightModes(time: LocalTime): NightModes {
     )
 }
 
-private enum class CampingSheetSection {
-    PREPARE_CAMP,
-    CAMPING_ACTIVITIES,
-    EATING,
-}
-
 private const val windowWidth = 970
 
 
@@ -200,9 +194,11 @@ private const val windowWidth = 970
 class CampingSheet(
     private val game: Game,
     private val actor: PF2ENpc,
+    private val dispatcher: ActionDispatcher,
 ) : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
+    id = "km-camping-sheet",
     width = windowWidth,
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
@@ -328,11 +324,7 @@ class CampingSheet(
             }
 
             "show-players" -> buildPromise {
-                game.socket.emitPfrpg2eKingdomCampingWeather(
-                    recordOf(
-                        "action" to "openCampingSheet"
-                    )
-                )
+                dispatcher.dispatch(emptyActionMessage("openCampingSheet"))
             }
 
             "open-journal" -> {
@@ -454,10 +446,10 @@ class CampingSheet(
                 CampingSheetSection.EATING -> if (camping.canPerformActivities()) {
                     CampingSheetSection.CAMPING_ACTIVITIES
                 } else {
-                    CampingSheetSection.PREPARE_CAMP
+                    CampingSheetSection.PREPARE_CAMPSITE
                 }
 
-                else -> CampingSheetSection.PREPARE_CAMP
+                else -> CampingSheetSection.PREPARE_CAMPSITE
             }.toCamelCase()
             actor.setCamping(camping)
         }
@@ -466,7 +458,7 @@ class CampingSheet(
     private suspend fun nextSection() {
         actor.getCamping()?.let { camping ->
             camping.section = when (fromCamelCase<CampingSheetSection>(camping.section)) {
-                CampingSheetSection.PREPARE_CAMP -> if (camping.canPerformActivities()) {
+                CampingSheetSection.PREPARE_CAMPSITE -> if (camping.canPerformActivities()) {
                     CampingSheetSection.CAMPING_ACTIVITIES
                 } else {
                     CampingSheetSection.EATING
@@ -720,8 +712,8 @@ class CampingSheet(
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = getCampingActorsByUuid(camping.actorUuids).associateBy(PF2EActor::uuid)
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }
-        val section = fromCamelCase<CampingSheetSection>(camping.section) ?: CampingSheetSection.PREPARE_CAMP
-        val prepareCampSection = section == CampingSheetSection.PREPARE_CAMP
+        val section = fromCamelCase<CampingSheetSection>(camping.section) ?: CampingSheetSection.PREPARE_CAMPSITE
+        val prepareCampSection = section == CampingSheetSection.PREPARE_CAMPSITE
         val campingActivitiesSection = section == CampingSheetSection.CAMPING_ACTIVITIES
         val eatingSection = section == CampingSheetSection.EATING
         val foodItems = getCompendiumFoodItems()

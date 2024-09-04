@@ -14,6 +14,7 @@ import com.foundryvtt.core.applications.api.HandlebarsTemplatePart
 import com.foundryvtt.core.applications.api.Window
 import com.foundryvtt.core.game
 import js.core.Void
+import js.objects.Record
 import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.html.org.w3c.dom.events.Event
@@ -38,6 +39,7 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
     scrollable: Array<String> = emptyArray(),
     width: Int? = undefined,
     height: Int? = null,
+    id: String? = null,
     resizable: Boolean? = undefined,
     protected val debug: Boolean = false,
     protected val renderOnSubmit: Boolean = true,
@@ -78,7 +80,9 @@ abstract class FormApp<T : HandlebarsRenderContext, O>(
                 scrollable = scrollable,
             )
         )
-    )
+    ).apply {
+        id?.let { this.unsafeCast<Record<String, Any>>()["id"] = it }
+    }
 ) {
     protected var isFormValid: Boolean = true
 

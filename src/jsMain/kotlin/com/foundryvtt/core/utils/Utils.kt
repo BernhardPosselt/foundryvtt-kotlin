@@ -16,3 +16,4 @@ external fun diffObject(
 ): AnyObject
 
 external fun getProperty(`object`: AnyObject, key: String): Any?
+external fun setProperty(`object`: AnyObject, key: String, value: Any): Boolean

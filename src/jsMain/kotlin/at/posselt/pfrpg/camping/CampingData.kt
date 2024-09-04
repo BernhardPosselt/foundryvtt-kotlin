@@ -4,6 +4,7 @@ import at.posselt.pfrpg.camping.dialogs.RegionSettings
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.fromCamelCase
 import com.foundryvtt.pf2e.actor.PF2EActor
+import js.objects.Record
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -22,7 +23,7 @@ external interface Cooking {
     var cookingSkill: String
     var actorMeals: Array<ActorMeal>
     var homebrewMeals: Array<RecipeData>
-    var degreeOfSuccess: String?
+    var results: Record<String, String?>
     var minimumSubsistence: Int
 }
 
@@ -76,3 +77,9 @@ fun CampingActivity.checkPerformed() =
 
 fun CampingActivity.isPrepareCamp() =
     activity == "Prepare Campsite"
+
+enum class CampingSheetSection {
+    PREPARE_CAMPSITE,
+    CAMPING_ACTIVITIES,
+    EATING,
+}

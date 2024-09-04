@@ -1,16 +1,14 @@
 package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.actor.resolveAttribute
-import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.app.awaitablePrompt
+import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.camping.dialogs.RegionSetting
 import at.posselt.pfrpg.data.actor.*
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
-import at.posselt.pfrpg.data.checks.RollMode
 import at.posselt.pfrpg.data.checks.getLevelBasedDC
 import at.posselt.pfrpg.fromOrdinal
 import at.posselt.pfrpg.slugify
-import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.postDegreeOfSuccess
 import com.foundryvtt.pf2e.actions.CheckDC
 import com.foundryvtt.pf2e.actor.PF2ECreature
@@ -133,12 +131,6 @@ suspend fun PF2ECreature.campingActivityCheck(
             DegreeOfSuccess.CRITICAL_SUCCESS -> activity.criticalSuccess
         }
         postDegreeOfSuccess(degreeOfSuccess = result, message = config?.message)
-        if (config?.checkRandomEncounter == true) {
-            postChatTemplate(
-                "chatmessages/random-camping-encounter.hbs",
-                rollMode = RollMode.BLINDROLL
-            );
-        }
     }
     return result
 }

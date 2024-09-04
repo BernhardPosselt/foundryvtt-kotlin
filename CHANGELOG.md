@@ -14,11 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added a custom Subsist macro that works off the current region and allows you to add Provisions items to your
   inventory. Provisions are used up before rations and removed after resting. Automation is included for Coyote Cloak
   and Forager
+* Recipe healing, damaging and condition reducing effects are implemented, automating all remaining recipes
+* There is now a way to increase the number of fame points
 
 ### Removed
 
-* This release marks a departure from Paizo IP to OGL only content due to the removal of the CUP and to simplify
-  licensing compatibility. This primarily means that some names and setting information had to be removed or changed (
+* This release marks a departure from Paizo IP to OGL only content due improve licensing compatibility. This primarily
+  means that some names and setting information had to be removed or changed (
   e.g. the First World has been replaced with "A Supernatural Place" or "Galt Ragout" is now just "Ragout")
 * Removed additional Companion actors: ultimately too difficult to maintain due to Remaster changes and new content
   releases in addition to Paizo IP
@@ -30,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Meal Effects are now removed right before Prepare Campsite RAW
+* You can have more than one meal effect active at a time which at the same time means that eating a meal won't override
+  the previous meal anymore.
 * Instead of a single meal, players can now choose from the entire array of available recipes RAW
 * If you don't use the official module, you will need to:
     * Set your combat tracks and random encounters manually in camping sheet

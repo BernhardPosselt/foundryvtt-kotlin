@@ -15,9 +15,10 @@ import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.data.regions.Terrain
 import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.utils.asSequence
-import at.posselt.pfrpg.utils.postChatMessage
 import at.posselt.pfrpg.utils.postChatTemplate
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.Game
+import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actions.CheckDC
 import com.foundryvtt.pf2e.actions.SingleCheckActionUseOptions
 import com.foundryvtt.pf2e.actor.PF2ECharacter
@@ -27,12 +28,16 @@ import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
-external interface SubistData {
+external interface SubsistData {
     val skill: String
     val dc: Int
 }
 
-suspend fun subsistMacro(game: Game, actor: PF2ECharacter) {
+suspend fun subsistMacro(game: Game, actor: Actor?) {
+    if (actor !is PF2ECharacter) {
+        ui.notifications.error("Please select a Character")
+        return
+    }
     val camping = game.getCampingActor()?.getCamping()
     val skills = actor.skills.asSequence()
         .map { SelectOption(label = it.component2().label, value = it.component1()) }
@@ -41,7 +46,7 @@ suspend fun subsistMacro(game: Game, actor: PF2ECharacter) {
     val defaultDc = currentRegion?.zoneDc ?: 15
     val isUrban = currentRegion?.terrain?.let { fromCamelCase<Terrain>(it) } == Terrain.URBAN
     val defaultSkill = if (isUrban) "society" else "survival"
-    prompt<SubistData, Unit>(
+    prompt<SubsistData, Unit>(
         title = "Subsist",
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(

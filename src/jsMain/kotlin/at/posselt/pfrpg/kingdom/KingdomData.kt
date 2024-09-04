@@ -135,6 +135,7 @@ external interface BonusFeat {
 external interface Fame {
     var now: Int
     var next: Int
+    var max: Int
     var type: FameType
 }
 
