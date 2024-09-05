@@ -1,5 +1,6 @@
 package at.posselt.pfrpg.utils
 
+import com.foundryvtt.core.AnyObject
 import js.array.JsTuple2
 import js.array.ReadonlyArray
 import js.array.toTypedArray
@@ -101,3 +102,9 @@ fun <T : Any> JsClass<T>.newInstance(parameters: ReadonlyArray<Any?>) =
 
 fun <T> Array<T>.without(index: Int): Array<T> =
     filterIndexed { i, _ -> i != index }.toTypedArray()
+
+fun Any.asAnyObject() = unsafeCast<AnyObject>()
+
+fun <T> Array<T>.asAnyObjectArray() = unsafeCast<Array<AnyObject>>()
+
+fun <T> List<T>.asAnyObjectList() = unsafeCast<List<AnyObject>>()

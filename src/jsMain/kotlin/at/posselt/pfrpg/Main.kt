@@ -9,7 +9,7 @@ import at.posselt.pfrpg.actions.handlers.SyncActivitiesHandler
 import at.posselt.pfrpg.actor.partyMembers
 import at.posselt.pfrpg.camping.bindCampingChatEventListeners
 import at.posselt.pfrpg.camping.openCampingSheet
-import at.posselt.pfrpg.camping.registerEffectSyncingHooks
+import at.posselt.pfrpg.camping.registerActivityDiffingHooks
 import at.posselt.pfrpg.combattracks.registerCombatTrackHooks
 import at.posselt.pfrpg.macros.*
 import at.posselt.pfrpg.migrations.migratePfrpg2eKingdomCampingWeather
@@ -18,7 +18,6 @@ import at.posselt.pfrpg.utils.*
 import at.posselt.pfrpg.weather.registerWeatherHooks
 import at.posselt.pfrpg.weather.rollWeather
 import com.foundryvtt.core.*
-import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.objects.recordOf
 
 fun main() {
@@ -65,7 +64,7 @@ fun main() {
             }
             registerWeatherHooks(game)
             registerCombatTrackHooks(game)
-            registerEffectSyncingHooks(actionDispatcher)
+            registerActivityDiffingHooks(actionDispatcher)
         }
 
         game.pf2eKingmakerTools = Pfrpg2eKingdomCampingWeather(
