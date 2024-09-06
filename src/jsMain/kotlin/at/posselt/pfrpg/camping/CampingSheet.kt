@@ -383,8 +383,7 @@ class CampingSheet(
 
         // preparing check removes all meal effects
         if (activity.isPrepareCamp()) {
-            camping.getActorsInCamp()
-                .forEach { it.clearMealEffects(camping.getAllRecipes()) }
+            camping.clearMealEffects()
             postChatMessage("Preparing Campsite, removing all existing Meal Effects")
         }
 
@@ -850,7 +849,7 @@ class CampingSheet(
             adventuringFor = getAdventuringFor(camping),
             restDuration = fullRestDuration,
             restDurationLeft = getRestDurationLeft(camping),
-            encounterDc = camping.encounterModifier + (currentRegion?.encounterDc ?: 0),
+            encounterDc = findEncounterDcModifier(camping, game.getPF2EWorldTime().time.isDay()),
             section = section.toLabel(),
             prepareCampSection = prepareCampSection,
             campingActivitiesSection = campingActivitiesSection,
@@ -877,7 +876,7 @@ class CampingSheet(
 }
 
 
-fun getActivitySkills(
+private fun getActivitySkills(
     actor: PF2ECreature?,
     groupedActivity: ActivityAndData,
     ignoreSkillRequirements: Boolean,
@@ -891,7 +890,7 @@ fun getActivitySkills(
                     actor.satisfiesSkillRequirement(it)
                 }
             }
-            .filter { it.validateOnly != true }
+            .filter { !it.validateOnly }
             .map {
                 SelectOption(
                     label = it.attribute.label,

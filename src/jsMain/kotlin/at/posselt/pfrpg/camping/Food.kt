@@ -57,7 +57,13 @@ suspend fun PF2EActor.clearEffectsByUuid(uuids: Set<String>) {
         .filter { it.slug in effectSlugs }
         .mapNotNull { it.id }
         .toTypedArray()
-    deleteEmbeddedDocuments<PF2EEffect>("item", idsToRemove)
+    deleteEmbeddedDocuments<PF2EEffect>("Item", idsToRemove).await()
+}
+
+suspend fun CampingData.clearMealEffects() = coroutineScope {
+    getActorsInCamp()
+        .map { async { it.clearMealEffects(getAllRecipes()) } }
+        .awaitAll()
 }
 
 suspend fun PF2EActor.clearMealEffects(recipes: Array<RecipeData>) {
@@ -70,7 +76,7 @@ suspend fun PF2EActor.clearMealEffects(recipes: Array<RecipeData>) {
 
 suspend fun PF2EActor.addEffectsByUuid(uuids: List<String>) {
     val effects = fromUuidsTypeSafe<PF2EEffect>(uuids.toTypedArray())
-    createEmbeddedDocuments<PF2EEffect>("item", effects).await()
+    createEmbeddedDocuments<PF2EEffect>("Item", effects).await()
 }
 
 suspend fun PF2EActor.applyMealEffects(outcomes: List<CookingOutcome>) {
@@ -190,8 +196,8 @@ suspend fun PF2EActor.removeConsumableFromInventory(slug: String, quantity: Int)
             }
         }
     }
-    updateEmbeddedDocuments<PF2EConsumable>("item", updates).await()
-    deleteEmbeddedDocuments<PF2EConsumable>("item", deleteIds).await()
+    updateEmbeddedDocuments<PF2EConsumable>("Item", updates).await()
+    deleteEmbeddedDocuments<PF2EConsumable>("Item", deleteIds).await()
     return leftOver
 }
 

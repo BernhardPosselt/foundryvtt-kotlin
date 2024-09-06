@@ -62,9 +62,19 @@ external interface CampingData {
     var restingPlaylistSoundUuid: String?
 }
 
-suspend fun CampingData.getActorsInCamp(): List<PF2EActor> = coroutineScope {
+suspend fun CampingData.getActorsInCamp(
+    campingActivityOnly: Boolean = false
+): List<PF2EActor> = coroutineScope {
     actorUuids
-        .map { async { getCampingActorByUuid(it) } }
+        .map {
+            async {
+                if (campingActivityOnly) {
+                    getCampingActivityActorByUuid(it)
+                } else {
+                    getCampingActorByUuid(it)
+                }
+            }
+        }
         .awaitAll()
         .filterNotNull()
 }

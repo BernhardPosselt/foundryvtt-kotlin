@@ -7,6 +7,7 @@ import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.utils.*
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.documents.RollTable
+import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actor.PF2ENpc
 
 suspend fun rollRandomEncounter(
@@ -27,19 +28,20 @@ suspend fun rollRandomEncounter(
     }
 }
 
-suspend fun rollRandomEncounter(
+private suspend fun rollRandomEncounter(
     camping: CampingData,
     includeFlatCheck: Boolean,
     region: RegionSetting,
     isDay: Boolean,
-): Boolean {
+) {
     val table = region.rollTableUuid?.let { fromUuidTypeSafe<RollTable>(it) }
     if (table == null) {
-        return false
+        ui.notifications.error("Could not find random encounter roll table for region ${region.name}")
+        return
     }
     val rollMode = fromCamelCase<RollMode>(camping.randomEncounterRollMode) ?: RollMode.GMROLL
     val proxyTable = camping.proxyRandomEncounterTableUuid?.let { fromUuidTypeSafe<RollTable>(it) }
-    val dc = region.encounterDc + calculateModifierIncrease(camping, isDay) + camping.encounterModifier
+    val dc = findEncounterDcModifier(camping, isDay)
     val rollCheck = if (includeFlatCheck) {
         d20Check(
             dc = dc,
@@ -49,7 +51,7 @@ suspend fun rollRandomEncounter(
     } else {
         true
     }
-    return if (rollCheck) {
+    if (rollCheck) {
         val proxyResult = proxyTable?.rollWithDraw(rollMode = rollMode)
             ?.draw
             ?.results
@@ -60,11 +62,15 @@ suspend fun rollRandomEncounter(
         if (proxyResult == "Creature") {
             table.rollWithDraw(rollMode = rollMode)
         }
-        true
-    } else {
-        false
     }
 }
+
+fun findEncounterDcModifier(
+    camping: CampingData,
+    isDay: Boolean
+): Int = (camping.findCurrentRegion()?.encounterDc ?: 0) +
+        calculateModifierIncrease(camping, isDay) +
+        camping.encounterModifier
 
 private fun calculateModifierIncrease(camping: CampingData, isDay: Boolean): Int =
     camping.groupActivities().asSequence()
@@ -84,6 +90,5 @@ private fun calculateModifierIncrease(
             ?.modifyRandomEncounterDc
             ?.atTime(isDay)
     } ?: 0
-    console.log(data.name, activityMod, resultMod)
     return activityMod + resultMod
 }

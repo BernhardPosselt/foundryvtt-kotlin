@@ -23,6 +23,7 @@ import js.objects.Object
 class SyncActivities(
     val rollRandomEncounter: Boolean,
     val activities: Array<CampingActivity>,
+    val clearMealEffects: Boolean,
 )
 
 private data class ActivityChange(
@@ -114,6 +115,7 @@ fun checkPreActorUpdate(actor: Actor, update: AnyObject): SyncActivities? {
     return SyncActivities(
         rollRandomEncounter = activityStateChanged.any { it.resultChanged && it.rollRandomEncounter },
         activities = getActivitiesToSync(prepareCampsiteResult, camping, activities),
+        clearMealEffects = prepareCampsiteResult != null,
     )
 }
 
@@ -131,7 +133,7 @@ private fun getActivitiesToSync(
                 actorUuid = null
             )
         }
-        .toTypedArray() + activities
+        .toTypedArray() + activities.filter { it.actorUuid != null }
 }
 
 private fun setSection(
@@ -205,6 +207,7 @@ fun registerActivityDiffingHooks(dispatcher: ActionDispatcher) {
                         data = SyncActivitiesAction(
                             rollRandomEncounter = it.rollRandomEncounter,
                             activities = it.activities,
+                            clearMealEffects = it.clearMealEffects,
                         ).unsafeCast<AnyObject>()
                     )
                 )

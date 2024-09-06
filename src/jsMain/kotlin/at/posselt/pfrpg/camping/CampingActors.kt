@@ -50,6 +50,9 @@ val allowedDnDItems = arrayOf(
 suspend fun getCampingActivityCreatureByUuid(actorUuid: String) =
     fromUuidOfTypes(actorUuid, *allowedCampingActivityActorTypes).unsafeCast<PF2ECreature?>()
 
+suspend fun getCampingActivityActorByUuid(actorUuid: String) =
+    getCampingActivityCreatureByUuid(actorUuid).unsafeCast<PF2EActor?>()
+
 suspend fun getCampingActorByUuid(uuid: String) =
     fromUuidOfTypes<dynamic>(uuid, *allowedCampingActorTypes).unsafeCast<PF2EActor?>()
 
