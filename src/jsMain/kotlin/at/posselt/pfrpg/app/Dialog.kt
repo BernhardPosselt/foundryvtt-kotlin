@@ -13,6 +13,15 @@ enum class PromptType(val label: String, val icon: String? = null) {
     OK("Ok"),
 }
 
+suspend fun confirm(message: String) =
+    try {
+        DialogV2.confirm(
+            ConfirmOptions(content = message)
+        ).await().unsafeCast<Boolean>()
+    } catch (e: Throwable) {
+        false
+    }
+
 /**
  * Typesafe wrapper around the insanity that is DialogV2
  *

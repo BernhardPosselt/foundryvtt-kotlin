@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and Forager
 * Recipe healing, damaging and condition reducing effects are implemented, automating all remaining recipes
 * There is now a way to increase the number of fame points
+* Campsite Positions are now remembered on each scene so you can reuse their last result if it wasn't a critical failure
 
 ### Removed
 

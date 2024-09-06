@@ -11,6 +11,7 @@ import at.posselt.pfrpg.utils.asAnyObjectList
 import at.posselt.pfrpg.utils.buildPromise
 import com.foundryvtt.core.Actor
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.Game
 import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.onPreUpdateActor
 import com.foundryvtt.core.utils.diffObject
@@ -37,6 +38,7 @@ private data class ActivityChange(
 private const val homebrewPath = "flags.${Config.moduleId}.camping-sheet.homebrewCampingActivities"
 private const val alwaysPerformPath = "flags.${Config.moduleId}.camping-sheet.alwaysPerformActivities"
 private const val campingActivitiesPath = "flags.${Config.moduleId}.camping-sheet.campingActivities"
+private const val campingPositionsPath = "flags.${Config.moduleId}.camping-sheet.campingPositions"
 
 private val settingAttributes = setOf(
     homebrewPath,
@@ -89,7 +91,7 @@ private fun relevantUpdate(camping: CampingData, update: AnyObject): Set<String>
         }.toSet()
 }
 
-fun checkPreActorUpdate(actor: Actor, update: AnyObject): SyncActivities? {
+fun checkPreActorUpdate(game: Game, actor: Actor, update: AnyObject): SyncActivities? {
     val camping = actor.takeIfInstance<PF2ENpc>()?.getCamping() ?: return null
     console.log("Received camping update", update)
     val updates = relevantUpdate(camping, update)
@@ -98,6 +100,9 @@ fun checkPreActorUpdate(actor: Actor, update: AnyObject): SyncActivities? {
     val activities = getProperty(update, campingActivitiesPath)
         ?.unsafeCast<Array<CampingActivity>>()
         ?: camping.campingActivities
+    val alwaysPerformActivities = getProperty(update, alwaysPerformPath)
+        ?.unsafeCast<Array<String>>()
+        ?: camping.alwaysPerformActivities
     val activitiesByName = camping.campingActivities.associateBy { it.activity }
     val activityDataByName = camping.getAllActivities().associateBy { it.name }
     val activityStateChanged = getActivityChanges(
@@ -110,23 +115,43 @@ fun checkPreActorUpdate(actor: Actor, update: AnyObject): SyncActivities? {
             || camping.campingActivities.size != activities.size
     if (!needsSync) return null
 
-    val prepareCampsiteResult = checkPrepareCampsiteResult(activityStateChanged)
-    setSection(prepareCampsiteResult, camping, update)
+    val prepareCampsiteChanged = prepareCampsiteChanged(activityStateChanged)
+    var prepareCampsiteResult: PrepareCampsiteResult? = null
+    if (prepareCampsiteChanged != null) {
+        val result = prepareCampsiteChanged.parseResult()
+        prepareCampsiteResult = checkPrepareCampsiteResult(result)
+        setSection(prepareCampsiteResult, camping, update)
+        if (result != null && result != DegreeOfSuccess.CRITICAL_FAILURE) {
+            setCampingPositions(game, camping, result)
+        }
+    }
     return SyncActivities(
         rollRandomEncounter = activityStateChanged.any { it.resultChanged && it.rollRandomEncounter },
-        activities = getActivitiesToSync(prepareCampsiteResult, camping, activities),
+        activities = getActivitiesToSync(prepareCampsiteResult, alwaysPerformActivities, activities),
         clearMealEffects = prepareCampsiteResult != null,
     )
 }
 
+private fun setCampingPositions(
+    game: Game,
+    camping: CampingData,
+    degree: DegreeOfSuccess,
+) {
+    buildPromise {
+        camping.worldSceneId?.let {
+            updateCampingPosition(game, it, degree)
+        }
+    }
+}
+
 private fun getActivitiesToSync(
     prepareCampsiteResult: PrepareCampsiteResult?,
-    camping: CampingData,
+    alwaysPerformActivities: Array<String>,
     activities: Array<CampingActivity>
 ) = if (prepareCampsiteResult == PrepareCampsiteResult.SKIP_CAMPING) {
     emptyArray()
 } else {
-    camping.alwaysPerformActivities
+    alwaysPerformActivities
         .map {
             CampingActivity(
                 activity = it,
@@ -185,21 +210,22 @@ private enum class PrepareCampsiteResult {
     CAMPING_ACTIVITIES,
 }
 
-private fun checkPrepareCampsiteResult(activityStateChanged: List<ActivityChange>): PrepareCampsiteResult? {
-    val prepareCampsite = activityStateChanged
-        .map { it.new }
-        .find { it.isPrepareCamp() } ?: return null
-    val prepareCampsiteResult = prepareCampsite.parseResult()
-    return if (prepareCampsiteResult == null || prepareCampsiteResult == DegreeOfSuccess.CRITICAL_FAILURE) {
+private fun checkPrepareCampsiteResult(result: DegreeOfSuccess?): PrepareCampsiteResult {
+    return if (result == null || result == DegreeOfSuccess.CRITICAL_FAILURE) {
         PrepareCampsiteResult.SKIP_CAMPING
     } else {
         PrepareCampsiteResult.CAMPING_ACTIVITIES
     }
 }
 
-fun registerActivityDiffingHooks(dispatcher: ActionDispatcher) {
+private fun prepareCampsiteChanged(activityStateChanged: List<ActivityChange>) =
+    activityStateChanged
+        .map { it.new }
+        .find { it.isPrepareCamp() }
+
+fun registerActivityDiffingHooks(game: Game, dispatcher: ActionDispatcher) {
     Hooks.onPreUpdateActor { actor, update, _, _ ->
-        checkPreActorUpdate(actor, update)?.let {
+        checkPreActorUpdate(game, actor, update)?.let {
             buildPromise {
                 dispatcher.dispatch(
                     ActionMessage(

@@ -4,6 +4,7 @@ import at.posselt.pfrpg.actor.party
 import at.posselt.pfrpg.app.*
 import at.posselt.pfrpg.app.FormApp
 import at.posselt.pfrpg.app.forms.CheckboxInput
+import at.posselt.pfrpg.app.forms.Menu
 import at.posselt.pfrpg.app.forms.NumberInput
 import at.posselt.pfrpg.app.forms.Section
 import at.posselt.pfrpg.app.forms.SectionsContext
@@ -58,6 +59,7 @@ external interface CampingSettings {
     val alwaysPerformActivities: Array<String>
     val restingPlaylistUuid: String?
     val restingPlaylistSoundUuid: String?
+    val worldSceneId: String?
 }
 
 @OptIn(ExperimentalJsExport::class)
@@ -72,6 +74,7 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
             string("restRollMode") {
                 choices = RestRollMode.entries.map { it.toCamelCase() }.toTypedArray()
             }
+            string("worldSceneId", nullable = true)
             int("increaseWatchActorNumber")
             stringArray("actorUuidsNotKeepingWatch")
             stringArray("alwaysPerformActivities")
@@ -141,7 +144,8 @@ class CampingSettingsApplication(
             minimumSubsistence = camping.cooking.minimumSubsistence,
             alwaysPerformActivities = camping.alwaysPerformActivities,
             restingPlaylistUuid = camping.restingPlaylistUuid,
-            restingPlaylistSoundUuid = camping.restingPlaylistSoundUuid
+            restingPlaylistSoundUuid = camping.restingPlaylistSoundUuid,
+            worldSceneId = camping.worldSceneId,
         )
     }
 
@@ -164,6 +168,9 @@ class CampingSettingsApplication(
         val uuidsNotKeepingWatch = setOf(*settings.actorUuidsNotKeepingWatch)
         val playlist = settings.restingPlaylistUuid?.let { fromUuidTypeSafe<Playlist>(it) }
         val playlistSound = settings.restingPlaylistSoundUuid?.let { fromUuidTypeSafe<PlaylistSound>(it) }
+        val hexScenes = game.scenes
+            .filter { it.grid.type == 2 }
+            .mapNotNull { it.id?.let { id -> SelectOption(label = it.name, value = id) } }
         CampingSettingsContext(
             partId = parent.partId,
             isFormValid = isFormValid,
@@ -171,6 +178,21 @@ class CampingSettingsApplication(
                 Section(
                     legend = "Exploration",
                     formRows = listOf(
+                        Select(
+                            label = "Hexploration Scene",
+                            name = "worldSceneId",
+                            help = "Store party actor token positions on this map each time you Prepare Campsite to reuse camp locations",
+                            options = hexScenes,
+                            required = false,
+                            value = settings.worldSceneId,
+                            stacked = false,
+                        ),
+                        Menu(
+                            label = "Camping Positions",
+                            name = "Reset",
+                            value = "reset-camping-positions",
+                            disabled = settings.worldSceneId == null,
+                        ),
                         NumberInput(
                             name = "minimumTravelSpeed",
                             label = "Minimum Travel Speed",
@@ -315,6 +337,7 @@ class CampingSettingsApplication(
             "save" -> {
                 buildPromise {
                     campingActor.getCamping()?.let { camping ->
+                        val alwaysPerformNames = settings.alwaysPerformActivities.toSet()
                         camping.gunsToClean = settings.gunsToClean
                         camping.restRollMode = settings.restRollMode
                         camping.increaseWatchActorNumber = settings.increaseWatchActorNumber
@@ -328,10 +351,24 @@ class CampingSettingsApplication(
                         camping.alwaysPerformActivities = settings.alwaysPerformActivities
                         camping.restingPlaylistSoundUuid = settings.restingPlaylistSoundUuid
                         camping.restingPlaylistUuid = settings.restingPlaylistUuid
+                        camping.worldSceneId = settings.worldSceneId
+                        camping.campingActivities = camping.campingActivities
+                            .filter { it.activity !in alwaysPerformNames }
+                            .toTypedArray()
                         campingActor.setCamping(camping)
                     }
                     close()
                 }
+            }
+
+            "reset-camping-positions" -> buildPromise {
+                settings.worldSceneId
+                    ?.let { worldSceneId -> game.scenes.get(worldSceneId) }
+                    ?.let { scene ->
+                        if (confirm("${scene.name}: Reset all Camping Positions?")) {
+                            scene.resetCampsites()
+                        }
+                    }
             }
 
             else -> console.log(action)

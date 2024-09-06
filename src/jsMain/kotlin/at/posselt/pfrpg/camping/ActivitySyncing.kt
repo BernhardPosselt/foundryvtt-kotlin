@@ -94,12 +94,6 @@ suspend fun CampingData.syncCampingEffects(activities: Array<CampingActivity>) =
         }
         .groupBy { it.activityName }
     val compendiumItems = allEffects.map { it.effect }
-    console.log(
-        allRelevantEffectsByName.values.toTypedArray(),
-        activitiesByName.values.toTypedArray(),
-        allEffects,
-        activities
-    )
     actors.flatMap { actor ->
         val existingEffects = actor.findCampingEffectsInInventory(compendiumItems)
         val syncEffects = activities

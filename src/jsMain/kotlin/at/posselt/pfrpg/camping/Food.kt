@@ -66,6 +66,7 @@ suspend fun CampingData.clearMealEffects() = coroutineScope {
         .awaitAll()
 }
 
+
 suspend fun PF2EActor.clearMealEffects(recipes: Array<RecipeData>) {
     clearEffectsByUuid(
         recipes
@@ -76,7 +77,7 @@ suspend fun PF2EActor.clearMealEffects(recipes: Array<RecipeData>) {
 
 suspend fun PF2EActor.addEffectsByUuid(uuids: List<String>) {
     val effects = fromUuidsTypeSafe<PF2EEffect>(uuids.toTypedArray())
-    createEmbeddedDocuments<PF2EEffect>("Item", effects).await()
+    createEmbeddedDocuments("Item", effects).await()
 }
 
 suspend fun PF2EActor.applyMealEffects(outcomes: List<CookingOutcome>) {

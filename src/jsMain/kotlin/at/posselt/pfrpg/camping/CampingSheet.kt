@@ -10,6 +10,7 @@ import at.posselt.pfrpg.app.FormApp
 import at.posselt.pfrpg.app.HandlebarsRenderContext
 import at.posselt.pfrpg.app.forms.FormElementContext
 import at.posselt.pfrpg.app.MenuControl
+import at.posselt.pfrpg.app.confirm
 import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.app.forms.SelectOption
 import at.posselt.pfrpg.calculateHexplorationActivities
@@ -287,8 +288,18 @@ class CampingSheet(
             "configure-regions" -> RegionConfig(actor).launch()
             "configure-recipes" -> ManageRecipesApplication(game, actor).launch()
             "configure-activities" -> ManageActivitiesApplication(game, actor).launch()
-            "reset-activities" -> buildPromise { resetActivities() }
-            "reset-meals" -> buildPromise { resetMeals() }
+            "reset-activities" -> buildPromise {
+                if (confirm("Reset all camping activity results?")) {
+                    resetActivities()
+                }
+            }
+
+            "reset-meals" -> buildPromise {
+                if (confirm("Reset all meal choices back to Skip Meal?")) {
+                    resetMeals()
+                }
+            }
+
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> console.log("resting")
             "consume-rations" -> console.log("consuming rations")
@@ -385,6 +396,15 @@ class CampingSheet(
         if (activity.isPrepareCamp()) {
             camping.clearMealEffects()
             postChatMessage("Preparing Campsite, removing all existing Meal Effects")
+            val existingCampingResult = camping.worldSceneId?.let { findExistingCampsiteResult(game, it) }
+            if (existingCampingResult != null
+                && confirm("Reuse existing camp (${existingCampingResult.toLabel()})?")
+            ) {
+                camping.campingActivities
+                    .find { it.activity == activityName }?.result = existingCampingResult.toCamelCase()
+                actor.setCamping(camping)
+                return
+            }
         }
 
         // if it's a recipe we need to know the dc

@@ -3,6 +3,7 @@ package at.posselt.pfrpg.camping
 import at.posselt.pfrpg.actor.resolveAttribute
 import at.posselt.pfrpg.app.awaitablePrompt
 import at.posselt.pfrpg.app.forms.Select
+import at.posselt.pfrpg.app.forms.formContext
 import at.posselt.pfrpg.camping.dialogs.RegionSetting
 import at.posselt.pfrpg.data.actor.*
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
@@ -28,7 +29,7 @@ private suspend fun askDc(activity: String): Int {
         title = "$activity: Select DC",
         templatePath = "components/forms/form.hbs",
         templateContext = recordOf(
-            "formRows" to Select.dc().toContext()
+            "formRows" to formContext(Select.dc())
         ),
     ) {
         it.dc

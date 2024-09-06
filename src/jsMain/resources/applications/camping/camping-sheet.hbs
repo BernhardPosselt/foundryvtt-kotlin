@@ -72,11 +72,13 @@
     </div>
     <div id="km-camping-hexploration" class="km-row">
         <div id="km-adventuring-for"><b>Adventuring: </b> {{adventuringFor}}
-            <button type="button"
-                    data-action="reset-adventuring-for"
-                    title="Reset Adventuring Time Tracker">
-                <i class="fa-solid fa-rotate-left"></i>
-            </button>
+            {{#if isGM}}
+                <button type="button"
+                        data-action="reset-adventuring-for"
+                        title="Reset Adventuring Time Tracker">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            {{/if}}
         </div>
         <div><b>Hex. Activities:</b> {{hexplorationActivitiesAvailable}}/{{hexplorationActivitiesMax}}</div>
         <div>{{> formElement region}}</div>

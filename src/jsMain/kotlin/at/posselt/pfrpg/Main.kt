@@ -64,7 +64,7 @@ fun main() {
             }
             registerWeatherHooks(game)
             registerCombatTrackHooks(game)
-            registerActivityDiffingHooks(actionDispatcher)
+            registerActivityDiffingHooks(game, actionDispatcher)
         }
 
         game.pf2eKingmakerTools = Pfrpg2eKingdomCampingWeather(

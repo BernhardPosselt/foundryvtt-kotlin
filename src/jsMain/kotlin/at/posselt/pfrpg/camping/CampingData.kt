@@ -35,6 +35,7 @@ external interface CampingActivity {
     var selectedSkill: String?
 }
 
+
 @JsPlainObject
 external interface CampingData {
     var currentRegion: String
@@ -60,6 +61,7 @@ external interface CampingData {
     var section: String
     var restingPlaylistUuid: String?
     var restingPlaylistSoundUuid: String?
+    var worldSceneId: String?
 }
 
 suspend fun CampingData.getActorsInCamp(

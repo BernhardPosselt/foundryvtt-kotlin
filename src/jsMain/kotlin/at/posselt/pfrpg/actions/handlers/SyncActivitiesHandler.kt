@@ -24,7 +24,8 @@ class SyncActivitiesHandler(
 ) : ActionHandler("syncActivities") {
     override suspend fun execute(action: ActionMessage, dispatcher: ActionDispatcher) {
         val data = action.data.unsafeCast<SyncActivitiesAction>()
-        val camping = game.getCampingActor()?.getCamping()
+        val campingActor = game.getCampingActor()
+        val camping = campingActor?.getCamping()
         if (camping != null) {
             if (data.clearMealEffects) {
                 camping.clearMealEffects()
