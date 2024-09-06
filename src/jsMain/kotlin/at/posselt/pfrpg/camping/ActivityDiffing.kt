@@ -25,6 +25,7 @@ class SyncActivities(
     val rollRandomEncounter: Boolean,
     val activities: Array<CampingActivity>,
     val clearMealEffects: Boolean,
+    val prepareCampsiteResult: String?
 )
 
 private data class ActivityChange(
@@ -116,33 +117,20 @@ fun checkPreActorUpdate(game: Game, actor: Actor, update: AnyObject): SyncActivi
     if (!needsSync) return null
 
     val prepareCampsiteChanged = prepareCampsiteChanged(activityStateChanged)
-    var prepareCampsiteResult: PrepareCampsiteResult? = null
-    if (prepareCampsiteChanged != null) {
-        val result = prepareCampsiteChanged.parseResult()
-        prepareCampsiteResult = checkPrepareCampsiteResult(result)
-        setSection(prepareCampsiteResult, camping, update)
-        if (result != null && result != DegreeOfSuccess.CRITICAL_FAILURE) {
-            setCampingPositions(game, camping, result)
-        }
+    val result = prepareCampsiteChanged?.parseResult()
+    val prepareCampsiteResult = prepareCampsiteChanged?.let {
+        val campResult = checkPrepareCampsiteResult(result)
+        setSection(campResult, camping, update)
+        campResult
     }
     return SyncActivities(
         rollRandomEncounter = activityStateChanged.any { it.resultChanged && it.rollRandomEncounter },
         activities = getActivitiesToSync(prepareCampsiteResult, alwaysPerformActivities, activities),
         clearMealEffects = prepareCampsiteResult != null,
+        prepareCampsiteResult = result?.toCamelCase()
     )
 }
 
-private fun setCampingPositions(
-    game: Game,
-    camping: CampingData,
-    degree: DegreeOfSuccess,
-) {
-    buildPromise {
-        camping.worldSceneId?.let {
-            updateCampingPosition(game, it, degree)
-        }
-    }
-}
 
 private fun getActivitiesToSync(
     prepareCampsiteResult: PrepareCampsiteResult?,
@@ -234,6 +222,7 @@ fun registerActivityDiffingHooks(game: Game, dispatcher: ActionDispatcher) {
                             rollRandomEncounter = it.rollRandomEncounter,
                             activities = it.activities,
                             clearMealEffects = it.clearMealEffects,
+                            prepareCampsiteResult = it.prepareCampsiteResult
                         ).unsafeCast<AnyObject>()
                     )
                 )

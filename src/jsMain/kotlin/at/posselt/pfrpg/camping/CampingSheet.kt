@@ -394,7 +394,7 @@ class CampingSheet(
 
         // preparing check removes all meal effects
         if (activity.isPrepareCamp()) {
-            camping.clearMealEffects()
+            dispatcher.dispatch(emptyActionMessage("clearMealEffects"))
             postChatMessage("Preparing Campsite, removing all existing Meal Effects")
             val existingCampingResult = camping.worldSceneId?.let { findExistingCampsiteResult(game, it) }
             if (existingCampingResult != null

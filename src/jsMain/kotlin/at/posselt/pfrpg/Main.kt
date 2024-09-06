@@ -3,8 +3,8 @@ package at.posselt.pfrpg
 import at.posselt.pfrpg.actions.ActionDispatcher
 import at.posselt.pfrpg.actions.handlers.AddHuntAndGatherResultHandler
 import at.posselt.pfrpg.actions.handlers.ClearActivitiesHandler
+import at.posselt.pfrpg.actions.handlers.ClearMealEffectsHandler
 import at.posselt.pfrpg.actions.handlers.OpenCampingSheetHandler
-import at.posselt.pfrpg.actions.handlers.SkipActivitiesHandler
 import at.posselt.pfrpg.actions.handlers.SyncActivitiesHandler
 import at.posselt.pfrpg.actor.partyMembers
 import at.posselt.pfrpg.camping.bindCampingChatEventListeners
@@ -29,7 +29,7 @@ fun main() {
                 OpenCampingSheetHandler(game = game),
                 ClearActivitiesHandler(game = game),
                 SyncActivitiesHandler(game = game),
-                SkipActivitiesHandler(game = game),
+                ClearMealEffectsHandler(game = game),
             )
         ).apply {
             listen()
