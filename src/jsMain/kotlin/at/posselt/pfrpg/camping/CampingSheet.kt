@@ -402,6 +402,7 @@ class CampingSheet(
             ) {
                 camping.campingActivities
                     .find { it.activity == activityName }?.result = existingCampingResult.toCamelCase()
+                postPassTimeMessage("Reusing a previous campsite", 1)
                 actor.setCamping(camping)
                 return
             }
@@ -429,6 +430,8 @@ class CampingSheet(
                     recipe = recipe,
                     degreeOfSuccess = result,
                 )
+            } else if (activity.isPrepareCamp()) {
+                postPassTimeMessage("Preparing a new campsite", 2)
             }
         }
     }
