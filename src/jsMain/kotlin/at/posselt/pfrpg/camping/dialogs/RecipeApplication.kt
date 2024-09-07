@@ -69,17 +69,6 @@ external interface RecipeSubmitData {
     val criticalFailure: OutcomeSubmitData
 }
 
-enum class HealMode {
-    AFTER_CONSUMPTION,
-    AFTER_REST,
-    AFTER_CONSUMPTION_AND_REST,
-}
-
-enum class ReduceConditionMode {
-    ALL,
-    RANDOM
-}
-
 @OptIn(ExperimentalJsStatic::class, ExperimentalJsExport::class)
 @JsExport
 class RecipeDataModel(val value: AnyObject) : DataModel(value) {

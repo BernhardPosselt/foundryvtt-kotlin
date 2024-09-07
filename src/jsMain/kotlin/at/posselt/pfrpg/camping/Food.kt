@@ -2,16 +2,24 @@ package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.Config
 import at.posselt.pfrpg.divideRoundingUp
+import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.utils.buildUpdate
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.fromUuidsTypeSafe
+import at.posselt.pfrpg.utils.roll
+import at.posselt.pfrpg.utils.typeSafeUpdate
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.core.documents.ChatMessage
+import com.foundryvtt.core.documents.GetSpeakerOptions
 import com.foundryvtt.pf2e.actor.PF2EActor
+import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2EParty
 import com.foundryvtt.pf2e.item.PF2EConsumable
 import com.foundryvtt.pf2e.item.PF2EConsumableData
 import com.foundryvtt.pf2e.item.PF2EEffect
+import com.foundryvtt.pf2e.rolls.DamageRoll
 import js.array.push
+import js.objects.recordOf
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
@@ -24,8 +32,8 @@ import kotlin.math.min
 suspend fun PF2EActor.addConsumableToInventory(uuid: String, quantity: Int) {
     if (quantity > 0) {
         fromUuidTypeSafe<PF2EConsumable>(uuid)?.let { item ->
-            val obj = item.toObject().unsafeCast<dynamic>()
-            val system = obj.system.unsafeCast<PF2EConsumableData>()
+            val obj = item.toObject().unsafeCast<AnyObject>()
+            val system = obj["system"].unsafeCast<PF2EConsumableData>()
             if (system.uses.max > 1) {
                 val max = system.uses.max
                 system.quantity = quantity.divideRoundingUp(max)
@@ -38,23 +46,35 @@ suspend fun PF2EActor.addConsumableToInventory(uuid: String, quantity: Int) {
     }
 }
 
-private fun getMealEffectUuids(recipe: RecipeData): List<String> {
-    return listOf(
-        recipe.criticalFailure.effects?.map { it.uuid },
-        recipe.success.effects?.map { it.uuid },
-        recipe.criticalSuccess.effects?.map { it.uuid },
-        recipe.favoriteMeal?.effects?.map { it.uuid },
-    )
+private fun getAllOutcomeEffects(recipe: RecipeData): List<MealEffect> =
+    listOfNotNull(
+        recipe.criticalFailure.effects?.toList(),
+        recipe.success.effects?.toList(),
+        recipe.criticalSuccess.effects?.toList(),
+        recipe.favoriteMeal?.effects?.toList(),
+    ).flatten()
+
+private suspend fun getMealEffectItems(recipe: RecipeData): List<PF2EEffect> = coroutineScope {
+    getAllOutcomeEffects(recipe)
+        .map { it.uuid }
+        .map { async { fromUuidTypeSafe<PF2EEffect>(it) } }
+        .awaitAll()
         .filterNotNull()
-        .flatMap { it }
 }
 
-suspend fun PF2EActor.clearEffectsByUuid(uuids: Set<String>) {
-    val effectSlugs = fromUuidsTypeSafe<PF2EEffect>(uuids.toTypedArray())
-        .map { it.slug }
+suspend fun getMealEffectItems(recipes: List<RecipeData>): List<PF2EEffect> = coroutineScope {
+    recipes
+        .map { async { getMealEffectItems(it) } }
+        .awaitAll()
+        .flatten()
+}
+
+suspend fun PF2EActor.clearEffects(effects: List<PF2EEffect>) {
+    val effectNames = effects
+        .map { it.name }
         .toSet()
     val idsToRemove = itemTypes.effect
-        .filter { it.slug in effectSlugs }
+        .filter { it.name in effectNames }
         .mapNotNull { it.id }
         .toTypedArray()
     deleteEmbeddedDocuments<PF2EEffect>("Item", idsToRemove).await()
@@ -62,36 +82,118 @@ suspend fun PF2EActor.clearEffectsByUuid(uuids: Set<String>) {
 
 suspend fun CampingData.clearMealEffects() = coroutineScope {
     getActorsInCamp()
-        .map { async { it.clearMealEffects(getAllRecipes()) } }
+        .map { async { it.clearEffects(getMealEffectItems(getAllRecipes().toList())) } }
         .awaitAll()
 }
 
+enum class MealEffectTrigger {
+    CONSUMPTION,
+    REST
+}
 
-suspend fun PF2EActor.clearMealEffects(recipes: Array<RecipeData>) {
-    clearEffectsByUuid(
-        recipes
-            .flatMap(::getMealEffectUuids)
-            .toSet()
+private fun healModeApplies(healMode: String?, trigger: MealEffectTrigger) =
+    when (healMode?.let { fromCamelCase<HealMode>(it) }) {
+        HealMode.AFTER_CONSUMPTION -> trigger == MealEffectTrigger.CONSUMPTION
+        HealMode.AFTER_REST -> trigger == MealEffectTrigger.REST
+        HealMode.AFTER_CONSUMPTION_AND_REST -> true
+        null -> trigger == MealEffectTrigger.CONSUMPTION
+    }
+
+data class MealNameAndEffect(
+    val effectName: String,
+    val effect: MealEffect,
+)
+
+suspend fun PF2ECharacter.applyConsumptionMealEffects(
+    outcome: CookingOutcome,
+) {
+    val uuids = if (outcome.chooseRandomly == true) {
+        listOfNotNull(outcome.effects?.randomOrNull()?.uuid)
+    } else {
+        outcome.effects?.map(MealEffect::uuid) ?: emptyList()
+    }
+    val effects = fromUuidsTypeSafe<PF2EEffect>(uuids.toTypedArray())
+    createEmbeddedDocuments("Item", effects).await()
+    val effectsByUuid = effects.associateBy { it.uuid }
+
+    val applicableHealEffects = outcome.effects
+        ?.filter { healModeApplies(it.healMode, MealEffectTrigger.CONSUMPTION) }
+        ?.mapNotNull { effectsByUuid[it.uuid]?.name?.let { name -> MealNameAndEffect(name, it) } }
+        ?: emptyList()
+    applyMealHealEffects(applicableHealEffects)
+}
+
+
+suspend fun PF2ECharacter.applyRestHealEffects(
+    recipes: List<RecipeData>,
+    mealEffectItems: List<PF2EEffect>,
+) {
+    val effectsByUuid = mealEffectItems.associateBy { it.uuid }
+    val appliedMealNames = itemTypes.effect.map { it.name }.toSet()
+    val appliedEffectItemUuids = mealEffectItems
+        .filter { it.name in appliedMealNames }
+        .map { it.uuid }
+        .toSet()
+    val applicableHealEffects = recipes.asSequence()
+        .flatMap { getAllOutcomeEffects(it) }
+        .filter { it.uuid in appliedEffectItemUuids }
+        .filter { healModeApplies(it.healMode, MealEffectTrigger.REST) }
+        .mapNotNull { effectsByUuid[it.uuid]?.name?.let { name -> MealNameAndEffect(name, it) } }
+        .toList()
+    applyMealHealEffects(applicableHealEffects)
+}
+
+private sealed interface HealingValue
+
+private data class Healing(
+    val name: String,
+    val formula: String,
+) : HealingValue
+
+private data class Damage(
+    val name: String,
+    val formula: String,
+) : HealingValue
+
+private data class Conditions(
+    val name: String,
+    val reduceConditions: ReduceConditions,
+) : HealingValue
+
+private fun parseMealNameAndEffects(effect: MealNameAndEffect): List<HealingValue> {
+    val healFormula = effect.effect.healFormula
+    val damageFormula = effect.effect.damageFormula
+    val reduceConditions = effect.effect.reduceConditions
+    val name = effect.effectName
+    return listOfNotNull(
+        healFormula?.let { Healing(name, it) },
+        damageFormula?.let { Damage(name, it) },
+        reduceConditions?.let { Conditions(name, it) },
     )
 }
 
-suspend fun PF2EActor.addEffectsByUuid(uuids: List<String>) {
-    val effects = fromUuidsTypeSafe<PF2EEffect>(uuids.toTypedArray())
-    createEmbeddedDocuments("Item", effects).await()
+private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<MealNameAndEffect>) {
+    val parsedEffects = mealEffectItems.flatMap(::parseMealNameAndEffects)
+    val healingFormulas = parsedEffects.filterIsInstance<Healing>()
+    val damageFormulas = parsedEffects.filterIsInstance<Damage>()
+    val reduceConditions = parsedEffects.filterIsInstance<Conditions>()
+    val totalHealing = healingFormulas.sumOf { roll(it.formula, flavor = "Apply healing from ${it.name}") }
+    val hp = min(system.attributes.hp.max, system.attributes.hp.value + totalHealing)
+    typeSafeUpdate { system.attributes.hp.value = hp }
+    // TODO: reduce conditions
+    damageFormulas.forEach {
+        DamageRoll(it.formula).toMessage(
+            recordOf(
+                "speakerData" to ChatMessage.getSpeaker(
+                    GetSpeakerOptions(
+                        actor = this
+                    )
+                )
+            )
+        )
+    }
 }
 
-suspend fun PF2EActor.applyMealEffects(outcomes: List<CookingOutcome>) {
-    val uuids = outcomes
-        .flatMap {
-            if (it.chooseRandomly == true) {
-                sequenceOf(it.effects?.randomOrNull()?.uuid)
-            } else {
-                it.effects?.map { it.uuid }?.asSequence() ?: emptySequence()
-            }
-        }
-        .filterNotNull()
-    addEffectsByUuid(uuids)
-}
 
 @JsPlainObject
 external interface FoodCost {
@@ -129,7 +231,7 @@ fun buildFoodCost(
     missingRations = totalAmount?.let { it.rations < amount.rations } == true,
 )
 
-fun capAt(number: Int, cap: Int? = null): String {
+private fun capAt(number: Int, cap: Int? = null): String {
     return if (cap == null || number <= cap) {
         number.toString()
     } else {
@@ -171,11 +273,11 @@ suspend fun PF2EActor.addFoodToInventory(foodAmount: FoodAmount) = coroutineScop
 }
 
 
-suspend fun PF2EActor.removeConsumableFromInventory(slug: String, quantity: Int): Int {
+suspend fun PF2EActor.removeConsumableFromInventory(name: String, quantity: Int): Int {
     val updates = arrayOf<AnyObject>()
     val deleteIds = arrayOf<String>()
     var leftOver = quantity
-    consumablesBySlug(slug).forEach { consumable ->
+    consumablesByName(name).forEach { consumable ->
         val id = consumable.id
         if (id != null && leftOver > 0) {
             val totalQuantity = consumable.totalQuantity()
@@ -229,10 +331,11 @@ suspend fun reduceFoodBy(actors: List<PF2EActor>, foodAmount: FoodAmount, foodIt
 }
 
 suspend fun PF2EActor.reduceFoodBy(foodAmount: FoodAmount, foodItems: FoodItems): FoodAmount = coroutineScope {
-    val leftOverSpecial = async { removeConsumableFromInventory(foodItems.special.slug, foodAmount.specialIngredients) }
-    val leftOverBasic = async { removeConsumableFromInventory(foodItems.basic.slug, foodAmount.basicIngredients) }
-    val leftOverProvisions = async { removeConsumableFromInventory(foodItems.provisions.slug, foodAmount.rations) }
-    val leftOverRation = async { removeConsumableFromInventory(foodItems.ration.slug, leftOverProvisions.await()) }
+    val leftOverSpecial =
+        async { removeConsumableFromInventory(foodItems.special.name!!, foodAmount.specialIngredients) }
+    val leftOverBasic = async { removeConsumableFromInventory(foodItems.basic.name!!, foodAmount.basicIngredients) }
+    val leftOverProvisions = async { removeConsumableFromInventory(foodItems.provisions.name!!, foodAmount.rations) }
+    val leftOverRation = async { removeConsumableFromInventory(foodItems.ration.name!!, leftOverProvisions.await()) }
     FoodAmount(
         basicIngredients = leftOverBasic.await(),
         specialIngredients = leftOverSpecial.await(),
@@ -249,24 +352,12 @@ private fun PF2EConsumable.totalQuantity() =
 private fun List<PF2EConsumable>.sumQuantity() =
     fold(0) { a, b -> a + b.totalQuantity() }
 
-private fun PF2EActor.consumableQuantityBySlug(slug: String): Int =
-    consumablesBySlug(slug).sumQuantity()
+private fun PF2EActor.consumableQuantityByName(name: String): Int =
+    consumablesByName(name).sumQuantity()
 
-private fun PF2EActor.consumablesBySlug(slug: String) =
-    itemTypes.consumable.filter { it.slug == slug }
+private fun PF2EActor.consumablesByName(name: String) =
+    itemTypes.consumable.filter { it.name == name }
 
-
-private fun findTotalFood(
-    actor: PF2EActor,
-    foodItems: FoodItems,
-): FoodAmount {
-    return FoodAmount(
-        basicIngredients = actor.consumableQuantityBySlug(foodItems.basic.slug),
-        specialIngredients = actor.consumableQuantityBySlug(foodItems.special.slug),
-        rations = actor.consumableQuantityBySlug(foodItems.ration.slug) +
-                actor.consumableQuantityBySlug(foodItems.provisions.slug),
-    )
-}
 
 data class FoodItems(
     val basic: PF2EConsumable,
@@ -291,15 +382,23 @@ suspend fun getCompendiumFoodItems() = coroutineScope {
     FoodItems(basic = basic, special = special, ration = ration, provisions = provisions)
 }
 
-suspend fun CampingData.getFoodAmount(
+private fun PF2EActor.getTotalCarriedFood(
+    foodItems: FoodItems,
+): FoodAmount {
+    return FoodAmount(
+        basicIngredients = consumableQuantityByName(foodItems.basic.name!!),
+        specialIngredients = consumableQuantityByName(foodItems.special.name!!),
+        rations = consumableQuantityByName(foodItems.ration.name!!) +
+                consumableQuantityByName(foodItems.provisions.name!!),
+    )
+}
+
+suspend fun CampingData.getTotalCarriedFood(
     party: PF2EParty?,
     foodItems: FoodItems,
 ): FoodAmount = coroutineScope {
     val actors = getActorsInCamp() + (party?.let { listOf(it) } ?: emptyList())
     actors.map {
-        findTotalFood(
-            actor = it,
-            foodItems = foodItems,
-        )
+        it.getTotalCarriedFood(foodItems = foodItems)
     }.sum()
 }

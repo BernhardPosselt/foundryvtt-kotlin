@@ -51,6 +51,18 @@ external interface RecipeData {
     val favoriteMeal: CookingOutcome?
 }
 
+enum class HealMode {
+    AFTER_CONSUMPTION,
+    AFTER_REST,
+    AFTER_CONSUMPTION_AND_REST,
+}
+
+enum class ReduceConditionMode {
+    ALL,
+    RANDOM
+}
+
+
 fun RecipeData.canBeFavoriteMeal() = name != "Basic Meal"
 
 fun RecipeData.cookingCost(): FoodAmount =

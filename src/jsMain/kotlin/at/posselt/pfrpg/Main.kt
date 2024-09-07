@@ -109,7 +109,6 @@ fun main() {
                 game.migratePfrpg2eKingdomCampingWeather()
                 openCampingSheet(game, actionDispatcher)
             }
-//            DamageRoll("1d4[fire]").toMessage()
         }
 
         Hooks.onRenderChatLog { _, _, _ ->

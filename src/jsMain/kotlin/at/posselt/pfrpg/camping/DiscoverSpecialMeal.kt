@@ -43,7 +43,8 @@ suspend fun CampingData.learnSpecialMeal(
     val camping = campingActor.getCamping()
     val actors = camping?.getActorsInCamp()
     val actor = getCampingActorByUuid(actorUuid)
-    val recipe = getAllRecipes().find { it.name == recipeName }
+    val allRecipes = getAllRecipes().toList()
+    val recipe = allRecipes.find { it.name == recipeName }
     if (recipe != null && actor != null && actors != null) {
         val cost = if (isRecoverHalf) {
             recipe.cookingCost()
@@ -51,7 +52,8 @@ suspend fun CampingData.learnSpecialMeal(
             recipe.discoverCost()
         }
         if (isCriticalFailure) {
-            actor.applyMealEffects(listOf(recipe.criticalFailure))
+            val items = getMealEffectItems(allRecipes)
+            actor.applyMealEffects(allRecipes, items, recipe.criticalFailure)
         }
         val leftOver = reduceFoodBy(actors, foodAmount = cost, foodItems = getCompendiumFoodItems())
         if (isSuccess) {

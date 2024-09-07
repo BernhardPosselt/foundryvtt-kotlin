@@ -11,7 +11,7 @@ import at.posselt.pfrpg.camping.discoverCost
 import at.posselt.pfrpg.camping.findCurrentRegion
 import at.posselt.pfrpg.camping.getAllRecipes
 import at.posselt.pfrpg.camping.getCompendiumFoodItems
-import at.posselt.pfrpg.camping.getFoodAmount
+import at.posselt.pfrpg.camping.getTotalCarriedFood
 import at.posselt.pfrpg.utils.buildUuid
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.ui.TextEditor
@@ -47,7 +47,7 @@ suspend fun pickSpecialRecipe(
     val learnedRecipes = camping.cooking.knownRecipes.toSet()
     val allRecipes = camping.getAllRecipes()
     val items = getCompendiumFoodItems()
-    val totalItems = camping.getFoodAmount(partyActor, items)
+    val totalItems = camping.getTotalCarriedFood(partyActor, items)
     val rows = allRecipes.asSequence()
         .filter { it.level < (camping.findCurrentRegion()?.level ?: 0) }
         .filter { it.name !in learnedRecipes }

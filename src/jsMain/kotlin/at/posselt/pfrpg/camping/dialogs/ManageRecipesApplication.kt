@@ -6,11 +6,10 @@ import at.posselt.pfrpg.app.forms.CheckboxInput
 import at.posselt.pfrpg.camping.RecipeData
 import at.posselt.pfrpg.camping.buildFoodCost
 import at.posselt.pfrpg.camping.cookingCost
-import at.posselt.pfrpg.camping.discoverCost
 import at.posselt.pfrpg.camping.getAllRecipes
 import at.posselt.pfrpg.camping.getCamping
 import at.posselt.pfrpg.camping.getCompendiumFoodItems
-import at.posselt.pfrpg.camping.getFoodAmount
+import at.posselt.pfrpg.camping.getTotalCarriedFood
 import at.posselt.pfrpg.camping.setCamping
 import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.buildUuid
@@ -63,7 +62,7 @@ class ManageRecipesApplication(
     override fun getItems(): Promise<Array<CrudItem>> = buildPromise {
         actor.getCamping()?.let { camping ->
             val foodItems = getCompendiumFoodItems()
-            val total = camping.getFoodAmount(game.party(), foodItems)
+            val total = camping.getTotalCarriedFood(game.party(), foodItems)
             val learnedRecipes = camping.cooking.knownRecipes.toSet()
             camping.getAllRecipes()
                 .sortedWith(compareBy(RecipeData::level, RecipeData::name))

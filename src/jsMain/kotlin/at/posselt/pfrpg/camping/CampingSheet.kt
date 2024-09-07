@@ -392,7 +392,8 @@ class CampingSheet(
 
         val activity = campingCheckData.activityData.data
 
-        // preparing check removes all meal effects
+        // preparing check removes all meal effects; note that this is prone to races
+        // when prepare camp would receive meal bonuses which technically shouldn't happen
         if (activity.isPrepareCamp()) {
             dispatcher.dispatch(emptyActionMessage("clearMealEffects"))
             postChatMessage("Preparing Campsite, removing all existing Meal Effects")
@@ -739,7 +740,7 @@ class CampingSheet(
         val campingActivitiesSection = section == CampingSheetSection.CAMPING_ACTIVITIES
         val eatingSection = section == CampingSheetSection.EATING
         val foodItems = getCompendiumFoodItems()
-        val totalFood = camping.getFoodAmount(game.party(), foodItems)
+        val totalFood = camping.getTotalCarriedFood(game.party(), foodItems)
         val availableFood = buildFoodCost(totalFood, items = foodItems)
         val recipeActors = camping.cooking.actorMeals
             .mapNotNull { meal ->
@@ -931,4 +932,11 @@ private fun getActivitySkills(
             value = groupedActivity.result.selectedSkill,
         ).toContext()
     }
+}
+
+suspend fun openCampingSheet(game: Game, dispatcher: ActionDispatcher) {
+    // TODO: create camping actor if not present
+    game.getCampingActor()
+        ?.let { actor -> CampingSheet(game, actor, dispatcher) }
+        ?.launch()
 }
