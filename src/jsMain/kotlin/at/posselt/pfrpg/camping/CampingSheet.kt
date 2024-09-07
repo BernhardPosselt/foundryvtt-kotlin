@@ -498,6 +498,10 @@ class CampingSheet(
     }
 
     private suspend fun assignRecipeTo(actorUuid: String, recipeName: String) {
+        if (getCampingActivityActorByUuid(actorUuid) == null) {
+            ui.notifications.error("Only Characters can consume meals")
+            return
+        }
         actor.getCamping()?.let { camping ->
             val existingMeal = camping.cooking.actorMeals.find { it.actorUuid == actorUuid }
             if (existingMeal == null) {
@@ -510,7 +514,6 @@ class CampingSheet(
             } else {
                 existingMeal.chosenMeal = recipeName
             }
-
             actor.setCamping(camping)
         }
     }
@@ -520,7 +523,7 @@ class CampingSheet(
             val activity = camping.getAllActivities().find { it.name == activityName }
             val activityActor = getCampingActivityCreatureByUuid(actorUuid)
             if (activityActor == null) {
-                ui.notifications.error("Only NPCs and Characters can perform camping activities")
+                ui.notifications.error("Only Characters can perform camping activities")
             } else if (activity == null) {
                 ui.notifications.error("Activity with name $activityName not found")
             } else if (!activityActor.satisfiesAnyActivitySkillRequirement(activity, camping.ignoreSkillRequirements)) {

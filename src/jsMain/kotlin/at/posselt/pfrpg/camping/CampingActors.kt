@@ -29,7 +29,6 @@ private val allowedCampingActorTypes = arrayOf(
     PF2ELoot::class,
 )
 private val allowedCampingActivityActorTypes: Array<KClass<out PF2EActor>> = arrayOf(
-    PF2ENpc::class,
     PF2ECharacter::class,
 )
 val allowedDnDItems = arrayOf(

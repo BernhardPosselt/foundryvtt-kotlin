@@ -7,8 +7,17 @@ import js.objects.jso
 import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
+
 @JsPlainObject
-external interface PF2EConditionData
+external interface PF2EConditionValue {
+    var isValued: Boolean
+    var value: Int?
+}
+
+@JsPlainObject
+external interface PF2EConditionData {
+    var value: PF2EConditionValue
+}
 
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier

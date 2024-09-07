@@ -3,9 +3,12 @@ package at.posselt.pfrpg.camping
 import at.posselt.pfrpg.Config
 import at.posselt.pfrpg.divideRoundingUp
 import at.posselt.pfrpg.fromCamelCase
+import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.utils.buildUpdate
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.fromUuidsTypeSafe
+import at.posselt.pfrpg.utils.postChatMessage
+import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.roll
 import at.posselt.pfrpg.utils.typeSafeUpdate
 import com.foundryvtt.core.AnyObject
@@ -14,6 +17,7 @@ import com.foundryvtt.core.documents.GetSpeakerOptions
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2EParty
+import com.foundryvtt.pf2e.item.PF2ECondition
 import com.foundryvtt.pf2e.item.PF2EConsumable
 import com.foundryvtt.pf2e.item.PF2EConsumableData
 import com.foundryvtt.pf2e.item.PF2EEffect
@@ -104,9 +108,7 @@ data class MealNameAndEffect(
     val effect: MealEffect,
 )
 
-suspend fun PF2ECharacter.applyConsumptionMealEffects(
-    outcome: CookingOutcome,
-) {
+suspend fun PF2ECharacter.applyConsumptionMealEffects(outcome: CookingOutcome) {
     val uuids = if (outcome.chooseRandomly == true) {
         listOfNotNull(outcome.effects?.randomOrNull()?.uuid)
     } else {
@@ -172,15 +174,16 @@ private fun parseMealNameAndEffects(effect: MealNameAndEffect): List<HealingValu
     )
 }
 
+
 private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<MealNameAndEffect>) {
     val parsedEffects = mealEffectItems.flatMap(::parseMealNameAndEffects)
     val healingFormulas = parsedEffects.filterIsInstance<Healing>()
     val damageFormulas = parsedEffects.filterIsInstance<Damage>()
     val reduceConditions = parsedEffects.filterIsInstance<Conditions>()
-    val totalHealing = healingFormulas.sumOf { roll(it.formula, flavor = "Apply healing from ${it.name}") }
+    val totalHealing =
+        healingFormulas.sumOf { roll(it.formula, flavor = "Automatically applying healing from ${it.name}") }
     val hp = min(system.attributes.hp.max, system.attributes.hp.value + totalHealing)
     typeSafeUpdate { system.attributes.hp.value = hp }
-    // TODO: reduce conditions
     damageFormulas.forEach {
         DamageRoll(it.formula).toMessage(
             recordOf(
@@ -190,6 +193,26 @@ private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<Mea
                     )
                 )
             )
+        )
+    }
+    reduceConditions.forEach { condition ->
+        postChatTemplate(
+            templatePath = "chatmessages/reduce-conditions.hbs",
+            templateContext = recordOf(
+                "effect" to condition.name,
+                "heading" to if (condition.reduceConditions.mode == "random") {
+                    "Lower one of the following conditions (or choose one at random if more than one applies)"
+                } else {
+                    "Lower all of the following conditions"
+                },
+                "values" to listOfNotNull(
+                    condition.reduceConditions.clumsy?.let { "Clumsy: $it" },
+                    condition.reduceConditions.enfeebled?.let { "Enfeebled: $it" },
+                    condition.reduceConditions.drained?.let { "Drained: $it" },
+                    condition.reduceConditions.stupefied?.let { "Stupefied: $it" },
+                ).toTypedArray()
+            ),
+            speaker = this
         )
     }
 }

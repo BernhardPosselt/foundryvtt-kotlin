@@ -3,6 +3,7 @@ package at.posselt.pfrpg.camping
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.utils.postChatTemplate
 import com.foundryvtt.core.AnyObject
+import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import kotlinx.js.JsPlainObject
 
@@ -51,9 +52,8 @@ suspend fun CampingData.learnSpecialMeal(
         } else {
             recipe.discoverCost()
         }
-        if (isCriticalFailure) {
-            val items = getMealEffectItems(allRecipes)
-            actor.applyMealEffects(allRecipes, items, recipe.criticalFailure)
+        if (isCriticalFailure && actor is PF2ECharacter) {
+            actor.applyConsumptionMealEffects(recipe.criticalFailure)
         }
         val leftOver = reduceFoodBy(actors, foodAmount = cost, foodItems = getCompendiumFoodItems())
         if (isSuccess) {
