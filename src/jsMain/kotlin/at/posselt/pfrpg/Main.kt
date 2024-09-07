@@ -4,6 +4,7 @@ import at.posselt.pfrpg.actions.ActionDispatcher
 import at.posselt.pfrpg.actions.handlers.AddHuntAndGatherResultHandler
 import at.posselt.pfrpg.actions.handlers.ClearActivitiesHandler
 import at.posselt.pfrpg.actions.handlers.ClearMealEffectsHandler
+import at.posselt.pfrpg.actions.handlers.LearnSpecialRecipeHandler
 import at.posselt.pfrpg.actions.handlers.OpenCampingSheetHandler
 import at.posselt.pfrpg.actions.handlers.SyncActivitiesHandler
 import at.posselt.pfrpg.actor.partyMembers
@@ -30,6 +31,7 @@ fun main() {
                 ClearActivitiesHandler(game = game),
                 SyncActivitiesHandler(game = game),
                 ClearMealEffectsHandler(game = game),
+                LearnSpecialRecipeHandler(game = game),
             )
         ).apply {
             listen()

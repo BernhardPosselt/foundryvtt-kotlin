@@ -1,19 +1,18 @@
 package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
+import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.utils.postChatTemplate
 import com.foundryvtt.core.AnyObject
-import com.foundryvtt.pf2e.actor.PF2ECharacter
-import com.foundryvtt.pf2e.actor.PF2ENpc
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
 private external interface DiscoverSpecialMealChatContext {
-    val learnRecipe: Boolean
-    val recoverHalf: Boolean
-    val applyCriticalFailure: Boolean
-    val recipeName: String
+    val degree: String
+    val name: String
     val actorUuid: String
+    val learnRecipe: Boolean
+    val criticalFailure: Boolean
 }
 
 suspend fun postDiscoverSpecialMeal(
@@ -24,42 +23,11 @@ suspend fun postDiscoverSpecialMeal(
     postChatTemplate(
         templatePath = "chatmessages/discover-special-meal.hbs",
         templateContext = DiscoverSpecialMealChatContext(
-            recipeName = recipe.name,
+            name = recipe.name,
             actorUuid = actorUuid,
+            degree = degreeOfSuccess.toCamelCase(),
             learnRecipe = degreeOfSuccess.succeeded(),
-            recoverHalf = degreeOfSuccess == DegreeOfSuccess.CRITICAL_SUCCESS,
-            applyCriticalFailure = degreeOfSuccess == DegreeOfSuccess.CRITICAL_FAILURE,
+            criticalFailure = degreeOfSuccess == DegreeOfSuccess.CRITICAL_FAILURE,
         ).unsafeCast<AnyObject>(),
     )
-}
-
-suspend fun CampingData.learnSpecialMeal(
-    campingActor: PF2ENpc,
-    actorUuid: String,
-    recipeName: String,
-    isRecoverHalf: Boolean,
-    isSuccess: Boolean,
-    isCriticalFailure: Boolean,
-) {
-    val camping = campingActor.getCamping()
-    val actors = camping?.getActorsInCamp()
-    val actor = getCampingActorByUuid(actorUuid)
-    val allRecipes = getAllRecipes().toList()
-    val recipe = allRecipes.find { it.name == recipeName }
-    if (recipe != null && actor != null && actors != null) {
-        val cost = if (isRecoverHalf) {
-            recipe.cookingCost()
-        } else {
-            recipe.discoverCost()
-        }
-        if (isCriticalFailure && actor is PF2ECharacter) {
-            actor.applyConsumptionMealEffects(recipe.criticalFailure)
-        }
-        val leftOver = reduceFoodBy(actors, foodAmount = cost, foodItems = getCompendiumFoodItems())
-        if (isSuccess) {
-            camping.cooking.knownRecipes = (camping.cooking.knownRecipes + recipeName).distinct().toTypedArray()
-            campingActor.setCamping(camping)
-        }
-        // TODO: message to chat for removed food
-    }
 }
