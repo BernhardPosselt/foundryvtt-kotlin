@@ -187,6 +187,7 @@ private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<Mea
     damageFormulas.forEach {
         DamageRoll(it.formula).toMessage(
             recordOf(
+                "flavor" to "Rolling damage from ${it.name}, please apply manually",
                 "speakerData" to ChatMessage.getSpeaker(
                     GetSpeakerOptions(
                         actor = this
@@ -201,9 +202,9 @@ private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<Mea
             templateContext = recordOf(
                 "effect" to condition.name,
                 "heading" to if (condition.reduceConditions.mode == "random") {
-                    "Lower one of the following conditions (or choose one at random if more than one applies)"
+                    "Manually lower one of the following conditions (or choose one at random if more than one applies)"
                 } else {
-                    "Lower all of the following conditions"
+                    "Manually lower all of the following conditions"
                 },
                 "values" to listOfNotNull(
                     condition.reduceConditions.clumsy?.let { "Clumsy: $it" },
