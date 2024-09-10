@@ -29,6 +29,7 @@ external interface MealEffect {
 external interface CookingOutcome {
     val effects: Array<MealEffect>?
     val chooseRandomly: Boolean?
+    val message: String?
 }
 
 

@@ -16,20 +16,6 @@ Hooks.on('ready', async () => {
         const gameInstance = game;
         gameInstance.pf2eKingmakerTools.macros.structureTokenMappingMacro = structureTokenMappingDialog.bind(null, game);
         gameInstance.pf2eKingmakerTools.macros.viewKingdomMacro = showKingdom.bind(null, game);
-        gameInstance.settings.register('pf2e-kingmaker-tools', 'showManual', {
-            name: 'Show Manual',
-            scope: 'world',
-            config: false,
-            default: true,
-            type: Boolean,
-        } as any);
-        gameInstance.settings.register<string, string, []>('pf2e-kingmaker-tools', 'forceEnabledCompanionLeadershipBenefits', {
-            name: 'Force Enabled Companion Leadership Benefits',
-            scope: 'world',
-            config: false,
-            default: [],
-            type: Array,
-        });
         gameInstance.settings.register<string, string, number>('pf2e-kingmaker-tools', 'rpToXpConversionRate', {
             default: 1,
             config: false,
@@ -203,11 +189,6 @@ Hooks.on('ready', async () => {
                 await showKingdom(gameInstance);
             }
         });
-
-        if (isFirstGm(gameInstance) && getBooleanSetting(gameInstance, 'showManual')) {
-            await setSetting(gameInstance, 'showManual', false);
-            await openJournal('Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.iAQCUYEAq4Dy8uCY');
-        }
     }
 });
 

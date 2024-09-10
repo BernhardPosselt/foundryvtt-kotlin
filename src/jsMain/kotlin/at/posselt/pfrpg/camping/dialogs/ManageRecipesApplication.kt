@@ -36,6 +36,7 @@ class ManageRecipesApplication(
             camping.cooking.knownRecipes = camping.cooking.knownRecipes.filter { it != id }.toTypedArray()
             camping.cooking.homebrewMeals = camping.cooking.homebrewMeals.filter { it.name != id }.toTypedArray()
             actor.setCamping(camping)
+            render()
         }
         undefined
     }
@@ -69,7 +70,7 @@ class ManageRecipesApplication(
                 .map { recipe ->
                     val recipeName = recipe.name
                     val link = TextEditor.enrichHTML(buildUuid(recipe.uuid, recipeName)).await()
-                    val isHomebrew = recipe.isHomebrew ?: false
+                    val editable = recipe.isHomebrew ?: false
                     val enabled = learnedRecipes.contains(recipeName)
                     val cook = tpl(
                         "components/food-cost/food-cost.hbs",
@@ -93,8 +94,8 @@ class ManageRecipesApplication(
                             name = "enabledIds.$recipeName",
                             disabled = recipeName == "Basic Meal" || recipeName == "Hearty Meal",
                         ).toContext(),
-                        canBeEdited = isHomebrew,
-                        canBeDeleted = isHomebrew,
+                        canBeEdited = editable,
+                        canBeDeleted = editable,
                     )
                 }.toTypedArray()
         } ?: emptyArray()

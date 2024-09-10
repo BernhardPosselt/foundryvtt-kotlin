@@ -37,6 +37,7 @@ import at.posselt.pfrpg.utils.openItem
 import at.posselt.pfrpg.utils.openJournal
 import at.posselt.pfrpg.utils.postChatMessage
 import at.posselt.pfrpg.utils.toDateInputString
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
@@ -51,6 +52,7 @@ import com.foundryvtt.pf2e.item.itemFromUuid
 import js.array.push
 import js.core.Void
 import js.objects.ReadonlyRecord
+import js.objects.recordOf
 import kotlinx.coroutines.await
 import kotlinx.datetime.LocalTime
 import kotlinx.js.JsPlainObject
@@ -235,10 +237,8 @@ class CampingSheet(
                 val tile = target.closest(".km-camping-actor") as HTMLElement?
                 val actor = tile?.dataset?.get("uuid")
                     ?.let { fromUuidTypeSafe<PF2EActor>(it) }
-                buildPromise {
-                    if (actor != null) {
-                        addItemToActor(documentRef, actor)
-                    }
+                if (actor != null) {
+                    addItemToActor(documentRef, actor)
                 }
             }
         }
@@ -253,12 +253,10 @@ class CampingSheet(
                 val actor = tile?.dataset?.get("actorUuid")
                     ?.let { fromUuidTypeSafe<PF2EActor>(it) }
                 val activityName = tile?.dataset?.get("activityName")
-                buildPromise {
-                    if (documentRef is ActorRef && activityName != null) {
-                        assignActivityTo(documentRef.uuid, activityName)
-                    } else if (actor != null && activityName != null) {
-                        addItemToActor(documentRef, actor)
-                    }
+                if (documentRef is ActorRef && activityName != null) {
+                    assignActivityTo(documentRef.uuid, activityName)
+                } else if (actor != null && activityName != null) {
+                    addItemToActor(documentRef, actor)
                 }
             }
         }
@@ -270,10 +268,8 @@ class CampingSheet(
                 val target = event.target as HTMLElement
                 val tile = target.closest(".km-camping-recipe") as HTMLElement?
                 val recipeName = tile?.dataset?.get("recipeName")
-                buildPromise {
-                    if (documentRef is ActorRef && recipeName != null) {
-                        assignRecipeTo(documentRef.uuid, recipeName)
-                    }
+                if (documentRef is ActorRef && recipeName != null) {
+                    assignRecipeTo(documentRef.uuid, recipeName)
                 }
             }
         }
@@ -579,7 +575,7 @@ class CampingSheet(
                         ActorMeal(
                             actorUuid = uuid,
                             favoriteMeal = null,
-                            chosenMeal = "meal",
+                            chosenMeal = "nothing",
                         )
                     )
                     actor.setCamping(camping)
@@ -938,8 +934,22 @@ private fun getActivitySkills(
 }
 
 suspend fun openCampingSheet(game: Game, dispatcher: ActionDispatcher) {
-    // TODO: create camping actor if not present
-    game.getCampingActor()
-        ?.let { actor -> CampingSheet(game, actor, dispatcher) }
-        ?.launch()
+    val campingActor = game.getCampingActor()
+    if (campingActor == null) {
+        val actor = PF2ENpc.create(
+            recordOf(
+                "type" to "npc",
+                "name" to "Camping Sheet",
+                "img" to "icons/magic/fire/flame-burning-campfire-orange.webp",
+                "ownership" to recordOf(
+                    "default" to 3
+                )
+            )
+        ).await()
+        actor.setCamping(getDefaultCamping(game))
+        openCampingSheet(game, dispatcher)
+        openJournal("Compendium.pf2e-kingmaker-tools.kingmaker-tools-journals.JournalEntry.kd8cT1Uv9hZOrpgS")
+    } else {
+        CampingSheet(game, campingActor, dispatcher).launch()
+    }
 }

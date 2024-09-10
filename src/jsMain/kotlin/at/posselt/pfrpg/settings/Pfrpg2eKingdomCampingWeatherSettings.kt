@@ -197,6 +197,12 @@ object Pfrpg2eKingdomCampingWeatherSettings {
     fun getEnableCombatTracks(): Boolean =
         game.settings.getBoolean("enableCombatTracks")
 
+    suspend fun setDisableFirstRunMessage(value: Boolean) =
+        game.settings.setBoolean("disableFirstRunMessage", value)
+
+    fun getDisableFirstRunMessage(): Boolean =
+        game.settings.getBoolean("disableFirstRunMessage")
+
     suspend fun setEnableSheltered(value: Boolean) =
         game.settings.setBoolean("enableSheltered", value)
 
@@ -230,6 +236,7 @@ object Pfrpg2eKingdomCampingWeatherSettings {
     private object nonUserVisibleSettings {
         val booleans = mapOf(
             "enableSheltered" to false,
+            "disableFirstRunMessage" to false,
         )
         val strings = mapOf(
             "currentWeatherFx" to "none",

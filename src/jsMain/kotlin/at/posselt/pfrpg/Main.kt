@@ -12,6 +12,7 @@ import at.posselt.pfrpg.camping.bindCampingChatEventListeners
 import at.posselt.pfrpg.camping.openCampingSheet
 import at.posselt.pfrpg.camping.registerActivityDiffingHooks
 import at.posselt.pfrpg.combattracks.registerCombatTrackHooks
+import at.posselt.pfrpg.firstrun.showFirstRunMessage
 import at.posselt.pfrpg.macros.*
 import at.posselt.pfrpg.migrations.migratePfrpg2eKingdomCampingWeather
 import at.posselt.pfrpg.settings.pfrpg2eKingdomCampingWeather
@@ -109,6 +110,7 @@ fun main() {
         Hooks.onReady {
             buildPromise {
                 game.migratePfrpg2eKingdomCampingWeather()
+                showFirstRunMessage(game)
                 openCampingSheet(game, actionDispatcher)
             }
         }

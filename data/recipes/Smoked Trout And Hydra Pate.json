@@ -14,7 +14,8 @@
       {
         "uuid": "Compendium.pf2e-kingmaker-tools.kingmaker-tools-meal-effects.Item.4d6roHW75xe52o7A"
       }
-    ]
+    ],
+    "message": "All eaters treat light armor they're at least trained in as if the armor had the comfort trait."
   },
   "criticalFailure": {
     "effects": [

@@ -12,7 +12,6 @@ import at.posselt.pfrpg.camping.updateCampingPosition
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.data.checks.RollMode
 import at.posselt.pfrpg.fromCamelCase
-import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.postChatTemplate
 import com.foundryvtt.core.Game
 import kotlinx.js.JsPlainObject

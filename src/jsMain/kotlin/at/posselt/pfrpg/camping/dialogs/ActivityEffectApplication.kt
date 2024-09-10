@@ -10,7 +10,6 @@ import at.posselt.pfrpg.app.forms.toOption
 import at.posselt.pfrpg.camping.ActivityEffect
 import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.toCamelCase
-import at.posselt.pfrpg.toLabel
 import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.launch

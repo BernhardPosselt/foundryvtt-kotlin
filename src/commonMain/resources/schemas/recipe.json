@@ -89,6 +89,9 @@
         },
         "chooseRandomly": {
           "type": "boolean"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },

@@ -8,6 +8,7 @@ import at.posselt.pfrpg.app.forms.NumberInput
 import at.posselt.pfrpg.app.forms.SectionContext
 import at.posselt.pfrpg.app.forms.SectionsContext
 import at.posselt.pfrpg.app.forms.Select
+import at.posselt.pfrpg.app.forms.TextArea
 import at.posselt.pfrpg.app.forms.TextInput
 import at.posselt.pfrpg.app.forms.formContext
 import at.posselt.pfrpg.app.forms.toOption
@@ -50,6 +51,7 @@ external interface OutcomeSubmitData {
     val damageFormula: String
     val healMode: String
     val reduceConditions: ReduceConditions
+    val message: String?
 }
 
 @JsPlainObject
@@ -90,6 +92,7 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
             int("specialIngredients")
             schema("favoriteMeal") {
                 string("uuid")
+                string("message", nullable = true)
                 string("healFormula", nullable = true)
                 string("damageFormula", nullable = true)
                 int("changeRestDurationSeconds")
@@ -111,6 +114,7 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
             }
             schema("criticalSuccess") {
                 string("uuid")
+                string("message", nullable = true)
                 string("healFormula", nullable = true)
                 string("damageFormula", nullable = true)
                 int("changeRestDurationSeconds")
@@ -132,6 +136,7 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
             }
             schema("success") {
                 string("uuid")
+                string("message", nullable = true)
                 string("healFormula", nullable = true)
                 string("damageFormula", nullable = true)
                 int("changeRestDurationSeconds")
@@ -152,6 +157,7 @@ class RecipeDataModel(val value: AnyObject) : DataModel(value) {
                 }
             }
             schema("criticalFailure") {
+                string("message", nullable = true)
                 string("uuid")
                 string("healFormula", nullable = true)
                 string("damageFormula", nullable = true)
@@ -376,6 +382,14 @@ private suspend fun createMealInputs(
         ?.let { fromUuidTypeSafe<PF2EEffect>(it) }
         ?: allEffects.firstOrNull()
     return formContext(
+        TextArea(
+            label = "Message",
+            help = "If given, posted to chat after changing the meal's degree of success",
+            value = cookingOutcome?.message ?: "",
+            required = false,
+            stacked = false,
+            name = "$namePrefix.message",
+        ),
         Select(
             label = "Effect",
             name = "$namePrefix.uuid",
@@ -471,6 +485,7 @@ private suspend fun createMealInputs(
 
 private fun toOutcome(outcome: OutcomeSubmitData): CookingOutcome =
     CookingOutcome(
+        message = outcome.message,
         effects = arrayOf(
             MealEffect(
                 uuid = outcome.uuid,

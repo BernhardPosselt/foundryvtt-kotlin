@@ -26,6 +26,7 @@ class ManageActivitiesApplication(
                 camping.homebrewCampingActivities.filter { it.name != id }.toTypedArray()
             camping.campingActivities.filter { it.activity != id }
             actor.setCamping(camping)
+            render()
         }
         undefined
     }
@@ -56,7 +57,7 @@ class ManageActivitiesApplication(
                 .sortedWith(compareBy(CampingActivityData::name))
                 .map { activity ->
                     val name = activity.name
-                    val isHomebrew = activity.isHomebrew ?: false
+                    val canBeEdited = activity.isHomebrew
                     val enabled = !locked.contains(name)
                     CrudItem(
                         id = name,
@@ -69,8 +70,8 @@ class ManageActivitiesApplication(
                             hideLabel = true,
                             name = "enabledIds.$name",
                         ).toContext(),
-                        canBeEdited = isHomebrew,
-                        canBeDeleted = isHomebrew,
+                        canBeEdited = canBeEdited,
+                        canBeDeleted = canBeEdited,
                     )
                 }.toTypedArray()
         } ?: emptyArray()

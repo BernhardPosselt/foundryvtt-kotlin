@@ -287,6 +287,7 @@ class CampingSettingsApplication(
                             label = "Guns To Clean",
                             value = settings.gunsToClean,
                             stacked = false,
+                            help = "Up to 4 guns can be cleaned in an hour during Daily Preparations. If you go over 4 guns, Daily Preparations will take an additional hour for every set of 4 guns rounded up."
                         ),
                         NumberInput(
                             name = "increaseWatchActorNumber",
