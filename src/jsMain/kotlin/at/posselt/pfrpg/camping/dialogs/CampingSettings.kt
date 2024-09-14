@@ -143,8 +143,8 @@ class CampingSettingsApplication(
             minimumTravelSpeed = camping.minimumTravelSpeed,
             minimumSubsistence = camping.cooking.minimumSubsistence,
             alwaysPerformActivities = camping.alwaysPerformActivities,
-            restingPlaylistUuid = camping.restingPlaylistUuid,
-            restingPlaylistSoundUuid = camping.restingPlaylistSoundUuid,
+            restingPlaylistUuid = camping.restingTrack?.playlistUuid,
+            restingPlaylistSoundUuid = camping.restingTrack?.playlistUuid,
             worldSceneId = camping.worldSceneId,
         )
     }
@@ -350,8 +350,9 @@ class CampingSettingsApplication(
                         camping.minimumTravelSpeed = settings.minimumTravelSpeed
                         camping.cooking.minimumSubsistence = settings.minimumSubsistence
                         camping.alwaysPerformActivities = settings.alwaysPerformActivities
-                        camping.restingPlaylistSoundUuid = settings.restingPlaylistSoundUuid
-                        camping.restingPlaylistUuid = settings.restingPlaylistUuid
+                        camping.restingTrack = settings.restingPlaylistSoundUuid?.let {
+                            Track(playlistUuid = it, trackUuid = settings.restingPlaylistUuid)
+                        }
                         camping.worldSceneId = settings.worldSceneId
                         camping.campingActivities = camping.campingActivities
                             .filter { it.activity !in alwaysPerformNames }

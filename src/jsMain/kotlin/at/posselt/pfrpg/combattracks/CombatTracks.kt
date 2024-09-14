@@ -1,6 +1,8 @@
 package at.posselt.pfrpg.combattracks
 
-import at.posselt.pfrpg.camping.dialogs.CombatTrack
+import at.posselt.pfrpg.camping.dialogs.Track
+import at.posselt.pfrpg.camping.dialogs.play
+import at.posselt.pfrpg.camping.dialogs.stop
 import at.posselt.pfrpg.camping.findCurrentRegion
 import at.posselt.pfrpg.camping.getCamping
 import at.posselt.pfrpg.camping.getCampingActor
@@ -13,17 +15,17 @@ import com.foundryvtt.core.documents.*
 import com.foundryvtt.pf2e.actor.PF2EActor
 import kotlinx.coroutines.await
 
-fun Actor.getCombatTrack(): CombatTrack? =
+fun Actor.getCombatTrack(): Track? =
     getAppFlag("combat-track")
 
-suspend fun Actor.setCombatTrack(track: CombatTrack?) {
+suspend fun Actor.setCombatTrack(track: Track?) {
     setAppFlag("combat-track", track)
 }
 
-fun Scene.getCombatTrack(): CombatTrack? =
+fun Scene.getCombatTrack(): Track? =
     getAppFlag("combat-track")
 
-suspend fun Scene.setCombatTrack(track: CombatTrack?) {
+suspend fun Scene.setCombatTrack(track: Track?) {
     setAppFlag("combat-track", track)
 }
 
@@ -40,7 +42,7 @@ suspend fun Scene.startMusic() {
         ?: playlist?.playAll()?.await()
 }
 
-fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): CombatTrack? =
+fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): Track? =
     // check for actor overrides
     combatants.asSequence()
         .mapNotNull(Combatant::actor)
@@ -52,33 +54,15 @@ fun Game.findCombatTrack(combatants: Array<Combatant>, active: Scene): CombatTra
 
 suspend fun Game.startCombatTrack(combatants: Array<Combatant>, active: Scene) {
     findCombatTrack(combatants, active)?.let {
-        val trackUuid = it.trackUuid
-        val playlistUuid = it.playlistUuid
-        if (trackUuid != null) {
-            scenes.active?.stopMusic()
-            fromUuidTypeSafe<PlaylistSound>(trackUuid)
-                ?.typeSafeUpdate { playing = true }
-        } else {
-            scenes.active?.stopMusic()
-            fromUuidTypeSafe<Playlist>(playlistUuid)
-                ?.playAll()
-        }
+        scenes.active?.stopMusic()
+        it.play()
     }
 }
 
 suspend fun Game.stopCombatTrack(combatants: Array<Combatant>, active: Scene) {
     findCombatTrack(combatants, active)?.let {
-        val trackUuid = it.trackUuid
-        val playlistUuid = it.playlistUuid
-        if (trackUuid != null) {
-            fromUuidTypeSafe<PlaylistSound>(trackUuid)
-                ?.typeSafeUpdate { playing = false }
-            scenes.active?.startMusic()
-        } else {
-            fromUuidTypeSafe<Playlist>(playlistUuid)
-                ?.stopAll()
-            scenes.active?.startMusic()
-        }
+        it.stop()
+        scenes.active?.startMusic()
     }
 }
 

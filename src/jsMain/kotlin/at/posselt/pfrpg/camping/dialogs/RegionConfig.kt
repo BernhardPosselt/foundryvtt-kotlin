@@ -8,14 +8,21 @@ import at.posselt.pfrpg.app.forms.TextInput
 import at.posselt.pfrpg.app.forms.toOption
 import at.posselt.pfrpg.camping.getCamping
 import at.posselt.pfrpg.camping.setCamping
+import at.posselt.pfrpg.combattracks.startMusic
+import at.posselt.pfrpg.combattracks.stopMusic
 import at.posselt.pfrpg.data.regions.Terrain
 import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.utils.buildPromise
+import at.posselt.pfrpg.utils.fromUuidTypeSafe
+import at.posselt.pfrpg.utils.typeSafeUpdate
 import com.foundryvtt.core.*
+import com.foundryvtt.core.Game.scenes
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.*
 import com.foundryvtt.core.data.dsl.buildSchema
+import com.foundryvtt.core.documents.Playlist
+import com.foundryvtt.core.documents.PlaylistSound
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import js.array.push
 import kotlinx.coroutines.await
@@ -26,7 +33,7 @@ import org.w3c.dom.pointerevents.PointerEvent
 import kotlin.js.Promise
 
 @JsPlainObject
-external interface CombatTrack {
+external interface Track {
     var playlistUuid: String
     var trackUuid: String?
 }
@@ -39,7 +46,7 @@ external interface RegionSetting {
     var level: Int
     var terrain: String
     var rollTableUuid: String?
-    var combatTrack: CombatTrack?
+    var combatTrack: Track?
 }
 
 @JsPlainObject
@@ -245,4 +252,26 @@ class RegionConfig(
         )
     }
 
+}
+
+suspend fun Track.play() {
+    val track = trackUuid
+    if (track != null) {
+        fromUuidTypeSafe<PlaylistSound>(track)
+            ?.typeSafeUpdate { playing = true }
+    } else {
+        fromUuidTypeSafe<Playlist>(playlistUuid)
+            ?.playAll()
+    }
+}
+
+suspend fun Track.stop() {
+    val track = trackUuid
+    if (track != null) {
+        fromUuidTypeSafe<PlaylistSound>(track)
+            ?.typeSafeUpdate { playing = false }
+    } else {
+        fromUuidTypeSafe<Playlist>(playlistUuid)
+            ?.stopAll()
+    }
 }

@@ -1,13 +1,14 @@
 package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.Config
+import at.posselt.pfrpg.actor.getEffectNames
 import at.posselt.pfrpg.divideRoundingUp
 import at.posselt.pfrpg.fromCamelCase
-import at.posselt.pfrpg.toCamelCase
+import at.posselt.pfrpg.utils.awaitAll
+import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.buildUpdate
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.fromUuidsTypeSafe
-import at.posselt.pfrpg.utils.postChatMessage
 import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.roll
 import at.posselt.pfrpg.utils.typeSafeUpdate
@@ -17,7 +18,6 @@ import com.foundryvtt.core.documents.GetSpeakerOptions
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2EParty
-import com.foundryvtt.pf2e.item.PF2ECondition
 import com.foundryvtt.pf2e.item.PF2EConsumable
 import com.foundryvtt.pf2e.item.PF2EConsumableData
 import com.foundryvtt.pf2e.item.PF2EEffect
@@ -29,7 +29,6 @@ import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.js.JsPlainObject
-import kotlin.js.unsafeCast
 import kotlin.math.max
 import kotlin.math.min
 
@@ -50,6 +49,49 @@ suspend fun PF2EActor.addConsumableToInventory(uuid: String, quantity: Int) {
     }
 }
 
+/**
+ * Given a list of meal effects, get those that are have been applied to a player
+ */
+suspend fun PF2EActor.getAppliedMealEffects(mealEffects: List<MealEffect>): List<MealEffect> {
+    val effectNames = getEffectNames()
+    return mealEffects
+        .map { buildPromise { fromUuidTypeSafe<PF2EEffect>(it.uuid)?.name to it } }
+        .awaitAll()
+        .filter { it.first != null && it.first in effectNames }
+        .map { it.second }
+}
+
+fun mealEffectsChangingRestDuration(recipes: List<RecipeData>): List<MealEffect> =
+    mealEffectsHaving(recipes) {
+        it.changeRestDurationSeconds != null
+    }
+
+fun mealEffectsDoublingHealing(recipes: List<RecipeData>): List<MealEffect> =
+    mealEffectsHaving(recipes) {
+        it.doublesHealing == true
+    }
+
+fun mealEffectsHalvingHealing(recipes: List<RecipeData>): List<MealEffect> =
+    mealEffectsHaving(recipes) {
+        it.halvesHealing == true
+    }
+
+
+private fun mealEffectsHaving(recipes: List<RecipeData>, predicate: (MealEffect) -> Boolean): List<MealEffect> =
+    recipes.asSequence()
+        .flatMap {
+            sequenceOf(
+                it.criticalFailure.effects,
+                it.success.effects,
+                it.criticalSuccess.effects,
+                it.favoriteMeal?.effects,
+            ).filterNotNull()
+                .flatMap(Array<MealEffect>::asSequence)
+                .filter(predicate)
+        }
+        .toList()
+
+
 private fun getAllOutcomeEffects(recipe: RecipeData): List<MealEffect> =
     listOfNotNull(
         recipe.criticalFailure.effects?.toList(),
@@ -58,36 +100,72 @@ private fun getAllOutcomeEffects(recipe: RecipeData): List<MealEffect> =
         recipe.favoriteMeal?.effects?.toList(),
     ).flatten()
 
-private suspend fun getMealEffectItems(recipe: RecipeData): List<PF2EEffect> = coroutineScope {
+private suspend fun getMealEffectItems(
+    recipe: RecipeData,
+    removedAfterRest: Boolean = false,
+): List<PF2EEffect> = coroutineScope {
     getAllOutcomeEffects(recipe)
+        .filter { !removedAfterRest || it.removeAfterRest == true }
         .map { it.uuid }
         .map { async { fromUuidTypeSafe<PF2EEffect>(it) } }
         .awaitAll()
         .filterNotNull()
 }
 
-suspend fun getMealEffectItems(recipes: List<RecipeData>): List<PF2EEffect> = coroutineScope {
+suspend fun getMealEffectItems(
+    recipes: List<RecipeData>,
+    removedAfterRest: Boolean = false,
+): List<PF2EEffect> = coroutineScope {
     recipes
-        .map { async { getMealEffectItems(it) } }
+        .map { async { getMealEffectItems(it, removedAfterRest) } }
         .awaitAll()
         .flatten()
 }
 
-suspend fun PF2EActor.clearEffects(effects: List<PF2EEffect>) {
-    val effectNames = effects
-        .map { it.name }
-        .toSet()
-    val idsToRemove = itemTypes.effect
-        .filter { it.name in effectNames }
+suspend fun PF2EActor.removeConsumablesByName(names: Set<String>) {
+    val idsToRemove = itemTypes.consumable
+        .filter { it.name in names }
         .mapNotNull { it.id }
         .toTypedArray()
     deleteEmbeddedDocuments<PF2EEffect>("Item", idsToRemove).await()
 }
 
-suspend fun CampingData.clearMealEffects() = coroutineScope {
-    getActorsInCamp()
-        .map { async { it.clearEffects(getMealEffectItems(getAllRecipes().toList())) } }
+suspend fun PF2EActor.removeEffectsByName(names: Set<String>) {
+    val idsToRemove = itemTypes.effect
+        .filter { it.name in names }
+        .mapNotNull { it.id }
+        .toTypedArray()
+    deleteEmbeddedDocuments<PF2EEffect>("Item", idsToRemove).await()
+}
+
+suspend fun PF2EActor.clearEffects(effects: List<PF2EEffect>) {
+    val effectNames = effects
+        .mapNotNull { it.name }
+        .toSet()
+    removeEffectsByName(effectNames)
+}
+
+suspend fun removeMealEffects(
+    recipes: List<RecipeData>,
+    actors: List<PF2EActor>,
+    removedAfterRest: Boolean = false,
+) = coroutineScope {
+    val effects = getMealEffectItems(recipes, removedAfterRest)
+    actors
+        .map { async { it.clearEffects(effects) } }
         .awaitAll()
+}
+
+suspend fun removeProvisions(
+    actors: List<PF2EActor>,
+) = coroutineScope {
+    fromUuidTypeSafe<PF2EConsumable>(Config.items.provisionsUuid)
+        ?.name
+        ?.let { provisionsName ->
+            actors
+                .map { async { it.removeConsumablesByName(setOf(provisionsName)) } }
+                .awaitAll()
+        }
 }
 
 enum class MealEffectTrigger {
@@ -125,6 +203,17 @@ suspend fun PF2ECharacter.applyConsumptionMealEffects(outcome: CookingOutcome) {
     applyMealHealEffects(applicableHealEffects)
 }
 
+
+suspend fun applyRestHealEffects(
+    actors: List<PF2EActor>,
+    recipes: List<RecipeData>,
+    mealEffectItems: List<PF2EEffect>,
+) = coroutineScope {
+    actors
+        .filterIsInstance<PF2ECharacter>()
+        .map { async { it.applyRestHealEffects(recipes, mealEffectItems) } }
+        .awaitAll()
+}
 
 suspend fun PF2ECharacter.applyRestHealEffects(
     recipes: List<RecipeData>,

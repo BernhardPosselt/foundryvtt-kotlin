@@ -3,8 +3,9 @@ package at.posselt.pfrpg.actions.handlers
 import at.posselt.pfrpg.actions.ActionDispatcher
 import at.posselt.pfrpg.actions.ActionMessage
 import at.posselt.pfrpg.camping.CampingActivity
-import at.posselt.pfrpg.camping.CampingData
-import at.posselt.pfrpg.camping.clearMealEffects
+import at.posselt.pfrpg.camping.removeMealEffects
+import at.posselt.pfrpg.camping.getActorsInCamp
+import at.posselt.pfrpg.camping.getAllRecipes
 import at.posselt.pfrpg.camping.getCamping
 import at.posselt.pfrpg.camping.getCampingActor
 import at.posselt.pfrpg.camping.syncCampingEffects
@@ -42,7 +43,7 @@ class SyncActivitiesHandler(
                     }
                 }
             if (data.clearMealEffects) {
-                camping.clearMealEffects()
+                removeMealEffects(camping.getAllRecipes().toList(), camping.getActorsInCamp())
             }
             camping.syncCampingEffects(data.activities)
         }

@@ -23,6 +23,7 @@ import at.posselt.pfrpg.camping.dialogs.pickSpecialRecipe
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.resting.getTotalRestDuration
+import at.posselt.pfrpg.resting.rest
 import at.posselt.pfrpg.takeIfInstance
 import at.posselt.pfrpg.toCamelCase
 import at.posselt.pfrpg.toLabel
@@ -37,7 +38,6 @@ import at.posselt.pfrpg.utils.openItem
 import at.posselt.pfrpg.utils.openJournal
 import at.posselt.pfrpg.utils.postChatMessage
 import at.posselt.pfrpg.utils.toDateInputString
-import com.foundryvtt.core.Actor
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.documents.onCreateItem
@@ -297,7 +297,12 @@ class CampingSheet(
             }
 
             "settings" -> CampingSettingsApplication(game, actor).launch()
-            "rest" -> console.log("resting")
+            "rest" -> actor.getCamping()?.let {
+                buildPromise {
+                    rest(game, actor, it)
+                }
+            }
+
             "consume-rations" -> console.log("consuming rations")
             "roll-camping-check" -> buildPromise {
                 target.closest(".km-camping-activity")
@@ -637,11 +642,6 @@ class CampingSheet(
         return formatSeconds(elapsedSeconds, isNegative)
     }
 
-    private fun getRestDurationLeft(camping: CampingData): String? {
-        // TODO
-        return null
-    }
-
     private fun advanceHours(target: HTMLElement) {
         game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
     }
@@ -811,8 +811,8 @@ class CampingSheet(
             recipes = recipes.toList(),
             gunsToClean = camping.gunsToClean,
             increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
+            remainingSeconds = camping.watchSecondsRemaining,
         )
-
         val currentRegion = camping.findCurrentRegion()
         val regions = camping.regionSettings.regions
         val isGM = game.user.isGM
@@ -870,8 +870,8 @@ class CampingSheet(
             hexplorationActivitiesAvailable = getHexplorationActivitiesAvailable(camping),
             hexplorationActivitiesMax = "${getHexplorationActivities()}",
             adventuringFor = getAdventuringFor(camping),
-            restDuration = fullRestDuration,
-            restDurationLeft = getRestDurationLeft(camping),
+            restDuration = fullRestDuration.total.label,
+            restDurationLeft = fullRestDuration.left?.label,
             encounterDc = findEncounterDcModifier(camping, game.getPF2EWorldTime().time.isDay()),
             section = section.toLabel(),
             prepareCampSection = prepareCampSection,

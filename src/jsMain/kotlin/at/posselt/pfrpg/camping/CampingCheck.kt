@@ -24,7 +24,7 @@ private external interface AskDcData {
     val dc: Int
 }
 
-private suspend fun askDc(activity: String): Int {
+suspend fun askDc(activity: String): Int {
     return awaitablePrompt<AskDcData, Int>(
         title = "$activity: Select DC",
         templatePath = "components/forms/form.hbs",
@@ -137,7 +137,7 @@ suspend fun PF2ECreature.campingActivityCheck(
 }
 
 
-private suspend fun PF2ECreature.performCampingCheck(
+suspend fun PF2ECreature.performCampingCheck(
     attribute: Attribute,
     isSecret: Boolean = false,
     isWatch: Boolean = false,

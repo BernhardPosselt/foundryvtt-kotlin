@@ -1,8 +1,11 @@
 package at.posselt.pfrpg.camping
 
+import at.posselt.pfrpg.actor.getEffectNames
 import at.posselt.pfrpg.camping.dialogs.ActivityEffectTarget
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.fromCamelCase
+import at.posselt.pfrpg.utils.awaitAll
+import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.item.PF2EEffect
@@ -146,3 +149,39 @@ suspend fun CampingData.clearCampingEffects() = coroutineScope {
         }
         .awaitAll()
 }
+
+suspend fun PF2EActor.getAppliedCampingEffects(campingData: List<ActivityEffect>): List<ActivityEffect> {
+    val effectNames = getEffectNames()
+    return campingData
+        .map { buildPromise { fromUuidTypeSafe<PF2EEffect>(it.uuid)?.name to it } }
+        .awaitAll()
+        .filter { it.first != null && it.first in effectNames }
+        .map { it.second }
+}
+
+/**
+ * Only checks if the top level effect doubles healing
+ */
+fun campingActivitiesDoublingHealing(campingData: List<CampingActivityData>): List<ActivityEffect> =
+    campingActivitiesHaving(campingData) {
+        it.doublesHealing == true
+    }
+
+
+private fun campingActivitiesHaving(
+    data: List<CampingActivityData>,
+    predicate: (ActivityEffect) -> Boolean
+): List<ActivityEffect> =
+    data.asSequence()
+        .flatMap {
+            sequenceOf(
+                it.effectUuids,
+                it.success?.effectUuids,
+                it.criticalSuccess?.effectUuids,
+                it.failure?.effectUuids,
+                it.criticalFailure?.effectUuids,
+            ).filterNotNull()
+                .flatMap(Array<ActivityEffect>::asSequence)
+                .filter(predicate)
+        }
+        .toList()

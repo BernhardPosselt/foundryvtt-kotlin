@@ -6,7 +6,7 @@ import at.posselt.pfrpg.app.forms.FormElementContext
 import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.app.forms.formContext
 import at.posselt.pfrpg.app.forms.toOption
-import at.posselt.pfrpg.camping.dialogs.CombatTrack
+import at.posselt.pfrpg.camping.dialogs.Track
 import at.posselt.pfrpg.combattracks.getCombatTrack
 import at.posselt.pfrpg.combattracks.setCombatTrack
 import at.posselt.pfrpg.utils.buildPromise
@@ -47,7 +47,7 @@ private class CombatTrackApplication(
     title = "Set Combat Track: ${actor?.name ?: scene.name}",
     template = "components/forms/application-form.hbs",
 ) {
-    var combatTrack: CombatTrack? = if (actor == null) {
+    var combatTrack: Track? = if (actor == null) {
         scene.getCombatTrack()
     } else {
         actor.getCombatTrack()
@@ -84,7 +84,7 @@ private class CombatTrackApplication(
     }
 
     override fun onParsedSubmit(value: CombatTrackData): Promise<Void> = buildPromise {
-        combatTrack = CombatTrack(playlistUuid = value.playlistUuid, trackUuid = value.trackUuid)
+        combatTrack = Track(playlistUuid = value.playlistUuid, trackUuid = value.trackUuid)
         undefined
     }
 

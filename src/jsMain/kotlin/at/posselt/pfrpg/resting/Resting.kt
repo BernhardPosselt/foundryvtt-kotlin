@@ -1,24 +1,57 @@
 package at.posselt.pfrpg.resting
 
-import at.posselt.pfrpg.camping.CampingActivityData
+import at.posselt.pfrpg.camping.ActivityEffect
+import at.posselt.pfrpg.camping.CampingData
 import at.posselt.pfrpg.camping.MealEffect
 import at.posselt.pfrpg.camping.RecipeData
+import at.posselt.pfrpg.camping.applyRestHealEffects
+import at.posselt.pfrpg.camping.askDc
 import at.posselt.pfrpg.camping.calculateDailyPreparationSeconds
 import at.posselt.pfrpg.camping.calculateRestDurationSeconds
-import at.posselt.pfrpg.camping.campingEffectsDoublingHealing
+import at.posselt.pfrpg.camping.campingActivitiesDoublingHealing
+import at.posselt.pfrpg.camping.dialogs.RestRollMode
+import at.posselt.pfrpg.camping.dialogs.play
+import at.posselt.pfrpg.camping.getActorsInCamp
+import at.posselt.pfrpg.camping.getAllActivities
+import at.posselt.pfrpg.camping.getAllRecipes
 import at.posselt.pfrpg.camping.getAppliedCampingEffects
 import at.posselt.pfrpg.camping.getAppliedMealEffects
+import at.posselt.pfrpg.camping.getCampingActorsByUuid
+import at.posselt.pfrpg.camping.getMealEffectItems
 import at.posselt.pfrpg.camping.mealEffectsChangingRestDuration
 import at.posselt.pfrpg.camping.mealEffectsDoublingHealing
+import at.posselt.pfrpg.camping.mealEffectsHalvingHealing
+import at.posselt.pfrpg.camping.performCampingCheck
+import at.posselt.pfrpg.camping.removeCombatEffects
+import at.posselt.pfrpg.camping.removeMealEffects
+import at.posselt.pfrpg.camping.removeProvisions
+import at.posselt.pfrpg.camping.rollRandomEncounter
+import at.posselt.pfrpg.camping.setCamping
+import at.posselt.pfrpg.data.actor.Perception
+import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.utils.awaitAll
 import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.formatSeconds
+import at.posselt.pfrpg.utils.postChatMessage
+import at.posselt.pfrpg.utils.typeSafeUpdate
+import com.foundryvtt.core.Game
+import com.foundryvtt.pf2e.actions.RestForTheNightOptions
 import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.actor.PF2ECharacter
+import com.foundryvtt.pf2e.actor.PF2ENpc
+import com.foundryvtt.pf2e.pf2e
+import js.objects.jso
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.random.Random
 
 private const val EIGHT_HOURS_SECONDS = 8 * 60 * 60
+private const val FOUR_HOURS_SECONDS = 4 * 3600
 
-suspend fun getRestSecondsPerPlayer(
+private suspend fun getRestSecondsPerPlayer(
     players: List<PF2EActor>,
     recipes: List<RecipeData>,
     increaseActorsKeepingWatch: Int = 0,
@@ -40,7 +73,7 @@ suspend fun getRestSecondsPerPlayer(
     return durationPerPlayer + additionalWatchers
 }
 
-suspend fun getFullRestSeconds(
+private suspend fun getFullRestSeconds(
     watchers: List<PF2EActor>,
     recipes: List<RecipeData>,
     gunsToClean: Int,
@@ -48,29 +81,208 @@ suspend fun getFullRestSeconds(
 ): Int = calculateRestDurationSeconds(getRestSecondsPerPlayer(watchers, recipes, increaseActorsKeepingWatch)) +
         calculateDailyPreparationSeconds(gunsToClean)
 
+data class RestDuration(
+    val value: Int,
+) {
+    val label: String
+        get() = formatSeconds(value)
+}
+
+
+data class TotalRestDuration(
+    val total: RestDuration,
+    val left: RestDuration?,
+)
+
 suspend fun getTotalRestDuration(
     watchers: List<PF2EActor>,
     recipes: List<RecipeData>,
     gunsToClean: Int,
     increaseActorsKeepingWatch: Int = 0,
-) = formatSeconds(
-    getFullRestSeconds(
+    remainingSeconds: Int? = null,
+): TotalRestDuration {
+    val total = getFullRestSeconds(
         watchers = watchers,
         recipes = recipes,
         gunsToClean = gunsToClean,
         increaseActorsKeepingWatch = increaseActorsKeepingWatch
     )
-)
-
-
-suspend fun healsDoubleHp(
-    actor: PF2ECharacter,
-    recipes: List<RecipeData>,
-    campingData: List<CampingActivityData>,
-): Boolean {
-    val mealEffects = mealEffectsDoublingHealing(recipes)
-    val campingEffects = campingEffectsDoublingHealing(campingData)
-    return actor.getAppliedMealEffects(mealEffects).isNotEmpty()
-            || actor.getAppliedCampingEffects(campingEffects).isNotEmpty()
+    return TotalRestDuration(
+        total = RestDuration(total),
+        left = remainingSeconds?.let(::RestDuration)
+    )
 }
 
+private enum class HealMultiplier {
+    HALVE,
+    DOUBLE,
+}
+
+private fun PF2ECharacter.additionalHealingAfterRest(multiplier: HealMultiplier?): Int {
+    return if (multiplier != null) {
+        val healed = max(
+            1,
+            system.abilities.con.mod
+        ) * system.details.level.value * hitPoints.recoveryMultiplier + hitPoints.recoveryAddend
+        if (multiplier == HealMultiplier.DOUBLE) {
+            healed
+        } else {
+            val healedWithHalf = (healed / 2) + system.attributes.hp.value
+            if (healedWithHalf >= system.attributes.hp.max) {
+                0
+            } else {
+                healedWithHalf - system.attributes.hp.max
+            }
+        }
+    } else {
+        0
+    }
+}
+
+private suspend fun findHealMultiplier(
+    actor: PF2ECharacter,
+    recipesDoublingHealing: List<MealEffect>,
+    recipesHalvingHealing: List<MealEffect>,
+    activitiesDoublingHealing: List<ActivityEffect>,
+): HealMultiplier? {
+    val doubles = actor.getAppliedMealEffects(recipesDoublingHealing).isNotEmpty()
+            || actor.getAppliedCampingEffects(activitiesDoublingHealing).isNotEmpty()
+    val halves = actor.getAppliedMealEffects(recipesHalvingHealing).isNotEmpty()
+    return if (doubles && halves) {
+        null
+    } else if (doubles) {
+        HealMultiplier.DOUBLE
+    } else if (halves) {
+        HealMultiplier.HALVE
+    } else {
+        null
+    }
+}
+
+private suspend fun additionalHealingPerActorAfterRest(
+    recipes: List<RecipeData>,
+    camping: CampingData,
+    actors: List<PF2EActor>
+): List<Pair<PF2ECharacter, Int>> = coroutineScope {
+    val recipesDoublingHealing = mealEffectsDoublingHealing(recipes)
+    val recipesHalvingHealing = mealEffectsHalvingHealing(recipes)
+    val activitiesDoublingHealing = campingActivitiesDoublingHealing(camping.getAllActivities().toList())
+    actors
+        .filterIsInstance<PF2ECharacter>()
+        .map { actor ->
+            async {
+                val multiplier = findHealMultiplier(
+                    actor,
+                    recipesDoublingHealing = recipesDoublingHealing,
+                    recipesHalvingHealing = recipesHalvingHealing,
+                    activitiesDoublingHealing = activitiesDoublingHealing
+                )
+                actor to actor.additionalHealingAfterRest(multiplier)
+            }
+        }
+        .awaitAll()
+}
+
+private suspend fun applyAdditionalHealing(healingAfterRest: List<Pair<PF2ECharacter, Int>>) = coroutineScope {
+    healingAfterRest.map { (actor, healing) ->
+        val value = min(actor.hitPoints.value + healing, actor.hitPoints.max)
+        async {
+            if (value > 0) {
+                postChatMessage("Healing an additional $value HP to recipes or camping activities", speaker = actor)
+            } else {
+                postChatMessage("Healing $value HP fewer due to recipes", speaker = actor)
+            }
+            actor.typeSafeUpdate { system.attributes.hp.value = value }
+        }
+    }.awaitAll()
+}
+
+private suspend fun findRandomEncounterAt(
+    game: Game,
+    campingActor: PF2ENpc,
+    camping: CampingData,
+    watchDurationSeconds: Int,
+): Int? {
+    val randomEncounterChecksAtSeconds = when (fromCamelCase<RestRollMode>(camping.restRollMode)) {
+        RestRollMode.ONE -> List(1) { Random.nextInt(1, watchDurationSeconds - 1) }
+        RestRollMode.ONE_EVERY_FOUR_HOURS -> List(watchDurationSeconds / (FOUR_HOURS_SECONDS)) { index ->
+            val begin = index * FOUR_HOURS_SECONDS
+            val end = index * FOUR_HOURS_SECONDS + FOUR_HOURS_SECONDS
+            Random.nextInt(begin + 1, end - 1)
+        }
+
+        else -> emptyList()
+    }
+    for (checksAtSecond in randomEncounterChecksAtSeconds) {
+        if (rollRandomEncounter(game = game, actor = campingActor, includeFlatCheck = true)) {
+            return checksAtSecond
+        }
+    }
+    return null
+}
+
+private suspend fun beginRest(game: Game, campingActor: PF2ENpc, camping: CampingData) {
+    val actorsByUuid = getCampingActorsByUuid(camping.actorUuids).associateBy(PF2EActor::uuid)
+    val watchers = actorsByUuid.values
+        .filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) }
+    val watchDurationSeconds = getFullRestSeconds(
+        watchers = watchers,
+        recipes = camping.getAllRecipes().toList(),
+        gunsToClean = camping.gunsToClean,
+        increaseActorsKeepingWatch = camping.increaseWatchActorNumber,
+    )
+    val randomEncounterAt = findRandomEncounterAt(
+        game = game,
+        campingActor = campingActor,
+        camping = camping,
+        watchDurationSeconds = watchDurationSeconds,
+    )
+    if (randomEncounterAt != null) {
+        watchers
+            .filterIsInstance<PF2ECharacter>()
+            .randomOrNull()
+            ?.performCampingCheck(
+                isSecret = true,
+                isWatch = true,
+                attribute = Perception,
+                dc = askDc("Enemy Stealth"),
+            )
+        game.time.advance(randomEncounterAt)
+        camping.watchSecondsRemaining = randomEncounterAt
+        campingActor.setCamping(camping)
+    } else {
+        camping.watchSecondsRemaining = watchDurationSeconds
+        completeDailyPreparations(game, campingActor, camping)
+    }
+}
+
+private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc, camping: CampingData) =
+    coroutineScope {
+        val actors = camping.getActorsInCamp()
+        val recipes = camping.getAllRecipes().toList()
+
+        game.time.advance(camping.watchSecondsRemaining)
+        camping.watchSecondsRemaining = 0
+        camping.dailyPrepsAtTime = game.time.worldTime
+        camping.campingActivities.forEach { it.result = null }
+        camping.cooking.results = jso()
+        campingActor.setCamping(camping)
+
+        val additionalHealing = additionalHealingPerActorAfterRest(recipes, camping, actors)
+        game.pf2e.actions.restForTheNight(RestForTheNightOptions(actors = actors.toTypedArray(), skipDialog = true))
+        applyAdditionalHealing(additionalHealing)
+        applyRestHealEffects(actors, recipes, getMealEffectItems(recipes))
+        removeMealEffects(recipes, actors, removedAfterRest = true)
+        removeProvisions(actors)
+        removeCombatEffects(actors)
+    }
+
+
+suspend fun rest(game: Game, campingActor: PF2ENpc, camping: CampingData) {
+    if (camping.watchSecondsRemaining == 0) {
+        camping.restingTrack?.play()
+        beginRest(game, campingActor, camping)
+    } else {
+        completeDailyPreparations(game, campingActor, camping)
+    }
+}

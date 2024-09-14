@@ -4,7 +4,7 @@ import at.posselt.pfrpg.actor.npcs
 import at.posselt.pfrpg.camping.ActorMeal
 import at.posselt.pfrpg.camping.CampingData
 import at.posselt.pfrpg.camping.CampingSkill
-import at.posselt.pfrpg.camping.dialogs.CombatTrack
+import at.posselt.pfrpg.camping.dialogs.Track
 import at.posselt.pfrpg.camping.getDefaultCamping
 import at.posselt.pfrpg.combattracks.getCombatTrack
 import at.posselt.pfrpg.combattracks.setCombatTrack
@@ -15,12 +15,12 @@ import at.posselt.pfrpg.utils.typeSafeUpdate
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2ENpc
 
-private fun migrateCombatTrack(game: Game, combatTrack: dynamic): CombatTrack? {
+private fun migrateCombatTrack(game: Game, combatTrack: dynamic): Track? {
     val trackName = combatTrack["name"].unsafeCast<String?>()
     return trackName
         ?.let { game.playlists.getName(it) }
         ?.uuid
-        ?.let { CombatTrack(playlistUuid = it) }
+        ?.let { Track(playlistUuid = it) }
 }
 
 private val structureNamesToMigrate = setOf(

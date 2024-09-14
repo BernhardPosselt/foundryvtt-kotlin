@@ -59,10 +59,11 @@
                     id="km-camping-rest"
                     type="button"
                     data-action="rest"
-                    title="Rest & Daily Preparations: {{restDuration}}h"
+                    title="Rest & Daily Preparations: {{#if
+                            restDurationLeft}}{{restDurationLeft}}{{else}}{{restDuration}}{{/if}}h"
             >
                 {{#if restDurationleft}}
-                    <span>Continue ({{restDurationleft}}) </span><i class="fa-solid fa-bed"></i>
+                    <span>Continue </span><i class="fa-solid fa-bed"></i>
                 {{else}}
                     <span>Rest</span><i
                         class="fa-solid fa-bed"></i>

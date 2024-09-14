@@ -23,6 +23,8 @@ external interface Hp : MaxValue {
     var temp: Int
 }
 
+fun Hp.damage(): Int = max - value
+
 @JsPlainObject
 external interface Xp : MinMaxValue {
     var pct: Int
@@ -99,6 +101,17 @@ external interface PF2ECharacterSystem {
     var saves: Saves
 }
 
+@JsPlainObject
+external interface HitPoints {
+    val value: Int
+    val max: Int
+    val temp: Int
+    val unrecoverable: Int
+    val negativeHealing: Boolean
+    val recoveryMultiplier: Int
+    val recoveryAddend: Int
+}
+
 // required to make instance of work, but since the classes are not registered here
 // at page load, we can't use @file:JsQualifier
 @JsName("CONFIG.PF2E.Actor.documentClasses.character")
@@ -110,6 +123,7 @@ external class PF2ECharacter : PF2EActor, PF2ECreature {
     override fun update(data: AnyObject, operation: DatabaseUpdateOperation): Promise<PF2ECharacter?>
 
     val abilities: Abilities
+    val hitPoints: HitPoints
     override val skills: ReadonlyRecord<String, PF2EAttribute>
     val system: PF2ECharacterSystem
 }

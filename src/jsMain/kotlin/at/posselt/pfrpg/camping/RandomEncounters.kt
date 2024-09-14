@@ -1,5 +1,6 @@
 package at.posselt.pfrpg.camping
 
+import at.posselt.pfrpg.actor.party
 import at.posselt.pfrpg.camping.dialogs.RegionSetting
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg.data.checks.RollMode
@@ -14,18 +15,21 @@ suspend fun rollRandomEncounter(
     game: Game,
     actor: PF2ENpc,
     includeFlatCheck: Boolean
-) {
+): Boolean {
     actor.getCamping()?.let { camping ->
         val currentRegion = camping.findCurrentRegion() ?: camping.regionSettings.regions.firstOrNull()
         currentRegion?.let { region ->
+            val partyLevel = game.party()?.level ?: 1
             rollRandomEncounter(
                 camping = camping,
                 includeFlatCheck = includeFlatCheck,
                 region = region,
                 isDay = game.getPF2EWorldTime().time.isDay(),
+                partyLevel = partyLevel,
             )
         }
     }
+    return false
 }
 
 private suspend fun rollRandomEncounter(
@@ -33,11 +37,12 @@ private suspend fun rollRandomEncounter(
     includeFlatCheck: Boolean,
     region: RegionSetting,
     isDay: Boolean,
-) {
+    partyLevel: Int,
+): Boolean {
     val table = region.rollTableUuid?.let { fromUuidTypeSafe<RollTable>(it) }
     if (table == null) {
         ui.notifications.error("Could not find random encounter roll table for region ${region.name}")
-        return
+        return false
     }
     val rollMode = fromCamelCase<RollMode>(camping.randomEncounterRollMode) ?: RollMode.GMROLL
     val proxyTable = camping.proxyRandomEncounterTableUuid?.let { fromUuidTypeSafe<RollTable>(it) }
@@ -62,7 +67,18 @@ private suspend fun rollRandomEncounter(
         if (proxyResult == "Creature") {
             table.rollWithDraw(rollMode = rollMode)
         }
+        if (camping.campingActivities.any {
+                val result = it.parseResult()
+                it.isPrepareCamp() && result != null && result != DegreeOfSuccess.CRITICAL_FAILURE
+            }) {
+            postCombatEffects(
+                activeActivities = camping.alwaysPerformActivities.toSet() + camping.campingActivities.map { it.activity },
+                partyLevel = partyLevel
+            )
+        }
+        return true
     }
+    return false
 }
 
 fun findEncounterDcModifier(

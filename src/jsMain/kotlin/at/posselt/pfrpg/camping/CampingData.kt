@@ -1,7 +1,7 @@
 package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.Config
-import at.posselt.pfrpg.camping.dialogs.CombatTrack
+import at.posselt.pfrpg.camping.dialogs.Track
 import at.posselt.pfrpg.camping.dialogs.RegionSetting
 import at.posselt.pfrpg.camping.dialogs.RegionSettings
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
@@ -70,8 +70,7 @@ external interface CampingData {
     var minimumTravelSpeed: Int?
     var regionSettings: RegionSettings
     var section: String
-    var restingPlaylistUuid: String?
-    var restingPlaylistSoundUuid: String?
+    var restingTrack: Track?
     var worldSceneId: String?
 }
 
@@ -166,8 +165,7 @@ fun getDefaultCamping(game: Game): CampingData {
         randomEncounterRollMode = "gmroll",
         section = "prepareCampsite",
         alwaysPerformActivities = emptyArray(),
-        restingPlaylistSoundUuid = null,
-        restingPlaylistUuid = null,
+        restingTrack = null,
         regionSettings = RegionSettings(
             regions = arrayOf(
                 RegionSetting(
@@ -175,7 +173,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 14,
                     encounterDc = 12,
                     level = 0,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = shrikeHills),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = shrikeHills),
                     terrain = Terrain.HILLS.toCamelCase(),
                 ),
                 RegionSetting(
@@ -183,7 +181,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 15,
                     encounterDc = 12,
                     level = 1,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = shrikeHills),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = shrikeHills),
                     terrain = Terrain.PLAINS.toCamelCase(),
                     rollTableUuid = rolltableUuids[0],
                 ),
@@ -192,7 +190,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 16,
                     encounterDc = 14,
                     level = 2,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = shrikeHills),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = shrikeHills),
                     terrain = Terrain.FOREST.toCamelCase(),
                     rollTableUuid = rolltableUuids[1],
                 ),
@@ -201,7 +199,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 18,
                     encounterDc = 12,
                     level = 3,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.FOREST.toCamelCase(),
                     rollTableUuid = rolltableUuids[2],
                 ),
@@ -210,7 +208,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 19,
                     encounterDc = 12,
                     level = 4,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.HILLS.toCamelCase(),
                     rollTableUuid = rolltableUuids[3],
                 ),
@@ -219,7 +217,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 20,
                     encounterDc = 14,
                     level = 5,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = narlmarches),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = narlmarches),
                     terrain = Terrain.FOREST.toCamelCase(),
                     rollTableUuid = rolltableUuids[4],
                 ),
@@ -228,7 +226,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 20,
                     encounterDc = 12,
                     level = 6,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.HILLS.toCamelCase(),
                     rollTableUuid = rolltableUuids[5],
                 ),
@@ -237,7 +235,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 18,
                     encounterDc = 12,
                     level = 7,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = dunsward),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = dunsward),
                     terrain = Terrain.PLAINS.toCamelCase(),
                     rollTableUuid = rolltableUuids[6],
                 ),
@@ -246,7 +244,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 24,
                     encounterDc = 12,
                     level = 8,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = dunsward),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = dunsward),
                     terrain = Terrain.HILLS.toCamelCase(),
                     rollTableUuid = rolltableUuids[7],
                 ),
@@ -255,7 +253,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 28,
                     encounterDc = 16,
                     level = 9,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = dunsward),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = dunsward),
                     terrain = Terrain.MOUNTAIN.toCamelCase(),
                     rollTableUuid = rolltableUuids[8],
                 ),
@@ -264,7 +262,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 32,
                     encounterDc = 14,
                     level = 10,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = narlmarches),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = narlmarches),
                     terrain = Terrain.SWAMP.toCamelCase(),
                     rollTableUuid = rolltableUuids[9],
                 ),
@@ -273,7 +271,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 28,
                     encounterDc = 12,
                     level = 11,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.PLAINS.toCamelCase(),
                     rollTableUuid = rolltableUuids[10],
                 ),
@@ -282,7 +280,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 28,
                     encounterDc = 12,
                     level = 12,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.HILLS.toCamelCase(),
                     rollTableUuid = rolltableUuids[11],
                 ),
@@ -291,7 +289,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 26,
                     encounterDc = 12,
                     level = 13,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = shrikeHills),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = shrikeHills),
                     terrain = Terrain.PLAINS.toCamelCase(),
                     rollTableUuid = rolltableUuids[12],
                 ),
@@ -300,7 +298,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 30,
                     encounterDc = 12,
                     level = 14,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.PLAINS.toCamelCase(),
                     rollTableUuid = rolltableUuids[13],
                 ),
@@ -309,7 +307,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 29,
                     encounterDc = 12,
                     level = 15,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = capital),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = capital),
                     terrain = Terrain.PLAINS.toCamelCase(),
                     rollTableUuid = rolltableUuids[14],
                 ),
@@ -318,7 +316,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 35,
                     encounterDc = 12,
                     level = 16,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.HILLS.toCamelCase(),
                     rollTableUuid = rolltableUuids[15],
                 ),
@@ -327,7 +325,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 36,
                     encounterDc = 12,
                     level = 17,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.HILLS.toCamelCase(),
                     rollTableUuid = rolltableUuids[16],
                 ),
@@ -336,7 +334,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 43,
                     encounterDc = 14,
                     level = 18,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = firstWorld),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = firstWorld),
                     terrain = Terrain.FOREST.toCamelCase(),
                     rollTableUuid = rolltableUuids[17],
                 ),
@@ -345,7 +343,7 @@ fun getDefaultCamping(game: Game): CampingData {
                     zoneDc = 41,
                     encounterDc = 16,
                     level = 19,
-                    combatTrack = CombatTrack(playlistUuid = playlistUuid, trackUuid = glenebon),
+                    combatTrack = Track(playlistUuid = playlistUuid, trackUuid = glenebon),
                     terrain = Terrain.MOUNTAIN.toCamelCase(),
                     rollTableUuid = rolltableUuids[18],
                 ),
@@ -381,8 +379,13 @@ fun CampingData.getAllRecipes(): Array<RecipeData> {
         .toTypedArray() + cooking.homebrewMeals
 }
 
-fun CampingData.canPerformActivities() =
-    campingActivities.find { it.isPrepareCamp() }?.result != DegreeOfSuccess.CRITICAL_FAILURE.toCamelCase()
+fun CampingData.canPerformActivities(): Boolean {
+    val prepareCampResult = campingActivities
+        .find { it.isPrepareCamp() }
+        ?.result
+        ?.let { fromCamelCase<DegreeOfSuccess>(it) }
+    return prepareCampResult != null && prepareCampResult != DegreeOfSuccess.CRITICAL_FAILURE
+}
 
 fun CampingData.findCurrentRegion(): RegionSetting? =
     regionSettings.regions.find { it.name == currentRegion }

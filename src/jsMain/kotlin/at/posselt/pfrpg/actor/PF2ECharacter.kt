@@ -52,3 +52,6 @@ suspend fun openActor(uuid: String) {
         ?.sheet
         ?.render(true)
 }
+
+fun PF2EActor.getEffectNames() =
+    itemTypes.effect.mapNotNull { it.name }.toSet()
