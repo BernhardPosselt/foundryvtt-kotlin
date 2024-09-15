@@ -1,7 +1,6 @@
 package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.actor.getLoreAttributes
-import at.posselt.pfrpg.camping.getLoreSkills
 import at.posselt.pfrpg.data.actor.*
 import at.posselt.pfrpg.data.actor.Attribute
 import at.posselt.pfrpg.data.checks.DegreeOfSuccess
@@ -59,7 +58,7 @@ external interface CampingActivityData {
     var criticalFailure: ActivityOutcome?
 }
 
-fun CampingActivityData.isPrepareCamp() =
+fun CampingActivityData.isPrepareCampsite() =
     name == "Prepare Campsite"
 
 fun CampingActivityData.isHuntAndGather() =
@@ -108,7 +107,7 @@ data class ActivityAndData(
                 || result.checkPerformed()
     }
 
-    fun isPrepareCamp() = data.isPrepareCamp()
+    fun isPrepareCamp() = data.isPrepareCampsite()
 
     fun isNotPrepareCamp() = !isPrepareCamp()
 }

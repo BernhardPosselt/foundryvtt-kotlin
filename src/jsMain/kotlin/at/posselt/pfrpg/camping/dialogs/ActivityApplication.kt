@@ -139,6 +139,7 @@ class ActivityApplication(
     template = "components/forms/application-form.hbs",
     debug = true,
     dataModel = ActivityDataModel::class.js,
+    id = "kmActivity"
 ) {
     private val editActivityName = data?.name
     private val editActivityLocked = data?.isLocked

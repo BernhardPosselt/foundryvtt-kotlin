@@ -104,6 +104,7 @@ class RegionConfig(
     template = "applications/settings/configure-regions.hbs",
     dataModel = RegionSettingsDataModel::class.js,
     debug = true,
+    id = "kmRegions"
 ) {
     private var currentSettings = actor.getCamping()!!.regionSettings
 

@@ -97,7 +97,7 @@ fun CampingActivity.parseResult() =
 fun CampingActivity.checkPerformed() =
     result != null && actorUuid != null
 
-fun CampingActivity.isPrepareCamp() =
+fun CampingActivity.isPrepareCampsite() =
     activity == "Prepare Campsite"
 
 enum class CampingSheetSection {
@@ -381,7 +381,7 @@ fun CampingData.getAllRecipes(): Array<RecipeData> {
 
 fun CampingData.canPerformActivities(): Boolean {
     val prepareCampResult = campingActivities
-        .find { it.isPrepareCamp() }
+        .find { it.isPrepareCampsite() }
         ?.result
         ?.let { fromCamelCase<DegreeOfSuccess>(it) }
     return prepareCampResult != null && prepareCampResult != DegreeOfSuccess.CRITICAL_FAILURE

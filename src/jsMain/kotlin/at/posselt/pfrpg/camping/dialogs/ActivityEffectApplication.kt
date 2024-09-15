@@ -78,6 +78,7 @@ class ActivityEffectApplication(
     debug = true,
     dataModel = ActivityEffectDataModel::class.js,
     width = 400,
+    id = "kmActivityEffect"
 ) {
     var currentActivityEffect: ActivityEffect? = data?.let(::deepClone)
 

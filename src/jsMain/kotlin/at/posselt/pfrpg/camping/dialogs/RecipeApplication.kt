@@ -194,6 +194,7 @@ class RecipeApplication(
     template = "components/forms/application-form.hbs",
     debug = true,
     dataModel = RecipeDataModel::class.js,
+    id = "kmRecipe"
 ) {
     private val editRecipeName = recipe?.name
     private var currentRecipe: RecipeData? = recipe

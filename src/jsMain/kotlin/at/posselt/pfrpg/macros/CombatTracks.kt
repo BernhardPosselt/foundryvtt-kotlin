@@ -46,6 +46,7 @@ private class CombatTrackApplication(
 ) : FormApp<CombatTrackContext, CombatTrackData>(
     title = "Set Combat Track: ${actor?.name ?: scene.name}",
     template = "components/forms/application-form.hbs",
+    id = "kmCombatTrack",
 ) {
     var combatTrack: Track? = if (actor == null) {
         scene.getCombatTrack()

@@ -209,7 +209,7 @@ private fun checkPrepareCampsiteResult(result: DegreeOfSuccess?): PrepareCampsit
 private fun prepareCampsiteChanged(activityStateChanged: List<ActivityChange>) =
     activityStateChanged
         .map { it.new }
-        .find { it.isPrepareCamp() }
+        .find { it.isPrepareCampsite() }
 
 fun registerActivityDiffingHooks(game: Game, dispatcher: ActionDispatcher) {
     Hooks.onPreUpdateActor { actor, update, _, _ ->

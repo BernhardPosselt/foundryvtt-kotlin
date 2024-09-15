@@ -72,6 +72,7 @@ class FavoriteMealsApplication(
     template = "components/forms/application-form.hbs",
     debug = true,
     dataModel = RecipeDataModel::class.js,
+    id = "kmFavoriteMeals"
 ) {
     private var meals: List<FavoriteMealChoice> = actor.getCamping()?.let {
         it.cooking.actorMeals.map { actorMeal ->

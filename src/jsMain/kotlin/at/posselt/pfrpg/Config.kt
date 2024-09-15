@@ -17,7 +17,7 @@ object Config {
     }
 
     object regions {
-        const val defaultRegion = "Rostland Hinterlands"
+        const val defaultRegion = "Zone 00"
     }
 
     object kingmakerModule {

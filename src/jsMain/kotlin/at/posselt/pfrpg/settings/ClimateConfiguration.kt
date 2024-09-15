@@ -90,6 +90,7 @@ class ClimateConfiguration : FormApp<ClimateSettingsContext, ClimateSettings>(
     template = "applications/settings/configure-climate.hbs",
     debug = true,
     dataModel = ClimateConfigurationDataModel::class.js,
+    id = "kmClimate",
 ) {
     private var currentSettings = game.settings.pfrpg2eKingdomCampingWeather.getClimateSettings()
 

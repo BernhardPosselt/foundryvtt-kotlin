@@ -19,6 +19,7 @@ class ManageActivitiesApplication(
 ) : CrudApplication(
     title = "Manage Activities",
     debug = true,
+    id = "kmManageActivities"
 ) {
     override fun deleteEntry(id: String) = buildPromise {
         actor.getCamping()?.let { camping ->
@@ -68,6 +69,7 @@ class ManageActivitiesApplication(
                             value = enabled,
                             label = "Enable",
                             hideLabel = true,
+                            disabled = activity.isPrepareCampsite(),
                             name = "enabledIds.$name",
                         ).toContext(),
                         canBeEdited = canBeEdited,
@@ -82,7 +84,7 @@ class ManageActivitiesApplication(
     }
 
     override fun onParsedSubmit(value: CrudData): Promise<Void> = buildPromise {
-        val enabled = value.enabledIds.toSet()
+        val enabled = value.enabledIds.toSet() + "Prepare Campsite"
         actor.getCamping()?.let { camping ->
             camping.lockedActivities = camping.getAllActivities()
                 .filter { !enabled.contains(it.name) }

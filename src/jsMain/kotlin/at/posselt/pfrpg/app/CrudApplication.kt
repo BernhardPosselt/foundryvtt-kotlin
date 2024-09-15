@@ -47,6 +47,7 @@ external interface CrudData {
 
 abstract class CrudApplication(
     title: String,
+    id: String,
     width: Int? = undefined,
     debug: Boolean = false,
 ) : FormApp<CrudTemplateContext, CrudData>(
@@ -57,6 +58,7 @@ abstract class CrudApplication(
     closeOnSubmit = true,
     scrollable = arrayOf(".window-content"),
     debug = debug,
+    id = id,
 ) {
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {

@@ -131,6 +131,7 @@ class Migration10 : Migration(10) {
                 chosenMeal = "nothing"
             )
         }.toTypedArray()
+        camping.currentRegion = "Zone 00"
     }
 
     override suspend fun migrateKingdom(game: Game, kingdom: KingdomData) {

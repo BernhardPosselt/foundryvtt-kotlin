@@ -126,6 +126,8 @@ class CampingSettingsApplication(
     template = "components/forms/application-form.hbs",
     debug = true,
     dataModel = CampingSettingsDataModel::class.js,
+    id = "kmCampingSettings",
+    width = 600,
 ) {
     var settings: CampingSettings
 

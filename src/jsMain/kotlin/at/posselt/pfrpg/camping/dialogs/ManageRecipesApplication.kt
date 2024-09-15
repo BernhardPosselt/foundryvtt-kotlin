@@ -11,9 +11,12 @@ import at.posselt.pfrpg.camping.getCamping
 import at.posselt.pfrpg.camping.getCompendiumFoodItems
 import at.posselt.pfrpg.camping.getTotalCarriedFood
 import at.posselt.pfrpg.camping.setCamping
+import at.posselt.pfrpg.utils.asSequence
 import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.buildUuid
 import at.posselt.pfrpg.utils.launch
+import at.posselt.pfrpg.utils.toMutableRecord
+import at.posselt.pfrpg.utils.toRecord
 import at.posselt.pfrpg.utils.tpl
 import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
@@ -28,6 +31,7 @@ class ManageRecipesApplication(
     private val game: Game,
     private val actor: PF2ENpc,
 ) : CrudApplication(
+    id = "kmManageRecipes",
     title = "Manage Recipes",
     debug = true,
 ) {
@@ -35,6 +39,9 @@ class ManageRecipesApplication(
         actor.getCamping()?.let { camping ->
             camping.cooking.knownRecipes = camping.cooking.knownRecipes.filter { it != id }.toTypedArray()
             camping.cooking.homebrewMeals = camping.cooking.homebrewMeals.filter { it.name != id }.toTypedArray()
+            camping.cooking.actorMeals.forEach { if (it.chosenMeal == id) it.chosenMeal = "nothing" }
+            camping.cooking.results =
+                camping.cooking.results.asSequence().filter { it.component1() != id }.toMutableRecord()
             actor.setCamping(camping)
             render()
         }
@@ -108,7 +115,12 @@ class ManageRecipesApplication(
     override fun onParsedSubmit(value: CrudData): Promise<Void> = buildPromise {
         console.log("saving", value)
         actor.getCamping()?.let { camping ->
-            camping.cooking.knownRecipes = value.enabledIds + arrayOf("Hearty Meal", "Basic Meal")
+            val enabledRecipes = value.enabledIds + arrayOf("Hearty Meal", "Basic Meal")
+            camping.cooking.knownRecipes = enabledRecipes
+            camping.cooking.actorMeals.forEach { if (it.chosenMeal !in enabledRecipes) it.chosenMeal = "nothing" }
+            camping.cooking.results = camping.cooking.results.asSequence()
+                .filter { it.component1() in enabledRecipes }
+                .toMutableRecord()
             actor.setCamping(camping)
         }
         undefined

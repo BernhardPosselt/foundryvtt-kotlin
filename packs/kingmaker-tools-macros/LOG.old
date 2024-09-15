@@ -1,20 +1,3 @@
-2024/09/10-11:39:41.434813 739e0b6006c0 Recovering log #1358
-2024/09/10-11:39:41.459292 739e0b6006c0 Delete type=0 #1358
-2024/09/10-11:39:41.459345 739e0b6006c0 Delete type=3 #1357
-2024/09/10-13:57:34.043284 739e000006c0 Level-0 table #1362: started
-2024/09/10-13:57:34.043308 739e000006c0 Level-0 table #1362: 0 bytes OK
-2024/09/10-13:57:34.055887 739e000006c0 Delete type=0 #1360
-2024/09/10-13:57:34.075962 739e000006c0 Manual compaction at level-0 from '!macros!0NhBWcZQf1GHp73f' @ 72057594037927935 : 1 .. '!macros!tsqRp4OXdkrzRajS' @ 0 : 0; will stop at '!macros!0NhBWcZQf1GHp73f' @ 157 : 1
-2024/09/10-13:57:34.075970 739e000006c0 Compacting 1@0 + 0@1 files
-2024/09/10-13:57:34.082302 739e000006c0 Generated table #1363@0: 1 keys, 633 bytes
-2024/09/10-13:57:34.082315 739e000006c0 Compacted 1@0 + 0@1 files => 633 bytes
-2024/09/10-13:57:34.094655 739e000006c0 compacted to: files[ 0 1 1 0 0 0 0 ]
-2024/09/10-13:57:34.094722 739e000006c0 Delete type=2 #1335
-2024/09/10-13:57:34.149560 739e000006c0 Manual compaction at level-0 from '!macros!0NhBWcZQf1GHp73f' @ 157 : 1 .. '!macros!tsqRp4OXdkrzRajS' @ 0 : 0; will stop at (end)
-2024/09/10-13:57:34.149597 739e000006c0 Manual compaction at level-1 from '!macros!0NhBWcZQf1GHp73f' @ 72057594037927935 : 1 .. '!macros!tsqRp4OXdkrzRajS' @ 0 : 0; will stop at '!macros!0NhBWcZQf1GHp73f' @ 157 : 1
-2024/09/10-13:57:34.149602 739e000006c0 Compacting 1@1 + 0@2 files
-2024/09/10-13:57:34.155923 739e000006c0 Generated table #1364@1: 1 keys, 633 bytes
-2024/09/10-13:57:34.155937 739e000006c0 Compacted 1@1 + 0@2 files => 633 bytes
-2024/09/10-13:57:34.168244 739e000006c0 compacted to: files[ 0 0 2 0 0 0 0 ]
-2024/09/10-13:57:34.168310 739e000006c0 Delete type=2 #1363
-2024/09/10-13:57:34.294992 739e000006c0 Manual compaction at level-1 from '!macros!0NhBWcZQf1GHp73f' @ 157 : 1 .. '!macros!tsqRp4OXdkrzRajS' @ 0 : 0; will stop at (end)
+2024/09/15-12:09:24.488016 7ff3640006c0 Recovering log #1366
+2024/09/15-12:09:24.507583 7ff3640006c0 Delete type=0 #1366
+2024/09/15-12:09:24.507662 7ff3640006c0 Delete type=3 #1365

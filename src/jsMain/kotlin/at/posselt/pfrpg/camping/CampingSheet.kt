@@ -201,7 +201,7 @@ class CampingSheet(
 ) : FormApp<CampingSheetContext, CampingSheetFormData>(
     title = "Camping",
     template = "applications/camping/camping-sheet.hbs",
-    id = "km-camping-sheet",
+    id = "kmCamping",
     width = windowWidth,
     classes = arrayOf("km-camping-sheet"),
     controls = arrayOf(
@@ -395,7 +395,7 @@ class CampingSheet(
 
         // preparing check removes all meal effects; note that this is prone to races
         // when prepare camp would receive meal bonuses which technically shouldn't happen
-        if (activity.isPrepareCamp()) {
+        if (activity.isPrepareCampsite()) {
             dispatcher.dispatch(emptyActionMessage("clearMealEffects"))
             postChatMessage("Preparing Campsite, removing all existing Meal Effects")
             val existingCampingResult = camping.worldSceneId?.let { findExistingCampsiteResult(game, it) }
@@ -432,7 +432,7 @@ class CampingSheet(
                     recipe = recipe,
                     degreeOfSuccess = result,
                 )
-            } else if (activity.isPrepareCamp()) {
+            } else if (activity.isPrepareCampsite()) {
                 postPassTimeMessage("Preparing a new campsite", 2)
             }
         }
@@ -459,7 +459,7 @@ class CampingSheet(
 
     private suspend fun resetActivities() {
         actor.getCamping()?.let { camping ->
-            camping.campingActivities = camping.campingActivities.filter { it.isPrepareCamp() }.toTypedArray()
+            camping.campingActivities = camping.campingActivities.filter { it.isPrepareCampsite() }.toTypedArray()
             actor.setCamping(camping)
         }
     }

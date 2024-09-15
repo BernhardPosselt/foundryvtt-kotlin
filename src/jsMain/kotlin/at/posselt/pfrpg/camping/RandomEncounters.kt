@@ -69,7 +69,7 @@ private suspend fun rollRandomEncounter(
         }
         if (camping.campingActivities.any {
                 val result = it.parseResult()
-                it.isPrepareCamp() && result != null && result != DegreeOfSuccess.CRITICAL_FAILURE
+                it.isPrepareCampsite() && result != null && result != DegreeOfSuccess.CRITICAL_FAILURE
             }) {
             postCombatEffects(
                 activeActivities = camping.alwaysPerformActivities.toSet() + camping.campingActivities.map { it.activity },
