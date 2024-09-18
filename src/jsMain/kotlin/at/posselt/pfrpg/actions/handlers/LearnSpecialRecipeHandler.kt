@@ -49,18 +49,12 @@ class LearnSpecialRecipeHandler(
                 actor.applyConsumptionMealEffects(recipe.criticalFailure)
             }
             val actors = camping.getActorsInCamp()
-            val leftOver = reduceFoodBy(actors, foodAmount = cost, foodItems = getCompendiumFoodItems())
+            reduceFoodBy(actors, foodAmount = cost, foodItems = getCompendiumFoodItems())
             if (degreeOfSuccess.succeeded()) {
                 camping.cooking.knownRecipes = (camping.cooking.knownRecipes + recipeName).distinct().toTypedArray()
                 campingActor.setCamping(camping)
             }
-            postChatTemplate(
-                templatePath = "chatmessages/learned-recipe.hbs",
-                templateContext = recordOf(
-                    "name" to recipeName,
-                    "enoughIngredients" to leftOver.isEmpty(),
-                )
-            )
+            postChatTemplate("Learned recipe $recipeName")
         }
     }
 }

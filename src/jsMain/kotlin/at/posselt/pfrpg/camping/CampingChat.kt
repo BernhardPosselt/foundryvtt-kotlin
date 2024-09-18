@@ -3,6 +3,7 @@ package at.posselt.pfrpg.camping
 import at.posselt.pfrpg.Config
 import at.posselt.pfrpg.actions.ActionMessage
 import at.posselt.pfrpg.actions.ActionDispatcher
+import at.posselt.pfrpg.actions.handlers.ApplyMealEffects
 import at.posselt.pfrpg.actions.handlers.LearnSpecialRecipeData
 import at.posselt.pfrpg.data.checks.RollMode
 import at.posselt.pfrpg.utils.bindChatClick
@@ -81,6 +82,23 @@ fun bindCampingChatEventListeners(game: Game, dispatcher: ActionDispatcher) {
         )
         buildPromise {
             dispatcher.dispatch(action)
+        }
+    }
+    bindChatClick(".km-apply-meal-effect") { _, el ->
+        val degree = el.dataset["degree"]
+        val recipe = el.dataset["recipe"]
+        if (degree != null && recipe != null) {
+            buildPromise {
+                dispatcher.dispatch(
+                    ActionMessage(
+                        action = "applyMealEffects",
+                        data = ApplyMealEffects(
+                            degree = degree,
+                            recipe = recipe,
+                        ).unsafeCast<AnyObject>()
+                    )
+                )
+            }
         }
     }
 }

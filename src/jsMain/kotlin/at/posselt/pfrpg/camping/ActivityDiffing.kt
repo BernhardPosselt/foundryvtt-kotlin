@@ -39,7 +39,6 @@ private data class ActivityChange(
 private const val homebrewPath = "flags.${Config.moduleId}.camping-sheet.homebrewCampingActivities"
 private const val alwaysPerformPath = "flags.${Config.moduleId}.camping-sheet.alwaysPerformActivities"
 private const val campingActivitiesPath = "flags.${Config.moduleId}.camping-sheet.campingActivities"
-private const val campingPositionsPath = "flags.${Config.moduleId}.camping-sheet.campingPositions"
 
 private val settingAttributes = setOf(
     homebrewPath,
@@ -52,7 +51,7 @@ private val listenForAttributeChanges = mapOf(
     alwaysPerformPath to ::alwaysPerformActivitiesChanged,
 )
 
-private fun doObjectArraysDiffer(source: List<AnyObject>, target: List<AnyObject>): Boolean {
+fun doObjectArraysDiffer(source: List<AnyObject>, target: List<AnyObject>): Boolean {
     return source.size != target.size ||
             (source.asSequence() zip target.asSequence())
                 .any { (first, second) ->

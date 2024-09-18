@@ -417,13 +417,11 @@ class CampingSheet(
             .filterIsInstance<MealChoice.Rations>()
             .map { it.cookingCost }
             .sum()
-        val leftOver = reduceFoodBy(
+        reduceFoodBy(
             camping.getActorsInCamp(),
             foodAmount = rations,
-            foodItems = getCompendiumFoodItems()
+            foodItems = getCompendiumFoodItems(),
         )
-        val postfix = if (leftOver.isEmpty()) "" else ", missing ${leftOver.rations}"
-        postChatMessage("Consuming ${rations.rations} rations$postfix")
     }
 
     private suspend fun rollRecipeCheck(recipeName: String) {

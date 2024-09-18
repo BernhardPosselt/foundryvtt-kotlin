@@ -9,6 +9,7 @@ import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.buildUpdate
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.fromUuidsTypeSafe
+import at.posselt.pfrpg.utils.postChatMessage
 import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.roll
 import at.posselt.pfrpg.utils.typeSafeUpdate
@@ -203,6 +204,15 @@ suspend fun PF2ECharacter.applyConsumptionMealEffects(outcome: CookingOutcome) {
     applyMealHealEffects(applicableHealEffects)
 }
 
+suspend fun applyConsumptionMealEffects(
+    actors: List<PF2EActor>,
+    outcome: CookingOutcome
+) = coroutineScope {
+    actors
+        .filterIsInstance<PF2ECharacter>()
+        .map { async { it.applyConsumptionMealEffects(outcome) } }
+        .awaitAll()
+}
 
 suspend fun applyRestHealEffects(
     actors: List<PF2EActor>,
@@ -436,10 +446,29 @@ fun calculateCharges(
     )
 }
 
-suspend fun reduceFoodBy(actors: List<PF2EActor>, foodAmount: FoodAmount, foodItems: FoodItems): FoodAmount {
+suspend fun reduceFoodBy(
+    actors: List<PF2EActor>,
+    foodAmount: FoodAmount,
+    foodItems: FoodItems,
+    postMessage: Boolean = true,
+): FoodAmount {
     var leftOver = foodAmount
     actors.forEach { actor ->
         leftOver = actor.reduceFoodBy(foodAmount = leftOver, foodItems = foodItems)
+    }
+    if (postMessage) {
+        postChatTemplate(
+            templatePath = "chatmesssages/consume-food.hbs",
+            templateContext = recordOf(
+                "missing" to !leftOver.isEmpty(),
+                "rations" to foodAmount.rations,
+                "specialIngredients" to foodAmount.specialIngredients,
+                "basicIngredients" to foodAmount.basicIngredients,
+                "missingRations" to leftOver.rations,
+                "missingSpecialIngredients" to leftOver.specialIngredients,
+                "missingBasicIngredients" to leftOver.basicIngredients,
+            ),
+        )
     }
     return leftOver
 }

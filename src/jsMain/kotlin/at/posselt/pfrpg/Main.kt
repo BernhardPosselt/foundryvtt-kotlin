@@ -2,6 +2,7 @@ package at.posselt.pfrpg
 
 import at.posselt.pfrpg.actions.ActionDispatcher
 import at.posselt.pfrpg.actions.handlers.AddHuntAndGatherResultHandler
+import at.posselt.pfrpg.actions.handlers.ApplyMealEffectsHandler
 import at.posselt.pfrpg.actions.handlers.ClearActivitiesHandler
 import at.posselt.pfrpg.actions.handlers.ClearMealEffectsHandler
 import at.posselt.pfrpg.actions.handlers.LearnSpecialRecipeHandler
@@ -11,6 +12,7 @@ import at.posselt.pfrpg.actor.partyMembers
 import at.posselt.pfrpg.camping.bindCampingChatEventListeners
 import at.posselt.pfrpg.camping.openCampingSheet
 import at.posselt.pfrpg.camping.registerActivityDiffingHooks
+import at.posselt.pfrpg.camping.registerMealDiffingHooks
 import at.posselt.pfrpg.combattracks.registerCombatTrackHooks
 import at.posselt.pfrpg.firstrun.showFirstRunMessage
 import at.posselt.pfrpg.macros.*
@@ -33,6 +35,7 @@ fun main() {
                 SyncActivitiesHandler(game = game),
                 ClearMealEffectsHandler(game = game),
                 LearnSpecialRecipeHandler(game = game),
+                ApplyMealEffectsHandler(game = game),
             )
         ).apply {
             listen()
@@ -68,6 +71,7 @@ fun main() {
             registerWeatherHooks(game)
             registerCombatTrackHooks(game)
             registerActivityDiffingHooks(game, actionDispatcher)
+            registerMealDiffingHooks()
         }
 
         game.pf2eKingmakerTools = Pfrpg2eKingdomCampingWeather(
