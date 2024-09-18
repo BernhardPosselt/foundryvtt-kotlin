@@ -4,20 +4,7 @@
   "isLocked": false,
   "isSecret": false,
   "isHomebrew": false,
-  "skills": [
-    {
-      "name": "cooking",
-      "proficiency": "untrained",
-      "dcType": "none",
-      "validateOnly": true
-    },
-    {
-      "name": "survival",
-      "proficiency": "untrained",
-      "dcType": "none",
-      "validateOnly": true
-    }
-  ],
+  "skills": [],
   "criticalSuccess": {
     "message": "The character gains the recipe’s listed critical success effect."
   },

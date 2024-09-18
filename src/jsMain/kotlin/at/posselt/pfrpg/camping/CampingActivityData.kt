@@ -58,6 +58,9 @@ external interface CampingActivityData {
     var criticalFailure: ActivityOutcome?
 }
 
+fun CampingActivityData.isCookMeal() =
+    name == "Cook Meal"
+
 fun CampingActivityData.isPrepareCampsite() =
     name == "Prepare Campsite"
 
@@ -91,11 +94,11 @@ enum class DcType {
 
 data class ParsedCampingSkill(
     val attribute: Attribute,
-    val proficiency: Proficiency,
+    val proficiency: Proficiency = Proficiency.UNTRAINED,
     val dcType: DcType,
     val dc: Int?,
-    val validateOnly: Boolean,
-    val required: Boolean,
+    val validateOnly: Boolean = false,
+    val required: Boolean = false,
 )
 
 data class ActivityAndData(
@@ -106,6 +109,8 @@ data class ActivityAndData(
         return (data.doesNotRequireACheck() && result.actorUuid != null)
                 || result.checkPerformed()
     }
+
+    fun isCookMeal() = data.isCookMeal()
 
     fun isPrepareCamp() = data.isPrepareCampsite()
 

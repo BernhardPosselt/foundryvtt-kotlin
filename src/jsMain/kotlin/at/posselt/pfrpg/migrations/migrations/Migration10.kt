@@ -88,7 +88,7 @@ class Migration10 : Migration(10) {
         }.toTypedArray()
         camping.section = "prepareCampsite"
         val homebrewCampingActivities = camping.homebrewCampingActivities.unsafeCast<Array<dynamic>>()
-        val newSkills: Map<String, Array<CampingSkill>> = homebrewCampingActivities.map { activity ->
+        val newSkills: Map<String, Array<CampingSkill>> = homebrewCampingActivities.associate { activity ->
             val activityName = activity.name as String
             val dc = parseDcValue(activity)
             val dcType = parseDcType(activity)
@@ -113,7 +113,7 @@ class Migration10 : Migration(10) {
                     )
                 }
             }
-        }.toMap()
+        }
         camping.homebrewCampingActivities.forEach { activity ->
             activity.skills = newSkills[activity.name] ?: emptyArray<CampingSkill>()
         }
@@ -131,6 +131,7 @@ class Migration10 : Migration(10) {
                 chosenMeal = "nothing"
             )
         }.toTypedArray()
+        camping.cooking.results = emptyArray()
         camping.currentRegion = "Zone 00"
     }
 

@@ -296,7 +296,7 @@ class ActivityApplication(
                             label = "Name",
                             name = "name",
                             disabled = editActivityName != null,
-                            value = currentActivity.name ?: "",
+                            value = currentActivity.name,
                             required = true,
                             help = "To override an existing activity, use the same name",
                         ),

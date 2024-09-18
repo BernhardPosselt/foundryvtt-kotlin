@@ -35,18 +35,13 @@
             {{/if}}
             {{#if requiresCheck}}
                 <div class="km-camping-tile-check">
-                    <select aria-label="Selected Skill" required="" class="km-proficiency">
-                        <option class="km-proficiency-untrained" value="survival" selected="">Survival</option>
-                        <option class="km-proficiency-untrained" value="cooking" selected="">Cooking</option>
-                    </select>
+                    {{> formElement skills }}
                     <button class="km-camping-action km-tile-check" data-action="roll-recipe-check" type="button">
                         <i class="fa-solid fa-dice-d20"></i>
                     </button>
                 </div>
                 <div class="km-camping-tile-result">
-                    <select disabled>
-                        <option>-</option>
-                    </select>
+                    {{> formElement degreeOfSuccess }}
                 </div>
             {{/if}}
         </section>

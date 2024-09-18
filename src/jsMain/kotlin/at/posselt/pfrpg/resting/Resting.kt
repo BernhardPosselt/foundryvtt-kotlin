@@ -265,7 +265,7 @@ private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc,
         camping.watchSecondsRemaining = 0
         camping.dailyPrepsAtTime = game.time.worldTime
         camping.campingActivities.forEach { it.result = null }
-        camping.cooking.results = jso()
+        camping.cooking.results.forEach { it.result = null }
         campingActor.setCamping(camping)
 
         val additionalHealing = additionalHealingPerActorAfterRest(recipes, camping, actors)

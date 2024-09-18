@@ -21,6 +21,9 @@ fun PF2ECreature.resolveAttribute(attribute: Attribute): PF2EAttribute? = when (
     is Lore -> skills[attribute.value] ?: skills[attribute.lorePostfixValue]
 }
 
+fun PF2ECreature.hasAttribute(attribute: Attribute) =
+    resolveAttribute(attribute) != null
+
 fun PF2ECreature.getLoreAttributes(): List<Lore> {
     val nonLoreSkills = Skill.entries.map { it.value }.toSet()
     return skills.asSequence()

@@ -388,7 +388,7 @@ ul.km-camping-actors {
                 button {
                     width: 100%;
                     margin: 0;
-                    border-radius: 0;
+                    border-radius: 0 0 5px 5px;
                     border: 0;
                     border-top: 1px solid;
                 }
@@ -541,7 +541,6 @@ ul.km-camping-actors {
                 display: flex;
                 border-bottom: 1px solid;
                 height: calc(11.5em + 1px);
-                width: 11.5em;
                 box-sizing: border-box;
 
                 button[data-action="clear-activity"] {

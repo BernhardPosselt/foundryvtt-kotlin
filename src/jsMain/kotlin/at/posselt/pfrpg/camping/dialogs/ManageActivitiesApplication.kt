@@ -25,7 +25,8 @@ class ManageActivitiesApplication(
         actor.getCamping()?.let { camping ->
             camping.homebrewCampingActivities =
                 camping.homebrewCampingActivities.filter { it.name != id }.toTypedArray()
-            camping.campingActivities.filter { it.activity != id }
+            camping.campingActivities = camping.campingActivities.filter { it.activity != id }.toTypedArray()
+            camping.lockedActivities = camping.lockedActivities.filter { it != id }.toTypedArray()
             actor.setCamping(camping)
             render()
         }

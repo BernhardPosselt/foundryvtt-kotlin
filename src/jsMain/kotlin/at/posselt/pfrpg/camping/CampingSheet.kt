@@ -13,6 +13,7 @@ import at.posselt.pfrpg.app.MenuControl
 import at.posselt.pfrpg.app.confirm
 import at.posselt.pfrpg.app.forms.Select
 import at.posselt.pfrpg.app.forms.SelectOption
+import at.posselt.pfrpg.app.forms.toOption
 import at.posselt.pfrpg.calculateHexplorationActivities
 import at.posselt.pfrpg.camping.dialogs.CampingSettingsApplication
 import at.posselt.pfrpg.camping.dialogs.FavoriteMealsApplication
@@ -46,6 +47,7 @@ import com.foundryvtt.core.documents.onUpdateItem
 import com.foundryvtt.core.onUpdateWorldTime
 import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actor.PF2EActor
+import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2ECreature
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.itemFromUuid
@@ -118,6 +120,8 @@ external interface RecipeContext {
     val hidden: Boolean
     val rations: Boolean
     val actors: Array<RecipeActorContext>
+    val skills: FormElementContext?
+    val degreeOfSuccess: FormElementContext?
 }
 
 @JsPlainObject
@@ -150,14 +154,21 @@ external interface CampingSheetContext : HandlebarsRenderContext {
 
 @JsPlainObject
 external interface CampingSheetActivitiesFormData {
-    val degreeOfSuccess: ReadonlyRecord<String, String>
-    val selectedSkill: ReadonlyRecord<String, String>
+    val degreeOfSuccess: ReadonlyRecord<String, String?>?
+    val selectedSkill: ReadonlyRecord<String, String?>?
+}
+
+@JsPlainObject
+external interface RecipeFormData {
+    val selectedSkill: ReadonlyRecord<String, String?>?
+    val degreeOfSuccess: ReadonlyRecord<String, String?>?
 }
 
 @JsPlainObject
 external interface CampingSheetFormData {
     val region: String
     val activities: CampingSheetActivitiesFormData
+    val recipes: RecipeFormData?
 }
 
 
@@ -303,7 +314,17 @@ class CampingSheet(
                 }
             }
 
-            "consume-rations" -> console.log("consuming rations")
+            "roll-recipe-check" -> buildPromise {
+                target.closest(".km-camping-recipe")
+                    ?.takeIfInstance<HTMLElement>()
+                    ?.dataset["recipeName"]
+                    ?.let { rollRecipeCheck(it) }
+            }
+
+            "consume-rations" -> buildPromise {
+                consumeRations()
+            }
+
             "roll-camping-check" -> buildPromise {
                 target.closest(".km-camping-activity")
                     ?.takeIfInstance<HTMLElement>()
@@ -379,6 +400,68 @@ class CampingSheet(
                 resetAdventuringTimeTracker()
             }
         }
+    }
+
+    private suspend fun consumeRations() {
+        // the following lines should all be non-null if everything went right
+        val camping = actor.getCamping()
+        checkNotNull(camping) { "Could not find camping data on actor ${actor.uuid}" }
+        val parsed = camping.findCookingChoices(
+            charactersInCampByUuid = camping.getActorsInCamp()
+                .filterIsInstance<PF2ECharacter>()
+                .associateBy { it.uuid },
+            recipesByName = camping.getAllRecipes()
+                .associateBy { it.name },
+        )
+        val rations = parsed.meals
+            .filterIsInstance<MealChoice.Rations>()
+            .map { it.cookingCost }
+            .sum()
+        val leftOver = reduceFoodBy(
+            camping.getActorsInCamp(),
+            foodAmount = rations,
+            foodItems = getCompendiumFoodItems()
+        )
+        val postfix = if (leftOver.isEmpty()) "" else ", missing ${leftOver.rations}"
+        postChatMessage("Consuming ${rations.rations} rations$postfix")
+    }
+
+    private suspend fun rollRecipeCheck(recipeName: String) {
+        // the following lines should all be non-null if everything went right
+        val camping = actor.getCamping()
+        checkNotNull(camping) { "Could not find camping data on actor ${actor.uuid}" }
+        val region = camping.findCurrentRegion()
+        checkNotNull(region) { "Could not determine current region" }
+        val activityData = camping.groupActivities().find { it.isCookMeal() }
+        checkNotNull(activityData) { "Could not find Cook Meal activity" }
+        val parsed = camping.findCookingChoices(
+            charactersInCampByUuid = camping.getActorsInCamp()
+                .filterIsInstance<PF2ECharacter>()
+                .associateBy { it.uuid },
+            recipesByName = camping.getAllRecipes()
+                .associateBy { it.name },
+        )
+        val cook = parsed.cook
+        checkNotNull(cook) { "Trying to cook a meal without a selected cook" }
+        val mealToCook = parsed.results.find { it.recipe.name == recipeName }
+        checkNotNull(mealToCook) { "Could not find meal with name $recipeName" }
+
+        val result = cook.campingActivityCheck(
+            data = CampingCheckData(
+                region = region,
+                activityData = activityData,
+                skill = ParsedCampingSkill(
+                    attribute = mealToCook.selectedSkill,
+                    dcType = DcType.STATIC,
+                    dc = mealToCook.dc
+                )
+            ),
+            overrideDc = mealToCook.dc,
+        )
+        camping.cooking.results
+            .find { it.recipeName == recipeName }
+            ?.let { it.result = result?.toCamelCase() }
+        actor.setCamping(camping)
     }
 
     private suspend fun rollCheck(activityName: String, actorUuid: String) {
@@ -647,13 +730,23 @@ class CampingSheet(
     }
 
     private suspend fun getRecipeContext(
-        recipeActors: List<RecipeActorContext>,
+        parsedCookingChoices: ParsedMeals,
         foodItems: FoodItems,
         total: FoodAmount,
         camping: CampingData,
         section: CampingSheetSection,
     ): Array<RecipeContext> {
-        val actorsByChosenMeal = recipeActors.groupBy { it.chosenMeal }
+        val actorsByChosenMeal = parsedCookingChoices.meals
+            .map { meal ->
+                RecipeActorContext(
+                    name = meal.actor.name,
+                    uuid = meal.actor.uuid,
+                    image = meal.actor.img,
+                    chosenMeal = meal.name,
+                    favoriteMeal = meal.favoriteMeal?.name,
+                )
+            }
+            .groupBy { it.chosenMeal }
         val starving = RecipeContext(
             name = "Skip Meal",
             targetRecipe = "nothing",
@@ -677,16 +770,19 @@ class CampingSheet(
             actors = actorsByChosenMeal["rationsOrSubsistence"]?.toTypedArray() ?: emptyArray(),
             hidden = section != CampingSheetSection.EATING,
         )
-
+        val cookMealActor = parsedCookingChoices.cook
+        val cookingSkillOptions = parsedCookingChoices.skills.map { it.toOption() }
+        val knownRecipes = camping.cooking.knownRecipes.toSet()
         return arrayOf(starving, rations) + camping.getAllRecipes()
             .sortedBy { it.level }
-            .mapNotNull { recipe ->
+            .map { recipe ->
                 val item = itemFromUuid(recipe.uuid)
                 val cookingCost = buildFoodCost(
                     recipe.cookingCost(),
                     totalAmount = total,
                     items = foodItems
                 )
+                val result = parsedCookingChoices.results.find { it.recipe.name == recipe.name }
                 RecipeContext(
                     name = recipe.name,
                     targetRecipe = recipe.name,
@@ -694,29 +790,37 @@ class CampingSheet(
                     uuid = recipe.uuid,
                     icon = recipe.icon ?: item?.img ?: "icons/consumables/food/shank-meat-bone-glazed-brown.webp",
                     requiresCheck = true,
-                    hidden = section != CampingSheetSection.EATING,
+                    hidden = section != CampingSheetSection.EATING || cookMealActor == null || recipe.name !in knownRecipes,
                     rations = false,
                     actors = actorsByChosenMeal[recipe.name]?.toTypedArray() ?: emptyArray(),
+                    skills = Select(
+                        label = "Selected Skill",
+                        name = "recipes.selectedSkill.${recipe.name}",
+                        hideLabel = true,
+                        options = cookingSkillOptions,
+                        elementClasses = listOf("km-proficiency"),
+                        value = result?.selectedSkill?.value,
+                    ).toContext(),
+                    degreeOfSuccess = Select.fromEnum<DegreeOfSuccess>(
+                        label = "Degree of Success",
+                        hideLabel = true,
+                        required = false,
+                        name = "recipes.degreeOfSuccess.${recipe.name}",
+                        value = result?.degreeOfSuccess,
+                        elementClasses = listOf("km-degree-of-success"),
+                    ).toContext(),
                 )
             }
             .toTypedArray()
     }
 
     private fun calculateTotalFoodCost(
-        actorMeals: Array<ActorMeal>,
+        actorMeals: List<MealChoice>,
         availableFood: FoodAmount,
         foodItems: FoodItems,
     ): FoodCost {
         val amount = actorMeals
-            .map {
-                if (it.chosenMeal == "rationsOrSubsistence") {
-                    FoodAmount(rations = 1)
-                } else if (it.chosenMeal == "nothing") {
-                    FoodAmount()
-                } else {
-                    recipes.find { recipe -> it.chosenMeal == recipe.name }?.cookingCost() ?: FoodAmount()
-                }
-            }
+            .map { it.cookingCost }
             .sum()
         return buildFoodCost(amount, totalAmount = availableFood, items = foodItems)
     }
@@ -733,6 +837,16 @@ class CampingSheet(
         val pxTimeOffset = -((dayPercentage * widthWithoutBorder).toInt() - widthWithoutBorder / 2)
         val camping = actor.getCamping() ?: getDefaultCamping(game)
         val actorsByUuid = getCampingActorsByUuid(camping.actorUuids).associateBy(PF2EActor::uuid)
+        val charactersByUuid: Map<String, PF2ECharacter> = actorsByUuid
+            .mapNotNull {
+                val value = it.value
+                if (value is PF2ECharacter) {
+                    it.key to value
+                } else {
+                    null
+                }
+            }
+            .toMap()
         val groupActivities = camping.groupActivities().sortedBy { it.data.name }
         val section = fromCamelCase<CampingSheetSection>(camping.section) ?: CampingSheetSection.PREPARE_CAMPSITE
         val prepareCampSection = section == CampingSheetSection.PREPARE_CAMPSITE
@@ -741,20 +855,12 @@ class CampingSheet(
         val foodItems = getCompendiumFoodItems()
         val totalFood = camping.getTotalCarriedFood(game.party(), foodItems)
         val availableFood = buildFoodCost(totalFood, items = foodItems)
-        val recipeActors = camping.cooking.actorMeals
-            .mapNotNull { meal ->
-                actorsByUuid[meal.actorUuid]?.let { actor ->
-                    RecipeActorContext(
-                        name = actor.name,
-                        uuid = actor.uuid,
-                        image = actor.img,
-                        chosenMeal = meal.chosenMeal,
-                        favoriteMeal = meal.favoriteMeal,
-                    )
-                }
-            }
+        val parsedCookingChoices = camping.findCookingChoices(
+            charactersInCampByUuid = charactersByUuid,
+            recipesByName = recipes.associateBy { it.name },
+        )
         val recipesContext = getRecipeContext(
-            recipeActors = recipeActors,
+            parsedCookingChoices = parsedCookingChoices,
             foodItems = foodItems,
             total = totalFood,
             camping = camping,
@@ -819,7 +925,7 @@ class CampingSheet(
         CampingSheetContext(
             availableFood = availableFood,
             totalFoodCost = calculateTotalFoodCost(
-                actorMeals = camping.cooking.actorMeals,
+                actorMeals = parsedCookingChoices.meals,
                 foodItems = foodItems,
                 availableFood = totalFood,
             ),
@@ -890,6 +996,18 @@ class CampingSheet(
                     actorUuid = it.actorUuid,
                     result = value.activities.degreeOfSuccess?.get(it.activity),
                     selectedSkill = value.activities.selectedSkill?.get(it.activity),
+                )
+            }.toTypedArray()
+            val cookingResultsByRecipe = camping.cooking.results.associateBy { it.recipeName }
+            camping.cooking.results = camping.getAllRecipes().map {
+                val result = cookingResultsByRecipe[it.name] ?: CookingResult(
+                    recipeName = it.name,
+                    result = null,
+                    skill = "survival",
+                )
+                result.copy(
+                    result = value.recipes?.degreeOfSuccess?.get(it.name),
+                    skill = value.recipes?.selectedSkill?.get(it.name) ?: "survival",
                 )
             }.toTypedArray()
             actor.setCamping(camping)

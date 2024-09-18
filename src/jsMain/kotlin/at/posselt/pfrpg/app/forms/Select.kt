@@ -1,5 +1,6 @@
 package at.posselt.pfrpg.app.forms
 
+import at.posselt.pfrpg.data.actor.Attribute
 import at.posselt.pfrpg.data.actor.Perception
 import at.posselt.pfrpg.deCamelCase
 import at.posselt.pfrpg.toCamelCase
@@ -271,7 +272,7 @@ inline fun <reified T : Enum<T>> enumToOptions(labelFunction: (T) -> String = { 
         )
     }
 
-fun Perception.toOption() =
+fun Attribute.toOption() =
     SelectOption(
         label = value.deCamelCase(),
         value = value,

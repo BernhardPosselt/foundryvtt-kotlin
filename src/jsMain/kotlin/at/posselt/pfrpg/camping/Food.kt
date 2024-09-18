@@ -394,12 +394,13 @@ suspend fun PF2EActor.removeConsumableFromInventory(name: String, quantity: Int)
         val id = consumable.id
         if (id != null && leftOver > 0) {
             val totalQuantity = consumable.totalQuantity()
-            leftOver -= min(leftOver, totalQuantity)
-            if (totalQuantity <= leftOver) {
+            val consume = min(leftOver, totalQuantity)
+            leftOver -= consume
+            if (totalQuantity <= consume) {
                 deleteIds.push(id)
             } else {
                 val chargeUpdates = calculateCharges(
-                    removeQuantity = leftOver,
+                    removeQuantity = consume,
                     itemQuantity = consumable.system.quantity,
                     itemUses = consumable.system.uses.value,
                     itemMaxUses = consumable.system.uses.max,
@@ -495,7 +496,7 @@ suspend fun getCompendiumFoodItems() = coroutineScope {
     FoodItems(basic = basic, special = special, ration = ration, provisions = provisions)
 }
 
-private fun PF2EActor.getTotalCarriedFood(
+fun PF2EActor.getTotalCarriedFood(
     foodItems: FoodItems,
 ): FoodAmount {
     return FoodAmount(
