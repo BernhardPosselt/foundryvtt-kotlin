@@ -61,7 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   0.46.2 for V11), then upgrade to this release
 * If you have multiple kingdom sheets, migrations will be run for all of them; you can still only have 1 camping sheet
 * Combat Tracks can now select a track on a playlist in addition to selecting a playlist
-* TODO: detail new camping sheet
+* Camping Sheet and almost all macros are now based on ApplicationV2 which support a dark and light theme out of the box
+* Changing the degree of success dropdown for activities as well as recipes posts all associated messages to chat now
 
 ## Fixed
 
