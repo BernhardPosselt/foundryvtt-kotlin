@@ -1,4 +1,4 @@
-rootProject.name = "kingmaker-tools-ng"
+rootProject.name = "pfrpg2eKingdomCampingWeather"
 
 dependencyResolutionManagement {
     versionCatalogs {

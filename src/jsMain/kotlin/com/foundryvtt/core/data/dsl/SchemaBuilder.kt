@@ -1,6 +1,6 @@
 package com.foundryvtt.core.data.dsl
 
-import at.posselt.pfrpg.utils.toRecord
+import at.posselt.pfrpg2e.utils.toRecord
 import com.foundryvtt.core.data.fields.*
 import js.objects.Record
 import js.objects.recordOf
