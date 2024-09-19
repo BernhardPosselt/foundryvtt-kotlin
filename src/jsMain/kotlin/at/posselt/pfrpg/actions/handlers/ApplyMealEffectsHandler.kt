@@ -5,6 +5,7 @@ import at.posselt.pfrpg.actions.ActionMessage
 import at.posselt.pfrpg.camping.MealChoice
 import at.posselt.pfrpg.camping.applyConsumptionMealEffects
 import at.posselt.pfrpg.camping.findCookingChoices
+import at.posselt.pfrpg.camping.getActorsCarryingFood
 import at.posselt.pfrpg.camping.getActorsInCamp
 import at.posselt.pfrpg.camping.getAllRecipes
 import at.posselt.pfrpg.camping.getCamping
@@ -65,7 +66,7 @@ class ApplyMealEffectsHandler(val game: Game) : ActionHandler("applyMealEffects"
         }
         val totalCost = chosenMeals.map { it.cookingCost }.sum()
         reduceFoodBy(
-            actors = actors,
+            actors = camping.getActorsCarryingFood(game),
             foodItems = getCompendiumFoodItems(),
             foodAmount = totalCost,
         )

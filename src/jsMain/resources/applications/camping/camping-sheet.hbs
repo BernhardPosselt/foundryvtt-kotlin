@@ -92,10 +92,17 @@
                     <i class="fa-solid fa-plus"></i></button>
                 <button type="button" data-action="reset-encounter-dc" title="Reset Encounter DC"><i
                         class="fa-solid fa-rotate-left"></i></button>
-                <button type="button" data-action="roll-encounter" title="Roll Random Encounter"><i
+                <button type="button"
+                        {{#unless canRollEncounter}}disabled{{/unless}}
+                        data-action="roll-encounter"
+                        title="Roll Random Encounter"><i
                         class="fa-solid fa-skull"></i></button>
-                <button type="button" data-action="check-encounter" title="Check for Random Encounter"><i
-                        class="fa-solid fa-dice-d20"></i><i class="fa-solid fa-skull"></i></button>
+                <button type="button"
+                        {{#unless canRollEncounter}}disabled{{/unless}}
+                        data-action="check-encounter"
+                        title="Check for Random Encounter"><i
+                        class="fa-solid fa-dice-d20"></i><i
+                        class="fa-solid fa-skull"></i></button>
             </div>
         {{/if}}
     </div>

@@ -109,7 +109,9 @@ suspend fun getTotalRestDuration(
     )
     return TotalRestDuration(
         total = RestDuration(total),
-        left = remainingSeconds?.let(::RestDuration)
+        left = remainingSeconds
+            ?.takeIf { it > 0 }
+            ?.let(::RestDuration)
     )
 }
 
@@ -187,10 +189,11 @@ private suspend fun applyAdditionalHealing(healingAfterRest: List<Pair<PF2EChara
     healingAfterRest.map { (actor, healing) ->
         val value = min(actor.hitPoints.value + healing, actor.hitPoints.max)
         async {
-            if (value > 0) {
-                postChatMessage("Healing an additional $value HP to recipes or camping activities", speaker = actor)
-            } else {
-                postChatMessage("Healing $value HP fewer due to recipes", speaker = actor)
+            val difference = actor.hitPoints.value - value
+            if (difference > 0) {
+                postChatMessage("Healing $difference HP more from recipes or camping activities", speaker = actor)
+            } else if (difference < 0) {
+                postChatMessage("Healing $difference HP fewer from recipes", speaker = actor)
             }
             actor.typeSafeUpdate { system.attributes.hp.value = value }
         }
@@ -263,6 +266,7 @@ private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc,
 
         game.time.advance(camping.watchSecondsRemaining)
         camping.watchSecondsRemaining = 0
+        camping.encounterModifier = 0
         camping.dailyPrepsAtTime = game.time.worldTime
         camping.campingActivities.forEach { it.result = null }
         camping.cooking.results.forEach { it.result = null }
@@ -272,7 +276,7 @@ private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc,
         game.pf2e.actions.restForTheNight(RestForTheNightOptions(actors = actors.toTypedArray(), skipDialog = true))
         applyAdditionalHealing(additionalHealing)
         applyRestHealEffects(actors, recipes, getMealEffectItems(recipes))
-        removeMealEffects(recipes, actors, removedAfterRest = true)
+        removeMealEffects(recipes, actors, onlyRemoveAfterRest = true)
         removeProvisions(actors)
         removeCombatEffects(actors)
     }

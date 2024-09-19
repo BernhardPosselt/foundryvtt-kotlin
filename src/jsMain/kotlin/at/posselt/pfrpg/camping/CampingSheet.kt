@@ -150,6 +150,7 @@ external interface CampingSheetContext : HandlebarsRenderContext {
     var recipes: Array<RecipeContext>
     var totalFoodCost: FoodCost
     var availableFood: FoodCost
+    var canRollEncounter: Boolean
 }
 
 @JsPlainObject
@@ -418,7 +419,7 @@ class CampingSheet(
             .map { it.cookingCost }
             .sum()
         reduceFoodBy(
-            camping.getActorsInCamp(),
+            actors = camping.getActorsCarryingFood(game),
             foodAmount = rations,
             foodItems = getCompendiumFoodItems(),
         )
@@ -636,7 +637,16 @@ class CampingSheet(
             if (modifier == null) {
                 camping.encounterModifier = 0
             } else {
-                camping.encounterModifier += modifier
+                val encounterDc = camping.findCurrentRegion()?.encounterDc ?: 0
+                val totalDc = encounterDc + camping.encounterModifier + modifier
+                val mod = if (totalDc > 20) {
+                    20 - encounterDc
+                } else if (totalDc < 0) {
+                    -encounterDc
+                } else {
+                    camping.encounterModifier + modifier
+                }
+                camping.encounterModifier = mod
             }
             actor.setCamping(camping)
         }
@@ -921,6 +931,7 @@ class CampingSheet(
         val regions = camping.regionSettings.regions
         val isGM = game.user.isGM
         CampingSheetContext(
+            canRollEncounter = currentRegion?.rollTableUuid != null,
             availableFood = availableFood,
             totalFoodCost = calculateTotalFoodCost(
                 actorMeals = parsedCookingChoices.meals,

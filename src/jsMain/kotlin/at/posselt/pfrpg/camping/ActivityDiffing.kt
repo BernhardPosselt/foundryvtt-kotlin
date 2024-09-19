@@ -125,7 +125,7 @@ fun checkPreActorUpdate(game: Game, actor: Actor, update: AnyObject): SyncActivi
     return SyncActivities(
         rollRandomEncounter = activityStateChanged.any { it.resultChanged && it.rollRandomEncounter },
         activities = getActivitiesToSync(prepareCampsiteResult, alwaysPerformActivities, activities),
-        clearMealEffects = prepareCampsiteResult != null,
+        clearMealEffects = result != null,
         prepareCampsiteResult = result?.toCamelCase()
     )
 }

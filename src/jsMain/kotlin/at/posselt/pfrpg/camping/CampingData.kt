@@ -2,6 +2,7 @@ package at.posselt.pfrpg.camping
 
 import at.posselt.pfrpg.Config
 import at.posselt.pfrpg.actor.hasAttribute
+import at.posselt.pfrpg.actor.party
 import at.posselt.pfrpg.camping.dialogs.Track
 import at.posselt.pfrpg.camping.dialogs.RegionSetting
 import at.posselt.pfrpg.camping.dialogs.RegionSettings
@@ -85,8 +86,12 @@ external interface CampingData {
     var worldSceneId: String?
 }
 
+suspend fun CampingData.getActorsCarryingFood(game: Game): List<PF2EActor> =
+    getActorsInCamp() + listOfNotNull(game.party())
+
+
 suspend fun CampingData.getActorsInCamp(
-    campingActivityOnly: Boolean = false
+    campingActivityOnly: Boolean = false,
 ): List<PF2EActor> = coroutineScope {
     actorUuids
         .map {

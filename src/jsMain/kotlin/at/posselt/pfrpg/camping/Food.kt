@@ -9,7 +9,6 @@ import at.posselt.pfrpg.utils.buildPromise
 import at.posselt.pfrpg.utils.buildUpdate
 import at.posselt.pfrpg.utils.fromUuidTypeSafe
 import at.posselt.pfrpg.utils.fromUuidsTypeSafe
-import at.posselt.pfrpg.utils.postChatMessage
 import at.posselt.pfrpg.utils.postChatTemplate
 import at.posselt.pfrpg.utils.roll
 import at.posselt.pfrpg.utils.typeSafeUpdate
@@ -103,10 +102,16 @@ private fun getAllOutcomeEffects(recipe: RecipeData): List<MealEffect> =
 
 private suspend fun getMealEffectItems(
     recipe: RecipeData,
-    removedAfterRest: Boolean = false,
+    onlyRemoveAfterRest: Boolean = false,
 ): List<PF2EEffect> = coroutineScope {
     getAllOutcomeEffects(recipe)
-        .filter { !removedAfterRest || it.removeAfterRest == true }
+        .filter {
+            if (onlyRemoveAfterRest) {
+                it.removeAfterRest == true
+            } else {
+                true
+            }
+        }
         .map { it.uuid }
         .map { async { fromUuidTypeSafe<PF2EEffect>(it) } }
         .awaitAll()
@@ -115,10 +120,10 @@ private suspend fun getMealEffectItems(
 
 suspend fun getMealEffectItems(
     recipes: List<RecipeData>,
-    removedAfterRest: Boolean = false,
+    onlyRemoveAfterRest: Boolean = false,
 ): List<PF2EEffect> = coroutineScope {
     recipes
-        .map { async { getMealEffectItems(it, removedAfterRest) } }
+        .map { async { getMealEffectItems(it, onlyRemoveAfterRest) } }
         .awaitAll()
         .flatten()
 }
@@ -149,9 +154,9 @@ suspend fun PF2EActor.clearEffects(effects: List<PF2EEffect>) {
 suspend fun removeMealEffects(
     recipes: List<RecipeData>,
     actors: List<PF2EActor>,
-    removedAfterRest: Boolean = false,
+    onlyRemoveAfterRest: Boolean = false,
 ) = coroutineScope {
-    val effects = getMealEffectItems(recipes, removedAfterRest)
+    val effects = getMealEffectItems(recipes, onlyRemoveAfterRest)
     actors
         .map { async { it.clearEffects(effects) } }
         .awaitAll()
@@ -358,7 +363,7 @@ private fun capAt(number: Int, cap: Int? = null): String {
     return if (cap == null || number <= cap) {
         number.toString()
     } else {
-        "$number+"
+        "$cap+"
     }
 }
 
@@ -458,7 +463,7 @@ suspend fun reduceFoodBy(
     }
     if (postMessage) {
         postChatTemplate(
-            templatePath = "chatmesssages/consume-food.hbs",
+            templatePath = "chatmessages/consume-food.hbs",
             templateContext = recordOf(
                 "missing" to !leftOver.isEmpty(),
                 "rations" to foodAmount.rations,

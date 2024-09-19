@@ -5,6 +5,7 @@ import at.posselt.pfrpg.actions.ActionMessage
 import at.posselt.pfrpg.camping.applyConsumptionMealEffects
 import at.posselt.pfrpg.camping.cookingCost
 import at.posselt.pfrpg.camping.discoverCost
+import at.posselt.pfrpg.camping.getActorsCarryingFood
 import at.posselt.pfrpg.camping.getActorsInCamp
 import at.posselt.pfrpg.camping.getAllRecipes
 import at.posselt.pfrpg.camping.getCamping
@@ -18,7 +19,6 @@ import at.posselt.pfrpg.fromCamelCase
 import at.posselt.pfrpg.utils.postChatTemplate
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2ECharacter
-import js.objects.recordOf
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
@@ -48,8 +48,11 @@ class LearnSpecialRecipeHandler(
             if (degreeOfSuccess == DegreeOfSuccess.CRITICAL_FAILURE && actor is PF2ECharacter) {
                 actor.applyConsumptionMealEffects(recipe.criticalFailure)
             }
-            val actors = camping.getActorsInCamp()
-            reduceFoodBy(actors, foodAmount = cost, foodItems = getCompendiumFoodItems())
+            reduceFoodBy(
+                actors = camping.getActorsCarryingFood(game),
+                foodAmount = cost,
+                foodItems = getCompendiumFoodItems(),
+            )
             if (degreeOfSuccess.succeeded()) {
                 camping.cooking.knownRecipes = (camping.cooking.knownRecipes + recipeName).distinct().toTypedArray()
                 campingActor.setCamping(camping)

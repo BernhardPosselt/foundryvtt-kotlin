@@ -41,7 +41,9 @@ private suspend fun rollRandomEncounter(
 ): Boolean {
     val table = region.rollTableUuid?.let { fromUuidTypeSafe<RollTable>(it) }
     if (table == null) {
-        ui.notifications.error("Could not find random encounter roll table for region ${region.name}")
+        if (region.rollTableUuid != null) {
+            ui.notifications.error("Could not find random encounter roll table for region ${region.name}")
+        }
         return false
     }
     val rollMode = fromCamelCase<RollMode>(camping.randomEncounterRollMode) ?: RollMode.GMROLL
