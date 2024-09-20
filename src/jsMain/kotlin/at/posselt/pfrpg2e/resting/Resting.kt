@@ -40,10 +40,11 @@ import com.foundryvtt.pf2e.actor.PF2EActor
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.pf2e
-import js.objects.jso
 import kotlinx.coroutines.async
+import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -133,7 +134,7 @@ private fun PF2ECharacter.additionalHealingAfterRest(multiplier: HealMultiplier?
             if (healedWithHalf >= system.attributes.hp.max) {
                 0
             } else {
-                healedWithHalf - system.attributes.hp.max
+                -(healed / 2)
             }
         }
     } else {
@@ -187,13 +188,13 @@ private suspend fun additionalHealingPerActorAfterRest(
 
 private suspend fun applyAdditionalHealing(healingAfterRest: List<Pair<PF2ECharacter, Int>>) = coroutineScope {
     healingAfterRest.map { (actor, healing) ->
+        console.log(actor.name, healing, actor.hitPoints.value)
         val value = min(actor.hitPoints.value + healing, actor.hitPoints.max)
         async {
-            val difference = actor.hitPoints.value - value
-            if (difference > 0) {
-                postChatMessage("Healing $difference HP more from recipes or camping activities", speaker = actor)
-            } else if (difference < 0) {
-                postChatMessage("Healing $difference HP fewer from recipes", speaker = actor)
+            if (healing > 0) {
+                postChatMessage("Healing $healing HP more from recipes or camping activities", speaker = actor)
+            } else if (healing < 0) {
+                postChatMessage("Healing ${abs(healing)}healing HP fewer from recipes", speaker = actor)
             }
             actor.typeSafeUpdate { system.attributes.hp.value = value }
         }
@@ -274,6 +275,7 @@ private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc,
 
         val additionalHealing = additionalHealingPerActorAfterRest(recipes, camping, actors)
         game.pf2e.actions.restForTheNight(RestForTheNightOptions(actors = actors.toTypedArray(), skipDialog = true))
+            .await()
         applyAdditionalHealing(additionalHealing)
         applyRestHealEffects(actors, recipes, getMealEffectItems(recipes))
         removeMealEffects(recipes, actors, onlyRemoveAfterRest = true)

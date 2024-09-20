@@ -782,7 +782,7 @@ class CampingSheet(
         val cookingSkillOptions = parsedCookingChoices.skills.map { it.toOption() }
         val knownRecipes = camping.cooking.knownRecipes.toSet()
         return arrayOf(starving, rations) + camping.getAllRecipes()
-            .sortedBy { it.level }
+            .sortedBy { it.name }
             .map { recipe ->
                 val item = itemFromUuid(recipe.uuid)
                 val cookingCost = buildFoodCost(
