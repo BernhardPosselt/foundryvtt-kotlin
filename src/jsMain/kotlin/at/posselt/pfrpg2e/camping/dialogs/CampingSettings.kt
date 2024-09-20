@@ -146,7 +146,7 @@ class CampingSettingsApplication(
             minimumSubsistence = camping.cooking.minimumSubsistence,
             alwaysPerformActivities = camping.alwaysPerformActivities,
             restingPlaylistUuid = camping.restingTrack?.playlistUuid,
-            restingPlaylistSoundUuid = camping.restingTrack?.playlistUuid,
+            restingPlaylistSoundUuid = camping.restingTrack?.trackUuid,
             worldSceneId = camping.worldSceneId,
         )
     }
@@ -172,6 +172,7 @@ class CampingSettingsApplication(
         val playlistSound = settings.restingPlaylistSoundUuid?.let { fromUuidTypeSafe<PlaylistSound>(it) }
         val hexScenes = game.scenes
             .filter { it.grid.type == 2 }
+            .sortedBy { it.name }
             .mapNotNull { it.id?.let { id -> SelectOption(label = it.name, value = id) } }
         CampingSettingsContext(
             partId = parent.partId,
@@ -272,14 +273,16 @@ class CampingSettingsApplication(
                             value = playlist?.uuid,
                             required = false,
                             stacked = false,
-                            help = "Played when resting. Make sure to change the Playback Mode to Soundboard Only to only play it once.",
-                            options = game.playlists.contents.mapNotNull { it.toOption(useUuid = true) },
+                            help = "Played when resting. Make sure to select a track and change the Playback Mode to Soundboard Only to only play it once.",
+                            options = game.playlists.contents
+                                .sortedBy { it.name }
+                                .mapNotNull { it.toOption(useUuid = true) },
                         ),
                         Select(
                             "Playlist Track",
                             name = "restingPlaylistSoundUuid",
                             value = playlistSound?.uuid,
-                            required = false,
+                            required = playlist != null,
                             stacked = false,
                             options = playlist?.sounds?.contents?.mapNotNull { it.toOption(useUuid = true) }
                                 ?: emptyList(),
@@ -352,8 +355,8 @@ class CampingSettingsApplication(
                         camping.minimumTravelSpeed = settings.minimumTravelSpeed
                         camping.cooking.minimumSubsistence = settings.minimumSubsistence
                         camping.alwaysPerformActivities = settings.alwaysPerformActivities
-                        camping.restingTrack = settings.restingPlaylistSoundUuid?.let {
-                            Track(playlistUuid = it, trackUuid = settings.restingPlaylistUuid)
+                        camping.restingTrack = settings.restingPlaylistUuid?.let {
+                            Track(playlistUuid = it, trackUuid = settings.restingPlaylistSoundUuid)
                         }
                         camping.worldSceneId = settings.worldSceneId
                         camping.campingActivities = camping.campingActivities
