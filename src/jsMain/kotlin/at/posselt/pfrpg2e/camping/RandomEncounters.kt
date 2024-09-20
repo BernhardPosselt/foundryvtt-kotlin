@@ -74,7 +74,10 @@ private suspend fun rollRandomEncounter(
                 it.isPrepareCampsite() && result != null && result != DegreeOfSuccess.CRITICAL_FAILURE
             }) {
             postCombatEffects(
-                activeActivities = camping.alwaysPerformActivities.toSet() + camping.campingActivities.map { it.activity },
+                activeActivities = camping.alwaysPerformActivities.toSet() +
+                        camping.campingActivities
+                            .filter { it.actorUuid != null }
+                            .map { it.activity },
                 partyLevel = partyLevel
             )
         }
