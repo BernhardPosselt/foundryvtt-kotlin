@@ -1,1 +1,0 @@
-* random encounter check not done

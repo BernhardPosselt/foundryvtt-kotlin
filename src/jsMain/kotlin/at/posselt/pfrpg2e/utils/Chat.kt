@@ -7,9 +7,7 @@ import at.posselt.pfrpg2e.toCamelCase
 import at.posselt.pfrpg2e.toLabel
 import com.foundryvtt.core.Actor
 import com.foundryvtt.core.documents.ChatMessage
-import com.foundryvtt.core.documents.ChatSpeakerData
 import com.foundryvtt.core.documents.GetSpeakerOptions
-import com.foundryvtt.pf2e.actor.PF2EActor
 import js.objects.ReadonlyRecord
 import js.objects.jso
 import js.objects.recordOf

@@ -199,9 +199,9 @@ suspend fun PF2ECharacter.applyConsumptionMealEffects(outcome: CookingOutcome) {
         outcome.effects?.map(MealEffect::uuid) ?: emptyList()
     }
     val effects = fromUuidsTypeSafe<PF2EEffect>(uuids.toTypedArray())
-    createEmbeddedDocuments("Item", effects).await()
+    val items = effects.map { it.toObject() }.toTypedArray()
+    createEmbeddedDocuments<PF2EEffect>("Item", items).await()
     val effectsByUuid = effects.associateBy { it.uuid }
-
     val applicableHealEffects = outcome.effects
         ?.filter { healModeApplies(it.healMode, MealEffectTrigger.CONSUMPTION) }
         ?.mapNotNull { effectsByUuid[it.uuid]?.name?.let { name -> MealNameAndEffect(name, it) } }
@@ -279,7 +279,9 @@ private fun parseMealNameAndEffects(effect: MealNameAndEffect): List<HealingValu
 }
 
 
-private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<MealNameAndEffect>) {
+private suspend fun PF2ECharacter.applyMealHealEffects(
+    mealEffectItems: List<MealNameAndEffect>,
+) {
     val parsedEffects = mealEffectItems.flatMap(::parseMealNameAndEffects)
     val healingFormulas = parsedEffects.filterIsInstance<Healing>()
     val damageFormulas = parsedEffects.filterIsInstance<Damage>()
@@ -292,7 +294,7 @@ private suspend fun PF2ECharacter.applyMealHealEffects(mealEffectItems: List<Mea
         DamageRoll(it.formula).toMessage(
             recordOf(
                 "flavor" to "Rolling damage from ${it.name}, please apply manually",
-                "speakerData" to ChatMessage.getSpeaker(
+                "speaker" to ChatMessage.getSpeaker(
                     GetSpeakerOptions(
                         actor = this
                     )

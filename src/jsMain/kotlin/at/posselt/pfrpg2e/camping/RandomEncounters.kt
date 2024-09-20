@@ -20,7 +20,7 @@ suspend fun rollRandomEncounter(
         val currentRegion = camping.findCurrentRegion() ?: camping.regionSettings.regions.firstOrNull()
         currentRegion?.let { region ->
             val partyLevel = game.party()?.level ?: 1
-            rollRandomEncounter(
+            return rollRandomEncounter(
                 camping = camping,
                 includeFlatCheck = includeFlatCheck,
                 region = region,

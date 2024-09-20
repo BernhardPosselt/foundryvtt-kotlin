@@ -216,6 +216,7 @@ private suspend fun findRandomEncounterAt(
 
         else -> emptyList()
     }
+    console.log(randomEncounterChecksAtSeconds)
     for (checksAtSecond in randomEncounterChecksAtSeconds) {
         if (rollRandomEncounter(game = game, actor = campingActor, includeFlatCheck = true)) {
             return checksAtSecond
@@ -240,6 +241,7 @@ private suspend fun beginRest(game: Game, campingActor: PF2ENpc, camping: Campin
         camping = camping,
         watchDurationSeconds = watchDurationSeconds,
     )
+    console.log(randomEncounterAt)
     if (randomEncounterAt != null) {
         watchers
             .filterIsInstance<PF2ECharacter>()
