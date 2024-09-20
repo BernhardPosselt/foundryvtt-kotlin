@@ -21,9 +21,6 @@ repositories {
 }
 
 kotlin {
-//    compilerOptions {
-//        freeCompilerArgs.add("-XXLanguage:+JsAllowInvalidCharsIdentifiersEscaping")
-//    }
     js {
         useEsModules()
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -149,12 +146,23 @@ tasks.register<PackJsonFile>("packJsonFiles") {
     targetDirectory = layout.projectDirectory.dir("src/commonMain/resources/data/")
 }
 
+tasks.register<Exec>("installOldJs") {
+    workingDir = layout.projectDirectory.dir("oldsrc/").asFile
+    commandLine = listOf("yarn", "install")
+}
+
+tasks.register<Exec>("compileOldJs") {
+    workingDir = layout.projectDirectory.dir("oldsrc/").asFile
+    commandLine = listOf("yarn", "run", "build")
+}
+
 /**
  * Run using ./gradlew package -PmoduleVersion=0.0.1
  */
 tasks.register<Zip>("package") {
-    dependsOn("clean", "build", "copyOldJs", "packJsonFiles", "changeModuleVersion")
-    tasks.named("build").get().mustRunAfter("clean")
+    dependsOn("clean", "build", "installOldJs", "compileOldJs", "copyOldJs", "packJsonFiles", "changeModuleVersion")
+    tasks.named("compileOldJs").get().mustRunAfter("installOldJs")
+    tasks.named("build").get().mustRunAfter("clean", "compileOldJs")
     archiveFileName.set("release.zip")
     destinationDirectory.set(layout.buildDirectory)
     from("dist") { into("dist") }
