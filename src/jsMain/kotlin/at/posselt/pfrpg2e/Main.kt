@@ -30,7 +30,7 @@ fun main() {
             game = game,
             handlers = listOf(
                 AddHuntAndGatherResultHandler(game = game),
-                at.posselt.pfrpg2e.actions.handlers.OpenCampingSheetHandler(game = game),
+                OpenCampingSheetHandler(game = game),
                 ClearActivitiesHandler(game = game),
                 SyncActivitiesHandler(game = game),
                 ClearMealEffectsHandler(game = game),
@@ -115,7 +115,6 @@ fun main() {
             buildPromise {
                 game.migratePfrpg2eKingdomCampingWeather()
                 showFirstRunMessage(game)
-                openCampingSheet(game, actionDispatcher)
             }
         }
 
