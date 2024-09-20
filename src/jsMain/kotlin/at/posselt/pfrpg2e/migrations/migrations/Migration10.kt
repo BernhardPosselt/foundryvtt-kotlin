@@ -152,6 +152,13 @@ class Migration10 : Migration(10) {
                 val combatTrack = migrateCombatTrack(game, track)
                 scene.setCombatTrack(combatTrack)
             }
+            for (token in scene.tokens) {
+                val actor = token.actor
+                actor?.getCombatTrack()?.let { track: dynamic ->
+                    val combatTrack = migrateCombatTrack(game, track)
+                    actor.setCombatTrack(combatTrack)
+                }
+            }
         }
         for (actor in game.actors) {
             actor.getCombatTrack()?.let { track: dynamic ->

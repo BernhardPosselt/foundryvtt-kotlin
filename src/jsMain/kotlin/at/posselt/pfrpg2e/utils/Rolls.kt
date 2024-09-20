@@ -4,8 +4,12 @@ import at.posselt.pfrpg2e.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg2e.data.checks.RollMode
 import at.posselt.pfrpg2e.data.checks.determineDegreeOfSuccess
 import at.posselt.pfrpg2e.toCamelCase
+import com.foundryvtt.core.Actor
 import com.foundryvtt.core.Roll
 import com.foundryvtt.core.RollMessageOptions
+import com.foundryvtt.core.documents.ChatMessage
+import com.foundryvtt.core.documents.GetSpeakerOptions
+import js.objects.Record
 import js.objects.recordOf
 import kotlinx.coroutines.await
 
@@ -46,12 +50,23 @@ suspend fun roll(
     formula: String,
     flavor: String? = undefined,
     rollMode: RollMode = RollMode.PUBLICROLL,
+    speaker: Actor? = null,
     toChat: Boolean = true,
 ): Int {
     val roll = Roll(formula).evaluate().await()
     if (toChat) {
+        val data: Record<String, Any?> = recordOf(
+            "flavor" to flavor,
+        )
+        if (speaker != null) {
+            data["speaker"] = ChatMessage.getSpeaker(
+                GetSpeakerOptions(
+                    actor = speaker,
+                )
+            )
+        }
         roll.toMessage(
-            recordOf("flavor" to flavor),
+            data,
             RollMessageOptions(rollMode = rollMode.toCamelCase())
         ).await()
     }

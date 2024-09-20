@@ -26,7 +26,7 @@
 {{else if radio}}
         <input type="radio" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if elementClasses}}class="{{elementClasses}}"{{/if}} {{#if
-                disabled}}disabled{{/if}} {{checked value}}>
+                disabled}}disabled{{/if}} {{checked checked}}>
 {{else if text}}
         <input type="text" name="{{name}}" value="{{value}}" {{#if hideLabel}}aria-label="{{label}}"{{/if}} {{#if
                 required}}required{{/if}} {{#if overrideType}}data-dtype="{{overrideType}}"{{/if}} {{#if

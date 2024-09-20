@@ -188,7 +188,6 @@ private suspend fun additionalHealingPerActorAfterRest(
 
 private suspend fun applyAdditionalHealing(healingAfterRest: List<Pair<PF2ECharacter, Int>>) = coroutineScope {
     healingAfterRest.map { (actor, healing) ->
-        console.log(actor.name, healing, actor.hitPoints.value)
         val value = min(actor.hitPoints.value + healing, actor.hitPoints.max)
         async {
             if (healing > 0) {

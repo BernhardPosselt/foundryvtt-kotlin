@@ -47,6 +47,7 @@ external interface FormElementContext {
     val templatePartial: String?
     val labelElement: String
     val placeholder: String?
+    val checked: Boolean?
 
     // instead of going with an enum, we need to list all values
     // because Handlebars is fucking stupid and can't have == in their template language

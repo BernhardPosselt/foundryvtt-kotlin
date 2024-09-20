@@ -65,8 +65,9 @@ suspend fun pickSpecialRecipe(
                     ),
                     input = RadioInput(
                         name = "recipe",
-                        value = index == 0,
-                        label = label,
+                        checked = index == 0,
+                        value = recipe.name,
+                        label = recipe.name,
                         escapeLabel = false,
                         hideLabel = true,
                     ).toContext(),
@@ -75,7 +76,6 @@ suspend fun pickSpecialRecipe(
         }.toList()
         .awaitAll()
         .toTypedArray()
-    console.log(rows)
     awaitablePrompt<LearnSpecialRecipeData, RecipeData?>(
         title = "Recipes learnable in Zone",
         templatePath = "applications/camping/learn-recipe.hbs",

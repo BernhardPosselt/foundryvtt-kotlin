@@ -3,7 +3,8 @@ package at.posselt.pfrpg2e.app.forms
 data class RadioInput(
     override val label: String,
     override val name: String,
-    val value: Boolean = false,
+    val checked: Boolean,
+    val value: String,
     val required: Boolean = false,
     override val help: String? = null,
     override val hideLabel: Boolean = false,
@@ -38,6 +39,7 @@ data class RadioInput(
         escapeLabel = escapeLabel,
         component = false,
         labelElement = labelElement,
+        checked = checked,
     )
 }
 

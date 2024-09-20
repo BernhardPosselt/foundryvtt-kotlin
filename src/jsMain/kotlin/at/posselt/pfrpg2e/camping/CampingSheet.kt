@@ -494,6 +494,7 @@ class CampingSheet(
 
         // if it's a recipe we need to know the dc
         val recipe = if (activity.isDiscoverSpecialMeal()) askRecipe(camping) else null
+        console.log(recipe)
         checkActor.campingActivityCheck(
             data = campingCheckData,
             overrideDc = recipe?.cookingLoreDC,

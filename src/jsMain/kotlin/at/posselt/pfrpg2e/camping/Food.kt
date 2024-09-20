@@ -286,8 +286,13 @@ private suspend fun PF2ECharacter.applyMealHealEffects(
     val healingFormulas = parsedEffects.filterIsInstance<Healing>()
     val damageFormulas = parsedEffects.filterIsInstance<Damage>()
     val reduceConditions = parsedEffects.filterIsInstance<Conditions>()
-    val totalHealing =
-        healingFormulas.sumOf { roll(it.formula, flavor = "Automatically applying healing from ${it.name}") }
+    val totalHealing = healingFormulas.sumOf {
+        roll(
+            it.formula,
+            flavor = "Automatically applying healing from ${it.name}",
+            speaker = this,
+        )
+    }
     val hp = min(system.attributes.hp.max, system.attributes.hp.value + totalHealing)
     typeSafeUpdate { system.attributes.hp.value = hp }
     damageFormulas.forEach {
