@@ -165,16 +165,16 @@ tasks.register<Zip>("package") {
     tasks.named("build").get().mustRunAfter("clean", "compileOldJs")
     archiveFileName.set("release.zip")
     destinationDirectory.set(layout.buildDirectory)
-    from("dist") { into("dist") }
-    from("docs") { into("docs") }
-    from("img") { into("img") }
-    from("packs") { into("packs") }
-    from("styles") { into("styles") }
-    from("templates") { into("templates") }
-    from("CHANGELOG.md")
-    from("LICENSE")
-    from("OpenGameLicense.md")
-    from("README.md")
-    from("token-map.json")
-    from("module.json")
+    from("dist") { into("pf2e-kingmaker-tools/dist") }
+    from("docs") { into("pf2e-kingmaker-tools/docs") }
+    from("img") { into("pf2e-kingmaker-tools/img") }
+    from("packs") { into("pf2e-kingmaker-tools/packs") }
+    from("styles") { into("pf2e-kingmaker-tools/styles") }
+    from("templates") { into("pf2e-kingmaker-tools/templates") }
+    from("CHANGELOG.md") { into("pf2e-kingmaker-tools/") }
+    from("LICENSE") { into("pf2e-kingmaker-tools/") }
+    from("OpenGameLicense.md") { into("pf2e-kingmaker-tools/") }
+    from("README.md") { into("pf2e-kingmaker-tools/") }
+    from("token-map.json") { into("pf2e-kingmaker-tools/") }
+    from("module.json") { into("pf2e-kingmaker-tools/") }
 }
