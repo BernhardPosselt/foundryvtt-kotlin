@@ -84,7 +84,10 @@ class RegionSettingsDataModel(val value: AnyObject) : DataModel(value) {
                     int("encounterDc")
                     int("level")
                     string("rollTableUuid", nullable = true)
-                    string("combatTrack", nullable = true)
+                    schema("combatTrack") {
+                        string("playlistUuid", nullable = true)
+                        string("trackUuid", nullable = true)
+                    }
                     string("terrain")
                 }
             }
@@ -234,6 +237,12 @@ class RegionConfig(
     }
 
     override fun onParsedSubmit(value: RegionSettings) = buildPromise {
+        // unfortunately there is no way to make an object optional if all of its properties are null
+        value.regions.forEach {
+            if (it.combatTrack?.playlistUuid == null) {
+                it.combatTrack = null
+            }
+        }
         currentSettings = value
         if (currentSettings.regions.isEmpty()) {
             addDefaultRegion()
