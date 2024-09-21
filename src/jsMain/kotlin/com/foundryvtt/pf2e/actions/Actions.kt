@@ -5,8 +5,8 @@ import kotlinx.js.JsPlainObject
 import kotlin.js.Promise
 
 
-external interface Action {
-    val use: (options: ActionUseOptions) -> Promise<Array<CheckResultCallback>>
+external class Action {
+    fun use(options: ActionUseOptions): Promise<Array<CheckResultCallback>>
 }
 
 @JsPlainObject

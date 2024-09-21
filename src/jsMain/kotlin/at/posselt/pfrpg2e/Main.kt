@@ -25,6 +25,7 @@ import at.posselt.pfrpg2e.weather.rollWeather
 import com.foundryvtt.core.*
 import io.kvision.jquery.get
 import js.objects.recordOf
+import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 
 fun main() {
