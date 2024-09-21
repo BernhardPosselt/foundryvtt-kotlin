@@ -47,6 +47,7 @@ external interface Cooking {
     var actorMeals: Array<ActorMeal>
     var homebrewMeals: Array<RecipeData>
     var results: Array<CookingResult>
+    var minimumSubsistence: Int
 }
 
 @JsPlainObject
@@ -169,6 +170,7 @@ fun getDefaultCamping(game: Game): CampingData {
             knownRecipes = arrayOf("Basic Meal", "Hearty Meal"),
             homebrewMeals = emptyArray(),
             results = emptyArray(),
+            minimumSubsistence = 0,
         ),
         watchSecondsRemaining = 0,
         gunsToClean = 0,

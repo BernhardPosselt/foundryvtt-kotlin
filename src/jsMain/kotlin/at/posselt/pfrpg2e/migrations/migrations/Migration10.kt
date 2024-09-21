@@ -117,6 +117,7 @@ class Migration10 : Migration(10) {
         camping.homebrewCampingActivities.forEach { activity ->
             activity.skills = newSkills[activity.name] ?: emptyArray<CampingSkill>()
         }
+        camping.cooking.minimumSubsistence = 0
         camping.restRollMode = if (camping.restRollMode == "one-every-4-hours") {
             "oneEveryFourHours"
         } else {

@@ -55,6 +55,7 @@ external interface CampingSettings {
     val randomEncounterRollMode: String
     val ignoreSkillRequirements: Boolean
     val minimumTravelSpeed: Int?
+    val minimumSubsistence: Int
     val alwaysPerformActivities: Array<String>
     val restingPlaylistUuid: String?
     val restingPlaylistSoundUuid: String?
@@ -84,6 +85,7 @@ class CampingSettingsDataModel(value: AnyObject) : DataModel(value) {
             string("restingPlaylistSoundUuid", nullable = true)
             boolean("ignoreSkillRequirements")
             int("minimumTravelSpeed")
+            int("minimumSubsistence")
         }
     }
 }
@@ -141,6 +143,7 @@ class CampingSettingsApplication(
             randomEncounterRollMode = camping.randomEncounterRollMode,
             ignoreSkillRequirements = camping.ignoreSkillRequirements,
             minimumTravelSpeed = camping.minimumTravelSpeed,
+            minimumSubsistence = camping.cooking.minimumSubsistence,
             alwaysPerformActivities = camping.alwaysPerformActivities,
             restingPlaylistUuid = camping.restingTrack?.playlistUuid,
             restingPlaylistSoundUuid = camping.restingTrack?.trackUuid,
@@ -250,6 +253,18 @@ class CampingSettingsApplication(
                     }
                 ),
                 Section(
+                    legend = "Cooking",
+                    formRows = listOf(
+                        NumberInput(
+                            name = "minimumSubsistence",
+                            label = "Minimum Subsistence",
+                            help = "Gain this many provisions after resting",
+                            value = settings.minimumSubsistence,
+                            stacked = false,
+                        ),
+                    )
+                ),
+                Section(
                     legend = "Resting",
                     formRows = listOf(
                         Select(
@@ -338,6 +353,7 @@ class CampingSettingsApplication(
                         camping.randomEncounterRollMode = settings.randomEncounterRollMode
                         camping.ignoreSkillRequirements = settings.ignoreSkillRequirements
                         camping.minimumTravelSpeed = settings.minimumTravelSpeed
+                        camping.cooking.minimumSubsistence = settings.minimumSubsistence
                         camping.alwaysPerformActivities = settings.alwaysPerformActivities
                         camping.restingTrack = settings.restingPlaylistUuid?.let {
                             Track(playlistUuid = it, trackUuid = settings.restingPlaylistSoundUuid)

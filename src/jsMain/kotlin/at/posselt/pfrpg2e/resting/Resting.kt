@@ -1,5 +1,8 @@
 package at.posselt.pfrpg2e.resting
 
+import at.posselt.pfrpg2e.actions.ActionDispatcher
+import at.posselt.pfrpg2e.actions.ActionMessage
+import at.posselt.pfrpg2e.actions.handlers.GainProvisions
 import at.posselt.pfrpg2e.actor.party
 import at.posselt.pfrpg2e.camping.ActivityEffect
 import at.posselt.pfrpg2e.camping.CampingData
@@ -35,6 +38,7 @@ import at.posselt.pfrpg2e.utils.buildPromise
 import at.posselt.pfrpg2e.utils.formatSeconds
 import at.posselt.pfrpg2e.utils.postChatMessage
 import at.posselt.pfrpg2e.utils.typeSafeUpdate
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actions.RestForTheNightOptions
 import com.foundryvtt.pf2e.actor.PF2EActor
@@ -225,7 +229,12 @@ private suspend fun findRandomEncounterAt(
     return null
 }
 
-private suspend fun beginRest(game: Game, campingActor: PF2ENpc, camping: CampingData) {
+private suspend fun beginRest(
+    game: Game,
+    dispatcher: ActionDispatcher,
+    campingActor: PF2ENpc,
+    camping: CampingData,
+) {
     val actorsByUuid = getCampingActorsByUuid(camping.actorUuids).associateBy(PF2EActor::uuid)
     val watchers = actorsByUuid.values
         .filter { !camping.actorUuidsNotKeepingWatch.contains(it.uuid) }
@@ -256,11 +265,16 @@ private suspend fun beginRest(game: Game, campingActor: PF2ENpc, camping: Campin
         campingActor.setCamping(camping)
     } else {
         camping.watchSecondsRemaining = watchDurationSeconds
-        completeDailyPreparations(game, campingActor, camping)
+        completeDailyPreparations(game, dispatcher, campingActor, camping)
     }
 }
 
-private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc, camping: CampingData) =
+private suspend fun completeDailyPreparations(
+    game: Game,
+    dispatcher: ActionDispatcher,
+    campingActor: PF2ENpc,
+    camping: CampingData,
+) =
     coroutineScope {
         val actors = camping.getActorsInCamp()
         val recipes = camping.getAllRecipes().toList()
@@ -281,14 +295,38 @@ private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc,
         removeMealEffects(recipes, actors, onlyRemoveAfterRest = true)
         removeProvisions(actors + listOfNotNull(game.party()))
         removeCombatEffects(actors)
+        gainMinimumSubsistence(game, dispatcher, camping.cooking.minimumSubsistence)
     }
 
+private suspend fun gainMinimumSubsistence(
+    game: Game,
+    dispatcher: ActionDispatcher,
+    quantity: Int,
+) {
+    game.party()?.let {
+        dispatcher.dispatch(
+            ActionMessage(
+                action = "gainProvisions",
+                data = GainProvisions(
+                    actorUuid = it.uuid,
+                    quantity = quantity,
+                ).unsafeCast<AnyObject>()
+            )
+        )
+    }
+}
 
-suspend fun rest(game: Game, campingActor: PF2ENpc, camping: CampingData) {
+
+suspend fun rest(
+    game: Game,
+    dispatcher: ActionDispatcher,
+    campingActor: PF2ENpc,
+    camping: CampingData
+) {
     if (camping.watchSecondsRemaining == 0) {
         camping.restingTrack?.play()
-        beginRest(game, campingActor, camping)
+        beginRest(game, dispatcher, campingActor, camping)
     } else {
-        completeDailyPreparations(game, campingActor, camping)
+        completeDailyPreparations(game, dispatcher, campingActor, camping)
     }
 }

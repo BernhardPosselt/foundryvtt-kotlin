@@ -312,7 +312,7 @@ class CampingSheet(
             "settings" -> CampingSettingsApplication(game, actor).launch()
             "rest" -> actor.getCamping()?.let {
                 buildPromise {
-                    rest(game, actor, it)
+                    rest(game, dispatcher, actor, it)
                 }
             }
 

@@ -1,5 +1,6 @@
 package at.posselt.pfrpg2e.macros
 
+import at.posselt.pfrpg2e.app.confirm
 import at.posselt.pfrpg2e.app.forms.NumberInput
 import at.posselt.pfrpg2e.app.forms.formContext
 import at.posselt.pfrpg2e.app.prompt
@@ -32,9 +33,11 @@ private data class PointsForPlayer(
  * Sets all hero points to 1
  */
 suspend fun resetHeroPointsMacro(actors: Array<PF2ECharacter>) {
-    val points = actors.map { PointsForPlayer(player = it, 1, AwardMode.SET) }.toTypedArray()
-    updateHeroPoints(points)
-    postChatMessage("Reset hero point values to 1")
+    if (confirm("Reset Hero Points to 1?")) {
+        val points = actors.map { PointsForPlayer(player = it, 1, AwardMode.SET) }.toTypedArray()
+        updateHeroPoints(points)
+        postChatMessage("Reset hero point values to 1")
+    }
 }
 
 private suspend fun updateHeroPoints(points: Array<PointsForPlayer>): Unit = coroutineScope {
