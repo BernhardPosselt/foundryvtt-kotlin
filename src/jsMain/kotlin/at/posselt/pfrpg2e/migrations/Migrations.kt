@@ -53,7 +53,7 @@ suspend fun Game.migratePfrpg2eKingdomCampingWeather() {
         return
     }
     if (isFirstGM() && currentVersion < latestMigrationVersion) {
-        ui.notifications.info("$Config.moduleName: Running migrations, please do not close the window")
+        ui.notifications.info("${Config.moduleName}: Running migrations, please do not close the window")
 
         // create backups
         val kingdomActors = npcs().filter { it.getKingdom() != null }
