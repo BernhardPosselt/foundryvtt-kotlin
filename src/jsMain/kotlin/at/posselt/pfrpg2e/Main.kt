@@ -25,7 +25,6 @@ import at.posselt.pfrpg2e.weather.rollWeather
 import com.foundryvtt.core.*
 import io.kvision.jquery.get
 import js.objects.recordOf
-import kotlinx.js.JsPlainObject
 import org.w3c.dom.HTMLElement
 
 fun main() {
@@ -124,7 +123,7 @@ fun main() {
             }
         }
 
-        Hooks.onRenderChatMessage { message, html, messageData ->
+        Hooks.onRenderChatMessage { message, html, _ ->
             val elem = html[0] as HTMLElement
             fixVisibility(game, elem, message)
         }

@@ -80,7 +80,7 @@ fun registerWeatherHooks(game: Game) {
     }
     Hooks.onUpdateWorldTime { _, deltaInSeconds, _, _ ->
         if (game.settings.pfrpg2eKingdomCampingWeather.getAutoRollWeather()) {
-            if (dayHasChanged(game, deltaInSeconds)) {
+            if (game.isFirstGM() && dayHasChanged(game, deltaInSeconds)) {
                 buildPromise {
                     rollWeather(game)
                 }

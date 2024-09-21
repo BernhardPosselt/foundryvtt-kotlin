@@ -16,6 +16,7 @@ import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2ECharacter
 import js.objects.recordOf
+import kotlinx.coroutines.await
 import org.w3c.dom.get
 
 suspend fun postPassTimeMessage(message: String, hours: Int) {
@@ -52,7 +53,9 @@ fun bindCampingChatEventListeners(game: Game, dispatcher: ActionDispatcher) {
     }
     bindChatClick(".km-pass-time") { _, el ->
         el.dataset["seconds"]?.toInt()?.let {
-            game.time.advance(it)
+            buildPromise {
+                game.time.advance(it).await()
+            }
         }
     }
     bindChatClick(".km-random-encounter") { _, _ ->

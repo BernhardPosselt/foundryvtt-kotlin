@@ -36,7 +36,7 @@ class ActionDispatcher(
         if (handler != null) {
             if (handler.mode == ExecutionMode.GM_ONLY && game.isFirstGM()) {
                 handler.execute(action, this)
-            } else if (handler.mode == ExecutionMode.GM_ONLY && !game.isFirstGM()) {
+            } else if (handler.mode == ExecutionMode.GM_ONLY && !game.isFirstGM() && !receivedViaSocket) {
                 game.socket.emitPfrpg2eKingdomCampingWeather(action.unsafeCast<AnyObject>())
             } else if (handler.mode == ExecutionMode.OTHERS) {
                 // break endless socket emitting circuit

@@ -7,9 +7,9 @@ import com.foundryvtt.core.Game
 
 class OpenCampingSheetHandler(
     private val game: Game,
-) : at.posselt.pfrpg2e.actions.handlers.ActionHandler(
+) : ActionHandler(
     action = "openCampingSheet",
-    mode = at.posselt.pfrpg2e.actions.handlers.ExecutionMode.OTHERS,
+    mode = ExecutionMode.OTHERS,
 ) {
     override suspend fun execute(action: ActionMessage, dispatcher: ActionDispatcher) {
         openCampingSheet(game, dispatcher)

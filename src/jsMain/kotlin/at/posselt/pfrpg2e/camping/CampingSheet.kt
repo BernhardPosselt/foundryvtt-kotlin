@@ -344,8 +344,14 @@ class CampingSheet(
             "previous-section" -> buildPromise { previousSection() }
             "check-encounter" -> buildPromise { rollEncounter(includeFlatCheck = true) }
             "roll-encounter" -> buildPromise { rollEncounter(includeFlatCheck = false) }
-            "advance-hour" -> advanceHours(target)
-            "advance-hexploration" -> advanceHexplorationActivities(target)
+            "advance-hour" -> buildPromise {
+                advanceHours(target)
+            }
+
+            "advance-hexploration" -> buildPromise {
+                advanceHexplorationActivities(target)
+            }
+
             "clear-actor" -> {
                 buildPromise {
                     target.dataset["uuid"]?.let { clearActor(it) }
@@ -718,9 +724,9 @@ class CampingSheet(
         }
     }
 
-    private fun advanceHexplorationActivities(target: HTMLElement) {
+    private suspend fun advanceHexplorationActivities(target: HTMLElement) {
         val seconds = getHexplorationActivitySeconds()
-        game.time.advance(seconds * (target.dataset["activities"]?.toInt() ?: 0))
+        game.time.advance(seconds * (target.dataset["activities"]?.toInt() ?: 0)).await()
     }
 
     private fun getHexplorationActivitySeconds(): Int =
@@ -736,7 +742,7 @@ class CampingSheet(
         LocalTime.fromSecondOfDay(getHexplorationActivitySeconds()).toDateInputString()
 
     private fun getHexplorationActivitiesAvailable(camping: CampingData): Int =
-        ((8 * 3600 - (game.time.worldTime - camping.dailyPrepsAtTime)) / getHexplorationActivitySeconds())
+        max(0, (8 * 3600 - (game.time.worldTime - camping.dailyPrepsAtTime)) / getHexplorationActivitySeconds())
 
     private fun getAdventuringFor(camping: CampingData): String {
         val elapsedSeconds = game.time.worldTime - camping.dailyPrepsAtTime
@@ -744,8 +750,8 @@ class CampingSheet(
         return formatSeconds(elapsedSeconds, isNegative)
     }
 
-    private fun advanceHours(target: HTMLElement) {
-        game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0))
+    private suspend fun advanceHours(target: HTMLElement) {
+        game.time.advance(3600 * (target.dataset["hours"]?.toInt() ?: 0)).await()
     }
 
     private suspend fun getRecipeContext(

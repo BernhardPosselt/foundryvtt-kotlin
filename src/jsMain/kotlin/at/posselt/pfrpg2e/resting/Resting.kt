@@ -260,7 +260,7 @@ private suspend fun beginRest(
                 attribute = Perception,
                 dc = askDc("Enemy Stealth"),
             )
-        game.time.advance(randomEncounterAt)
+        game.time.advance(randomEncounterAt).await()
         camping.watchSecondsRemaining = randomEncounterAt
         campingActor.setCamping(camping)
     } else {
@@ -279,7 +279,7 @@ private suspend fun completeDailyPreparations(
         val actors = camping.getActorsInCamp()
         val recipes = camping.getAllRecipes().toList()
 
-        game.time.advance(camping.watchSecondsRemaining)
+        game.time.advance(camping.watchSecondsRemaining).await()
         camping.watchSecondsRemaining = 0
         camping.encounterModifier = 0
         camping.dailyPrepsAtTime = game.time.worldTime
