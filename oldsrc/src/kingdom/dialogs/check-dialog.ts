@@ -367,7 +367,7 @@ export class CheckDialog extends FormApplication<FormApplicationOptions & CheckD
         const skillRankFilters = ignoreSkillRequirements ? undefined : ranks;
         const activitySkills = getActivitySkills(this.overrideSkills ?? activities[activity].skills, skillRankFilters);
         const practicalMagic: Skill[] = activitySkills.includes('engineering') && hasFeat(this.kingdom, 'Practical Magic') ? ['magic'] : [];
-        const expandMagicSkills: Skill[] = getBooleanSetting(this.game, 'expandMagicUse') && expandMagicActivities.has(activity) ? ['magic'] : [];
+        const expandMagicSkills: Skill[] = this.kingdom.settings.expandMagicUse && expandMagicActivities.has(activity) ? ['magic'] : [];
         return Array.from(new Set([...activitySkills, ...expandMagicSkills, ...practicalMagic]));
     }
 

@@ -52,7 +52,7 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
         this.actor = options.sheetActor;
         this.kingdom = getKingdom(this.actor);
         this.data = {
-            expandMagicUse: getBooleanSetting(this.game, 'expandMagicUse'),
+            expandMagicUse: this.kingdom.settings.expandMagicUse,
             allStructuresItemBonusesStack: getBooleanSetting(this.game, 'kingdomAllStructureItemBonusesStack'),
             ignoreSkillRequirements: getBooleanSetting(this.game, 'kingdomIgnoreSkillRequirements'),
             automaticallyCalculateArmyConsumption: getBooleanSetting(this.game, 'autoCalculateArmyConsumption'),
@@ -149,7 +149,7 @@ class KingdomSettings extends FormApplication<FormApplicationOptions & KingdomSe
         await setSetting(this.game, 'capitalInvestmentInCapital', this.data.capitalInvestmentInCapital);
         await setSetting(this.game, 'reduceDCToBuildLumberStructures', this.data.reduceDCToBuildLumberStructures);
         await setSetting(this.game, 'automateResources', this.data.automateResources);
-        await setSetting(this.game, 'expandMagicUse', this.data.expandMagicUse);
+        await saveKingdom(this.actor, {settings: {expandMagicUse: this.data.expandMagicUse}});
         if (this.data.untrainedSkillProficiency === 'level') {
             await setSetting(this.game, 'kingdomAlwaysAddLevel', true);
             await setSetting(this.game, 'kingdomAlwaysAddHalfLevel', false);

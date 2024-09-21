@@ -131,11 +131,16 @@ export interface Settlement {
     waterBorders: number;
 }
 
+export interface KingdomSettings {
+    expandMagicUse: boolean;
+}
+
 export interface Kingdom {
     name: string;
     atWar: boolean;
     charter: string;
     government: string;
+    settings: KingdomSettings;
     fame: {
         now: number;
         next: number;
@@ -355,6 +360,9 @@ export function getDefaultKingdomData(): Kingdom {
         groups: [],
         milestones: getDefaultMilestones(),
         realmSceneId: null,
+        settings: {
+            expandMagicUse: false,
+        },
         workSites: {
             farmlands: {
                 quantity: 0,

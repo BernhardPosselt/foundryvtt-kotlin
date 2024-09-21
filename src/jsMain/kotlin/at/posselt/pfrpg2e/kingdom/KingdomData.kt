@@ -195,6 +195,12 @@ external interface Resources {
 }
 
 @JsPlainObject
+external interface KingdomSettings {
+    var expandMagicUse: Boolean
+}
+
+
+@JsPlainObject
 external interface KingdomData {
     var name: String
     var atWar: Boolean
@@ -218,6 +224,7 @@ external interface KingdomData {
     var turnsWithoutCultEvent: Int
     var creativeSolutions: Int
     var leaders: Leaders
+    var settings: KingdomSettings
     var commodities: CurrentCommodities
     var groups: Array<Group>
     var feats: Array<Feat>

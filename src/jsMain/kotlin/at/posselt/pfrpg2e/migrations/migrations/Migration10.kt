@@ -9,6 +9,7 @@ import at.posselt.pfrpg2e.camping.getDefaultCamping
 import at.posselt.pfrpg2e.combattracks.getCombatTrack
 import at.posselt.pfrpg2e.combattracks.setCombatTrack
 import at.posselt.pfrpg2e.kingdom.KingdomData
+import at.posselt.pfrpg2e.kingdom.KingdomSettings
 import at.posselt.pfrpg2e.kingdom.getParsedStructureData
 import at.posselt.pfrpg2e.settings.*
 import at.posselt.pfrpg2e.utils.typeSafeUpdate
@@ -143,6 +144,9 @@ class Migration10 : Migration(10) {
         kingdom.activityBlacklist = kingdom.activityBlacklist
             .filter { !activityBlacklistMappings.contains(it) }.toTypedArray() + replacements
         kingdom.fame.max = 3
+        kingdom.settings = KingdomSettings(
+            expandMagicUse = false,
+        )
     }
 
     override suspend fun migrateOther(game: Game) {
