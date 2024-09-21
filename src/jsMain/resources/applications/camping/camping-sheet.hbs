@@ -135,11 +135,13 @@
     <div id="km-camping-content" data-terrain="{{terrain}}" data-day="{{isDay}}">
         <button class="km-camping-previous"
                 data-action="previous-section"
-                {{#if prepareCampSection}}hidden{{/if}}
+            {{#unless isGM}}hidden{{/unless}}
+            {{#if prepareCampSection}}hidden{{/if}}
                 type="button"><i class="fa-solid fa-chevron-left"></i>
         </button>
         <button {{#if eatingSection}}hidden{{/if}}
                 class="km-camping-next"
+                {{#unless isGM}}hidden{{/unless}}
                 data-action="next-section"
                 type="button"><i class="fa-solid fa-chevron-right"></i></button>
         <div {{#unless eatingSection}}hidden{{/unless}} class="km-camping-eating-total">

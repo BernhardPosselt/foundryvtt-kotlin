@@ -458,9 +458,18 @@ class CampingSheet(
             ),
             overrideDc = mealToCook.dc,
         )
-        camping.cooking.results
-            .find { it.recipeName == recipeName }
-            ?.let { it.result = result?.toCamelCase() }
+        val existing = camping.cooking.results.find { it.recipeName == recipeName }
+        if (existing == null) {
+            camping.cooking.results.push(
+                CookingResult(
+                    recipeName = recipeName,
+                    skill = mealToCook.selectedSkill.value,
+                    result = result?.toCamelCase(),
+                )
+            )
+        } else {
+            existing.result = result?.toCamelCase()
+        }
         actor.setCamping(camping)
     }
 

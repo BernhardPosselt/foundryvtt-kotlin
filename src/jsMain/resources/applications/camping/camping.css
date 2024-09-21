@@ -494,16 +494,18 @@ ul.km-camping-actors {
                 li {
                     margin: 0;
                     box-sizing: content-box;
-                    aspect-ratio: 1;
                     display: flex;
                     align-items: stretch;
+                    min-height: 100%;
 
                     img {
                         object-fit: cover;
                         object-position: top center;
                         border: 0;
-                        border-radius: 0;
                         aspect-ratio: 1;
+                        border-radius: 0;
+                        height: 100%;
+                        width: 100%;
                         box-shadow: 0 0 0 1px;
                     }
                 }
