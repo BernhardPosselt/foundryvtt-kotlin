@@ -4,6 +4,7 @@ import at.posselt.pfrpg2e.Config
 import at.posselt.pfrpg2e.actions.ActionMessage
 import at.posselt.pfrpg2e.actions.ActionDispatcher
 import at.posselt.pfrpg2e.actions.handlers.ApplyMealEffects
+import at.posselt.pfrpg2e.actions.handlers.GainProvisions
 import at.posselt.pfrpg2e.actions.handlers.LearnSpecialRecipeData
 import at.posselt.pfrpg2e.data.checks.RollMode
 import at.posselt.pfrpg2e.utils.bindChatClick
@@ -63,11 +64,18 @@ fun bindCampingChatEventListeners(game: Game, dispatcher: ActionDispatcher) {
     }
     bindChatClick(".gain-provisions") { _, el ->
         buildPromise {
-            val actor = el.dataset["actorUuid"]?.let { fromUuidTypeSafe<PF2ECharacter>(it) }
+            val actorUuid = el.dataset["actorUuid"]
             val quantity = el.dataset["quantity"]?.toInt() ?: 0
-            if (quantity > 0 && actor != null) {
-                actor.addConsumableToInventory(Config.items.provisionsUuid, quantity)
-                postChatMessage("${actor.name}: Adding $quantity provisions")
+            if (quantity > 0 && actorUuid != null) {
+                dispatcher.dispatch(
+                    ActionMessage(
+                        action = "gainProvisions",
+                        data = GainProvisions(
+                            quantity = quantity,
+                            actorUuid = actorUuid,
+                        ).unsafeCast<AnyObject>()
+                    )
+                )
             }
         }
     }

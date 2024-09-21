@@ -6,8 +6,12 @@ import at.posselt.pfrpg2e.takeIfInstance
 import at.posselt.pfrpg2e.toCamelCase
 import at.posselt.pfrpg2e.toLabel
 import com.foundryvtt.core.Actor
+import com.foundryvtt.core.Game
+import com.foundryvtt.core.Hooks
 import com.foundryvtt.core.documents.ChatMessage
 import com.foundryvtt.core.documents.GetSpeakerOptions
+import com.foundryvtt.core.onRenderChatMessage
+import io.kvision.jquery.get
 import js.objects.ReadonlyRecord
 import js.objects.jso
 import js.objects.recordOf
@@ -54,14 +58,28 @@ suspend fun postChatMessage(
     rollMode: RollMode? = null,
     speaker: Actor? = null
 ) {
+    val fixedMessage = if (rollMode == RollMode.BLINDROLL) {
+        "<div hidden class=\"km-hide-from-user\"></div>$message"
+    } else {
+        message
+    }
     val data = recordOf<String, Any?>(
-        "content" to message
+        "content" to fixedMessage
     )
     if (speaker != null) {
         data["speaker"] = ChatMessage.getSpeaker(GetSpeakerOptions(actor = speaker))
     }
     rollMode?.let { ChatMessage.applyRollMode(data, it.toCamelCase()) }
     ChatMessage.create(data).await()
+}
+
+fun fixVisibility(game: Game, html: HTMLElement, message: ChatMessage) {
+    if (!game.user.isGM
+        && message.blind
+        && html.querySelector(".km-hide-from-user") != null
+    ) {
+        html.hidden = true
+    }
 }
 
 fun bindChatClick(selector: String, callback: (Event, HTMLElement) -> Unit) {

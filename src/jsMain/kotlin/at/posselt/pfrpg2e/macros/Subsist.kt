@@ -2,7 +2,11 @@ package at.posselt.pfrpg2e.macros
 
 import at.posselt.pfrpg2e.actor.hasFeat
 import at.posselt.pfrpg2e.actor.investedArmor
+import at.posselt.pfrpg2e.actor.partyMembers
 import at.posselt.pfrpg2e.actor.proficiency
+import at.posselt.pfrpg2e.app.awaitablePrompt
+import at.posselt.pfrpg2e.app.forms.FormElementContext
+import at.posselt.pfrpg2e.app.forms.RadioInput
 import at.posselt.pfrpg2e.app.forms.Select
 import at.posselt.pfrpg2e.app.forms.SelectOption
 import at.posselt.pfrpg2e.app.forms.formContext
@@ -17,6 +21,7 @@ import at.posselt.pfrpg2e.fromCamelCase
 import at.posselt.pfrpg2e.utils.asSequence
 import at.posselt.pfrpg2e.utils.postChatTemplate
 import com.foundryvtt.core.Actor
+import com.foundryvtt.core.AnyObject
 import com.foundryvtt.core.Game
 import com.foundryvtt.core.ui
 import com.foundryvtt.pf2e.actions.CheckDC
@@ -28,18 +33,62 @@ import kotlinx.coroutines.await
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
-external interface SubsistData {
+private external interface SubsistData {
     val skill: String
     val dc: Int
 }
 
+@JsPlainObject
+private external interface AskActorSubmitData {
+    val name: String
+}
+
+@JsPlainObject
+private external interface AskActorContext {
+    val formRows: Array<FormElementContext>
+}
+
+private suspend fun selectActor(choices: List<PF2ECharacter>): PF2ECharacter? {
+    return awaitablePrompt<AskActorSubmitData, PF2ECharacter?>(
+        title = "Select Character",
+        templatePath = "components/forms/form.hbs",
+        templateContext = AskActorContext(
+            formRows = choices
+                .sortedBy { it.name }
+                .mapIndexed { index, actor ->
+                    RadioInput(
+                        name = "name",
+                        label = actor.name,
+                        value = actor.name,
+                        checked = index == 0,
+                    ).toContext()
+                }.toTypedArray()
+        ).unsafeCast<AnyObject>(),
+    ) { data ->
+        choices.find { actor -> actor.name == data.name }
+    }
+}
+
 suspend fun subsistMacro(game: Game, actor: Actor?) {
-    if (actor !is PF2ECharacter) {
+    val chosenActor = if (actor is PF2ECharacter) {
+        actor
+    } else {
+        val ownedActors = game.partyMembers()
+            .filter { it.isOwner }
+        if (ownedActors.size == 1) {
+            ownedActors.first()
+        } else if (ownedActors.size > 1) {
+            selectActor(ownedActors)
+        } else {
+            null
+        }
+    }
+    if (chosenActor == null) {
         ui.notifications.error("Please select a Character")
         return
     }
     val camping = game.getCampingActor()?.getCamping()
-    val skills = actor.skills.asSequence()
+    val skills = chosenActor.skills.asSequence()
         .map { SelectOption(label = it.component2().label, value = it.component1()) }
         .toList()
     val currentRegion = camping?.findCurrentRegion()
@@ -65,31 +114,30 @@ suspend fun subsistMacro(game: Game, actor: Actor?) {
             )
         )
     ) {
-        console.log(it.skill)
         val options = SingleCheckActionUseOptions(
             difficultyClass = CheckDC(value = it.dc),
             rollOptions = arrayOf("action:subsist:after-exploration"),
             statistic = it.skill,
-            actors = arrayOf(actor),
+            actors = arrayOf(chosenActor),
         )
         val result = game.pf2e.actions.get("subsist")?.use(options)?.await()?.firstOrNull()
         val degree = fromCamelCase<DegreeOfSuccess>(result?.outcome!!)!!
         val provisions = calculateProvisions(
-            survivalProficiency = actor.skills["survival"]?.proficiency ?: Proficiency.UNTRAINED,
-            isForager = actor.hasFeat("forager"),
-            hasCoyoteCloak = actor.investedArmor("coyote-cloak"),
-            hasCoyoteCloakGreat = actor.investedArmor("coyote-cloak-greater"),
+            survivalProficiency = chosenActor.skills["survival"]?.proficiency ?: Proficiency.UNTRAINED,
+            isForager = chosenActor.hasFeat("forager"),
+            hasCoyoteCloak = chosenActor.investedArmor("coyote-cloak"),
+            hasCoyoteCloakGreat = chosenActor.investedArmor("coyote-cloak-greater"),
             degree = degree
         )
         if (provisions > 0) {
             postChatTemplate(
                 templateContext = recordOf(
                     "provisions" to provisions,
-                    "actorUuid" to actor.uuid,
-                    "actorName" to actor.name,
+                    "actorUuid" to chosenActor.uuid,
+                    "actorName" to chosenActor.name,
                 ),
                 templatePath = "chatmessages/subsist.hbs",
-                speaker = actor
+                speaker = chosenActor
             )
         }
     }

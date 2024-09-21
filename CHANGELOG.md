@@ -66,7 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 
-* Lots are not calculated from token size anymore
+* Lots are not calculated from token size anymore allowing you to use a finer grained grid
+* Private camping rolls are now hidden from players again
 
 ## [1.1.1] - 2024-07-17
 

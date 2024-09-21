@@ -5,6 +5,7 @@ import com.foundryvtt.core.abstract.DatabaseDeleteOperation
 import com.foundryvtt.core.abstract.DatabaseUpdateOperation
 import com.foundryvtt.core.applications.api.ApplicationV2
 import com.foundryvtt.core.applications.api.ContextMenuEntry
+import com.foundryvtt.core.documents.ChatMessage
 import com.foundryvtt.core.documents.TokenDocument
 import io.kvision.jquery.JQuery
 import kotlinx.js.JsPlainObject
@@ -86,6 +87,9 @@ fun <O> HooksEventListener.onCanvasReady(callback: (Canvas) -> O) =
 
 fun <O> HooksEventListener.onRenderChatLog(callback: RenderApplication<AnyObject, O>) =
     on("renderChatLog", callback)
+
+fun <O> HooksEventListener.onRenderChatMessage(callback: (message: ChatMessage, html: JQuery, messageData: AnyObject) -> O) =
+    on("renderChatMessage", callback)
 
 fun <O> HooksEventListener.onGetChatLogEntryContext(callback: ApplicationEntryContext<O>) =
     on("getChatLogEntryContext", callback)

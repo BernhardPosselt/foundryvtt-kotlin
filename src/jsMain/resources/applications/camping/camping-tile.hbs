@@ -35,7 +35,13 @@
                 <i class="fa-solid fa-dice-d20"></i>
             </button>
         </div>
-        <div class="km-camping-tile-result">
+        <div class="km-camping-tile-result" {{#unless secret}}hidden{{/unless}}>
+            <select disabled>
+                <option>-</option>
+                <option {{#if actor}}{{#if actor.degreeOfSuccess.value}}selected{{/if}}{{/if}}>???</option>
+            </select>
+        </div>
+        <div class="km-camping-tile-result" {{#if secret}}hidden{{/if}}>
             {{#if actor}}
                 {{> formElement actor.degreeOfSuccess }}
             {{else}}

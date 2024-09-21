@@ -1,5 +1,6 @@
 package at.posselt.pfrpg2e.resting
 
+import at.posselt.pfrpg2e.actor.party
 import at.posselt.pfrpg2e.camping.ActivityEffect
 import at.posselt.pfrpg2e.camping.CampingData
 import at.posselt.pfrpg2e.camping.MealEffect
@@ -278,7 +279,7 @@ private suspend fun completeDailyPreparations(game: Game, campingActor: PF2ENpc,
         applyAdditionalHealing(additionalHealing)
         applyRestHealEffects(actors, recipes, getMealEffectItems(recipes))
         removeMealEffects(recipes, actors, onlyRemoveAfterRest = true)
-        removeProvisions(actors)
+        removeProvisions(actors + listOfNotNull(game.party()))
         removeCombatEffects(actors)
     }
 

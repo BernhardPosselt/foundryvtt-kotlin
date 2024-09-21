@@ -5,6 +5,7 @@ import at.posselt.pfrpg2e.actions.handlers.AddHuntAndGatherResultHandler
 import at.posselt.pfrpg2e.actions.handlers.ApplyMealEffectsHandler
 import at.posselt.pfrpg2e.actions.handlers.ClearActivitiesHandler
 import at.posselt.pfrpg2e.actions.handlers.ClearMealEffectsHandler
+import at.posselt.pfrpg2e.actions.handlers.GainProvisionsHandler
 import at.posselt.pfrpg2e.actions.handlers.LearnSpecialRecipeHandler
 import at.posselt.pfrpg2e.actions.handlers.OpenCampingSheetHandler
 import at.posselt.pfrpg2e.actions.handlers.SyncActivitiesHandler
@@ -22,7 +23,9 @@ import at.posselt.pfrpg2e.utils.*
 import at.posselt.pfrpg2e.weather.registerWeatherHooks
 import at.posselt.pfrpg2e.weather.rollWeather
 import com.foundryvtt.core.*
+import io.kvision.jquery.get
 import js.objects.recordOf
+import org.w3c.dom.HTMLElement
 
 fun main() {
     Hooks.onInit {
@@ -36,6 +39,7 @@ fun main() {
                 ClearMealEffectsHandler(game = game),
                 LearnSpecialRecipeHandler(game = game),
                 ApplyMealEffectsHandler(game = game),
+                GainProvisionsHandler(game = game),
             )
         ).apply {
             listen()
@@ -107,7 +111,8 @@ fun main() {
                 realmTileDialogMacro = { buildPromise { editRealmTileMacro(game) } },
                 editStructureMacro = { actor -> buildPromise { editStructureMacro(actor) } },
                 openCampingSheet = { buildPromise { openCampingSheet(game, actionDispatcher) } },
-                subsistMacro = { actor -> buildPromise { subsistMacro(game, actor) } }
+                subsistMacro = { actor -> buildPromise { subsistMacro(game, actor) } },
+                createFoodMacro = { buildPromise { createFoodMacro(game, actionDispatcher) } },
             )
         )
 
@@ -116,6 +121,11 @@ fun main() {
                 game.migratePfrpg2eKingdomCampingWeather()
                 showFirstRunMessage(game)
             }
+        }
+
+        Hooks.onRenderChatMessage { message, html, messageData ->
+            val elem = html[0] as HTMLElement
+            fixVisibility(game, elem, message)
         }
 
         Hooks.onRenderChatLog { _, _, _ ->

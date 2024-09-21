@@ -114,7 +114,9 @@ class RegionConfig(
                 buildPromise {
                     actor.getCamping()?.let { camping ->
                         camping.regionSettings = currentSettings
-                        camping.currentRegion = currentSettings.regions.first().name
+                        if (!camping.regionSettings.regions.any { it.name == camping.currentRegion }) {
+                            camping.currentRegion = currentSettings.regions.first().name
+                        }
                         actor.setCamping(camping)
                     }
                     close()

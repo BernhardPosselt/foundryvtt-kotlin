@@ -252,7 +252,12 @@ ul.km-camping-actors {
         display: flex;
         margin-bottom: 0;
 
+        &:hover span {
+            display: block
+        }
+
         span {
+            display: none;
             position: absolute;
             font-size: var(--font-size-12);
             text-align: center;
@@ -565,7 +570,12 @@ ul.km-camping-actors {
                     align-items: center;
                     justify-content: center;
 
+                    &:hover header {
+                        display: block;
+                    }
+
                     header {
+                        display: none;
                         position: absolute;
                         font-size: var(--font-size-14);
                         text-align: center;
@@ -607,7 +617,6 @@ ul.km-camping-actors {
                     box-shadow: none;
                     font-size: 1em;
                     height: 2em;
-                    padding: 0 .3em;
                     border-style: none;
                     width: calc(9em + 2px);
                     text-overflow: ellipsis;
@@ -639,7 +648,6 @@ ul.km-camping-actors {
                     box-shadow: none;
                     font-size: 1em;
                     height: 2em;
-                    padding: 0 .3em;
                 }
             }
         }

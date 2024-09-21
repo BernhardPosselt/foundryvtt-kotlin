@@ -7,6 +7,7 @@ import at.posselt.pfrpg2e.app.forms.formContext
 import at.posselt.pfrpg2e.camping.dialogs.RegionSetting
 import at.posselt.pfrpg2e.data.actor.*
 import at.posselt.pfrpg2e.data.checks.DegreeOfSuccess
+import at.posselt.pfrpg2e.data.checks.RollMode
 import at.posselt.pfrpg2e.data.checks.getLevelBasedDC
 import at.posselt.pfrpg2e.fromOrdinal
 import at.posselt.pfrpg2e.slugify
@@ -131,7 +132,12 @@ suspend fun PF2ECreature.campingActivityCheck(
             DegreeOfSuccess.SUCCESS -> activity.success
             DegreeOfSuccess.CRITICAL_SUCCESS -> activity.criticalSuccess
         }
-        postDegreeOfSuccess(degreeOfSuccess = result, message = config?.message)
+        val rollMode = if (data.activityData.data.isSecret) RollMode.BLINDROLL else null
+        postDegreeOfSuccess(
+            degreeOfSuccess = result,
+            message = config?.message,
+            rollMode = rollMode,
+        )
     }
     return result
 }

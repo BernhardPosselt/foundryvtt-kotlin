@@ -88,6 +88,7 @@ external interface CampingSheetActivity {
     val name: String
     val hidden: Boolean
     val requiresCheck: Boolean
+    val secret: Boolean
     val skills: FormElementContext?
 }
 
@@ -897,12 +898,14 @@ class CampingSheet(
                     || eatingSection
                     || camping.alwaysPerformActivities.contains(data.name)
             CampingSheetActivity(
+                secret = data.isSecret && !game.user.isGM,
                 journalUuid = data.journalUuid,
                 name = data.name,
                 hidden = hidden,
                 requiresCheck = requiresCheck,
                 skills = skills,
                 actor = actor?.let { act ->
+                    val degree = result.result?.let { fromCamelCase<DegreeOfSuccess>(it) }
                     CampingSheetActor(
                         name = act.name,
                         uuid = act.uuid,
@@ -913,7 +916,7 @@ class CampingSheet(
                             hideLabel = true,
                             required = false,
                             name = "activities.degreeOfSuccess.${data.name}",
-                            value = result.result?.let { fromCamelCase<DegreeOfSuccess>(it) },
+                            value = degree,
                             elementClasses = listOf("km-degree-of-success"),
                         ).toContext(),
                     )
