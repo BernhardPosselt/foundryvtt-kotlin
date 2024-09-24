@@ -274,7 +274,9 @@ private fun parseMealNameAndEffects(effect: MealNameAndEffect): List<HealingValu
     return listOfNotNull(
         healFormula?.let { Healing(name, it) },
         damageFormula?.let { Damage(name, it) },
-        reduceConditions?.let { Conditions(name, it) },
+        reduceConditions
+            ?.takeIf { it.reducesAnyCondition() }
+            ?.let { Conditions(name, it) }
     )
 }
 
@@ -318,10 +320,10 @@ private suspend fun PF2ECharacter.applyMealHealEffects(
                     "Manually lower all of the following conditions"
                 },
                 "values" to listOfNotNull(
-                    condition.reduceConditions.clumsy?.let { "Clumsy: $it" },
-                    condition.reduceConditions.enfeebled?.let { "Enfeebled: $it" },
-                    condition.reduceConditions.drained?.let { "Drained: $it" },
-                    condition.reduceConditions.stupefied?.let { "Stupefied: $it" },
+                    condition.reduceConditions.clumsy?.takeIf { it > 0 }?.let { "Clumsy: $it" },
+                    condition.reduceConditions.enfeebled?.takeIf { it > 0 }?.let { "Enfeebled: $it" },
+                    condition.reduceConditions.drained?.takeIf { it > 0 }?.let { "Drained: $it" },
+                    condition.reduceConditions.stupefied?.takeIf { it > 0 }?.let { "Stupefied: $it" },
                 ).toTypedArray()
             ),
             speaker = this

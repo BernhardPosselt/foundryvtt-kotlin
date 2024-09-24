@@ -1,6 +1,7 @@
 import at.posselt.pfrpg2e.plugins.ChangeModuleVersion
 import at.posselt.pfrpg2e.plugins.JsonSchemaValidator
 import at.posselt.pfrpg2e.plugins.PackJsonFile
+import at.posselt.pfrpg2e.plugins.Release
 import at.posselt.pfrpg2e.plugins.UnpackJsonFile
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
@@ -14,7 +15,7 @@ plugins {
 }
 
 group = "at.posselt"
-version = "1.0.0"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
@@ -122,7 +123,7 @@ tasks.register<Copy>("copyOldJs") {
  * Updates the version attribute in module.json when packaging the zip
  */
 tasks.register<ChangeModuleVersion>("changeModuleVersion") {
-    moduleVersion = providers.gradleProperty("moduleVersion")
+    moduleVersion = project.version.toString()
 }
 
 /**
@@ -157,7 +158,7 @@ tasks.register<Exec>("compileOldJs") {
 }
 
 /**
- * Run using ./gradlew package -PmoduleVersion=0.0.1
+ * Run using ./gradlew package
  */
 tasks.register<Zip>("package") {
     dependsOn("clean", "build", "installOldJs", "compileOldJs", "copyOldJs", "packJsonFiles", "changeModuleVersion")
@@ -177,4 +178,10 @@ tasks.register<Zip>("package") {
     from("README.md") { into("pf2e-kingmaker-tools/") }
     from("token-map.json") { into("pf2e-kingmaker-tools/") }
     from("module.json") { into("pf2e-kingmaker-tools/") }
+}
+
+tasks.register<Release>("release") {
+    dependsOn("package")
+    releaseZip = layout.buildDirectory.file("release.zip")
+    version = project.version.toString()
 }

@@ -119,6 +119,7 @@ class FavoriteMealsApplication(
         val mealChoices = camping
             ?.getAllRecipes()
             ?.filter { it.canBeFavoriteMeal() }
+            ?.sortedBy { it.name }
             ?.map { SelectOption(label = it.name, value = it.name) }
             ?: emptyList()
 

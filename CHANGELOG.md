@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+* Remove token mappings from GMG npcs to not conflict with NPC Core
 * This release marks a departure from Paizo IP to OGL only content due improve licensing compatibility. This primarily
   means that some names and setting information had to be removed or changed (
   e.g. the First World has been replaced with "A Supernatural Place" or "Galt Ragout" is now just "Ragout")

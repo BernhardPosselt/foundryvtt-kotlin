@@ -40,9 +40,7 @@ private suspend fun checkPreActorMealUpdate(actor: Actor, update: AnyObject) {
         ?: emptyArray()
     updated
         .filter {
-            it.result != null
-                    && it.result != current[it.recipeName]?.result
-                    && it.result != DegreeOfSuccess.FAILURE.toCamelCase()
+            it.result != null && it.result != current[it.recipeName]?.result
         }
         .forEach { result ->
             val degree = result.result?.let { fromCamelCase<DegreeOfSuccess>(it) }
@@ -60,6 +58,7 @@ private suspend fun checkPreActorMealUpdate(actor: Actor, update: AnyObject) {
                     "degree" to result.result,
                     "label" to degree?.toLabel(),
                     "message" to message,
+                    "failure" to (degree == DegreeOfSuccess.FAILURE),
                 ),
             )
         }

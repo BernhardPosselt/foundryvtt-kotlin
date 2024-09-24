@@ -70,7 +70,7 @@ class ManageActivitiesApplication(
                             value = enabled,
                             label = "Enable",
                             hideLabel = true,
-                            disabled = activity.isPrepareCampsite(),
+                            disabled = activity.isPrepareCampsite() || activity.isCookMeal(),
                             name = "enabledIds.$name",
                         ).toContext(),
                         canBeEdited = canBeEdited,
@@ -85,7 +85,7 @@ class ManageActivitiesApplication(
     }
 
     override fun onParsedSubmit(value: CrudData): Promise<Void> = buildPromise {
-        val enabled = value.enabledIds.toSet() + "Prepare Campsite"
+        val enabled = value.enabledIds.toSet() + setOf("Prepare Campsite", "Cook Meal")
         actor.getCamping()?.let { camping ->
             camping.lockedActivities = camping.getAllActivities()
                 .filter { !enabled.contains(it.name) }

@@ -30,6 +30,7 @@ import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.data.dsl.buildSchema
 import com.foundryvtt.core.documents.JournalEntry
 import com.foundryvtt.core.documents.JournalEntryPage
+import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.array.push
@@ -80,7 +81,7 @@ class ActivityDataModel(value: AnyObject) : DataModel(value) {
             string("name")
             boolean("isSecret")
             string("journalUuid", nullable = true)
-            string("journalyEntryUuid", nullable = true)
+            string("journalEntryUuid", nullable = true)
             schema("modifyRandomEncounterDc") {
                 int("day")
                 int("night")
@@ -143,14 +144,14 @@ class ActivityApplication(
 ) {
     private val editActivityName = data?.name
     private val editActivityLocked = data?.isLocked
-    private var currentActivity: CampingActivityData = data ?: CampingActivityData(
+    private var currentActivity: CampingActivityData = data?.let(::deepClone) ?: CampingActivityData(
         name = "",
         journalUuid = null,
         skills = emptyArray<CampingSkill>(),
         modifyRandomEncounterDc = null,
         isSecret = false,
         isLocked = false,
-        effectUuids = null,
+        effectUuids = emptyArray(),
         isHomebrew = true,
         criticalSuccess = null,
         success = null,
@@ -169,6 +170,7 @@ class ActivityApplication(
             "save" -> save()
             "edit-skills" -> launchCampingSkillPicker(currentActivity.getCampingSkills(expandAny = false)) {
                 currentActivity.skills = it
+
                 render()
             }
 
@@ -245,7 +247,9 @@ class ActivityApplication(
     }
 
     private fun createEffectAt(section: String, effect: ActivityEffect) {
+        console.log(section, effect)
         getEffectsSection(section)?.push(effect)
+        console.log(currentActivity)
         render()
     }
 
@@ -303,7 +307,7 @@ class ActivityApplication(
                         Select(
                             label = "Journal",
                             name = "journalUuid",
-                            value = journal?.page?.uuid,
+                            value = journal?.entry?.uuid,
                             required = false,
                             options = game.journal.contents.mapNotNull { it.toOption(useUuid = true) },
                             stacked = false,
@@ -312,7 +316,7 @@ class ActivityApplication(
                             label = "Journal Entry",
                             name = "journalEntryUuid",
                             required = false,
-                            value = journal?.entry?.uuid,
+                            value = journal?.page?.uuid,
                             options = journal?.entry?.pages?.contents?.mapNotNull { it.toOption(useUuid = true) }
                                 ?: emptyList(),
                             stacked = false,
@@ -392,6 +396,9 @@ class ActivityApplication(
                         .filter { it.name != data.name }
                         .toTypedArray()
                     camping.homebrewCampingActivities.push(data)
+                    camping.campingActivities = camping.campingActivities
+                        .filter { it.activity != data.name }
+                        .toTypedArray()
                     actor.setCamping(camping)
                     close().await()
                     afterSubmit()

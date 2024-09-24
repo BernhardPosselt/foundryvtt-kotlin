@@ -30,7 +30,9 @@
             </div>
             {{#if rations }}
                 <div class="km-recipe-rations">
-                    <button type="button" data-action="consume-rations">Consume Rations</button>
+                    <button type="button" data-action="consume-rations"
+                            {{#unless consumeRationsEnabled}}disabled{{/unless}}>Consume Rations
+                    </button>
                 </div>
             {{/if}}
             {{#if requiresCheck}}

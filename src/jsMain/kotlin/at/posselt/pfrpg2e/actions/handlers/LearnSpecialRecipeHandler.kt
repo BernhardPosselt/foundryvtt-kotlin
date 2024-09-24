@@ -16,6 +16,7 @@ import at.posselt.pfrpg2e.camping.reduceFoodBy
 import at.posselt.pfrpg2e.camping.setCamping
 import at.posselt.pfrpg2e.data.checks.DegreeOfSuccess
 import at.posselt.pfrpg2e.fromCamelCase
+import at.posselt.pfrpg2e.utils.postChatMessage
 import at.posselt.pfrpg2e.utils.postChatTemplate
 import com.foundryvtt.core.Game
 import com.foundryvtt.pf2e.actor.PF2ECharacter
@@ -57,7 +58,7 @@ class LearnSpecialRecipeHandler(
                 camping.cooking.knownRecipes = (camping.cooking.knownRecipes + recipeName).distinct().toTypedArray()
                 campingActor.setCamping(camping)
             }
-            postChatTemplate("Learned recipe $recipeName")
+            postChatMessage("Learned recipe $recipeName")
         }
     }
 }

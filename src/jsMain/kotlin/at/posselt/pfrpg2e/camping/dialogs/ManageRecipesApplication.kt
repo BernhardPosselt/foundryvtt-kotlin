@@ -38,7 +38,14 @@ class ManageRecipesApplication(
         actor.getCamping()?.let { camping ->
             camping.cooking.knownRecipes = camping.cooking.knownRecipes.filter { it != id }.toTypedArray()
             camping.cooking.homebrewMeals = camping.cooking.homebrewMeals.filter { it.name != id }.toTypedArray()
-            camping.cooking.actorMeals.forEach { if (it.chosenMeal == id) it.chosenMeal = "nothing" }
+            camping.cooking.actorMeals.forEach {
+                if (it.chosenMeal == id) {
+                    it.chosenMeal = "nothing"
+                }
+                if (it.favoriteMeal == id) {
+                    it.favoriteMeal = null
+                }
+            }
             camping.cooking.results = camping.cooking.results.asSequence()
                 .filter { it.recipeName != id }
                 .toTypedArray()

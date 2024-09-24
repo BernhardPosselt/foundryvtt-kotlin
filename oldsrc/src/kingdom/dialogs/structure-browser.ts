@@ -368,8 +368,8 @@ class StructureBrowserApp extends FormApplication<
         if (!isBlank(filters.search)) enabledFilters.push(x => x.name.toLowerCase().includes(filters.search.trim().toLowerCase()));
         enabledFilters.push((x) => hasActivities(x, filters.activities));
         enabledFilters.push((x) => (x.level ?? 0) <= filters.level);
-        enabledFilters.push((x) => (x.lots ?? 0) <= filters.lots);
-        enabledFilters.push((x) => (x.lots ?? 0) >= filters.minLots);
+        enabledFilters.push((x) => (x.lots) <= filters.lots);
+        enabledFilters.push((x) => (x.lots) >= filters.minLots);
         return structures
             .filter(structure => enabledFilters.every(filter => filter(structure)))
             .sort((a, b) => a.name.localeCompare(b.name));

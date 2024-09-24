@@ -446,9 +446,9 @@ export function evaluateStructures(
         unlockActivities: [],
         residentialLots: structures
             .filter(structure => structure?.traits?.includes('residential'))
-            .map(s => s.lots ?? 1)
+            .map(s => s.lots)
             .reduce((a, b) => a + b, 0),
-        lots: structures.map(s => s.lots ?? 1).reduce((a, b) => a + b, 0),
+        lots: structures.map(s => s.lots).reduce((a, b) => a + b, 0),
         hasBridge: structures.some(structure => structure.isBridge),
     };
     const unionizedStructures = unionizeStructures(structures, activities);

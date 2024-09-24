@@ -1,10 +1,8 @@
-<p>Remove ingredients and {{#if learnRecipe}}learn the to cook <b>{{name}}</b>{{/if}}{{#if criticalFailure}}
-    apply the meal's critical failure effect{{/if}}</p>
-
 <button type="button"
         class="km-add-recipe"
         data-actor-uuid="{{actorUuid}}"
         data-name="{{name}}"
         data-degree="{{degree}}"
->Apply
+>Remove Ingredients {{#if learnRecipe}}& Learn {{name}}{{/if}}
+    {{#if criticalFailure}}& Suffer Critical Failure Effect{{/if}}
 </button>

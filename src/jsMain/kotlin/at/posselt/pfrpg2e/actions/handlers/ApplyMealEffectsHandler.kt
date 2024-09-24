@@ -32,12 +32,8 @@ class ApplyMealEffectsHandler(val game: Game) : ActionHandler("applyMealEffects"
         val data = action.data.unsafeCast<ApplyMealEffects>()
         val degree = fromCamelCase<DegreeOfSuccess>(data.degree) ?: return
         val recipe = recipesByName[data.recipe] ?: return
-        val outcome = when (degree) {
-            DegreeOfSuccess.CRITICAL_FAILURE -> recipe.criticalFailure
-            DegreeOfSuccess.SUCCESS -> recipe.success
-            DegreeOfSuccess.CRITICAL_SUCCESS -> recipe.criticalSuccess
-            else -> null
-        } ?: return
+
+        // reduce meal cost
         val charactersInCampByUuid = camping.getActorsInCamp().filterIsInstance<PF2ECharacter>().associateBy { it.uuid }
         val parsed = camping.findCookingChoices(
             charactersInCampByUuid = charactersInCampByUuid,
@@ -47,6 +43,20 @@ class ApplyMealEffectsHandler(val game: Game) : ActionHandler("applyMealEffects"
             .filterIsInstance<MealChoice.ParsedMeal>()
         val chosenMeals = mealChoices
             .filter { it.name == data.recipe }
+        val totalCost = chosenMeals.map { it.cookingCost }.sum()
+        reduceFoodBy(
+            actors = camping.getActorsCarryingFood(game),
+            foodItems = getCompendiumFoodItems(),
+            foodAmount = totalCost,
+        )
+
+        // and apply effects if not failure
+        val outcome = when (degree) {
+            DegreeOfSuccess.CRITICAL_FAILURE -> recipe.criticalFailure
+            DegreeOfSuccess.SUCCESS -> recipe.success
+            DegreeOfSuccess.CRITICAL_SUCCESS -> recipe.criticalSuccess
+            else -> null
+        } ?: return
         val actors = chosenMeals.map { it.actor }
         val actorUuids = actors.map { it.uuid }.toSet()
 
@@ -64,11 +74,5 @@ class ApplyMealEffectsHandler(val game: Game) : ActionHandler("applyMealEffects"
                 outcome = favoriteOutcome,
             )
         }
-        val totalCost = chosenMeals.map { it.cookingCost }.sum()
-        reduceFoodBy(
-            actors = camping.getActorsCarryingFood(game),
-            foodItems = getCompendiumFoodItems(),
-            foodAmount = totalCost,
-        )
     }
 }

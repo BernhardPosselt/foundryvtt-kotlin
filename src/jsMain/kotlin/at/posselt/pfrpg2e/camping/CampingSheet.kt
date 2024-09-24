@@ -120,6 +120,7 @@ external interface RecipeContext {
     val requiresCheck: Boolean
     val hidden: Boolean
     val rations: Boolean
+    val consumeRationsEnabled: Boolean
     val actors: Array<RecipeActorContext>
     val skills: FormElementContext?
     val degreeOfSuccess: FormElementContext?
@@ -779,8 +780,11 @@ class CampingSheet(
             requiresCheck = false,
             hidden = section != CampingSheetSection.EATING,
             rations = false,
+            consumeRationsEnabled = false,
             actors = actorsByChosenMeal["nothing"]?.toTypedArray() ?: emptyArray(),
         )
+        val rationActors: Array<RecipeActorContext> =
+            actorsByChosenMeal["rationsOrSubsistence"]?.toTypedArray() ?: emptyArray()
         val rations = RecipeContext(
             name = "Rations",
             targetRecipe = "rationsOrSubsistence",
@@ -792,7 +796,8 @@ class CampingSheet(
                 items = foodItems,
             ),
             rations = true,
-            actors = actorsByChosenMeal["rationsOrSubsistence"]?.toTypedArray() ?: emptyArray(),
+            consumeRationsEnabled = rationActors.isNotEmpty(),
+            actors = rationActors,
             hidden = section != CampingSheetSection.EATING,
         )
         val cookMealActor = parsedCookingChoices.cook
@@ -817,6 +822,7 @@ class CampingSheet(
                     requiresCheck = true,
                     hidden = section != CampingSheetSection.EATING || cookMealActor == null || recipe.name !in knownRecipes,
                     rations = false,
+                    consumeRationsEnabled = false,
                     actors = actorsByChosenMeal[recipe.name]?.toTypedArray() ?: emptyArray(),
                     skills = Select(
                         label = "Selected Skill",
@@ -882,7 +888,7 @@ class CampingSheet(
         val availableFood = buildFoodCost(totalFood, items = foodItems)
         val parsedCookingChoices = camping.findCookingChoices(
             charactersInCampByUuid = charactersByUuid,
-            recipesByName = recipes.associateBy { it.name },
+            recipesByName = camping.getAllRecipes().associateBy { it.name },
         )
         val recipesContext = getRecipeContext(
             parsedCookingChoices = parsedCookingChoices,

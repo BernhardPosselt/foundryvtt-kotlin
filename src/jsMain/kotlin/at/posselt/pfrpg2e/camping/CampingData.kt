@@ -461,8 +461,8 @@ data class ParsedRecipeResult(
 ) {
     val dc
         get() = when (selectedSkill) {
-            Skill.SURVIVAL -> recipe.cookingLoreDC
-            else -> recipe.survivalDC
+            Skill.SURVIVAL -> recipe.survivalDC
+            else -> recipe.cookingLoreDC
         }
 }
 

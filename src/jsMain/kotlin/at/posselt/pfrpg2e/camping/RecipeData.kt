@@ -11,6 +11,9 @@ external interface ReduceConditions {
     val mode: String? // all or random
 }
 
+fun ReduceConditions.reducesAnyCondition() =
+    listOfNotNull(drained, enfeebled, clumsy, stupefied).any { it > 0 }
+
 @JsPlainObject
 external interface MealEffect {
     val uuid: String

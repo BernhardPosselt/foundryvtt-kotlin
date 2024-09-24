@@ -24,6 +24,7 @@ import com.foundryvtt.core.Game
 import com.foundryvtt.core.abstract.DataModel
 import com.foundryvtt.core.applications.api.HandlebarsRenderOptions
 import com.foundryvtt.core.data.dsl.buildSchema
+import com.foundryvtt.core.utils.deepClone
 import com.foundryvtt.pf2e.actor.PF2ENpc
 import com.foundryvtt.pf2e.item.PF2EEffect
 import js.array.push
@@ -197,7 +198,7 @@ class RecipeApplication(
     id = "kmRecipe"
 ) {
     private val editRecipeName = recipe?.name
-    private var currentRecipe: RecipeData? = recipe
+    private var currentRecipe: RecipeData? = recipe?.let(::deepClone)
 
     override fun _onClickAction(event: PointerEvent, target: HTMLElement) {
         when (target.dataset["action"]) {
