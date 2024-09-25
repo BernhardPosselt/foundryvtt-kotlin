@@ -1,7 +1,7 @@
 import at.posselt.pfrpg2e.plugins.ChangeModuleVersion
 import at.posselt.pfrpg2e.plugins.JsonSchemaValidator
 import at.posselt.pfrpg2e.plugins.PackJsonFile
-import at.posselt.pfrpg2e.plugins.Release
+import at.posselt.pfrpg2e.plugins.ReleaseModule
 import at.posselt.pfrpg2e.plugins.UnpackJsonFile
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
@@ -180,8 +180,10 @@ tasks.register<Zip>("package") {
     from("module.json") { into("pf2e-kingmaker-tools/") }
 }
 
-tasks.register<Release>("release") {
+tasks.register<ReleaseModule>("release") {
     dependsOn("package")
     releaseZip = layout.buildDirectory.file("release.zip")
     version = project.version.toString()
+    foundryVersion = "12"
+    githubRepo = "BernhardPosselt/pf2e-kingmaker-tools-ng"
 }

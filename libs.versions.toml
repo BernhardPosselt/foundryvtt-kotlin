@@ -2,6 +2,7 @@
 kotlin = "2.0.20"
 coroutines = "1.9.0"
 schema-validator = "0.2.3"
+ktor = "2.3.12"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }
@@ -18,6 +19,9 @@ kotlinx-coroutines-js = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-cor
 jsonschemavalidator = { module = "io.github.optimumcode:json-schema-validator", version.ref = "schema-validator" }
 jsonschemavalidator-js = { module = "io.github.optimumcode:json-schema-validator-js", version.ref = "schema-validator" }
 jquery = { module = "io.kvision:jquery-kotlin", version = "1.0.0" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
