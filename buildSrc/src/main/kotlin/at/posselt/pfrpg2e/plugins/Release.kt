@@ -23,6 +23,7 @@ abstract class Release : DefaultTask() {
         if (zipFile == null || !zipFile.exists()) {
             throw IllegalStateException("Need an archive file")
         }
+        ProcessBuilder(listOf("git add "))
         println(version.get())
         println(zipFile.absolutePath)
     }
