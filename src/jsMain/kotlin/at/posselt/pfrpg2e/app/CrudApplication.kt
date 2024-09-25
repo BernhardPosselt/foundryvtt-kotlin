@@ -54,8 +54,6 @@ abstract class CrudApplication(
     title = title,
     template = "components/forms/crud-form.hbs",
     width = width,
-    submitOnChange = false,
-    closeOnSubmit = true,
     scrollable = arrayOf(".window-content"),
     debug = debug,
     id = id,
