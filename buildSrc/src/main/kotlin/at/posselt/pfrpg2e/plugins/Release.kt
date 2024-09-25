@@ -17,16 +17,16 @@ abstract class Release : DefaultTask() {
 
     @TaskAction
     fun action() {
+        val release = version.get()
         val zipFile = releaseZip.asFile.orNull
         if (zipFile == null || !zipFile.exists()) {
             throw IllegalStateException("Need an archive file")
         }
         exec(listOf("git", "add", "build.gradle.kts", "module.json"))
-        exec(listOf("git", "commit", "-m", "release $version"))
+        exec(listOf("git", "commit", "-m", "release $release"))
         exec(listOf("git", "push", "origin", "master"))
-        exec(listOf("git", "tag", "$version"))
+        exec(listOf("git", "tag", "$release"))
         exec(listOf("git", "push", "--tags"))
-        println(version.get())
         println(zipFile.absolutePath)
     }
 
