@@ -80,11 +80,9 @@ Then link this directory to your foundry data folder:
 
     ln -s /home/bernhard/dev/pf2e-kingmaker-tools/ /home/bernhard/.local/share/FoundryVTT/Data/modules/pf2e-kingmaker-tools/
 
-First, build the old JS code using:
+Run the package task to build everything from scratch:
 
-    cd oldsrc
-    yarn install
-    yarn run build
+    ./gradlew package
 
 Then, you can keep building the project using:
 
@@ -105,7 +103,7 @@ Finally, start foundry
 
 You can release a new version using:
 
-    ./release.sh "1.1.1" "$GITHUB_TOKEN" "$FOUNDRY_TOKEN"
+    GITHUB_TOKEN="token_here" FOUNDRY_TOKEN="token_here" ./gradlew release
 
 ### Enable Schema Autocompletion Support in IntelliJ
 
