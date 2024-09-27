@@ -19,10 +19,11 @@ import io.ktor.util.cio.*
 import kotlinx.serialization.Serializable
 import io.ktor.client.plugins.logging.*
 import kotlinx.serialization.json.Json
+import java.nio.file.Files
 
 @Serializable
 private data class GetRelaseResponse(
-    val id: String,
+    val id: Int,
 )
 
 @Serializable
@@ -66,6 +67,9 @@ abstract class ReleaseModule : DefaultTask() {
     abstract val version: Property<String>
 
     @get:Input
+    abstract val moduleId: Property<String>
+
+    @get:Input
     abstract val foundryVersion: Property<String>
 
     @get:Input
@@ -79,6 +83,7 @@ abstract class ReleaseModule : DefaultTask() {
         val targetFoundryVersion = foundryVersion.get()
         val repo = githubRepo.get()
         val archive = releaseZip.asFile.orNull
+        val id = moduleId.get()
         if (archive == null || !archive.exists()) {
             throw IllegalStateException("Need an archive file")
         }
@@ -87,11 +92,13 @@ abstract class ReleaseModule : DefaultTask() {
         exec(listOf("git", "push", "origin", "master"))
         exec(listOf("git", "tag", "$releaseVersion"))
         exec(listOf("git", "push", "--tags"))
-        println(archive.absolutePath)
 
         val client = HttpClient(Java) {
             expectSuccess = true
-            install(Logging)
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.HEADERS
+            }
             install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true
@@ -100,15 +107,20 @@ abstract class ReleaseModule : DefaultTask() {
 
         }
         runBlocking {
-            val baseUrl = "https://api.github.com/repos/$repo"
-            val releaseId: String = client.post("$baseUrl/releases") {
+            val releaseId = client.post("https://api.github.com/repos/$repo/releases") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 bearerAuth(githubToken)
                 setBody(GetRelase(tag_name = releaseVersion, name = releaseVersion))
             }.body<GetRelaseResponse>().id
-            client.post("$baseUrl/releases/$releaseId/assets?name=release.zip") {
-                contentType(ContentType.Application.Json)
+            client.post("https://uploads.github.com/repos/$repo/releases/$releaseId/assets") {
+                url {
+                    parameters.append("name", "release.zip")
+                }
+                headers {
+                    append(HttpHeaders.ContentLength, Files.size(archive.toPath()).toString())
+                }
+                contentType(ContentType.Application.Zip)
                 accept(ContentType.Application.Json)
                 bearerAuth(githubToken)
                 setBody(archive.readChannel())
@@ -116,11 +128,13 @@ abstract class ReleaseModule : DefaultTask() {
             client.post("https://api.foundryvtt.com/_api/packages/release_version/") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                bearerAuth(foundryToken)
+                headers {
+                    append(HttpHeaders.Authorization, foundryToken)
+                }
                 setBody(
                     FoundryReleaseVersion(
-                        id = releaseVersion,
-                        dryRun = true,
+                        id = id,
+                        dryRun = false,
                         release = FoundryReleaseVersion.FoundryRelease(
                             version = releaseVersion,
                             manifest = "https://raw.githubusercontent.com/$repo/$releaseVersion/module.json",
