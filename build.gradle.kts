@@ -182,6 +182,7 @@ tasks.register<Zip>("package") {
 
 tasks.register<ReleaseModule>("release") {
     dependsOn("package")
+    mustRunAfter("package")
     releaseZip = layout.buildDirectory.file("release.zip")
     version = project.version.toString()
     foundryVersion = "12"
