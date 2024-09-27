@@ -186,4 +186,5 @@ tasks.register<ReleaseModule>("release") {
     version = project.version.toString()
     foundryVersion = "12"
     githubRepo = "BernhardPosselt/foundryvtt-kotlin"
+    moduleId = "pf2e-kingmaker-tools"
 }
