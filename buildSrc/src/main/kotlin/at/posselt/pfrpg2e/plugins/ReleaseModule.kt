@@ -2,6 +2,7 @@ package at.posselt.pfrpg2e.plugins
 
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.java.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
@@ -16,6 +17,8 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.cio.*
 import kotlinx.serialization.Serializable
+import io.ktor.client.plugins.logging.*
+import kotlinx.serialization.json.Json
 
 @Serializable
 private data class GetRelaseResponse(
@@ -86,25 +89,32 @@ abstract class ReleaseModule : DefaultTask() {
         exec(listOf("git", "push", "--tags"))
         println(archive.absolutePath)
 
-        val client = HttpClient() {
+        val client = HttpClient(Java) {
             expectSuccess = true
+            install(Logging)
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
             }
+
         }
         runBlocking {
             val baseUrl = "https://api.github.com/repos/$repo"
             val releaseId: String = client.post("$baseUrl/releases") {
+                contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 bearerAuth(githubToken)
                 setBody(GetRelase(tag_name = releaseVersion, name = releaseVersion))
             }.body<GetRelaseResponse>().id
             client.post("$baseUrl/releases/$releaseId/assets?name=release.zip") {
+                contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 bearerAuth(githubToken)
                 setBody(archive.readChannel())
             }
             client.post("https://api.foundryvtt.com/_api/packages/release_version/") {
+                contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 bearerAuth(foundryToken)
                 setBody(
