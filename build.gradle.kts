@@ -185,5 +185,5 @@ tasks.register<ReleaseModule>("release") {
     releaseZip = layout.buildDirectory.file("release.zip")
     version = project.version.toString()
     foundryVersion = "12"
-    githubRepo = "BernhardPosselt/pf2e-kingmaker-tools-ng"
+    githubRepo = "BernhardPosselt/foundryvtt-kotlin"
 }
