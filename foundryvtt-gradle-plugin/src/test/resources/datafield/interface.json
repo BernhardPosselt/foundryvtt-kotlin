@@ -23,6 +23,9 @@
       "items": {
         "type": "integer"
       }
+    },
+    "aref": {
+      "$ref": "at.posselt.example.Refe"
     }
   },
   "required": ["id"]

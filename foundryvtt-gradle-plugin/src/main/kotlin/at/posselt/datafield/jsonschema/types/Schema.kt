@@ -9,7 +9,7 @@ data class Schema(
     val schema: String,
     @SerialName($$"$id")
     val id: String,
-    val properties: Map<String, TypeDefinition>,
+    val properties: Map<String, TypeDefinition> = emptyMap(),
     val required: Set<String> = emptySet(),
     val type: String,
     val enum: List<String>? = null,

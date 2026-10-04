@@ -16,4 +16,6 @@ public interface Example {
     public val blubb2: Double?
 
     public val sap: List<Int>?
+
+    public val aref: Refe?
 }
