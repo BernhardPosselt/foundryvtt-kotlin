@@ -15,6 +15,10 @@
     "blubb": {
       "type": "integer"
     },
+    "anEnum": {
+      "type": "string",
+      "enum": ["test", "test2"]
+    },
     "blubb2": {
       "type": "number"
     },

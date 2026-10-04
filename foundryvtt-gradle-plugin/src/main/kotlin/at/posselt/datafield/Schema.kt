@@ -10,6 +10,7 @@ import at.posselt.datafield.jsonschema.types.Schema
 import at.posselt.datafield.jsonschema.types.StringDefinition
 import at.posselt.datafield.jsonschema.types.TypeDefinition
 import at.posselt.datafield.jsonschema.types.toClassName
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
@@ -32,20 +33,15 @@ private fun getType(typeDefinition: TypeDefinition): TypeName =
     when (typeDefinition) {
         is IntegerDefinition -> Integer::class.asTypeName()
         is Reference -> typeDefinition.ref.toClassName()
-        is StringDefinition -> if (typeDefinition.enum != null) {
-            throw RuntimeException("Inline Enums are not supported!")
-        } else {
-            String::class.asTypeName()
-        }
-
-        is ArrayDefinition -> List::class.asClassName().parameterizedBy(
+        is StringDefinition -> String::class.asTypeName()
+        is ArrayDefinition -> Array::class.asClassName().parameterizedBy(
             getType(typeDefinition.items)
         )
 
         is BooleanDefinition -> Boolean::class.asTypeName()
         is DoubleDefinition -> Double::class.asTypeName()
         is MapDefinition -> {
-            Map::class.asClassName().parameterizedBy(
+            ClassName("js.objects", "ReadonlyRecord").parameterizedBy(
                 String::class.asClassName(),
                 getType(typeDefinition.additionalProperties)
             )
