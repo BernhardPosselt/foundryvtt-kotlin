@@ -5,6 +5,13 @@
   "properties": {
     "id": {
       "type": "string"
+    },
+    "obj": {
+      "type": "object",
+      "$id": "at.posselt.example.Example2",
+      "properties": {
+
+      }
     }
   }
 }
