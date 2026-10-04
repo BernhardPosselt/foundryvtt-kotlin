@@ -43,7 +43,12 @@ This adds the following Gradle Tasks to your project:
 * **foundryvttModuleCreateRelease**: Creates a new release over foundryvtt.com's REST API
 
 
-## TODOs
+## Schemas
 
-* Think about credentials
-* Improve git code
+FoundryVTT allows you to define Data Models blabla
+
+To generate code, first provide a JSON schema for the type you wish to generate:
+
+```json
+
+```

@@ -8,7 +8,9 @@ data class Schema(
     @SerialName($$"$schema")
     val schema: String,
     @SerialName($$"$id")
-    override val id: String,
-    override val properties: Map<String, TypeDefinition>,
-    override val required: List<String> = emptyList(),
-): ObjectLike
+    val id: String,
+    val properties: Map<String, TypeDefinition>,
+    val required: Set<String> = emptySet(),
+    val type: String,
+    val enum: List<String>?
+)

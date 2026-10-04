@@ -3,4 +3,7 @@ package at.posselt.datafield.jsonschema.types
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface SpecificTypeDefinition: TypeDefinition
+data class ArrayDefinition(
+    val type: String,
+    val items: Reference
+): TypeDefinition

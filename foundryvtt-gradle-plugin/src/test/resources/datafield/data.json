@@ -8,7 +8,11 @@
     },
     "obj": {
       "type": "object",
-      "$id": "at.posselt.example.Example2"
+      "properties": {
+        "test": {
+          "type": "integer"
+        }
+      }
     }
   }
 }
