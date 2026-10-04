@@ -1,10 +1,12 @@
 package at.posselt.datafield
 
+import at.posselt.datafield.jsonschema.types.ObjectDefinition
 import java.io.BufferedReader
 import java.io.InputStream
 import java.nio.charset.Charset
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SchemaGenerationTest {
 

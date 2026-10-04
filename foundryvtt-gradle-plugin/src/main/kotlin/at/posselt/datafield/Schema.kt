@@ -2,6 +2,7 @@ package at.posselt.datafield
 
 import at.posselt.datafield.jsonschema.types.IntegerDefinition
 import at.posselt.datafield.jsonschema.types.ObjectDefinition
+import at.posselt.datafield.jsonschema.types.ObjectLike
 import at.posselt.datafield.jsonschema.types.Reference
 import at.posselt.datafield.jsonschema.types.Schema
 import com.squareup.kotlinpoet.FileSpec
@@ -17,7 +18,7 @@ fun parseSchema(schema: InputStream): Schema {
     return schema.use { json.decodeFromStream<Schema>(schema) }
 }
 
-fun generateInterface(def: ObjectDefinition): FileSpec {
+fun generateInterface(def: ObjectLike): FileSpec {
     val packageName = def.id.substringBeforeLast('.')
     val className = def.id.substringAfterLast('.')
     return FileSpec.builder(packageName, className)
@@ -39,5 +40,5 @@ fun generateInterface(def: ObjectDefinition): FileSpec {
 }
 
 fun generateCode(schema: Schema): FileSpec {
-
+    return generateInterface(schema)
 }

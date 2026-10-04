@@ -7,5 +7,8 @@ import kotlinx.serialization.Serializable
 data class Schema(
     @SerialName($$"$schema")
     val schema: String,
-    val definition: TypeDefinition
-)
+    @SerialName($$"$id")
+    override val id: String,
+    override val properties: Map<String, TypeDefinition>,
+    override val required: List<String> = emptyList(),
+): ObjectLike
