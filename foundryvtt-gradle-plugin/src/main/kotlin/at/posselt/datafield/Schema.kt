@@ -37,22 +37,22 @@ private fun getType(typeDefinition: TypeDefinition): TypeName =
         } else {
             String::class.asTypeName()
         }
+
         is ArrayDefinition -> List::class.asClassName().parameterizedBy(
-            String::class.asClassName(),
             getType(typeDefinition.items)
         )
 
         is BooleanDefinition -> Boolean::class.asTypeName()
         is DoubleDefinition -> Double::class.asTypeName()
         is MapDefinition -> {
-            HashMap::class.asClassName().parameterizedBy(
+            Map::class.asClassName().parameterizedBy(
                 String::class.asClassName(),
                 getType(typeDefinition.additionalProperties)
             )
         }
     }
 
-fun generateInterface(def: Schema): FileSpec {
+fun generateType(def: Schema): FileSpec {
     val klass = def.id.toClassName()
     val enum = def.enum
     return FileSpec.builder(klass)

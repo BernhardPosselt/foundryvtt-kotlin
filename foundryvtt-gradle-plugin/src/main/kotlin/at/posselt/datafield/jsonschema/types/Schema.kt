@@ -12,5 +12,5 @@ data class Schema(
     val properties: Map<String, TypeDefinition>,
     val required: Set<String> = emptySet(),
     val type: String,
-    val enum: List<String>?
+    val enum: List<String>? = null,
 )

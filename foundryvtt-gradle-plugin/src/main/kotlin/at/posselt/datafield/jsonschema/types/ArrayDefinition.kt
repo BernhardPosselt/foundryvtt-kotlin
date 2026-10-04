@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ArrayDefinition(
     val type: String,
-    val items: Reference
+    val items: TypeDefinition
 ): TypeDefinition

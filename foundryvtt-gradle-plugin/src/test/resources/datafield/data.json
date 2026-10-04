@@ -8,11 +8,22 @@
     },
     "obj": {
       "type": "object",
-      "properties": {
-        "test": {
-          "type": "integer"
-        }
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "blubb": {
+      "type": "integer"
+    },
+    "blubb2": {
+      "type": "number"
+    },
+    "sap": {
+      "type": "array",
+      "items": {
+        "type": "integer"
       }
     }
-  }
+  },
+  "required": ["id"]
 }
