@@ -8,20 +8,20 @@ import com.foundryvtt.core.helpers.FormInputConfig
 
 
 abstract external class DataField<T>(
-    options: DataFieldOptions/*<T>*/ = definedExternally,
+    options: DataFieldOptions<T> = definedExternally,
     context: DataFieldContext<T> = definedExternally
 ) {
     @JsExternalInheritorsOnly
     open class DataFieldStatic<T> {
         var hierarchical: Boolean
         var recursive: Boolean
-        var _defaults: DataFieldOptions/*<T>*/
+        var _defaults: DataFieldOptions<T>
         val hasFormSupport: Boolean
     }
 
     companion object : DataFieldStatic<Any>
 
-    var options: DataFieldOptions/*<T>*/
+    var options: DataFieldOptions<T>
 
     val fieldPath: String
     fun <O> apply(fn: Function<O>, value: T, options: AnyObject = definedExternally): O

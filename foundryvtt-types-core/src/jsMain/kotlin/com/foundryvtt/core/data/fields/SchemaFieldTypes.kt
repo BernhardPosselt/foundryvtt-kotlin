@@ -1,5 +1,5 @@
 package com.foundryvtt.core.data.fields
 
-import js.objects.ReadonlyRecord
+import js.objects.Record
 
-typealias DataSchema<T> = ReadonlyRecord<String, DataField<T>>
+typealias DataSchema<T> = Record<String, DataField<T>>

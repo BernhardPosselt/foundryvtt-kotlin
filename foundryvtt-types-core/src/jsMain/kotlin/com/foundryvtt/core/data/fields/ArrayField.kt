@@ -4,8 +4,8 @@ package com.foundryvtt.core.data.fields
 
 import com.foundryvtt.core.AnyObject
 
-external class ArrayField<T, D>(
-    element: DataField<D>,
+external class ArrayField<T>(
+    element: DataField<T>,
     options: ArrayFieldOptions<T>? = definedExternally,
     context: DataFieldContext<Array<T>>? = definedExternally,
 ) : DataField<Array<T>> {

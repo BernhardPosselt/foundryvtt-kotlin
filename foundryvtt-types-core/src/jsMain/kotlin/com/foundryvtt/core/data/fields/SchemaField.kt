@@ -8,10 +8,10 @@ import js.iterable.JsIterable
 import js.objects.Record
 
 external class SchemaField(
-    fields: DataSchema<Any>,
-    options: DataFieldOptions? = definedExternally, /*<Record<String, Any>>*/
-    context: DataFieldContext<Record<String, Any>>? = definedExternally,
-) : DataField<Record<String, Any>>, JsIterable<SchemaField> {
+    fields: DataSchema<out Any>,
+    options: DataFieldOptions<Any>? = definedExternally, /*<Record<String, Any>>*/
+    context: DataFieldContext<Record<String, out Any>>? = definedExternally,
+) : DataField<Record<String, out Any>>, JsIterable<SchemaField> {
     var fields: DataSchema<*>
     var unknownKeys: Array<String>
     fun keys(): Array<String>

@@ -3,7 +3,7 @@ package com.foundryvtt.core.data.fields
 import kotlinx.js.JsPlainObject
 
 @JsPlainObject
-external interface NumberFieldOptions : DataFieldOptions/*<Double>*/ {
+external interface NumberFieldOptions<T: Number> : DataFieldOptions<T> {
     var min: Number?
     var max: Number?
     var step: Number?
