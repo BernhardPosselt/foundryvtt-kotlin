@@ -23,6 +23,7 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll(
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+            "-Xcontext-parameters"
         )
     }
 }
